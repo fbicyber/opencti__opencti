@@ -67,7 +67,8 @@ FeedbackEditionContainerProps
           size="large"
           color="primary"
         >
-          <Close fontSize="small" color="primary" />
+            {/* ID Required for Selenium Auto Test */}
+          <Close id='close-update' fontSize="small" color="primary" />
         </IconButton>
         <Typography variant="h6" classes={{ root: classes.title }}>
           {t('Update a feedback')}

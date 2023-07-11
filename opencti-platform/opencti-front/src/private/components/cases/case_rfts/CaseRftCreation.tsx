@@ -188,6 +188,7 @@ export const CaseRftCreationForm: FunctionComponent<CaseRftFormProps> = ({
           <Field
             component={TextField}
             variant="standard"
+            id="add-takedown-report-name" // ID Required for Selenium Auto Test
             name="name"
             label={t('Name')}
             fullWidth={true}
@@ -196,6 +197,7 @@ export const CaseRftCreationForm: FunctionComponent<CaseRftFormProps> = ({
           />
           <Field
             component={DateTimePickerField}
+            id="add-takedown-report-date" // ID Required for Selenium Auto Test
             name="created"
             TextFieldProps={{
               label: t('Request For Takedown Date'),
@@ -235,6 +237,7 @@ export const CaseRftCreationForm: FunctionComponent<CaseRftFormProps> = ({
           />
           <Field
             component={MarkdownField}
+            id="case-takedown-report-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}
@@ -293,6 +296,7 @@ export const CaseRftCreationForm: FunctionComponent<CaseRftFormProps> = ({
               {t('Cancel')}
             </Button>
             <Button
+              id="add-takedown-report-create" // ID Required for Selenium Auto Test
               variant="contained"
               color="secondary"
               onClick={submitForm}
@@ -336,6 +340,7 @@ const CaseRftCreation = ({
   );
   return (
     <Drawer
+      id="add-takedown-report" // ID Required for Selenium Auto Test
       title={t('Create a request for takedown')}
       variant={DrawerVariant.create}
     >

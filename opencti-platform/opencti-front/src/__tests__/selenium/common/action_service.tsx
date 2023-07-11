@@ -4,8 +4,13 @@ import DriverService from './driver_service';
 import { readConfigFile } from './file_service';
 
 const LONG_TIMEOUT = 10000;
-const MED_TIMEOUT = 10000;
+const MED_TIMEOUT = 5000;
 const SHORT_TIMEOUT = 2000;
+
+const config = readConfigFile();
+const BASE_SITE = config.app.base_site;
+const BASE_PORT = config.app.port;
+const BASE_URL = `${BASE_SITE}:${BASE_PORT}/`;
 
 /**
  * Waits until an element is located. Eventually times out.
@@ -17,9 +22,13 @@ const SHORT_TIMEOUT = 2000;
 export async function getElementWithTimeout(locator: Locator, timeout = MED_TIMEOUT) {
   const driver: WebDriver = await new DriverService().driver;
   const element = await driver.wait(until.elementLocated(locator), timeout);
-  if (element !== null) {
-    driver.executeScript('arguments[0].scrollIntoView(true)', element);
-  }
+  // element.isDisplayed().then((state) => {
+  //   console.warn(locator);
+  //   console.warn(state);
+  // });
+  driver.executeScript('arguments[0].scrollIntoView(true)', element);
+  // Not scrolling to account for the Header/Footer being on????
+  driver.executeScript('window.scrollBy(0, 30)');
   return element;
 }
 
@@ -164,11 +173,12 @@ export async function selectRandomFromDropdown(
   } catch {
     await clickNonClickable(inputDropdown);
   }
-  await wait(500); // Wait for listbox to open
+  await wait(1000); // Wait for listbox to open
   const inputOptions: WebElement[] = await getSubElementsWithTimeout(
     By.xpath("//ul[@role='listbox']"),
     LONG_TIMEOUT,
   );
+
   let randomOption: WebElement = inputOptions[Math.floor(Math.random() * inputOptions.length)];
   let selectionText = await randomOption.getText();
   if (noSelect.length > 0) {
@@ -246,6 +256,22 @@ function ensurePrefix(value: string, prefix: string) {
   return !value.startsWith(prefix) ? `${prefix}${value}` : value;
 }
 
+/** Returns current date with current time. */
+export function getDateTime() {
+  const today = new Date();
+  let hour = today.getHours();
+  const minutes = today.getMinutes();
+  let am_or_pm = 'A';
+  if (hour > 11) {
+    am_or_pm = 'P';
+  }
+  if (hour > 12) {
+    hour -= 12;
+  }
+
+  return `${today.getFullYear()}0${String(today.getMonth() + 1).slice(-2)}${(`0${today.getDate()}`).slice(-2)}${(`0${hour}`).slice(-2)}${(`0${minutes}`).slice(-2)}${am_or_pm}`;
+}
+
 /**
  * Navigates to a given page path relative to the site's base URL.
  *
@@ -256,8 +282,7 @@ function ensurePrefix(value: string, prefix: string) {
  */
 export async function goToPath(path: string, query = '', endpoint = '') {
   const driver: WebDriver = await new DriverService().driver;
-  const defaultEndpoint = readConfigFile().app.base_url;
-  await driver.get(`${endpoint || defaultEndpoint}${removePrefix(path, '/')}${ensurePrefix(query, '?')}`);
+  await driver.get(`${endpoint || BASE_URL}${removePrefix(path, '/')}${ensurePrefix(query, '?')}`);
 }
 
 /**
@@ -314,5 +339,5 @@ export async function checkValue(locator: Locator, value: string | boolean | und
  * @param newVal Some string to replace the current text in the given element.
  */
 export async function replaceTextFieldValue(element: WebElement, newVal: string) {
-  await element.sendKeys(Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
+  await element.sendKeys(Key.END, Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
 }

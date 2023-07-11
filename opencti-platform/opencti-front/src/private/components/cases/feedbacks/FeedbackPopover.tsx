@@ -113,10 +113,12 @@ const FeedbackPopover = ({ id }: { id: string }) => {
       >
         <MoreVert />
       </IconButton>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={handleOpenEdit}>{t('Update')}</MenuItem>
+      {/* ID Required for Selenium Auto Test */}
+      <Menu id='feedback-menu' anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        <MenuItem onClick={handleOpenEdit} id='update-feedback-option'>{t('Update')}</MenuItem>
         <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
-          <MenuItem onClick={handleOpenDelete}>{t('Delete')}</MenuItem>
+                {/* ID Required for Selenium Auto Test */}
+          <MenuItem id='delete-feedback-option' onClick={handleOpenDelete}>{t('Delete')}</MenuItem>
         </Security>
       </Menu>
       <Dialog

@@ -11,6 +11,7 @@ const MarkdownField = (props) => {
   const {
     form: { setFieldValue, setTouched },
     field: { name },
+    id,
     onFocus,
     onSubmit,
     onSelect,
@@ -54,6 +55,7 @@ const MarkdownField = (props) => {
   };
   return (
     <div
+      id={id}
       style={style}
       className={!R.isNil(meta.error) ? 'error' : 'main'}
       onBlur={internalOnBlur}

@@ -196,6 +196,7 @@ export const CaseIncidentCreationForm: FunctionComponent<IncidentFormProps> = ({
           <Field
             component={TextField}
             variant="standard"
+            id="add-incident-response-name" // ID Required for Selenium Auto Test
             name="name"
             label={t('Name')}
             fullWidth={true}
@@ -203,6 +204,7 @@ export const CaseIncidentCreationForm: FunctionComponent<IncidentFormProps> = ({
             style={{ marginBottom: '20px' }}
           />
           <Field
+            id="add-incident-response-date" // ID Required for Selenium Auto Test
             component={DateTimePickerField}
             name="created"
             TextFieldProps={{
@@ -243,6 +245,7 @@ export const CaseIncidentCreationForm: FunctionComponent<IncidentFormProps> = ({
           />
           <Field
             component={MarkdownField}
+            id="add-incident-response-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}
@@ -301,6 +304,7 @@ export const CaseIncidentCreationForm: FunctionComponent<IncidentFormProps> = ({
               {t('Cancel')}
             </Button>
             <Button
+              id="add-incident-response-create" // ID Required for Selenium Auto Test
               variant="contained"
               color="secondary"
               onClick={submitForm}
@@ -345,6 +349,7 @@ const CaseIncidentCreation = ({
 
   return (
     <Drawer
+      id="add-incident-response" // ID Required for Selenium Auto Test
       title={t('Create an incident response')}
       variant={DrawerVariant.create}
     >

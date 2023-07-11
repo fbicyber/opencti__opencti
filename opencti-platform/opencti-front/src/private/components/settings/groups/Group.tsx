@@ -29,6 +29,7 @@ import GroupEdition from './GroupEdition';
 import GroupPopover from './GroupPopover';
 import ItemIcon from '../../../../components/ItemIcon';
 import GroupHiddenTypesChipList from './GroupHiddenTypesChipList';
+import ExpandableMarkdown from '../../../../components/ExpandableMarkdown';
 
 const useStyles = makeStyles<Theme>((theme) => ({
   container: {
@@ -172,8 +173,9 @@ const Group = ({ groupData }: { groupData: Group_group$key }) => {
               <Grid item={true} xs={12}>
                 <Typography variant="h3" gutterBottom={true}>
                   {t('Description')}
-                </Typography>
-                {group.description}
+                </Typography >
+                                   {/* ID Required for Selenium Auto Test */}
+                <ExpandableMarkdown id="case-security-groups-description" source={group.description} limit={400} />
               </Grid>
               <Grid item={true} xs={12}>
                 <GroupHiddenTypesChipList groupData={group} />
@@ -340,6 +342,7 @@ const Group = ({ groupData }: { groupData: Group_group$key }) => {
         </Grid>
       </Grid>
       <Fab
+        id="EditIcon" // ID Required for Selenium Auto Test
         onClick={handleOpenUpdate}
         color="secondary"
         aria-label="Edit"

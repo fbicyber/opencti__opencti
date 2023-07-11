@@ -263,6 +263,7 @@ export const IndicatorCreationForm: FunctionComponent<IndicatorFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
+            id="add-indicators-name" // ID Required for Selenium Auto Test
             component={TextField}
             variant="standard"
             name="name"
@@ -290,6 +291,7 @@ export const IndicatorCreationForm: FunctionComponent<IndicatorFormProps> = ({
             multiple={false}
           />
           <Field
+            id="add-indicators-pattern" // ID Required for Selenium Auto Test
             component={TextField}
             variant="standard"
             name="pattern"
@@ -343,6 +345,7 @@ export const IndicatorCreationForm: FunctionComponent<IndicatorFormProps> = ({
             style={{ marginTop: 20 }}
           />
           <Field
+            id="add-indicators-description" // ID Required for Selenium Auto Test
             component={MarkdownField}
             name="description"
             label={t('Description')}
@@ -403,6 +406,7 @@ export const IndicatorCreationForm: FunctionComponent<IndicatorFormProps> = ({
               {t('Cancel')}
             </Button>
             <Button
+              id="add-indicators-create" // ID Required for Selenium Auto Test
               variant="contained"
               color="secondary"
               onClick={submitForm}
@@ -468,6 +472,7 @@ const IndicatorCreation: FunctionComponent<IndicatorCreationProps> = ({ paginati
   return (
     <div>
       <Fab
+        id="add-indicators" // ID Required for Selenium Auto Test
         onClick={handleOpen}
         color="secondary"
         aria-label="Add"

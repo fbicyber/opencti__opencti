@@ -223,7 +223,8 @@ const CaseIncidentDetails: FunctionComponent<CaseIncidentDetailsProps> = ({
               {t('Description')}
             </Typography>
             {data.description ? (
-              <ExpandableMarkdown source={data.description} limit={300} />
+              /* // ID Required for Selenium Auto Test */
+              <ExpandableMarkdown source={data.description} limit={300} id="case-incident-response-description" />
             ) : '-'}
           </Grid>
         </Grid>

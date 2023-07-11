@@ -187,12 +187,15 @@ export const ReportCreationForm: FunctionComponent<ReportFormProps> = ({
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
             component={TextField}
+            variant="standard"
+            id="add-analyses-report-name" // ID Required for Selenium Auto Test
             name="name"
             label={t('Name')}
             fullWidth={true}
           />
           <Field
             component={DateTimePickerField}
+            id="add-analyses-report-date" // ID Required for Selenium Auto Test
             name="published"
             TextFieldProps={{
               label: t('Publication date'),
@@ -222,6 +225,7 @@ export const ReportCreationForm: FunctionComponent<ReportFormProps> = ({
           />
           <Field
             component={MarkdownField}
+            id="add-analyses-report-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}
@@ -282,6 +286,7 @@ export const ReportCreationForm: FunctionComponent<ReportFormProps> = ({
             <Button
               variant="contained"
               color="secondary"
+              id="add-analyses-report-create" // ID Required for Selenium Auto Test
               onClick={submitForm}
               disabled={isSubmitting}
               classes={{ root: classes.button }}
@@ -323,6 +328,7 @@ const ReportCreation = ({
   );
   return (
     <Drawer
+      id="add-analyses-report" // ID Required for Selenium Auto Test
       title={t('Create a report')}
       variant={DrawerVariant.create}
     >

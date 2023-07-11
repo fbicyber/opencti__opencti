@@ -208,6 +208,7 @@ const ObservedDataEditionOverviewComponent = (props) => {
         <div>
           <Form style={{ margin: '20px 0 20px 0' }}>
             <Field
+              id="edit-observed-data-first-date" // ID Required for Selenium Auto Test
               component={DateTimePickerField}
               name="first_observed"
               onFocus={editor.changeFocus}
@@ -225,6 +226,7 @@ const ObservedDataEditionOverviewComponent = (props) => {
               }}
             />
             <Field
+              id="edit-observed-data-last-date" // ID Required for Selenium Auto Test
               component={DateTimePickerField}
               name="last_observed"
               onFocus={editor.changeFocus}

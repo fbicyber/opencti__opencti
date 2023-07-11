@@ -63,6 +63,7 @@ CaseIncidentEditionContainerProps
       <div className={classes.header}>
         <IconButton
           aria-label="Close"
+          id="CloseIcon" // ID Required for Selenium Auto Test
           className={classes.closeButton}
           onClick={handleClose}
           size="large"

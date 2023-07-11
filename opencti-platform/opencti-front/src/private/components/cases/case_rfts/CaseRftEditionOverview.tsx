@@ -280,6 +280,7 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
       }) => (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
+            id="edit-rfts-name" // ID Required for Selenium Auto Test
             component={TextField}
             variant="standard"
             name="name"
@@ -293,6 +294,7 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
             style={{ marginBottom: '20px' }}
           />
           <Field
+            id="edit-rfts-date" // ID Required for Selenium Auto Test
             component={DateTimePickerField}
             name="created"
             onFocus={editor.changeFocus}
@@ -351,6 +353,7 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
             component={MarkdownField}
             name="description"
             label={t('Description')}
+            id="edit-rfts-description" // ID Required for Selenium Auto Test
             fullWidth={true}
             multiline={true}
             rows="4"

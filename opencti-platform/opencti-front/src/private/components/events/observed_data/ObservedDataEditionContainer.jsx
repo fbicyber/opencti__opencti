@@ -39,6 +39,7 @@ const ObservedDataEditionContainer = (props) => {
     <div>
       <div className={classes.header}>
         <IconButton
+          id="CloseIcon" // ID Required for Selenium Auto Test
           aria-label="Close"
           className={classes.closeButton}
           onClick={handleClose}

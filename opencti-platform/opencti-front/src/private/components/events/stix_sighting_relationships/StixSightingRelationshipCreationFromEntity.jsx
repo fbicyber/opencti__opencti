@@ -497,6 +497,7 @@ class StixSightingRelationshipCreationFromEntity extends Component {
           </IconButton>
         ) : (
           <Fab
+            id="add-sightings" // ID Required for Selenium Auto Test
             onClick={this.handleOpen.bind(this)}
             color="secondary"
             aria-label="Add"

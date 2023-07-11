@@ -195,6 +195,7 @@ export const IndividualCreationForm: FunctionComponent<IndividualFormProps> = ({
     }) => (
       <Form style={{ margin: '20px 0 20px 0' }}>
         <Field
+          id="add-individual-name" // ID Required for Selenium Auto Test
           component={TextField}
           variant="standard"
           name="name"
@@ -203,6 +204,7 @@ export const IndividualCreationForm: FunctionComponent<IndividualFormProps> = ({
           detectDuplicate={['User']}
         />
         <Field
+          id="add-individual-description" // ID Required for Selenium Auto Test
           component={MarkdownField}
           name="description"
           label={t('Description')}
@@ -251,6 +253,7 @@ export const IndividualCreationForm: FunctionComponent<IndividualFormProps> = ({
             {t('Cancel')}
           </Button>
           <Button
+            id="add-individual-create" // ID Required for Selenium Auto Test
             variant="contained"
             color="secondary"
             onClick={submitForm}
@@ -286,6 +289,7 @@ const IndividualCreation = ({ paginationOptions }: {
   return (
     <div>
       <Fab onClick={handleOpen}
+           id="add-individual" // ID Required for Selenium Auto Test
            color="secondary"
            aria-label="Add"
            className={classes.createButton}>

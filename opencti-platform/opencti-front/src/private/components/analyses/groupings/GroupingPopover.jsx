@@ -108,7 +108,8 @@ const GroupingPopover = (props) => {
           <Button onClick={handleCloseDelete} disabled={deleting}>
             {t('Cancel')}
           </Button>
-          <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+          {/* ID Required for Selenium Auto Test */}
+          <Button id="delete-grouping-button" color="secondary" onClick={submitDelete} disabled={deleting}>
             {t('Delete')}
           </Button>
         </DialogActions>

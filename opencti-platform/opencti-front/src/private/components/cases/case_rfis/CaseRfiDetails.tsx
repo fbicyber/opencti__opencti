@@ -223,7 +223,8 @@ const CaseRfiDetails: FunctionComponent<CaseRfiDetailsProps> = ({
               {t('Description')}
             </Typography>
             {data.description ? (
-              <ExpandableMarkdown source={data.description} limit={300} />
+              /* // ID Required for Selenium Auto Test */
+              <ExpandableMarkdown id="Rfis-description" source={data.description} limit={300} />
             ) : '-'}
           </Grid>
         </Grid>

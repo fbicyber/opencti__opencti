@@ -57,6 +57,7 @@ const FeedbackEdition: FunctionComponent<{ feedbackId: string }> = ({ feedbackId
         color="secondary"
         aria-label="Edit"
         className={classes.editButton}
+        id="EditIcon" // Required for Selenium Auto Test
       >
         <Edit />
       </Fab>

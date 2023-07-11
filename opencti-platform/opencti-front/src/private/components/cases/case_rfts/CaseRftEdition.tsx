@@ -51,6 +51,7 @@ const CaseRftEdition: FunctionComponent<{ caseId: string }> = ({ caseId }) => {
   return (
     <div>
       <Fab
+        id="EditIcon" // ID Required for Selenium Auto Test
         onClick={handleOpen}
         color="secondary"
         aria-label="Edit"

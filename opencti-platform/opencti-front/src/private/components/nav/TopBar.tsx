@@ -484,10 +484,10 @@ const TopBarComponent: FunctionComponent<TopBarProps> = ({
             </Security>
             <IconButton
               size="medium"
+              id="profile-menu-button" // ID Required for Selenium Auto Test
               classes={{ root: classes.button }}
               aria-owns={menuOpen.open ? 'menu-appbar' : undefined}
               aria-haspopup="true"
-              id="profile-menu-button" // ID Required for Selenium Auto Test
               onClick={handleOpenMenu}
               color={
                 location.pathname === '/dashboard/profile/me'
@@ -510,11 +510,14 @@ const TopBarComponent: FunctionComponent<TopBarProps> = ({
               >
                 {t('Profile')}
               </MenuItem>
-              <MenuItem onClick={handleOpenDrawer}>{t('Feedback')}</MenuItem>
-              {/* // ID Required for Selenium Auto Test */}
-              <MenuItem id="logout-button" onClick={() => handleLogout()}>
-                {t('Logout')}
-              </MenuItem>
+              <MenuItem
+                 onClick={handleOpenDrawer}
+                 id="feedback-button" // Required for Selenium Auto Test
+              >{t('Feedback')}</MenuItem>
+              <MenuItem
+                 onClick={() => handleLogout()}
+                 id="logout-button" // Required for Selenium Auto Test
+              >{t('Logout')}</MenuItem>
             </Menu>
           </div>
         </div>

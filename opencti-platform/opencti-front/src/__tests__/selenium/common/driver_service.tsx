@@ -40,14 +40,21 @@ export default class DriverService {
           chromeOptions = new chrome.Options().headless().windowSize(windowSize);
           // Fix Floss manager not present, cannot set Floss enable/disable on Linux Docker images launched from CI/CD
           chromeOptions.addArguments('--headless=new');
+          // chromeOptions.addArguments('--start-maximized');
         } else {
           chromeOptions = new chrome.Options().windowSize(windowSize);
         }
         // Full list of switches at: https://peter.sh/experiments/chromium-command-line-switches/
-        chromeOptions.addArguments('--disable-gpu'); // overcome limited resources of CI/CD pipeline images
-        chromeOptions.addArguments('--disable-dev-shm-usage'); // overcome limited resources of CI/CD pipeline images
-        chromeOptions.addArguments('--disable-extensions'); // disabling extensions not required for testing
         chromeOptions.addArguments('--no-sandbox'); // Bypass OS security model - NOT RECOMMENDED
+        chromeOptions.addArguments('--disable-dev-shm-usage'); // overcome limited resources of CI/CD pipeline images
+        chromeOptions.addArguments('--disable-gpu'); // overcome limited resources of CI/CD pipeline images
+        chromeOptions.addArguments('--disable-extensions'); // disabling extensions not required for testing
+        /// Disable on MAC: otherwise you will get: WebDriverError: disconnected: unable to connect to renderer 
+        /// Enable on Linux: otherwise you will get: DevToolActivePort missing error 
+        if (config.debug_port_required)
+        {
+           chromeOptions.addArguments('--remote-debugging-port=9222'); // Fixes Wonky DevToolActivePort missing error
+        }
         // chromeOptions.addArguments("--disable-software-rasterizer"); // Allow GPU to perform Raster
         // chromeOptions.setChromeBinaryPath("/usr/bin/chromium-browser");
 
