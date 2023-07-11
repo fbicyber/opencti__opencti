@@ -178,6 +178,7 @@ export async function selectRandomFromDropdown(
     By.xpath("//ul[@role='listbox']"),
     LONG_TIMEOUT,
   );
+
   let randomOption: WebElement = inputOptions[Math.floor(Math.random() * inputOptions.length)];
   let selectionText = await randomOption.getText();
   if (noSelect.length > 0) {
@@ -267,7 +268,6 @@ export function getDateTime() {
   if (hour > 12) {
     hour -= 12;
   }
-
   return `${today.getFullYear()}0${String(today.getMonth() + 1).slice(-2)}${(`0${today.getDate()}`).slice(-2)}${(`0${hour}`).slice(-2)}${(`0${minutes}`).slice(-2)}${am_or_pm}`;
 }
 
