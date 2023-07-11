@@ -85,7 +85,8 @@ const FeedbackDetails: FunctionComponent<FeedbackDetailsProps> = ({
               {t('Description')}
             </Typography>
             {data.description && (
-              <ExpandableMarkdown source={data.description} limit={300} />
+              /* // ID Required for Selenium Auto Test */
+              <ExpandableMarkdown source={data.description} id="case-feedback-response-description" limit={300} />
             )}
           </Grid>
         </Grid>

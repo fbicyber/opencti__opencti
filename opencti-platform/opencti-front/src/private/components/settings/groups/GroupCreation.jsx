@@ -132,6 +132,7 @@ class GroupCreation extends Component {
     return (
       <>
         <Fab
+          id="add-security-groups" // ID Required for Selenium Auto Test
           onClick={this.handleOpen.bind(this)}
           color="secondary"
           aria-label="Add"
@@ -169,12 +170,14 @@ class GroupCreation extends Component {
               {({ submitForm, handleReset, isSubmitting }) => (
                 <Form style={{ margin: '20px 0 20px 0' }}>
                   <Field
+                    id="add-security-groups-name" // ID Required for Selenium Auto Test
                     component={TextField}
                     name="name"
                     label={t('Name')}
                     fullWidth={true}
                   />
                   <Field
+                    id="add-security-groups-description" // ID Required for Selenium Auto Test
                     component={MarkdownField}
                     name="description"
                     label={t('Description')}
@@ -193,6 +196,7 @@ class GroupCreation extends Component {
                       {t('Cancel')}
                     </Button>
                     <Button
+                      id="add-security-groups-create" // ID Required for Selenium Auto Test
                       variant="contained"
                       color="secondary"
                       onClick={submitForm}

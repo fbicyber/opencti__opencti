@@ -196,6 +196,7 @@ const GroupingEditionOverviewComponent = (props) => {
         <div>
           <Form style={{ margin: '20px 0 20px 0' }}>
             <Field
+              id="edit-analyses-groupings-name" // ID Required for Selenium Auto Test
               component={TextField}
               name="name"
               label={t('Name')}
@@ -227,6 +228,7 @@ const GroupingEditionOverviewComponent = (props) => {
               editContext={context}
             />
             <Field
+              id="edit-analyses-groupings-description" // ID Required for Selenium Auto Test
               component={MarkdownField}
               name="description"
               label={t('Description')}

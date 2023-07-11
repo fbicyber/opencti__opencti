@@ -216,6 +216,8 @@ const ReportEditionOverviewComponent = (props) => {
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
             component={TextField}
+            variant="standard"
+            id="edit-analyses-report-name" // ID Required for Selenium Auto Test
             name="name"
             label={t('Name')}
             fullWidth={true}
@@ -227,6 +229,7 @@ const ReportEditionOverviewComponent = (props) => {
           />
           <Field
             component={DateTimePickerField}
+            id="edit-analyses-report-date" // ID Required for Selenium Auto Test
             name="published"
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
@@ -273,6 +276,7 @@ const ReportEditionOverviewComponent = (props) => {
           />
           <Field
             component={MarkdownField}
+            id="edit-analyses-report-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}

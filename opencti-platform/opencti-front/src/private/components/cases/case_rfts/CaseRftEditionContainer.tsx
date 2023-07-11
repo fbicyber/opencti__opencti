@@ -71,6 +71,7 @@ CaseRftEditionContainerProps
     <div>
       <div className={classes.header}>
         <IconButton
+          id="close-update" // ID Required for Selenium Auto Test
           aria-label="Close"
           className={classes.closeButton}
           onClick={handleClose}

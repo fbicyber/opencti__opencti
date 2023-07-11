@@ -281,6 +281,7 @@ const CaseRfiEditionOverview: FunctionComponent<CaseRfiEditionOverviewProps> = (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
             component={TextField}
+            id="edit-rfis-name" // ID Required for Selenium Auto Test
             variant="standard"
             name="name"
             label={t('Name')}
@@ -294,6 +295,7 @@ const CaseRfiEditionOverview: FunctionComponent<CaseRfiEditionOverviewProps> = (
           />
           <Field
             component={DateTimePickerField}
+            id="edit-rfis-date" // ID Required for Selenium Auto Test
             name="created"
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
@@ -349,6 +351,7 @@ const CaseRfiEditionOverview: FunctionComponent<CaseRfiEditionOverviewProps> = (
           />
           <Field
             component={MarkdownField}
+            id="edit-rfis-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}

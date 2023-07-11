@@ -42,7 +42,8 @@ class IndividualDetailsComponent extends Component {
               <Typography variant="h3" gutterBottom={true}>
                 {t('Description')}
               </Typography>
-              <ExpandableMarkdown source={individual.description} limit={400} />
+                          {/* ID Required for Selenium Auto Test */}
+              <ExpandableMarkdown id="individual-description" source={individual.description} limit={400} />
             </Grid>
             <Grid item={true} xs={6}>
               <Typography variant="h3" gutterBottom={true}>

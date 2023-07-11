@@ -185,6 +185,7 @@ const FeedbackCreation: FunctionComponent<{
               <Form style={{ margin: '20px 0 20px 0' }}>
                 <Field
                   component={MarkdownField}
+                  id="case-feedback-response-description" // Required for Selenium Auto Test
                   name="description"
                   label={t('Description')}
                   fullWidth={true}
@@ -214,6 +215,7 @@ const FeedbackCreation: FunctionComponent<{
                   component={SimpleFileUpload}
                   name="file"
                   label={t('Associated file')}
+                  id="add-feedback-file" // Required for Selenium Auto Test
                   FormControlProps={{ style: fieldSpacingContainerStyle }}
                   InputLabelProps={{ fullWidth: true, variant: 'standard' }}
                   InputProps={{ fullWidth: true, variant: 'standard' }}
@@ -235,6 +237,7 @@ const FeedbackCreation: FunctionComponent<{
                     {t('Cancel')}
                   </Button>
                   <Button
+                    id="add-feedback-response-create" // Required for Selenium Auto Test
                     variant="contained"
                     color="secondary"
                     onClick={submitForm}

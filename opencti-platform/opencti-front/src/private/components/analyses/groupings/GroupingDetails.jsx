@@ -122,7 +122,8 @@ const GroupingDetailsComponent = (props) => {
             <Typography variant="h3" gutterBottom={true}>
               {t('Description')}
             </Typography>
-            <ExpandableMarkdown source={grouping.description} limit={400} />
+                                {/* ID Required for Selenium Auto Test */}
+            <ExpandableMarkdown id="case-analyses-groupings-description" source={grouping.description} limit={400} />
             <Typography
               variant="h3"
               gutterBottom={true}

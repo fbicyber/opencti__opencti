@@ -123,7 +123,8 @@ const ReportDetailsComponent = (props) => {
             <Typography variant="h3" gutterBottom={true}>
               {t('Description')}
             </Typography>
-            <ExpandableMarkdown source={report.description} limit={400} />
+                                {/* ID Required for Selenium Auto Test */}
+            <ExpandableMarkdown id="case-analyses-report-description" source={report.description} limit={400} />
             <Typography
               variant="h3"
               gutterBottom={true}

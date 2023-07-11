@@ -232,7 +232,8 @@ const CaseRftDetails: FunctionComponent<CaseRftDetailsProps> = ({
               {t('Description')}
             </Typography>
             {data.description ? (
-              <ExpandableMarkdown source={data.description} limit={300} />
+              /* // ID Required for Selenium Auto Test */
+              <ExpandableMarkdown source={data.description} id="case-takedown-report-description" limit={300} />
             ) : '-'}
           </Grid>
         </Grid>

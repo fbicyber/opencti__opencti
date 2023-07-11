@@ -65,6 +65,7 @@ class ReportEdition extends Component {
     return (
       <div>
         <Fab
+          id="EditIcon" // ID Required for Selenium Auto Test
           onClick={this.handleOpen.bind(this)}
           color="secondary"
           aria-label="Edit"

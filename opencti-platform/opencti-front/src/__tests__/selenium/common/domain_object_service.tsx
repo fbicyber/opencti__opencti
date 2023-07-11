@@ -372,16 +372,27 @@ export async function updateDomainObject(
  * Assuming that the current view is a Stix Domain Object overview, click the
  * ellipsis (more options) button, click 'Delete', and then confirm 'Delete'.
  */
-export async function deleteDomainObject() {
+export async function deleteDomainObject(deleteButtonName = null) {
   try {
     const moreOptions = await getXpathNodeWith('data-testid', 'MoreVertIcon', { xpath: '/..' });
     await moreOptions.click();
 
     const deleteBtn = await getXpathNodeWith('text', 'Delete', { nodePath: '//li' });
+    await wait(500); // Allow to load
     await clickNonClickable(deleteBtn);
-
-    const confirmDelete = await getXpathNodeWith('text', 'Delete', { nodePath: '//button' });
-    await clickNonClickable(confirmDelete);
+    await wait(500); // Allow to load
+    await wait(500); // Allow to load
+    if (deleteButtonName === null)
+    {
+      const confirmDelete = await getXpathNodeWith('text', 'Delete', { nodePath: '//button' });
+      await clickNonClickable(confirmDelete);
+    }
+    else
+    {
+      const deleteBtn = await getElementWithTimeout(By.id(deleteButtonName));
+      await deleteBtn.click();
+    } 
+    await wait(500); // Allow to load
   } catch (err) {
     // Failed to find element with name.
     // TODO: Log errors like this and determine what to do.

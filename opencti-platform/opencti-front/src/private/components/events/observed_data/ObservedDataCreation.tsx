@@ -215,6 +215,7 @@ export const ObservedDataCreationForm: FunctionComponent<ObservedDataFormProps> 
             values={values.objects}
           />
           <Field
+            id="add-observed-data-first-date" // ID Required for Selenium Auto Test
             component={DateTimePickerField}
             name="first_observed"
             TextFieldProps={{
@@ -225,6 +226,7 @@ export const ObservedDataCreationForm: FunctionComponent<ObservedDataFormProps> 
             }}
           />
           <Field
+            id="add-observed-data-last-date" // ID Required for Selenium Auto Test
             component={DateTimePickerField}
             name="last_observed"
             TextFieldProps={{
@@ -287,6 +289,7 @@ export const ObservedDataCreationForm: FunctionComponent<ObservedDataFormProps> 
               {t('Cancel')}
             </Button>
             <Button
+              id="add-observed-data-create" // ID Required for Selenium Auto Test
               variant="contained"
               color="secondary"
               onClick={submitForm}
@@ -323,6 +326,7 @@ const ObservedDataCreation = ({ paginationOptions }: {
   return (
     <div>
       <Fab
+        id="add-observed-data" // ID Required for Selenium Auto Test
         onClick={handleOpen}
         color="secondary"
         aria-label="Add"

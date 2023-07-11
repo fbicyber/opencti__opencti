@@ -6,9 +6,6 @@ import { logIn_LocalStrategy, logOut } from './common/auth_service';
 import { readConfigFile } from './common/file_service';
 
 describe('Authentication workflow', () => {
-  // OPTIMIZE: development.json is the the assumed configuration for testing.
-  // OPTIMIZE: will failover to test.json if not found.
-  // const config = readJsonFile(getGQLPath('development.json', 'config'));
   const config = readConfigFile();
   const BASE_SITE = config.app.base_site;
   const BASE_PORT = config.app.frontend_tests_port;

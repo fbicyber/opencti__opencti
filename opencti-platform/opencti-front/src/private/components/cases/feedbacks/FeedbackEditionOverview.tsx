@@ -271,6 +271,7 @@ FeedbackEditionOverviewProps
           />
           <Field
             component={MarkdownField}
+            id="edit-case-feedback-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}

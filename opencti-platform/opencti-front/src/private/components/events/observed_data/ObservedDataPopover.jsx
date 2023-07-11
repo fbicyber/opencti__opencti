@@ -151,6 +151,7 @@ class ObservedDataPopover extends Component {
               {t('Cancel')}
             </Button>
             <Button
+              id="delete-observable-button" // ID Required for Selenium Auto Test
               color="secondary"
               onClick={this.submitDelete.bind(this)}
               disabled={this.state.deleting}

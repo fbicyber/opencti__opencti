@@ -1,8 +1,14 @@
 /* eslint-disable no-console */
 import React from 'react';
 import { act, cleanup, render } from '@testing-library/react';
-import { OperationDescriptor, RelayEnvironmentProvider } from 'react-relay/hooks';
-import { createMockEnvironment, MockPayloadGenerator as MockGen } from 'relay-test-utils';
+import {
+  OperationDescriptor,
+  RelayEnvironmentProvider,
+} from 'react-relay/hooks';
+import {
+  createMockEnvironment,
+  MockPayloadGenerator as MockGen,
+} from 'relay-test-utils';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import { CompatRouter } from 'react-router-dom-v5-compat';

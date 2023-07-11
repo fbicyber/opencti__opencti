@@ -3,8 +3,6 @@ import DriverService from './driver_service';
 import { getElementWithTimeout, wait } from './action_service';
 import { readConfigFile } from './file_service';
 
-// OPTIMIZE: development.json is the the assumed configuration for testing.
-// OPTIMIZE: will failover to test.json if not found.
 const config = readConfigFile();
 const BASE_SITE = config.app.base_site;
 const BASE_PORT = config.app.frontend_tests_port;
@@ -21,7 +19,7 @@ const BASE_URL = `${BASE_SITE}:${BASE_PORT}/`;
 export async function logIn_LocalStrategy(username = USERNAME, password = PASSWORD) {
   const driver: WebDriver = await new DriverService().driver;
   /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-  console.warn(BASE_URL);
+  // console.warn(BASE_URL);
   await driver.get(BASE_URL);
 
   // Click consent

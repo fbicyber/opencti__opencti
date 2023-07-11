@@ -283,6 +283,7 @@ const CaseIncidentEditionOverview: FunctionComponent<CaseIncidentEditionOverview
       }) => (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
+            id="add-incident-response-name" // ID Required for Selenium Auto Test
             component={TextField}
             variant="standard"
             name="name"
@@ -297,6 +298,7 @@ const CaseIncidentEditionOverview: FunctionComponent<CaseIncidentEditionOverview
           />
           <Field
             component={DateTimePickerField}
+            id="add-incident-response-date" // ID Required for Selenium Auto Test
             name="created"
             onFocus={editor.changeFocus}
             onSubmit={editor.changeField}
@@ -353,6 +355,7 @@ const CaseIncidentEditionOverview: FunctionComponent<CaseIncidentEditionOverview
           />
           <Field
             component={MarkdownField}
+            id="add-incident-response-description" // ID Required for Selenium Auto Test
             name="description"
             label={t('Description')}
             fullWidth={true}

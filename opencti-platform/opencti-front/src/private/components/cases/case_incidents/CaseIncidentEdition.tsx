@@ -51,6 +51,7 @@ const CaseIncidentEdition: FunctionComponent<{ caseId: string }> = ({ caseId }) 
   return (
     <div>
       <Fab
+        id="edit-case" // ID Required for Selenium Auto Test
         onClick={handleOpen}
         color="secondary"
         aria-label="Edit"

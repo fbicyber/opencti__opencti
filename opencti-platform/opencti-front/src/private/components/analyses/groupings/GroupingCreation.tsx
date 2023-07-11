@@ -171,6 +171,7 @@ export const GroupingCreationForm: FunctionComponent<GroupingFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
+            id="add-analyses-groupings-name" // ID Required for Selenium Auto Test
             component={TextField}
             name="name"
             label={t('Name')}
@@ -189,6 +190,7 @@ export const GroupingCreationForm: FunctionComponent<GroupingFormProps> = ({
             onChange={setFieldValue}
           />
           <Field
+            id="add-analyses-groupings-description" // ID Required for Selenium Auto Test
             component={MarkdownField}
             name="description"
             label={t('Description')}
@@ -248,6 +250,7 @@ export const GroupingCreationForm: FunctionComponent<GroupingFormProps> = ({
               {t('Cancel')}
             </Button>
             <Button
+              id="add-analyses-groupings-create" // ID Required for Selenium Auto Test
               variant="contained"
               color="secondary"
               onClick={submitForm}
@@ -286,6 +289,7 @@ const GroupingCreation = ({
   const updater = (store: RecordSourceSelectorProxy) => insertNode(store, 'Pagination_groupings', paginationOptions, 'groupingAdd');
   return (
     <Drawer
+      id="add-analyses-groupings" // ID Required for Selenium Auto Test
       title={t('Create a grouping')}
       variant={DrawerVariant.create}
     >

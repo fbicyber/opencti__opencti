@@ -152,6 +152,7 @@ const FileUploader: FunctionComponent<FileUploaderProps> = ({
       ) : (
         <Tooltip title={t('Select your file')} aria-label="Select your file">
           <IconButton
+            id="file-upload-button" // ID Required for Selenium Auto Test
             onClick={handleOpenUpload}
             aria-haspopup="true"
             color={color || 'primary'}

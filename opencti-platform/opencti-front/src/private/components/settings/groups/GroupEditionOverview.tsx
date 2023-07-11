@@ -122,6 +122,7 @@ const GroupEditionOverviewComponent: FunctionComponent<GroupEditionOverviewCompo
         {() => (
           <Form style={{ margin: '20px 0 20px 0' }}>
             <Field
+              id="edit-security-groups-name" // ID Required for Selenium Auto Test
               component={TextField}
               name="name"
               label={t('Name')}
@@ -133,6 +134,7 @@ const GroupEditionOverviewComponent: FunctionComponent<GroupEditionOverviewCompo
               }
             />
             <Field
+              id="edit-security-groups-description" // ID Required for Selenium Auto Test
               component={MarkdownField}
               name="description"
               label={t('Description')}

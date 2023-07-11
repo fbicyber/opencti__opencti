@@ -71,6 +71,7 @@ CaseRfiEditionContainerProps
     <div>
       <div className={classes.header}>
         <IconButton
+          id="edit-close-rfis" // ID Required for Selenium Auto Test
           aria-label="Close"
           className={classes.closeButton}
           onClick={handleClose}
