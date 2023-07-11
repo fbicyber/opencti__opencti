@@ -178,7 +178,6 @@ export async function selectRandomFromDropdown(
     By.xpath("//ul[@role='listbox']"),
     LONG_TIMEOUT,
   );
-
   let randomOption: WebElement = inputOptions[Math.floor(Math.random() * inputOptions.length)];
   let selectionText = await randomOption.getText();
   if (noSelect.length > 0) {
