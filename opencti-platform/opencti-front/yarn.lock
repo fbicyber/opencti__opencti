@@ -35,9 +35,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.22.5":
-  version: 7.22.5
-  resolution: "@babel/code-frame@npm:7.22.5"
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.22.10, @babel/code-frame@npm:^7.22.5":
+  version: 7.22.10
+  resolution: "@babel/code-frame@npm:7.22.10"
   dependencies:
     "@babel/highlight": ^7.22.10
     chalk: ^2.4.2
@@ -1715,7 +1715,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ckeditor/ckeditor5-dev-translations@npm:^38.0.0":
+"@ckeditor/ckeditor5-dev-translations@npm:^38.0.0, @ckeditor/ckeditor5-dev-translations@npm:^38.3.1":
   version: 38.3.1
   resolution: "@ckeditor/ckeditor5-dev-translations@npm:38.3.1"
   dependencies:
@@ -1729,25 +1729,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ckeditor/ckeditor5-dev-translations@npm:^38.2.2":
-  version: 38.2.2
-  resolution: "@ckeditor/ckeditor5-dev-translations@npm:38.2.2"
-  dependencies:
-    "@babel/parser": ^7.18.9
-    "@babel/traverse": ^7.18.9
-    chalk: ^4.0.0
-    pofile: ^1.0.9
-    rimraf: ^3.0.2
-    webpack-sources: ^2.0.1
-  checksum: 55096fff429819dbe06d1ff4960f042526fc0f28bc74c7e114650a1235034b9b0a0604578a9fd5706d7dac5a1e022d300d4fdd2154b4512329dab0bc7dbaaeac
-  languageName: node
-  linkType: hard
-
 "@ckeditor/ckeditor5-dev-utils@npm:^38.0.0":
-  version: 38.2.2
-  resolution: "@ckeditor/ckeditor5-dev-utils@npm:38.2.2"
+  version: 38.3.1
+  resolution: "@ckeditor/ckeditor5-dev-utils@npm:38.3.1"
   dependencies:
-    "@ckeditor/ckeditor5-dev-translations": ^38.2.2
+    "@ckeditor/ckeditor5-dev-translations": ^38.3.1
     chalk: ^3.0.0
     cli-cursor: ^3.1.0
     cli-spinners: ^2.6.1
@@ -1769,7 +1755,7 @@ __metadata:
     style-loader: ^2.0.0
     terser-webpack-plugin: ^4.2.3
     through2: ^3.0.1
-  checksum: fc3151a095add412c1186db3c2ba2575b616ec1a588234db3e5ae416f80952679ea7d4c633d00a0de9bf1c7fc163670c68ff96068e85bbe91adbbb6ccdf8d380
+  checksum: 82eaa0ee0640cd2ac1f33d17d3de0e394ab12dc27e222281f776b2289adad4ed1b413a673dadc115085e43f09c11648353c3199754fda7de2ce270b1de93ed92
   languageName: node
   linkType: hard
 
@@ -2358,13 +2344,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/android-arm64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/android-arm64@npm:0.18.20"
-  conditions: os=android & cpu=arm64
-  languageName: node
-  linkType: hard
-
 "@esbuild/android-arm@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/android-arm@npm:0.17.19"
@@ -2382,13 +2361,6 @@ __metadata:
 "@esbuild/android-arm@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/android-arm@npm:0.19.2"
-  conditions: os=android & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@esbuild/android-arm@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/android-arm@npm:0.18.20"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
@@ -2414,13 +2386,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/android-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/android-x64@npm:0.18.20"
-  conditions: os=android & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@esbuild/darwin-arm64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/darwin-arm64@npm:0.17.19"
@@ -2438,13 +2403,6 @@ __metadata:
 "@esbuild/darwin-arm64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/darwin-arm64@npm:0.19.2"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/darwin-arm64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/darwin-arm64@npm:0.18.20"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -2470,13 +2428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/darwin-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/darwin-x64@npm:0.18.20"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@esbuild/freebsd-arm64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/freebsd-arm64@npm:0.17.19"
@@ -2494,13 +2445,6 @@ __metadata:
 "@esbuild/freebsd-arm64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/freebsd-arm64@npm:0.19.2"
-  conditions: os=freebsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/freebsd-arm64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/freebsd-arm64@npm:0.18.20"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
@@ -2526,13 +2470,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/freebsd-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/freebsd-x64@npm:0.18.20"
-  conditions: os=freebsd & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@esbuild/linux-arm64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/linux-arm64@npm:0.17.19"
@@ -2550,13 +2487,6 @@ __metadata:
 "@esbuild/linux-arm64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/linux-arm64@npm:0.19.2"
-  conditions: os=linux & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-arm64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-arm64@npm:0.18.20"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
@@ -2582,13 +2512,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/linux-arm@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-arm@npm:0.18.20"
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
 "@esbuild/linux-ia32@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/linux-ia32@npm:0.17.19"
@@ -2606,13 +2529,6 @@ __metadata:
 "@esbuild/linux-ia32@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/linux-ia32@npm:0.19.2"
-  conditions: os=linux & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-ia32@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-ia32@npm:0.18.20"
   conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
@@ -2638,13 +2554,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/linux-loong64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-loong64@npm:0.18.20"
-  conditions: os=linux & cpu=loong64
-  languageName: node
-  linkType: hard
-
 "@esbuild/linux-mips64el@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/linux-mips64el@npm:0.17.19"
@@ -2662,13 +2571,6 @@ __metadata:
 "@esbuild/linux-mips64el@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/linux-mips64el@npm:0.19.2"
-  conditions: os=linux & cpu=mips64el
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-mips64el@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-mips64el@npm:0.18.20"
   conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
@@ -2694,13 +2596,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/linux-ppc64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-ppc64@npm:0.18.20"
-  conditions: os=linux & cpu=ppc64
-  languageName: node
-  linkType: hard
-
 "@esbuild/linux-riscv64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/linux-riscv64@npm:0.17.19"
@@ -2718,13 +2613,6 @@ __metadata:
 "@esbuild/linux-riscv64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/linux-riscv64@npm:0.19.2"
-  conditions: os=linux & cpu=riscv64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-riscv64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-riscv64@npm:0.18.20"
   conditions: os=linux & cpu=riscv64
   languageName: node
   linkType: hard
@@ -2750,13 +2638,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/linux-s390x@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-s390x@npm:0.18.20"
-  conditions: os=linux & cpu=s390x
-  languageName: node
-  linkType: hard
-
 "@esbuild/linux-x64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/linux-x64@npm:0.17.19"
@@ -2774,13 +2655,6 @@ __metadata:
 "@esbuild/linux-x64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/linux-x64@npm:0.19.2"
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/linux-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/linux-x64@npm:0.18.20"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
@@ -2806,13 +2680,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/netbsd-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/netbsd-x64@npm:0.18.20"
-  conditions: os=netbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@esbuild/openbsd-x64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/openbsd-x64@npm:0.17.19"
@@ -2830,13 +2697,6 @@ __metadata:
 "@esbuild/openbsd-x64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/openbsd-x64@npm:0.19.2"
-  conditions: os=openbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/openbsd-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/openbsd-x64@npm:0.18.20"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
@@ -2862,13 +2722,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/sunos-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/sunos-x64@npm:0.18.20"
-  conditions: os=sunos & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@esbuild/win32-arm64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/win32-arm64@npm:0.17.19"
@@ -2886,13 +2739,6 @@ __metadata:
 "@esbuild/win32-arm64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/win32-arm64@npm:0.19.2"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@esbuild/win32-arm64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/win32-arm64@npm:0.18.20"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -2918,13 +2764,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/win32-ia32@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/win32-ia32@npm:0.18.20"
-  conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
 "@esbuild/win32-x64@npm:0.17.19":
   version: 0.17.19
   resolution: "@esbuild/win32-x64@npm:0.17.19"
@@ -2942,13 +2781,6 @@ __metadata:
 "@esbuild/win32-x64@npm:0.19.2":
   version: 0.19.2
   resolution: "@esbuild/win32-x64@npm:0.19.2"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@esbuild/win32-x64@npm:0.18.20":
-  version: 0.18.20
-  resolution: "@esbuild/win32-x64@npm:0.18.20"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3378,9 +3210,9 @@ __metadata:
   version: 0.3.19
   resolution: "@jridgewell/trace-mapping@npm:0.3.19"
   dependencies:
-    "@jridgewell/resolve-uri": 3.1.0
-    "@jridgewell/sourcemap-codec": 1.4.14
-  checksum: 0572669f855260808c16fe8f78f5f1b4356463b11d3f2c7c0b5580c8ba1cbf4ae53efe9f627595830856e57dbac2325ac17eb0c3dd0ec42102e6f227cc289c02
+    "@jridgewell/resolve-uri": ^3.1.0
+    "@jridgewell/sourcemap-codec": ^1.4.14
+  checksum: 956a6f0f6fec060fb48c6bf1f5ec2064e13cd38c8be3873877d4b92b4a27ba58289a34071752671262a3e3c202abcc3fa2aac64d8447b4b0fa1ba3c9047f1c20
   languageName: node
   linkType: hard
 
@@ -3427,10 +3259,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/core-downloads-tracker@npm:^5.14.3":
-  version: 5.14.3
-  resolution: "@mui/core-downloads-tracker@npm:5.14.3"
-  checksum: bf8290f2d7486b964467ff91bd23adb14164a51e52bf5044084cac8c11b226a324e77952a66403038bc5052591db8bcd98f5ce5791a48e8589109368a311b8af
+"@mui/core-downloads-tracker@npm:^5.14.4":
+  version: 5.14.4
+  resolution: "@mui/core-downloads-tracker@npm:5.14.4"
+  checksum: da36c30ba8cd5ce5241fd6806603d70833a3ff5d92a47bbd3b1215308e47181a1340dbcb5acefeab99bd8e2e2cb9e6a1565c140a9bbf078236c10af8f8c27dc5
   languageName: node
   linkType: hard
 
@@ -3480,9 +3312,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/material@npm:5.14.3, @mui/material@npm:^5.4.1":
-  version: 5.14.3
-  resolution: "@mui/material@npm:5.14.3"
+"@mui/material@npm:5.14.4, @mui/material@npm:^5.4.1":
+  version: 5.14.4
+  resolution: "@mui/material@npm:5.14.4"
   dependencies:
     "@babel/runtime": ^7.22.10
     "@mui/base": 5.0.0-beta.12
@@ -3513,29 +3345,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/private-theming@npm:^5.13.7":
-  version: 5.13.7
-  resolution: "@mui/private-theming@npm:5.13.7"
+"@mui/private-theming@npm:^5.14.4":
+  version: 5.14.4
+  resolution: "@mui/private-theming@npm:5.14.4"
   dependencies:
-    "@babel/runtime": ^7.22.5
-    "@mui/utils": ^5.13.7
+    "@babel/runtime": ^7.22.6
+    "@mui/utils": ^5.14.4
     prop-types: ^15.8.1
-    react-is: ^18.2.0
-    react-transition-group: ^4.4.5
   peerDependencies:
-    "@emotion/react": ^11.5.0
-    "@emotion/styled": ^11.3.0
     "@types/react": ^17.0.0 || ^18.0.0
     react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
   peerDependenciesMeta:
-    "@emotion/react":
-      optional: true
-    "@emotion/styled":
-      optional: true
     "@types/react":
       optional: true
-  checksum: 645d25c9d2762403a7a1342a8b38f8232d5a8e03113ff183eccb248de07e683590f0271441e0ffc66ebcc54c3a79d63d532d2e0579cabbd968b8714537fb6732
+  checksum: 822487a6bd2cc06397b4158dd79283fa6829410d3abd16aa7c12d8569512bfa5f2b6db707b2b2e2f4fa59fc62286057b8184428c7e1cf8147eb1649c426b164c
   languageName: node
   linkType: hard
 
@@ -3591,9 +3414,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/system@npm:^5.14.3, @mui/system@npm:^5.4.1":
-  version: 5.14.3
-  resolution: "@mui/system@npm:5.14.3"
+"@mui/system@npm:^5.14.4, @mui/system@npm:^5.4.1":
+  version: 5.14.4
+  resolution: "@mui/system@npm:5.14.4"
   dependencies:
     "@babel/runtime": ^7.22.10
     "@mui/private-theming": ^5.14.6
@@ -3631,22 +3454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/utils@npm:5.14.3, @mui/utils@npm:^5.10.3, @mui/utils@npm:^5.13.7, @mui/utils@npm:^5.14.3":
-  version: 5.14.3
-  resolution: "@mui/utils@npm:5.14.3"
-  dependencies:
-    "@babel/runtime": ^7.22.6
-    "@types/prop-types": ^15.7.5
-    "@types/react-is": ^18.2.1
-    prop-types: ^15.8.1
-    react-is: ^18.2.0
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-  checksum: b0084c55dc15c304e93832a23c567e41f2b152242dee3dc2578ce4b3d5177d604994abe1fd39b38a23d049592126a71ecf5ac9fe9f141155aeb4cce06241df92
-  languageName: node
-  linkType: hard
-
-"@mui/utils@npm:^5.10.3, @mui/utils@npm:^5.14.3, @mui/utils@npm:^5.14.4":
+"@mui/utils@npm:5.14.4, @mui/utils@npm:^5.10.3, @mui/utils@npm:^5.14.4":
   version: 5.14.4
   resolution: "@mui/utils@npm:5.14.4"
   dependencies:
@@ -4445,9 +4253,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:16 || 17 || 18, @types/react@npm:18.2.18":
-  version: 18.2.18
-  resolution: "@types/react@npm:18.2.18"
+"@types/react@npm:*, @types/react@npm:16 || 17 || 18, @types/react@npm:18.2.20":
+  version: 18.2.20
+  resolution: "@types/react@npm:18.2.20"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
@@ -4457,13 +4265,13 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^17.0.52":
-  version: 17.0.62
-  resolution: "@types/react@npm:17.0.62"
+  version: 17.0.64
+  resolution: "@types/react@npm:17.0.64"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 428a5aff44824ef504e9a9259b5894fe44a5db1c344b536990f07e132900ff5b34cbef0be77a84f30f37be1f88fc8b56dce328f568de8d65de3bfe414c05b2e1
+  checksum: 71a7b402e8849ff31ed542d1d1a2ff6adb0e6f0e17321d126e7382a2fcb671ec1e1d1bf7045306922fa90b0319c57a8a45e6215bbf00fb6f73c3860d3f869870
   languageName: node
   linkType: hard
 
@@ -8046,9 +7854,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.477":
-  version: 1.4.485
-  resolution: "electron-to-chromium@npm:1.4.485"
-  checksum: 6f9efc92c18c4c8a16ba6d6004823d7ec893b98a0a0eae372e8cf1fbb61bdd04b9e2edd692dcb2e9d59cec06e3ef899262c52f1eb1e5d0202ee3d0b594fb4bd2
+  version: 1.4.490
+  resolution: "electron-to-chromium@npm:1.4.490"
+  checksum: c81bf177ff64ceb54fa90f715f1d52fb9106b0ef4426b816c4ae0471c562d8f4d110531df1a164ce17eda13ad9481f6bcd15f1368b6d5442a1d2f93102ef221a
   languageName: node
   linkType: hard
 
@@ -14021,6 +13829,9 @@ __metadata:
     "@rjsf/utils": 5.12.1
     "@rollup/plugin-graphql": 2.0.3
     "@testing-library/react": 14.0.0
+    "@types/chromedriver": ^81.0.1
+    "@types/jest": 29.5.1
+    "@types/lodash": 4.14.196
     "@types/node": 20.4.10
     "@types/qrcode": 1.5.1
     "@types/ramda": 0.29.3
@@ -16470,9 +16281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.25.2":
-  version: 3.27.2
-  resolution: "rollup@npm:3.27.2"
+"rollup@npm:^3.27.1":
+  version: 3.28.0
+  resolution: "rollup@npm:3.28.0"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -17496,6 +17307,33 @@ __metadata:
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
   checksum: 21425246a5a8f14d1625a657a3a56f8a323193fa341a71af818a2ed2a429efa2385a328b4381cf2f12c2d0e6380801eb9e0427ed9c3a10ff95c86e383184d632
+  languageName: node
+  linkType: hard
+
+"style-loader@npm:^3.0.0":
+  version: 3.3.3
+  resolution: "style-loader@npm:3.3.3"
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: f59c953f56f6a935bd6a1dfa409f1128fed2b66b48ce4a7a75b85862a7156e5e90ab163878962762f528ec4d510903d828da645e143fbffd26f055dc1c094078
+  languageName: node
+  linkType: hard
+
+"style-to-js@npm:1.1.3":
+  version: 1.1.3
+  resolution: "style-to-js@npm:1.1.3"
+  dependencies:
+    style-to-object: 0.4.1
+  checksum: 7aaeacff909d43bbfc28e9a004019224d0eda895ac3d0d9f3160b6ad044dca8d3965f7b2b92ac649f63f62889324b560147d21cf3149f29794692c5d7b207110
+  languageName: node
+  linkType: hard
+
+"style-to-object@npm:0.4.1":
+  version: 0.4.1
+  resolution: "style-to-object@npm:0.4.1"
+  dependencies:
+    inline-style-parser: 0.1.1
+  checksum: 2ea213e98eed21764ae1d1dc9359231a9f2d480d6ba55344c4c15eb275f0809f1845786e66d4caf62414a5cc8f112ce9425a58d251c77224060373e0db48f8c2
   languageName: node
   linkType: hard
 
