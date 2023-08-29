@@ -14,7 +14,7 @@ export default defineConfig({
                // Turned off / excluded the base test due to pipeline issue launching Chrome
                // Allows for merge while pipeline issue is researched. Runs locally outside of pipeline
                // See Drone build - 11903 - Error: spawn /root/.cache/selenium/chromedriver/linux64/115.0.5790.170/chromedriver ENOENT
-              'src/__tests__/selenium/auth.test.{ts,tsx}', 
+              // 'src/__tests__/selenium/auth.test.{ts,tsx}', 
              ],
     globals: true,
     testTimeout: 120000,
