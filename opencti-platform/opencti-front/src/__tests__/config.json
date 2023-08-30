@@ -1,5 +1,5 @@
 {
-  "headless": false,
+  "headless": true,
   "windowSize": {
     "height": 1800,
     "width": 1440

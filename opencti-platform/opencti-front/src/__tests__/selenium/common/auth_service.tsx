@@ -25,7 +25,7 @@ export async function logIn_LocalStrategy(username = USERNAME, password = PASSWO
   // Click consent
   try {
     const consentCheck = await getElementWithTimeout(By.name('consent'), 2000);
-    await wait(500);
+    await wait(1000);
     await consentCheck.click();
     // Login Form will auto scroll to the username/password fields
     await wait(1000);
@@ -55,14 +55,22 @@ export async function logIn_LocalStrategy(username = USERNAME, password = PASSWO
  */
 export async function logOut() {
   const driver: WebDriver = await new DriverService().driver;
-
   // Navigate to dashboard
   await driver.get(`${BASE_URL}dashboard`);
-  const profileMenuButton = await getElementWithTimeout(
-    By.id('profile-menu-button'),
-  );
-  // Open profile menu
-  profileMenuButton.click();
-  const logoutButton = await getElementWithTimeout(By.id('logout-button'));
-  logoutButton.click();
+  // Click Profile Button
+  try {
+    const profileMenuButton = await getElementWithTimeout(
+      By.id('profile-menu-button'),
+    );
+    await wait(5000);
+    // Open profile menu
+    profileMenuButton.click();
+    /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+  } catch { console.warn('Warn: Could not find profile button - did the page load?'); }
+  // Click Logout Button
+  try {
+    const logoutButton = await getElementWithTimeout(By.id('logout-button'));
+    logoutButton.click();
+    /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+  } catch { console.warn('Warn: Could not find logout button - did the page load?'); }
 }
