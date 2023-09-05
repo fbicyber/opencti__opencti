@@ -1,3 +1,6 @@
+/* eslint-disable class-methods-use-this */
+// import session from '../../../../opencti-graphql/src/database/';
+import session from 'express-session';
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -13,6 +16,9 @@ import {
 } from '../../utils/Time';
 import { handleLogout } from './nav/TopBar';
 import useAuth from '../../utils/hooks/useAuth';
+
+
+const { Store } = session;
 
 /**
  * Gets timeout and banner settings from react relay and return those values.
@@ -97,7 +103,7 @@ const TimeoutLock: React.FunctionComponent<TimeoutLockProps> = () => {
    * Resets the idle timeout counter, but only if the dialog has been closed.
    */
   const resetIdleTimeout = () => {
-    if (dialogOpen) return; // Don't touch the timeout counter if the dialog is still open
+    // if (dialogOpen) return; // Don't touch the timeout counter if the dialog is still open
     if (state.sessionLimit > 0) {
       dispatch({ type: 'reset timeout' });
     }
@@ -114,6 +120,7 @@ const TimeoutLock: React.FunctionComponent<TimeoutLockProps> = () => {
    * Unlocks the application screen by closing the dialog and refreshes the session.
    */
   const unlockScreen = () => {
+    resetTimeout()
     setDialogOpen(false);
   };
 
@@ -178,7 +185,7 @@ const TimeoutLock: React.FunctionComponent<TimeoutLockProps> = () => {
     }
     const secondsBetween = secondsBetweenDates(state.startDate, new Date());
     // Ensure that the user is logged out if the page has been open longer than the session allows
-    if (
+    if ( 
       secondsBetween >= state.sessionLimit
       || (state.idleCount !== undefined && state.idleCount <= 0 && dialogOpen)
     ) {
