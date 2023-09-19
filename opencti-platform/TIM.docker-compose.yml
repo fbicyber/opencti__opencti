@@ -1,0 +1,36 @@
+version: '3'
+services:
+  opencti:
+    container_name: opencti
+    build:
+      dockerfile: TIM.Dockerfile
+    ports:
+      - "${OPENCTI_BASE_PORT}:${OPENCTI_BASE_PORT}"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=8096
+      - APP__PORT=${OPENCTI_BASE_PORT}
+      - APP__BASE_URL=${OPENCTI_BASE_URL}
+      - APP__ADMIN__EMAIL=${OPENCTI_ADMIN_EMAIL}
+      - APP__ADMIN__PASSWORD=${OPENCTI_ADMIN_PASSWORD}
+      - APP__ADMIN__TOKEN=${OPENCTI_ADMIN_TOKEN}
+      - APP__APP_LOGS__LOGS_LEVEL=error
+      - REDIS__HOSTNAME=redis
+      - REDIS__PORT=${REDIS__PORT}
+      - MINIO__ENDPOINT=minio
+      - MINIO__PORT=${MINIO__PORT}
+      - MINIO__USE_SSL=false
+      - MINIO__ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO__SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - RABBITMQ__HOSTNAME=${RABBITMQ_HOSTNAME}
+      - RABBITMQ__PORT=${RABBITMQ__PORT}
+      - RABBITMQ__PORT_MANAGEMENT="1${RABBITMQ__PORT}"
+      - RABBITMQ__MANAGEMENT_SSL=false
+      - RABBITMQ__USERNAME=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ__PASSWORD=${RABBITMQ_DEFAULT_PASS}
+      - SMTP__HOSTNAME=${SMTP_HOSTNAME}
+      - SMTP__PORT=25
+      - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
+      - ELASTICSEARCH__URL=http://elasticsearch:9200
+
+# Run with:
+#   docker-compose -f docker-compose.platform.yml up --force-recreate -d

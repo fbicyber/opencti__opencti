@@ -1,0 +1,11 @@
+version: '3'
+services:
+  worker:
+    build:
+      dockerfile: TIM.Dockerfile
+    restart: always
+    depends_on:
+      - opencti
+    deploy:
+      mode: replicated
+      replicas: 3

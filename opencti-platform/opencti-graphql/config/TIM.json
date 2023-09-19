@@ -1,0 +1,200 @@
+{
+  "app": {
+    "port": 4000,
+    "base_path": "",
+    "base_url": "http://opencti:4000/",
+    "enabled": true,
+    "https_cert": {
+      "ca": [],
+      "key": null,
+      "crt": null,
+      "reject_unauthorized": true,
+      "cookie_secure": false
+    },
+    "app_logs": {
+      "logs_level": "info",
+      "logs_files": true,
+      "logs_console": true,
+      "logs_max_files": 7,
+      "logs_directory": "./logs",
+      "logs_redacted_inputs": [
+        "password",
+        "secret",
+        "token"
+      ]
+    },
+    "audit_logs": {
+      "logs_files": true,
+      "logs_console": true,
+      "logs_max_files": 7,
+      "logs_directory": "./logs"
+    },
+    "graphql": {
+      "armor_enabled": false,
+      "playground": {
+        "enabled": true,
+        "force_disabled_introspection": false
+      }
+    },
+    "telemetry": {
+      "tracing": {
+        "enabled": false,
+        "exporter_otlp": "",
+        "exporter_zipkin": ""
+      },
+      "metrics": {
+        "enabled": false,
+        "exporter_otlp": "",
+        "exporter_prometheus": 14269
+      }
+    },
+    "initialize_account_status": true,
+    "default_initialize_account_status": "Active",
+    "account_locked_message": "Your account has been locked for security reasons. Please contact ABC to resolve your issue at abc@accounts.com",
+    "account_locked_missing_training_message": "Your account has been locked because you are missing at least one of the required briefings. Please complete the requsite trainings / briefings before attempting to access this system.",
+    "default_training_list": "[\"ABC1000\"]",
+    "account_inactive_message": "Your account has been marked inactive. If you would like to reactivate your account, please contact ABC to resolve your issue at abc@accounts.com",
+    "default_external_access_info": "{\"Entity\": {\"entitySecurityMark\": \"UNCLASSIFIED//FOUO\", \"Info\": {\"briefings\": [{\"value\": \"ABC1000\"}]}}}",
+    "request_timeout": 1200000,
+    "session_timeout": 3600000,
+    "session_idle_timeout": 3600000,
+    "session_manager": "shared",
+    "rate_protection": {
+      "time_window": 1,
+      "max_requests": 10000
+    },
+    "concurrency": {
+      "retry_count": 100,
+      "retry_delay": 250,
+      "retry_jitter": 100,
+      "max_ttl": 60000,
+      "extension_threshold": 5000
+    },
+    "live_stream": {
+      "cache_max_size": 5000,
+      "cache_max_time": 2
+    },
+    "performance_logger": false,
+    "map_tile_server_dark": "https://map.opencti.io/styles/luatix-dark/{z}/{x}/{y}.png",
+    "map_tile_server_light": "https://map.opencti.io/styles/luatix-light/{z}/{x}/{y}.png",
+    "reference_attachment": false,
+    "python_execution": "native",
+    "admin": {
+      "email": "admin@opencti.io",
+      "password": "CHANGEMEPLEASE",
+      "token": "6C2C9EAE-6FF5-4421-B118-74A3CA5AAC20"
+    }
+  },
+  "demo_mode": false,
+  "http_proxy": "",
+  "https_proxy": "",
+  "no_proxy": "",
+  "https_proxy_ca": [],
+  "https_proxy_reject_unauthorized": false,
+  "rule_engine": {
+    "enabled": true,
+    "lock_key": "rule_engine_lock"
+  },
+  "history_manager": {
+    "enabled": true,
+    "lock_key": "history_manager_lock"
+  },
+  "activity_manager": {
+    "lock_key": "activity_manager_lock"
+  },
+  "connector_manager": {
+    "enabled": true,
+    "lock_key": "connector_manager_lock",
+    "works_day_range": 7,
+    "interval": 60000
+  },
+  "task_scheduler": {
+    "enabled": true,
+    "lock_key": "task_manager_lock",
+    "interval": 10000
+  },
+  "expiration_scheduler": {
+    "enabled": true,
+    "lock_key": "expired_manager_lock",
+    "interval": 300000
+  },
+  "notification_manager": {
+    "enabled": true,
+    "lock_live_key": "notification_live_manager_lock",
+    "lock_digest_key": "notification_digest_manager_lock",
+    "interval": 10000
+  },
+  "publisher_manager": {
+    "enabled": true,
+    "lock_key": "publisher_manager_lock",
+    "interval": 10000
+  },
+  "sync_manager": {
+    "enabled": true,
+    "lock_key": "sync_manager_lock",
+    "interval": 10000
+  },
+  "retention_manager": {
+    "enabled": true,
+    "lock_key": "retention_manager_lock",
+    "interval": 60000
+  },
+  "redis": {
+    "mode": "single",
+    "namespace": "",
+    "hostname": "redis",
+    "use_ssl": false,
+    "ca": [],
+    "port": 6379,
+    "trimming": 2000000
+  },
+  "elasticsearch": {
+    "index_prefix": "opencti",
+    "url": "http://elasticsearch:9200",
+    "index_creation_pattern": "-000001",
+    "search_ignore_throttled": false,
+    "max_pagination_result": 5000,
+    "max_concurrency": 4
+  },
+  "minio": {
+    "bucket_name": "opencti-bucket",
+    "bucket_region": "us-east-1",
+    "endpoint": "minio",
+    "port": 9000,
+    "use_ssl": false,
+    "access_key": "C145E441-A78D-4243-9014-658115356BE6",
+    "secret_key": "C25583E1-C9E3-49A8-AB11-4CBAD1B13CCB",
+    "excluded_files": [
+      ".DS_Store"
+    ],
+    "use_aws_role": false,
+    "hostname": "minio"
+  },
+  "rabbitmq": {
+    "queue_prefix": "",
+    "hostname": "rabbitmq",
+    "vhost": "/",
+    "use_ssl": false,
+    "use_ssl_ca": [],
+    "port": 5672,
+    "port_management": 15672,
+    "management_ssl": false,
+    "username": "guest",
+    "password": "guest",
+    "queue_type": "classic"
+  },
+  "smtp": {
+    "hostname": "smtp",
+    "use_ssl": false,
+    "reject_unauthorized": false,
+    "port": 25,
+    "username": "",
+    "password": "",
+    "from_email": "notifications@opencti.io"
+  },
+  "providers": {
+    "local": {
+      "strategy": "LocalStrategy"
+    }
+  }
+}
