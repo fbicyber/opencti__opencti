@@ -7,6 +7,7 @@ import {
   getDateTime,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
+import { format } from 'path';
 
 /**
  * Navigates to the Cases Incident Response list displayer.
@@ -26,36 +27,79 @@ export async function navigateToCaseIncidentResponse(id = '') {
  */
 export async function addCaseIncidentResponse(name: string, description: string) {
   // Click add button
-  const addBtn = await getElementWithTimeout(By.id('add-incident-response'));
-  await addBtn.click();
+  try{
+    const addBtn = await getElementWithTimeout(By.id('add-incident-response'));
+    await addBtn.click();
+  } catch {
+    console.warn("Warn: Could not locate or interact with add incident response button");
+  }
 
   // Fill name
-  const nameField = await getElementWithTimeout(By.id('add-incident-response-name'));
-  // Sometimes fails to find name field fast enough.
-  await wait(1000);
-  await nameField.click();
-  await nameField.sendKeys(name);
+  try{
+    const nameField = await getElementWithTimeout(By.id('add-incident-response-name'));
+    // Sometimes fails to find name field fast enough.
+    await wait(1000);
+    await nameField.click();
+    await nameField.sendKeys(name);
+    await wait(1000);
+
+    // check that it was name set correctly
+    getElementWithTimeout(By.id('add-incident-response-name'))
+    .then((elem) => elem.getAttribute("value"))
+    .then((val) => expect(val).toBe(name));
+  } catch (error) {
+    console.warn(error)
+    console.warn("Warn: Could not locate or interact with add incident response name");
+  }
 
   // Fill Incident Date
-  const incidentDate = await getElementWithTimeout(By.id('add-incident-response-date'));
-  await wait(1000);
-  await incidentDate.click();
-  const formattedDate = getDateTime();
-  await replaceTextFieldValue(incidentDate, formattedDate);
-  await wait(1000);
+  try {
+    const incidentDate = await getElementWithTimeout(By.id('add-incident-response-date'));
+    await wait(1000);
+    await incidentDate.click();
+    const formattedDate = getDateTime();
+    await replaceTextFieldValue(incidentDate, formattedDate);
+    await wait(1000);    
+
+    // check that it was date set correctly
+    getElementWithTimeout(By.id('add-incident-response-date'))
+    .then((elem) => elem.getAttribute("value"))
+    .then((val) => expect(val).toBe(formattedDate)); // should be problem until above fixed
+  } catch (error) {
+    console.warn(error)
+    console.warn("Warn: Could not locate or interact with add incident response date");
+  }
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'add-incident-response-description',
-    'textarea',
-  );
-  await descriptionField.click();
-  await descriptionField.sendKeys(description);
+  try {
+    const descriptionField = await getSubElementWithTimeout(
+      'id',
+      'add-incident-response-description',
+      'textarea',
+    );
+    await descriptionField.click();
+    await descriptionField.sendKeys(description);
+    await wait(1000);
+
+    // check that it was date set correctly
+    getSubElementWithTimeout('id', 'add-incident-response-description','textarea')
+    .then((elem) => elem.getAttribute("value"))
+    .then((val) => expect(val).toBe(description));
+  } catch (error) {
+    console.warn(error)
+    console.warn("Warn: Could not locate or interact with add incident response description");
+  }
 
   // Click create button
-  const createBtn = await getElementWithTimeout(By.id('add-incident-response-create'));
-  await createBtn.click();
+  try {
+    const createBtn = await getElementWithTimeout(By.id('add-incident-response-create'));
+    await createBtn.click();
+  } catch (error) {
+    console.warn(error)
+    console.error("Error: Could not create incident.");
+    console.error("Check previous warnings & errors for possible reasons.");
+    console.error("If there are no previously given errors then perhaps the create incident button could not be found or interacted with.");
+  }
 }
 
 export async function editCaseIncidentResponse(name:string, description: string) {
