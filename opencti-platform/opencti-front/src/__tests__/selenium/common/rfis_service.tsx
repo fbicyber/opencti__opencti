@@ -66,7 +66,7 @@ export async function addRfis(name: string, description: string) {
  * @param description The new RFI description
  * @param date The new string representation of the created/edit dated of the report
  */
-export async function editRfis(name: string, description: string, date: string) {
+export async function editRfis(name: string, description: string) {
   // Click edit button
   const editBtn = await getElementWithTimeout(By.id('edit-rfis'));
   await editBtn.click();

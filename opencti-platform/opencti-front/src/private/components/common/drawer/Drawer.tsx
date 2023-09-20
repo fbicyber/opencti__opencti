@@ -6,10 +6,10 @@ import { Add, Close, Edit } from '@mui/icons-material';
 import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
 import classNames from 'classnames';
+import { uniqueId } from 'lodash';
 import { Theme } from '../../../../components/Theme';
 import useAuth from '../../../../utils/hooks/useAuth';
 import { SubscriptionAvatars } from '../../../../components/Subscription';
-import { uniqueId } from 'lodash';
 
 export enum DrawerVariant {
   create = 'create',
@@ -70,7 +70,7 @@ interface DrawerProps {
 }
 
 const Drawer: FunctionComponent<DrawerProps> = ({
-  id, // ID Required for Selenium Auto Test 
+  id, // ID Required for Selenium Auto Test
   title,
   children,
   open: defaultOpen = false,

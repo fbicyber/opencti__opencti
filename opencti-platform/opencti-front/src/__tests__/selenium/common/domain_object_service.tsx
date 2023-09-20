@@ -382,16 +382,13 @@ export async function deleteDomainObject(deleteButtonName = null) {
     await clickNonClickable(deleteBtn);
     await wait(500); // Allow to load
     await wait(500); // Allow to load
-    if (deleteButtonName === null)
-    {
+    if (deleteButtonName === null) {
       const confirmDelete = await getXpathNodeWith('text', 'Delete', { nodePath: '//button' });
       await clickNonClickable(confirmDelete);
+    } else {
+      const deleteBtnByID = await getElementWithTimeout(By.id(deleteButtonName));
+      await deleteBtnByID.click();
     }
-    else
-    {
-      const deleteBtn = await getElementWithTimeout(By.id(deleteButtonName));
-      await deleteBtn.click();
-    } 
     await wait(500); // Allow to load
   } catch (err) {
     // Failed to find element with name.

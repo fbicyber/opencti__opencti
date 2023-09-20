@@ -88,7 +88,6 @@ export async function editAnalysesReport(name: string, description: string) {
   await replaceTextFieldValue(reportDate, formattedDate);
   await wait(1000);
 
-
   // Fill description
   const descriptionField = await getSubElementWithTimeout(
     'id',
