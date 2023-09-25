@@ -4,7 +4,7 @@ import {
   getSubElementWithTimeout,
   wait,
   replaceTextFieldValue,
-  getDateTime,
+  // getDateTime,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
 
@@ -127,7 +127,7 @@ export async function editCaseIncidentResponse(name:string, description: string)
     // check that it was name set correctly
     await getElementWithTimeout(By.id('add-incident-response-name'))
       .then((elem) => elem.getAttribute('value'))
-      .then((val) => expect(val).toBe(name)); 
+      .then((val) => expect(val).toBe(name));
   } catch (error) {
     console.error(error);
     console.error('Warn: Could not locate or interact with the incident response name');
@@ -148,7 +148,7 @@ export async function editCaseIncidentResponse(name:string, description: string)
   //   await getElementWithTimeout(By.id('add-incident-response-date'))
   //     .then((elem) => elem.getAttribute('value'))
   //   //  .then((val) => expect(val).toBeTruthy()); // TODO: Need to change to below after date issue fixed
-  //   .then((val) => expect(val.replace(':', '').replace(/-/g,'').replace(/\s/g, '').replace('M','')).toBe(formattedDate)); 
+  //   .then((val) => expect(val.replace(':', '').replace(/-/g,'').replace(/\s/g, '').replace('M','')).toBe(formattedDate));
   // } catch (error) {
   //   console.error(error);
   //   console.error('Warn: Could not locate or interact with add incident response date');
@@ -164,7 +164,7 @@ export async function editCaseIncidentResponse(name:string, description: string)
     await wait(2000);
     await descriptionField.click();
     await wait(2000);
-    
+
     // change description to passed in value
     await replaceTextFieldValue(descriptionField, description);
     await wait(3000);
