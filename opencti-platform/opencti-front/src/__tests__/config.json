@@ -1,6 +1,6 @@
 {
-  "headless": false,
-  "testing_config_file": "development.json",
+  "headless": true,
+  "testing_config_file": "test.json",
   "windowSize": {
     "height": 1800,
     "width": 1440
