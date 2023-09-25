@@ -40,6 +40,7 @@ export default class DriverService {
           chromeOptions = new chrome.Options().headless().windowSize(windowSize);
           // Fix Floss manager not present, cannot set Floss enable/disable on Linux Docker images launched from CI/CD
           chromeOptions.addArguments('--headless=new');
+          // chromeOptions.addArguments('--start-maximized');
         } else {
           chromeOptions = new chrome.Options().windowSize(windowSize);
         }

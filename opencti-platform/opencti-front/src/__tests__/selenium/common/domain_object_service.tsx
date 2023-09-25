@@ -378,10 +378,9 @@ export async function deleteDomainObject(deleteButtonName = null) {
     await moreOptions.click();
 
     const deleteBtn = await getXpathNodeWith('text', 'Delete', { nodePath: '//li' });
-    await wait(500); // Allow to load
+    await wait(1000); // Allow to load
     await clickNonClickable(deleteBtn);
-    await wait(500); // Allow to load
-    await wait(500); // Allow to load
+    await wait(1000); // Allow to load
     if (deleteButtonName === null) {
       const confirmDelete = await getXpathNodeWith('text', 'Delete', { nodePath: '//button' });
       await clickNonClickable(confirmDelete);
@@ -389,7 +388,7 @@ export async function deleteDomainObject(deleteButtonName = null) {
       const deleteBtnByID = await getElementWithTimeout(By.id(deleteButtonName));
       await deleteBtnByID.click();
     }
-    await wait(500); // Allow to load
+    await wait(1000); // Allow to load
   } catch (err) {
     // Failed to find element with name.
     // TODO: Log errors like this and determine what to do.

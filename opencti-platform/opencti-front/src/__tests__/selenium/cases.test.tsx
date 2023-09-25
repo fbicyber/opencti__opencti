@@ -35,6 +35,7 @@ describe('Case Incident Response Workflow', () => {
     // ensure that new case can be created
     try {
       await navigateToCaseIncidentResponse();
+      await wait(3000);
       await addCaseIncidentResponse(NAME, DESCRIPTION);
     } catch (error) {
       console.error(error);
@@ -46,6 +47,7 @@ describe('Case Incident Response Workflow', () => {
     // ensure that a case can be navigated to by name
     try {
       await navigateToCaseIncidentResponse();
+      await wait(3000);
       await selectCaseIncidentResponse(NAME);
     } catch (error) {
       console.error(error);
@@ -84,9 +86,9 @@ describe('Case Incident Response Workflow', () => {
     // ensure that a case can be selected by name
     try {
       await navigateToCaseIncidentResponse();
-      await wait(2000);
+      await wait(3000);
       await selectCaseIncidentResponse(NAME);
-      await wait(2000);
+      await wait(3000);
     } catch (error) {
       console.error(error);
       console.error(`Unable to navigate to case or select case ${NAME}`);
@@ -106,6 +108,7 @@ describe('Case Incident Response Workflow', () => {
     // ensure that a case can be selected by name
     try {
       await navigateToCaseIncidentResponse();
+      await wait(3000);
       await selectCaseIncidentResponse(NEW_NAME);
     } catch (error) {
       console.error(error);
@@ -128,6 +131,7 @@ describe('Case Incident Response Workflow', () => {
 
     // Check UPDATED Case Incident Response no longer shows up
     try {
+      // No await here - as it should not be found
       getXpathNodeWith('aria-label', NEW_NAME)
         .then((elem) => expect(elem).toBeNull());
     } catch (error) {

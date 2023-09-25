@@ -339,5 +339,5 @@ export async function checkValue(locator: Locator, value: string | boolean | und
  * @param newVal Some string to replace the current text in the given element.
  */
 export async function replaceTextFieldValue(element: WebElement, newVal: string) {
-  await element.sendKeys(Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
+  await element.sendKeys(Key.END, Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
 }
