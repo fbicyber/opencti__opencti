@@ -12,7 +12,7 @@ export interface StixArtifact extends StixCyberObject {
   mime_type: string; // optional
   payload_bin: string; // optional
   url: string; // optional
-  hashes : { [k: string]: string }; // optional
+  hashes: { [k: string]: string }; // optional
   encryption_algorithm: string; // optional
   decryption_key: string; // optional
   extensions: {
@@ -71,7 +71,7 @@ export interface StixEmailBodyMultipart extends StixInternalEmailBodyMultipart, 
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension;
-    [STIX_EXT_OCTI_SCO] : { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   };
 }
 
@@ -113,18 +113,18 @@ export interface StixFile extends StixCyberObject {
   atime: StixDate; // optional
   parent_directory_ref: StixId | undefined; // optional
   contains_refs: Array<StixId>; // optional
-  content_ref : StixId | undefined; // optional
+  content_ref: StixId | undefined; // optional
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
     [STIX_EXT_OCTI_SCO]: FileExtension
     // Archive extension
     'archive-ext'?: {
       contains_refs: Array<StixId>; // optional
-      comment : string; // optional
+      comment: string; // optional
     }
     // NTFS Extension
     'ntfs-ext'?: {
-      sid : string; // optional
+      sid: string; // optional
       alternate_data_streams: Array<{
         name: string;
         hashes: object; // optional
@@ -171,8 +171,8 @@ export interface StixCryptocurrencyWallet extends StixCyberObject {
   object_marking_refs: Array<StixId>;
   external_references: Array<StixInternalExternalReference>;
   extensions: {
-    [STIX_EXT_OCTI] : StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO] : { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI]: StixOpenctiExtension
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -188,8 +188,8 @@ export interface StixCryptographicKey extends StixCyberObject {
   object_marking_refs: Array<StixId>;
   external_references: Array<StixInternalExternalReference>;
   extensions: {
-    [STIX_EXT_OCTI] : StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO] : { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI]: StixOpenctiExtension
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -205,7 +205,7 @@ export interface StixHostname extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -221,7 +221,7 @@ export interface StixText extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -237,7 +237,7 @@ export interface StixUserAgent extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -255,7 +255,39 @@ export interface StixBankAccount extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
+  }
+}
+
+// Custom object extension - Credential
+// value
+export interface StixCredential extends StixCyberObject {
+  value: string;
+  description: string;
+  score: number;
+  labels: Array<string>;
+  created_by_ref: StixId | undefined,
+  object_marking_refs: Array<StixId>;
+  external_references: Array<StixInternalExternalReference>;
+  extensions: {
+    [STIX_EXT_OCTI]: StixOpenctiExtension
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
+  }
+}
+
+// Custom object extension - Tracking number
+// value
+export interface StixTrackingNumber extends StixCyberObject {
+  value: string;
+  description: string;
+  score: number;
+  labels: Array<string>;
+  created_by_ref: StixId | undefined,
+  object_marking_refs: Array<StixId>;
+  external_references: Array<StixInternalExternalReference>;
+  extensions: {
+    [STIX_EXT_OCTI]: StixOpenctiExtension
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -271,7 +303,7 @@ export interface StixPhoneNumber extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -290,7 +322,7 @@ export interface StixPaymentCard extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }
 
@@ -355,9 +387,9 @@ export interface StixNetworkTraffic extends StixCyberObject {
     // HTTP Request Extension
     'http-request-ext'?: {
       request_method: string;
-      request_value : string;
-      request_version : string; // optional
-      request_header : object; // optional
+      request_value: string;
+      request_version: string; // optional
+      request_header: object; // optional
       message_body_length: number; // optional
       message_body_data_ref: StixId; // optional
     }
@@ -379,7 +411,7 @@ export interface StixNetworkTraffic extends StixCyberObject {
     // TCP Extension
     'tcp-ext'?: {
       src_flags_hex: string; // optional
-      dst_flags_hex : string; // optional
+      dst_flags_hex: string; // optional
     }
   };
 }
@@ -496,7 +528,7 @@ export interface StixWindowsRegistryValueType extends StixInternalWindowsRegistr
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension;
-    [STIX_EXT_OCTI_SCO] : { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   };
 }
 
@@ -562,6 +594,6 @@ export interface StixMediaContent extends StixCyberObject {
   external_references: Array<StixInternalExternalReference>;
   extensions: {
     [STIX_EXT_OCTI]: StixOpenctiExtension
-    [STIX_EXT_OCTI_SCO]: { extension_type : 'new-sco' }
+    [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
   }
 }

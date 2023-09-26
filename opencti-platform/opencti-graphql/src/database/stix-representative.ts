@@ -1,35 +1,4 @@
-import type { StixObject } from '../types/stix-common';
-import { STIX_EXT_OCTI } from '../types/stix-extensions';
-import { getStixRepresentativeConverters } from './stix-converter';
-import { isStixSightingRelationship } from '../schema/stixSightingRelationship';
-import type * as SRO from '../types/stix-sro';
-import { isBasicRelationship } from '../schema/stixRelationship';
-import {
-  ENTITY_TYPE_ATTACK_PATTERN,
-  ENTITY_TYPE_CAMPAIGN,
-  ENTITY_TYPE_CONTAINER_NOTE,
-  ENTITY_TYPE_CONTAINER_OBSERVED_DATA,
-  ENTITY_TYPE_CONTAINER_OPINION,
-  ENTITY_TYPE_CONTAINER_REPORT,
-  ENTITY_TYPE_COURSE_OF_ACTION,
-  ENTITY_TYPE_INCIDENT,
-  ENTITY_TYPE_INDICATOR,
-  ENTITY_TYPE_INFRASTRUCTURE,
-  ENTITY_TYPE_INTRUSION_SET,
-  ENTITY_TYPE_MALWARE,
-  ENTITY_TYPE_TOOL,
-  ENTITY_TYPE_VULNERABILITY,
-  isStixDomainObjectIdentity,
-  isStixDomainObjectLocation, isStixDomainObjectThreatActor,
-} from '../schema/stixDomainObject';
-import type * as SDO from '../types/stix-sdo';
-import {
-  ENTITY_TYPE_EXTERNAL_REFERENCE,
-  ENTITY_TYPE_KILL_CHAIN_PHASE,
-  ENTITY_TYPE_LABEL,
-  ENTITY_TYPE_MARKING_DEFINITION
-} from '../schema/stixMetaObject';
-import type * as SMO from '../types/stix-smo';
+import { UnsupportedError } from '../config/errors';
 import {
   ENTITY_AUTONOMOUS_SYSTEM,
   ENTITY_BANK_ACCOUNT,
@@ -61,9 +30,40 @@ import {
   ENTITY_WINDOWS_REGISTRY_KEY,
   ENTITY_WINDOWS_REGISTRY_VALUE_TYPE
 } from '../schema/stixCyberObservable';
+import {
+  ENTITY_TYPE_ATTACK_PATTERN,
+  ENTITY_TYPE_CAMPAIGN,
+  ENTITY_TYPE_CONTAINER_NOTE,
+  ENTITY_TYPE_CONTAINER_OBSERVED_DATA,
+  ENTITY_TYPE_CONTAINER_OPINION,
+  ENTITY_TYPE_CONTAINER_REPORT,
+  ENTITY_TYPE_COURSE_OF_ACTION,
+  ENTITY_TYPE_INCIDENT,
+  ENTITY_TYPE_INDICATOR,
+  ENTITY_TYPE_INFRASTRUCTURE,
+  ENTITY_TYPE_INTRUSION_SET,
+  ENTITY_TYPE_MALWARE,
+  ENTITY_TYPE_TOOL,
+  ENTITY_TYPE_VULNERABILITY,
+  isStixDomainObjectIdentity,
+  isStixDomainObjectLocation, isStixDomainObjectThreatActor,
+} from '../schema/stixDomainObject';
+import {
+  ENTITY_TYPE_EXTERNAL_REFERENCE,
+  ENTITY_TYPE_KILL_CHAIN_PHASE,
+  ENTITY_TYPE_LABEL,
+  ENTITY_TYPE_MARKING_DEFINITION
+} from '../schema/stixMetaObject';
+import { isBasicRelationship } from '../schema/stixRelationship';
+import { isStixSightingRelationship } from '../schema/stixSightingRelationship';
+import type { StixObject } from '../types/stix-common';
+import { STIX_EXT_OCTI } from '../types/stix-extensions';
 import type * as SCO from '../types/stix-sco';
+import type * as SDO from '../types/stix-sdo';
+import type * as SMO from '../types/stix-smo';
+import type * as SRO from '../types/stix-sro';
 import { hashValue } from '../utils/format';
-import { UnsupportedError } from '../config/errors';
+import { getStixRepresentativeConverters } from './stix-converter';
 
 export const extractStixRepresentative = (
   stix: StixObject,
@@ -184,6 +184,12 @@ export const extractStixRepresentative = (
   if (entityType === ENTITY_BANK_ACCOUNT) {
     const bankAccount = stix as SCO.StixBankAccount;
     return bankAccount.iban ?? bankAccount.account_number ?? 'Unknown';
+  }
+  if (entityType === ENTITY_CREDENTIAL) {
+    return (stix as SCO.StixCredential).value ?? 'Unknown';
+  }
+  if (entityType === ENTITY_TRACKING_NUMBER) {
+    return (stix as SCO.StixTrackingNumber).value ?? 'Unknown';
   }
   if (entityType === ENTITY_CRYPTOGRAPHIC_KEY) {
     return (stix as SCO.StixCryptographicKey).value ?? 'Unknown';

@@ -511,7 +511,7 @@ const StixCyberObservableEditionOverviewComponent = ({
                             artifact
                               ? {
                                 label:
-                                    artifact.observable_value ?? artifact.id,
+                                  artifact.observable_value ?? artifact.id,
                                 value: artifact.id,
                               }
                               : undefined
@@ -783,6 +783,12 @@ const StixCyberObservableEditionOverview = createFragmentContainer(
           iban
           bic
           account_number
+        }
+        ... on Credential {
+          value
+        }
+        ... on TrackingNumber {
+          value
         }
         ... on PhoneNumber {
           value

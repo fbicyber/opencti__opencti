@@ -1,10 +1,79 @@
 import * as R from 'ramda';
 import { v4 as uuidv4, version as uuidVersion } from 'uuid';
-import { isEmptyField, isInferredIndex } from './utils';
-import { extractEntityRepresentativeName } from './entity-representative';
 import { FunctionalError, UnsupportedError } from '../config/errors';
+import {
+  INPUT_ASSIGNEE,
+  INPUT_CREATED_BY,
+  INPUT_EXTERNAL_REFS,
+  INPUT_GRANTED_REFS,
+  INPUT_KILLCHAIN,
+  INPUT_LABELS,
+  INPUT_MARKINGS,
+  INPUT_OBJECTS, INPUT_PARTICIPANT
+} from '../schema/general';
+import { isInternalObject } from '../schema/internalObject';
+import { isInternalRelationship } from '../schema/internalRelationship';
 import { isBasicObject } from '../schema/stixCoreObject';
-import { isBasicRelationship } from '../schema/stixRelationship';
+import { isStixCoreRelationship } from '../schema/stixCoreRelationship';
+import {
+  ENTITY_AUTONOMOUS_SYSTEM,
+  ENTITY_BANK_ACCOUNT,
+  ENTITY_CRYPTOGRAPHIC_KEY,
+  ENTITY_CRYPTOGRAPHIC_WALLET,
+  ENTITY_DIRECTORY,
+  ENTITY_DOMAIN_NAME,
+  ENTITY_EMAIL_ADDR,
+  ENTITY_EMAIL_MESSAGE,
+  ENTITY_EMAIL_MIME_PART_TYPE,
+  ENTITY_HASHED_OBSERVABLE_ARTIFACT,
+  ENTITY_HASHED_OBSERVABLE_STIX_FILE,
+  ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE,
+  ENTITY_HOSTNAME,
+  ENTITY_IPV4_ADDR,
+  ENTITY_IPV6_ADDR,
+  ENTITY_MAC_ADDR,
+  ENTITY_MEDIA_CONTENT,
+  ENTITY_MUTEX,
+  ENTITY_NETWORK_TRAFFIC,
+  ENTITY_PAYMENT_CARD,
+  ENTITY_PHONE_NUMBER,
+  ENTITY_PROCESS,
+  ENTITY_SOFTWARE,
+  ENTITY_TEXT,
+  ENTITY_URL,
+  ENTITY_USER_ACCOUNT,
+  ENTITY_USER_AGENT,
+  ENTITY_WINDOWS_REGISTRY_KEY,
+  ENTITY_WINDOWS_REGISTRY_VALUE_TYPE,
+  isStixCyberObservable
+} from '../schema/stixCyberObservable';
+import {
+  ENTITY_TYPE_ATTACK_PATTERN,
+  ENTITY_TYPE_CAMPAIGN,
+  ENTITY_TYPE_CONTAINER_NOTE,
+  ENTITY_TYPE_CONTAINER_OBSERVED_DATA,
+  ENTITY_TYPE_CONTAINER_OPINION,
+  ENTITY_TYPE_CONTAINER_REPORT,
+  ENTITY_TYPE_COURSE_OF_ACTION,
+  ENTITY_TYPE_INCIDENT,
+  ENTITY_TYPE_INDICATOR,
+  ENTITY_TYPE_INFRASTRUCTURE,
+  ENTITY_TYPE_INTRUSION_SET,
+  ENTITY_TYPE_MALWARE,
+  ENTITY_TYPE_THREAT_ACTOR_GROUP,
+  ENTITY_TYPE_TOOL,
+  ENTITY_TYPE_VULNERABILITY,
+  isStixDomainObject,
+  isStixDomainObjectIdentity,
+  isStixDomainObjectLocation, isStixDomainObjectThreatActor,
+} from '../schema/stixDomainObject';
+import {
+  ENTITY_TYPE_EXTERNAL_REFERENCE,
+  ENTITY_TYPE_KILL_CHAIN_PHASE,
+  ENTITY_TYPE_LABEL,
+  ENTITY_TYPE_MARKING_DEFINITION,
+  isStixMetaObject
+} from '../schema/stixMetaObject';
 import {
   INPUT_BCC,
   INPUT_BELONGS_TO,
@@ -38,95 +107,26 @@ import {
   RELATION_GRANTED_TO,
   RELATION_OBJECT_MARKING
 } from '../schema/stixRefRelationship';
-import {
-  ENTITY_TYPE_EXTERNAL_REFERENCE,
-  ENTITY_TYPE_KILL_CHAIN_PHASE,
-  ENTITY_TYPE_LABEL,
-  ENTITY_TYPE_MARKING_DEFINITION,
-  isStixMetaObject
-} from '../schema/stixMetaObject';
+import { isBasicRelationship } from '../schema/stixRelationship';
+import { isStixSightingRelationship } from '../schema/stixSightingRelationship';
 import type * as S from '../types/stix-common';
-import type * as SDO from '../types/stix-sdo';
-import type * as SRO from '../types/stix-sro';
+import { STIX_EXT_MITRE, STIX_EXT_OCTI, STIX_EXT_OCTI_SCO } from '../types/stix-extensions';
 import type * as SCO from '../types/stix-sco';
+import type * as SDO from '../types/stix-sdo';
 import type * as SMO from '../types/stix-smo';
+import type * as SRO from '../types/stix-sro';
 import type {
+  StoreCommon,
   StoreCyberObservable,
   StoreEntity,
-  StoreObject,
-  StoreRelation,
   StoreEntityIdentity,
-  StoreCommon
+  StoreObject,
+  StoreRelation
 } from '../types/store';
-import {
-  ENTITY_TYPE_ATTACK_PATTERN,
-  ENTITY_TYPE_CAMPAIGN,
-  ENTITY_TYPE_CONTAINER_NOTE,
-  ENTITY_TYPE_CONTAINER_OBSERVED_DATA,
-  ENTITY_TYPE_CONTAINER_OPINION,
-  ENTITY_TYPE_CONTAINER_REPORT,
-  ENTITY_TYPE_COURSE_OF_ACTION,
-  ENTITY_TYPE_INCIDENT,
-  ENTITY_TYPE_INDICATOR,
-  ENTITY_TYPE_INFRASTRUCTURE,
-  ENTITY_TYPE_INTRUSION_SET,
-  ENTITY_TYPE_MALWARE,
-  ENTITY_TYPE_THREAT_ACTOR_GROUP,
-  ENTITY_TYPE_TOOL,
-  ENTITY_TYPE_VULNERABILITY,
-  isStixDomainObject,
-  isStixDomainObjectIdentity,
-  isStixDomainObjectLocation, isStixDomainObjectThreatActor,
-} from '../schema/stixDomainObject';
-import { isStixCoreRelationship } from '../schema/stixCoreRelationship';
-import { isStixSightingRelationship } from '../schema/stixSightingRelationship';
-import {
-  ENTITY_AUTONOMOUS_SYSTEM,
-  ENTITY_BANK_ACCOUNT,
-  ENTITY_CRYPTOGRAPHIC_KEY,
-  ENTITY_CRYPTOGRAPHIC_WALLET,
-  ENTITY_DIRECTORY,
-  ENTITY_DOMAIN_NAME,
-  ENTITY_EMAIL_ADDR,
-  ENTITY_EMAIL_MESSAGE,
-  ENTITY_EMAIL_MIME_PART_TYPE,
-  ENTITY_HASHED_OBSERVABLE_ARTIFACT,
-  ENTITY_HASHED_OBSERVABLE_STIX_FILE,
-  ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE,
-  ENTITY_HOSTNAME,
-  ENTITY_IPV4_ADDR,
-  ENTITY_IPV6_ADDR,
-  ENTITY_MAC_ADDR,
-  ENTITY_MEDIA_CONTENT,
-  ENTITY_MUTEX,
-  ENTITY_NETWORK_TRAFFIC,
-  ENTITY_PAYMENT_CARD,
-  ENTITY_PHONE_NUMBER,
-  ENTITY_PROCESS,
-  ENTITY_SOFTWARE,
-  ENTITY_TEXT,
-  ENTITY_URL,
-  ENTITY_USER_ACCOUNT,
-  ENTITY_USER_AGENT,
-  ENTITY_WINDOWS_REGISTRY_KEY,
-  ENTITY_WINDOWS_REGISTRY_VALUE_TYPE,
-  isStixCyberObservable
-} from '../schema/stixCyberObservable';
-import { STIX_EXT_MITRE, STIX_EXT_OCTI, STIX_EXT_OCTI_SCO } from '../types/stix-extensions';
-import {
-  INPUT_ASSIGNEE,
-  INPUT_CREATED_BY,
-  INPUT_EXTERNAL_REFS,
-  INPUT_GRANTED_REFS,
-  INPUT_KILLCHAIN,
-  INPUT_LABELS,
-  INPUT_MARKINGS,
-  INPUT_OBJECTS, INPUT_PARTICIPANT
-} from '../schema/general';
 import { FROM_START, FROM_START_STR, UNTIL_END, UNTIL_END_STR } from '../utils/format';
+import { extractEntityRepresentativeName } from './entity-representative';
 import { isRelationBuiltin } from './stix';
-import { isInternalRelationship } from '../schema/internalRelationship';
-import { isInternalObject } from '../schema/internalObject';
+import { isEmptyField, isInferredIndex } from './utils';
 
 export const isTrustedStixId = (stixId: string): boolean => {
   const segments = stixId.split('--');
@@ -990,6 +990,40 @@ const convertBankAccountToStix = (instance: StoreCyberObservable, type: string):
     }
   };
 };
+const convertCredentialToStix = (instance: StoreCyberObservable, type: string): SCO.StixCredential => {
+  assertType(ENTITY_CREDENTIAL, type);
+  const stixCyberObject = buildStixCyberObservable(instance);
+  return {
+    ...stixCyberObject,
+    value: instance.value,
+    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
+    description: instance.x_opencti_description,
+    score: instance.x_opencti_score,
+    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
+    external_references: buildExternalReferences(instance),
+    extensions: {
+      [STIX_EXT_OCTI]: stixCyberObject.extensions[STIX_EXT_OCTI],
+      [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
+    }
+  };
+};
+const convertTrackingNumberToStix = (instance: StoreCyberObservable, type: string): SCO.StixTrackingNumber => {
+  assertType(ENTITY_TRACKING_NUMBER, type);
+  const stixCyberObject = buildStixCyberObservable(instance);
+  return {
+    ...stixCyberObject,
+    value: instance.value,
+    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
+    description: instance.x_opencti_description,
+    score: instance.x_opencti_score,
+    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
+    external_references: buildExternalReferences(instance),
+    extensions: {
+      [STIX_EXT_OCTI]: stixCyberObject.extensions[STIX_EXT_OCTI],
+      [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' }
+    }
+  };
+};
 const convertPhoneNumberToStix = (instance: StoreCyberObservable, type: string): SCO.StixPhoneNumber => {
   assertType(ENTITY_PHONE_NUMBER, type);
   const stixCyberObject = buildStixCyberObservable(instance);
@@ -1462,6 +1496,12 @@ const convertToStix = (instance: StoreCommon): S.StixObject => {
     }
     if (ENTITY_BANK_ACCOUNT === type) {
       return convertBankAccountToStix(cyber, type);
+    }
+    if (ENTITY_CREDENTIAL === type) {
+      return convertCredentialToStix(cyber, type);
+    }
+    if (ENTITY_TRACKING_NUMBER === type) {
+      return convertTrackingNumberToStix(cyber, type);
     }
     if (ENTITY_CRYPTOGRAPHIC_WALLET === type) {
       return convertCryptocurrencyWalletToStix(cyber, type);
