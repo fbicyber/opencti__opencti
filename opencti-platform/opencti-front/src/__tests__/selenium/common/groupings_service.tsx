@@ -9,6 +9,8 @@ import {
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
 
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+
 /**
  * Navigates to the Analyses Grouping list displayer.
  *
@@ -27,35 +29,69 @@ export async function navigateToAnalysesGroupings(id = '?sortBy=created&orderAsc
  */
 export async function addAnalysesGroupings(name: string, description: string) {
   // Click add button
-  const addBtn = await getElementWithTimeout(By.id('add-analyses-groupings'));
-  await addBtn.click();
-  await wait(2000);
+  try {
+    const addBtn = await getElementWithTimeout(By.id('add-analyses-groupings'));
+    await addBtn.click();
+    await wait(2000);
+  } catch (error) {
+    console.error('Unable to interact with with add analyses grouping button');
+    throw error;
+  }
 
   // Fill name
-  const nameField = await getElementWithTimeout(By.id('add-analyses-groupings-name'));
-  // Sometimes fails to find name field fast enough.
-  await wait(2000);
-  await nameField.click();
-  await nameField.sendKeys(name);
+  try {
+    const nameField = await getElementWithTimeout(By.id('add-analyses-groupings-name'));
+    await wait(2000);
+    await nameField.click();
+    await nameField.sendKeys(name);
+
+    // validate name changed
+    await getElementWithTimeout(By.id('add-analyses-groupings-name'))
+      .then((elem) => elem.getAttribute('value'))
+      .then((val) => expect(val).toBe(name));
+  } catch (error) {
+    console.error('Unable to fill analyses grouping name');
+    throw error;
+  }
 
   // Fill context
-  await wait(1000);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const unusedContext = await selectRandomFromDropdown(getDropdownSelectorWithName('context'));
+  try {
+    await wait(1000);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = await selectRandomFromDropdown(getDropdownSelectorWithName('context'));
+  } catch (error) {
+    console.error('Unable to fill analyses grouping context');
+    throw error;
+  }
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'add-analyses-groupings-description',
-    'textarea',
-  );
-  await descriptionField.click();
-  await descriptionField.sendKeys(description);
+  try {
+    const descriptionField = await getSubElementWithTimeout(
+      'id',
+      'add-analyses-groupings-description',
+      'textarea',
+    );
+    await descriptionField.click();
+    await descriptionField.sendKeys(description);
+
+    await getSubElementWithTimeout('id', 'add-analyses-groupings-description', 'textarea')
+      .then((elem) => elem.getAttribute('value'))
+      .then((val) => expect(val).toBe(description));
+  } catch (error) {
+    console.error('Unable to edit description analyses grouping field');
+    throw error;
+  }
 
   // Click create button
-  const createBtn = await getElementWithTimeout(By.id('add-analyses-groupings-create'));
-  await createBtn.click();
+  try {
+    const createBtn = await getElementWithTimeout(By.id('add-analyses-groupings-create'));
+    await createBtn.click();
+  } catch (error) {
+    console.error('Unable to create analyses grouping');
+    throw error;
+  }
 }
+
 /**
  * Tries to edit a Case Analysis Groupings with the given name.
  *
@@ -64,38 +100,76 @@ export async function addAnalysesGroupings(name: string, description: string) {
  */
 export async function editAnalysesGroupings(name: string, description: string) {
   // Click edit button
-  const editBtn = await getElementWithTimeout(By.id('EditIcon'));
-  await editBtn.click();
+  try {
+    await wait(2000);
+    const editBtn = await getElementWithTimeout(By.id('EditIcon'));
+    await editBtn.click();
+  } catch (error) {
+    console.error('Unable to interact with edit button for analyses groupings');
+    throw error;
+  }
 
   // Fill name
-  const nameField = await getElementWithTimeout(By.id('edit-analyses-groupings-name'));
-  // Sometimes fails to find name field fast enough.
-  await wait(2000);
-  await nameField.click();
-  await wait(1000);
-  await replaceTextFieldValue(nameField, name);
-  await wait(1000);
+  try {
+    const nameField = await getElementWithTimeout(By.id('edit-analyses-groupings-name'));
+    await wait(2000);
+    await nameField.click();
+    await wait(1000);
+
+    // change the name
+    await replaceTextFieldValue(nameField, name);
+    await wait(1000);
+
+    // validate that name was changed
+    await getElementWithTimeout(By.id('edit-analyses-groupings-name'))
+      .then((elem) => elem.getAttribute('value'))
+      .then((val) => expect(val).toBe(name));
+  } catch (error) {
+    console.error('Unable to edit name field for analyses grouping');
+    throw error;
+  }
 
   // Fill context
-  await wait(1000);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const unusedContext = await selectRandomFromDropdown(getDropdownSelectorWithName('context'));
+  try {
+    await wait(1000);
+    const _ = await selectRandomFromDropdown(getDropdownSelectorWithName('context'));
+  } catch (error) {
+    console.error('Unable to edit context for analyses grouping');
+    throw error;
+  }
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'edit-analyses-groupings-description',
-    'textarea',
-  );
-  await wait(1000);
-  await descriptionField.click();
-  await wait(1000);
-  await replaceTextFieldValue(descriptionField, description);
-  await wait(1000);
+  try {
+    const descriptionField = await getSubElementWithTimeout(
+      'id',
+      'edit-analyses-groupings-description',
+      'textarea',
+    );
+    await wait(1000);
+    await descriptionField.click();
+    await wait(1000);
+
+    // change the description
+    await replaceTextFieldValue(descriptionField, description);
+    await wait(1000);
+
+    // validate that description field changed
+    await getSubElementWithTimeout('id', 'edit-analyses-groupings-description', 'textarea')
+      .then((elem) => elem.getAttribute('value'))
+      .then((val) => expect(val).toBe(description));
+  } catch (error) {
+    console.error('Unable to edit description for analyses grouping');
+    throw error;
+  }
 
   // Click close button
-  const closeBtn = await getElementWithTimeout(By.id('CloseIcon'));
-  await closeBtn.click();
+  try {
+    const closeBtn = await getElementWithTimeout(By.id('CloseIcon'));
+    await closeBtn.click();
+  } catch (error) {
+    console.error('Unable to save edits for analyses grouping');
+    throw error;
+  }
 }
 
 /**
