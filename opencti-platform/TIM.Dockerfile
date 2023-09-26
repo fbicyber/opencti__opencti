@@ -46,10 +46,11 @@ RUN echo "~~~ Starting FRONT BUILDER ..." \
     && set -ex \
     ; apk add --no-cache \
     nodejs-current npm yarn \
-    git tini gcc g++ make musl-dev postfix postfix-pcre \
+    git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
     && corepack enable \
     && npm install -g node-gyp \
-    && CXXFLAGS="--std=c++17" yarn install
+    # && CXXFLAGS="--std=c++17" 
+    && yarn install
 COPY opencti-front /opt/opencti-build/opencti-front
 COPY opencti-graphql/config/schema/opencti.graphql /opt/opencti-build/opencti-graphql/config/schema/opencti.graphql
 RUN yarn build:standalone \
@@ -61,7 +62,7 @@ RUN echo "~~~ Starting APP ..." \
     && set -ex \
     ; apk add --no-cache \
     nodejs-current npm yarn \
-    git tini gcc musl-dev postfix postfix-pcre \
+    git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
     && corepack enable \
     && pip3 install --no-cache-dir --upgrade pip setuptools wheel \
     && ln -sf python3 /usr/bin/python 
