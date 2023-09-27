@@ -57,7 +57,7 @@ RUN echo "~~~ Starting FRONT BUILDER ..." \
     && set -ex \
     ; apk add --no-cache \
     nodejs-current npm yarn \
-    git tini gcc g++ make musl-dev cargo postfix postfix-pcre
+    git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
     && corepack enable \
     && npm install -g node-gyp \
     && CXXFLAGS="--std=c++17" yarn install
