@@ -1,8 +1,8 @@
 import { ABSTRACT_STIX_CYBER_OBSERVABLE, ABSTRACT_STIX_CYBER_OBSERVABLE_HASHED_OBSERVABLE, buildRefRelationKey, } from './general';
-import { RELATION_RELATED_TO } from './stixCoreRelationship';
-import { STIX_SIGHTING_RELATIONSHIP } from './stixSightingRelationship';
 import { schemaTypesDefinition } from './schema-types';
+import { RELATION_RELATED_TO } from './stixCoreRelationship';
 import { RELATION_CREATED_BY, RELATION_EXTERNAL_REFERENCE, RELATION_OBJECT, RELATION_OBJECT_LABEL, RELATION_OBJECT_MARKING } from './stixRefRelationship';
+import { STIX_SIGHTING_RELATIONSHIP } from './stixSightingRelationship';
 
 export const ENTITY_AUTONOMOUS_SYSTEM = 'Autonomous-System';
 export const ENTITY_DIRECTORY = 'Directory';
@@ -28,8 +28,10 @@ export const ENTITY_CRYPTOGRAPHIC_KEY = 'Cryptographic-Key'; // Custom
 export const ENTITY_CRYPTOGRAPHIC_WALLET = 'Cryptocurrency-Wallet'; // Custom
 export const ENTITY_HOSTNAME = 'Hostname'; // Custom
 export const ENTITY_TEXT = 'Text'; // Custom
+export const ENTITY_CREDENTIAL = 'Credential'; // Custom
 export const ENTITY_USER_AGENT = 'User-Agent'; // Custom
 export const ENTITY_BANK_ACCOUNT = 'Bank-Account'; // Custom
+export const ENTITY_TRACKING_NUMBER = 'Tracking-Number'; // Custom
 export const ENTITY_PHONE_NUMBER = 'Phone-Number'; // Custom
 export const ENTITY_PAYMENT_CARD = 'Payment-Card'; // Custom
 export const ENTITY_MEDIA_CONTENT = 'Media-Content'; // Custom
