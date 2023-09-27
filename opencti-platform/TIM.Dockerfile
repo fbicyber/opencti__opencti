@@ -46,8 +46,8 @@ COPY opencti-front/patch ./patch
 #     && set -ex \
 #     ; apk add --no-cache \
 #     nodejs-current npm yarn \
-#     git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
 #     && corepack enable \
+#     git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
 #     && npm install -g node-gyp \
 #     # && CXXFLAGS="--std=c++17" 
 #     && yarn install
@@ -55,9 +55,13 @@ COPY opencti-front/patch ./patch
 
 RUN echo "~~~ Starting FRONT BUILDER ..." \
     && set -ex; \
-    apk add --no-cache git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
-    && npm install -g node-gyp \
-&& yarn install
+    apk add --no-cache \
+        nodejs-current npm yarn \
+        git tini gcc g++ make musl-dev cargo postfix postfix-pcre
+
+RUN corepack enable
+RUN npm install -g node-gyp \
+    && yarn install
 
 RUN yarn install
 
