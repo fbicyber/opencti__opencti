@@ -42,15 +42,26 @@ WORKDIR /opt/opencti-build/opencti-front
 COPY opencti-front/package.json opencti-front/yarn.lock opencti-front/.yarnrc.yml ./
 COPY opencti-front/.yarn ./.yarn
 COPY opencti-front/patch ./patch
+# RUN echo "~~~ Starting FRONT BUILDER ..." \
+#     && set -ex \
+#     ; apk add --no-cache \
+#     nodejs-current npm yarn \
+#     git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
+#     && corepack enable \
+#     && npm install -g node-gyp \
+#     # && CXXFLAGS="--std=c++17" 
+#     && yarn install
+
+
 RUN echo "~~~ Starting FRONT BUILDER ..." \
-    && set -ex \
-    ; apk add --no-cache \
-    nodejs-current npm yarn \
-    git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
-    && corepack enable \
+    && set -ex; \
+    apk add --no-cache git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
     && npm install -g node-gyp \
-    # && CXXFLAGS="--std=c++17" 
-    && yarn install
+&& yarn install
+
+RUN yarn install
+
+
 COPY opencti-front /opt/opencti-build/opencti-front
 COPY opencti-graphql/config/schema/opencti.graphql /opt/opencti-build/opencti-graphql/config/schema/opencti.graphql
 RUN yarn build:standalone \
