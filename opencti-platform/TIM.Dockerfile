@@ -35,24 +35,12 @@ COPY opencti-graphql /opt/opencti-build/opencti-graphql
 RUN yarn build:prod \
     && echo "... GRAPHQL BUILDER Done ~~~"
 
-
 FROM base AS front-builder
 
 WORKDIR /opt/opencti-build/opencti-front
 COPY opencti-front/package.json opencti-front/yarn.lock opencti-front/.yarnrc.yml opencti-front/eslint-plugin-custom-rules ./
 COPY opencti-front/.yarn ./.yarn
 COPY opencti-front/patch ./patch
-# RUN echo "~~~ Starting FRONT BUILDER ..." \
-#     && set -ex \
-#     ; apk add --no-cache \
-#     nodejs-current npm yarn \
-#     && corepack enable \
-#     git tini gcc g++ make musl-dev cargo postfix postfix-pcre \
-#     && npm install -g node-gyp \
-#     # && CXXFLAGS="--std=c++17" 
-#     && yarn install
-
-
 RUN echo "~~~ Starting FRONT BUILDER ..." \
     && set -ex \
     ; apk add --no-cache \
@@ -61,8 +49,6 @@ RUN echo "~~~ Starting FRONT BUILDER ..." \
     && corepack enable \
     && npm install -g node-gyp \
     && CXXFLAGS="--std=c++17" yarn install
-
-
 COPY opencti-front /opt/opencti-build/opencti-front
 COPY opencti-graphql/config/schema/opencti.graphql /opt/opencti-build/opencti-graphql/config/schema/opencti.graphql
 RUN yarn install && yarn build:standalone \
