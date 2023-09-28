@@ -256,19 +256,42 @@ function ensurePrefix(value: string, prefix: string) {
   return !value.startsWith(prefix) ? `${prefix}${value}` : value;
 }
 
-/** Returns current date with current time. */
+/**
+ * Compare two date strings by removing '-', ' ', 'M', and ':' from both strings
+ * this utility is due to datetime in JS including characters not in 'getDateTime()'
+ * @param datestring1 first date string to compare
+ * @param datestring2 second date string to compare
+ * @returns value of equality between two strings
+ */
+export function compareDateString(datestring1: string, datestring2: string) {
+  // getDateTime() returns a string such as '202310030201P'
+  // actual datetimes are of format '2023-10-03 12:01 PM'
+  const formattedDate1 = datestring1.replaceAll(' ', '').replaceAll('-', '').replaceAll(':', '').replaceAll('M', '');
+  const formattedDate2 = datestring2.replaceAll(' ', '').replaceAll('-', '').replaceAll(':', '').replaceAll('M', '');
+  return formattedDate1 === formattedDate2;
+}
+
+/**
+ * Returns current date with current time.
+ * returned format is YYYYMMDDHHmm(A|P)
+ * */
 export function getDateTime() {
+  // get date
   const today = new Date();
-  let hour = today.getHours();
-  const minutes = today.getMinutes();
-  let am_or_pm = 'A';
-  if (hour > 11) {
-    am_or_pm = 'P';
-  }
-  if (hour > 12) {
-    hour -= 12;
-  }
-  return `${today.getFullYear()}0${String(today.getMonth() + 1).slice(-2)}${(`0${today.getDate()}`).slice(-2)}${(`0${hour}`).slice(-2)}${(`0${minutes}`).slice(-2)}${am_or_pm}`;
+
+  const year = today.getFullYear();
+
+  // pad values to make sure they fit the expected format
+  const month = `${String(today.getMonth() + 1)}`.padStart(2, '0');
+  const day = `${String(today.getDate())}`.padStart(2, '0');
+  const minutes = `${String(today.getMinutes())}`.padStart(2, '0');
+
+  // get the hour information
+  const hours24 = today.getHours();
+  const am_or_pm = hours24 < 11 ? 'A' : 'P';
+  const hours = `${hours24 % 12}`.padStart(2, '0');
+
+  return `${year}${month}${day}${hours}${minutes}${am_or_pm}`;
 }
 
 /**
@@ -338,5 +361,17 @@ export async function checkValue(locator: Locator, value: string | boolean | und
  * @param newVal Some string to replace the current text in the given element.
  */
 export async function replaceTextFieldValue(element: WebElement, newVal: string) {
-  await element.sendKeys(Key.END, Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
+//  await element.sendKeys(Key.END, Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
+  try {
+    await element.click();
+  } catch (error) {
+    // ignore, just try to click element
+  }
+
+  await wait(2000);
+  await element.sendKeys(Key.chord(Key.COMMAND, 'A'), Key.BACK_SPACE);
+  await wait(1000);
+  await element.sendKeys(Key.chord(Key.CONTROL, 'A'), Key.BACK_SPACE);
+  await wait(1000);
+  await element.sendKeys(newVal);
 }
