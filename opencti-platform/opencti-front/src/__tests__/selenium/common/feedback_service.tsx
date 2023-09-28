@@ -1,11 +1,12 @@
 import { By } from 'selenium-webdriver';
 import {
   getElementWithTimeout,
-  getSubElementWithTimeout,
   replaceTextFieldValue,
   wait,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
+
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
 /**
  * Navigates to the Cases Feedback list displayer.
@@ -43,49 +44,57 @@ export async function attachToFeedbackResponse() {
  */
 export async function addCaseFeedbackResponse(description: string) {
   // Click feedback button
-  const addBtn = await getElementWithTimeout(By.id('feedback-button'));
-  await addBtn.click();
+  await getElementWithTimeout(By.id('feedback-button'))
+    .then((btn) => btn.click());
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'case-feedback-response-description',
-    'textarea',
-  );
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
-  await descriptionField.click();
-  await descriptionField.sendKeys(description);
-  // await attachToFeedbackResponse();
+  // check that the description set correctly
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click create button
-  const createBtn = await getElementWithTimeout(By.id('add-feedback-response-create'));
-  await createBtn.click();
+  await getElementWithTimeout(By.id('add-feedback-response-create'))
+    .then((btn) => btn.click());
 }
 
 /**
  * Navigates to click the case Feedback response edit button
  * @param description Updates the Case Feedback Response Description
  */
-export async function editCaseFeedbackResponse(description: string) {
+export async function editCaseFeedbackResponse(name: string, description: string) {
   // Click edit icon
-  const editBtn = await getElementWithTimeout(By.id('EditIcon'));
-  await editBtn.click();
 
-  // Updates Description
-  const updatedDescriptionField = await getSubElementWithTimeout(
-    'id',
-    'edit-case-feedback-description',
-    'textarea',
-  );
+  await getElementWithTimeout(By.id('EditIcon'))
+    .then((btn) => btn.click());
+
+  // Update the name
+  await getElementWithTimeout(By.name('name'))
+    .then((field) => replaceTextFieldValue(field, name));
   await wait(2000);
-  await updatedDescriptionField.click();
-  await wait(1000);
-  await replaceTextFieldValue(updatedDescriptionField, description);
-  await wait(1000);
+
+  // check that the name has been updated
+  await getElementWithTimeout(By.name('name'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(name));
+
+  // Update Description
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
+
+  // check description
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click close button
-  const updateBtnMenu = await getElementWithTimeout(By.id('close-update'));
-  await updateBtnMenu.click();
+  await getElementWithTimeout(By.id('close-update'))
+    .then((btn) => btn.click());
 }
 
 /**

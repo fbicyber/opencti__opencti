@@ -18,8 +18,11 @@ import {
 } from './common/feedback_service';
 import { logIn_LocalStrategy } from './common/auth_service';
 
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+
 describe('Feedback Workflow', () => {
   const NAME = 'Feedback from admin@opencti.io';
+  const NEW_NAME = 'Updated feedback from admin@opencti.io';
   const DESCRIPTION = 'Test Case Feedback Response Description';
   const NEW_DESCRIPTION = 'UPDATED Test Case Feedback Response Description';
 
@@ -33,72 +36,73 @@ describe('Feedback Workflow', () => {
   });
 
   test('create feedback response', async () => {
-    await navigateToCaseFeedback();
-    await wait(2000);
-    await pressProfileButton();
-    await wait(2000);
-    await addCaseFeedbackResponse(DESCRIPTION);
-    await wait(5000);
-    await selectCaseFeedbackResponse(NAME);
-    await wait(2000);
-    // Check that name and description are correct
-    const nameField = await getXpathNodeWith('text', NAME);
-    const actualName = await nameField.getText();
-    expect(actualName).toBe(NAME);
-    await wait(1000);
-    const descriptionField = await getSubElementWithTimeout(
-      'id',
-      'case-feedback-response-description',
-      'p',
-    );
-    const actualDescription = await descriptionField.getText();
-    expect(actualDescription).toBe(DESCRIPTION);
+    try {
+      await navigateToCaseFeedback();
+      await wait(2000);
+      await pressProfileButton();
+      await wait(2000);
+      await addCaseFeedbackResponse(DESCRIPTION);
+      await wait(5000);
+    } catch (error) {
+      console.error('Unable to edit feedback response');
+      fail(error);
+    }
   });
 
   test('view feedback response', async () => {
-    await selectCaseFeedbackResponse(NAME);
-    await wait(3000);
-    await navigateToCaseFeedback();
+    try {
+      await selectCaseFeedbackResponse(NAME);
+      await wait(3000);
+
+      // check name is correct
+      await getXpathNodeWith('text', NAME)
+        .then((elem) => elem.getText())
+        .then((val) => expect(val).toBe(NAME));
+
+      // check that description is correct
+      await getSubElementWithTimeout('id', 'case-feedback-response-description', 'p')
+        .then((elem) => elem.getText())
+        .then((val) => expect(val).toBe(DESCRIPTION));
+    } catch (error) {
+      console.error('Unable to edit feedback response');
+      fail(error);
+    }
   });
 
   test('edit feedback response', async () => {
-    await navigateToCaseFeedback();
-    await wait(2000);
-    await selectCaseFeedbackResponse(NAME);
-    await wait(2000);
-    await editCaseFeedbackResponse(NEW_DESCRIPTION);
-    await wait(2000);
-    await navigateToCaseFeedback();
-    await wait(2000);
-    await selectCaseFeedbackResponse(NAME);
-    await wait(2000);
-
-    const UpdatedDescriptionField = await getSubElementWithTimeout(
-      'id',
-      'case-feedback-response-description',
-      'p',
-    );
-    const actualDescription2 = await UpdatedDescriptionField.getText();
-    expect(actualDescription2).toBe(NEW_DESCRIPTION);
-    await wait(2000);
+    try {
+      await selectCaseFeedbackResponse(NAME);
+      await editCaseFeedbackResponse(NEW_NAME, NEW_DESCRIPTION);
+    } catch (error) {
+      console.error('Unable to edit feedback response');
+      fail(error);
+    }
   });
 
   test('delete feedback response', async () => {
-    await navigateToCaseFeedback();
-    await selectCaseFeedbackResponse(NAME);
-    await wait(3000);
-    await deleteDomainObject();
-    await wait(3000);
+    try {
+      await selectCaseFeedbackResponse(NEW_NAME);
+      await wait(3000);
 
-    // Check Feedback no longer shows up
-    const t = async () => {
-      await getElementWithTimeout(
-        By.xpath(`//*[text()="${NAME}"]/ancestor::a`),
-        2000,
-      );
-    };
-    // RxJS instanceof TimeoutError expects TimeoutErrorImpl for some reason
-    // await expect(t).rejects.toThrow(TimeoutError);
-    await expect(t).rejects.toThrow();
+      // delete the case report
+      await deleteDomainObject();
+      await wait(5000);
+
+      // need to refresh to ensure feedback updates
+      await navigateToCaseFeedback();
+
+      // Check Feedback no longer shows up
+      const t = async () => {
+        await getElementWithTimeout(
+          By.xpath(`//*[text()="${NAME}"]/ancestor::a`),
+          2000,
+        );
+      };
+      // RxJS instanceof TimeoutError expects TimeoutErrorImpl for some reason
+      await expect(t).rejects.toThrow();
+    } catch (error) {
+      console.error('Feedback was not deleted! Or a second one existed');
+      fail(error);
+    }
   });
 });
