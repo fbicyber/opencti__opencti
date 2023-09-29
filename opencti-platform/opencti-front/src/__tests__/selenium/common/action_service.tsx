@@ -256,22 +256,6 @@ function ensurePrefix(value: string, prefix: string) {
   return !value.startsWith(prefix) ? `${prefix}${value}` : value;
 }
 
-/** Returns current date with current time. */
-export function getDateTime() {
-  const today = new Date();
-  let hour = today.getHours();
-  const minutes = today.getMinutes();
-  let am_or_pm = 'A';
-  if (hour > 11) {
-    am_or_pm = 'P';
-  }
-  if (hour > 12) {
-    hour -= 12;
-  }
-
-  return `${today.getFullYear()}0${String(today.getMonth() + 1).slice(-2)}${(`0${today.getDate()}`).slice(-2)}${(`0${hour}`).slice(-2)}${(`0${minutes}`).slice(-2)}${am_or_pm}`;
-}
-
 /**
  * Compare two date strings by removing '-', ' ', 'M', and ':' from both strings
  * this utility is due to datetime in JS including characters not in 'getDateTime()'
