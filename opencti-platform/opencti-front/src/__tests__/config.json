@@ -1,7 +1,7 @@
 {
   "headless": true,
   "debug_port_required": true,
-  "testing_config_file": "development.json",
+  "testing_config_file": "test.json",
   "windowSize": {
     "height": 1800,
     "width": 1440

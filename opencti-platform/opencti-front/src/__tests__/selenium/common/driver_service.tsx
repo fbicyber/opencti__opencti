@@ -49,11 +49,10 @@ export default class DriverService {
         chromeOptions.addArguments('--disable-dev-shm-usage'); // overcome limited resources of CI/CD pipeline images
         chromeOptions.addArguments('--disable-gpu'); // overcome limited resources of CI/CD pipeline images
         chromeOptions.addArguments('--disable-extensions'); // disabling extensions not required for testing
-        /// Disable on MAC: otherwise you will get: WebDriverError: disconnected: unable to connect to renderer 
-        /// Enable on Linux: otherwise you will get: DevToolActivePort missing error 
-        if (config.debug_port_required)
-        {
-           chromeOptions.addArguments('--remote-debugging-port=9222'); // Fixes Wonky DevToolActivePort missing error
+        /// Disable on MAC: otherwise you will get: WebDriverError: disconnected: unable to connect to renderer
+        /// Enable on Linux: otherwise you will get: DevToolActivePort missing error
+        if (config.debug_port_required) {
+          chromeOptions.addArguments('--remote-debugging-port=9222'); // Fixes Wonky DevToolActivePort missing error
         }
         // chromeOptions.addArguments("--disable-software-rasterizer"); // Allow GPU to perform Raster
         // chromeOptions.setChromeBinaryPath("/usr/bin/chromium-browser");

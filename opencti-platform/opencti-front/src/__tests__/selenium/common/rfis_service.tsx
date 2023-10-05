@@ -1,12 +1,14 @@
 import { By } from 'selenium-webdriver';
 import {
   getElementWithTimeout,
-  getSubElementWithTimeout,
   replaceTextFieldValue,
   wait,
   getDateTime,
+  compareDateString,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
+
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
 /**
  * Navigates to request for information page, or the information list displayer.
@@ -26,37 +28,42 @@ export async function navigateToRfis(id = '') {
  */
 export async function addRfis(name: string, description: string) {
   // Click add button
-  const addBtn = await getElementWithTimeout(By.id('add-rfis'));
-  await addBtn.click();
+  await getElementWithTimeout(By.id('add-rfis'))
+    .then((btn) => btn.click());
 
   // Fill name
-  const nameField = await getElementWithTimeout(By.id('add-rfis-name'));
-  // Sometimes fails to find name field fast enough.
-  await wait(1000);
-  await nameField.click();
-  await nameField.sendKeys(name);
+  await getElementWithTimeout(By.id('add-rfis-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
+
+  await getElementWithTimeout(By.id('add-rfis-name'))
+    .then((elem) => elem.getAttribute('value')) // appears that .getText() fails for some reason
+    .then((val) => expect(val).toBe(name));
 
   // Fill RFI Date
-  const rfisDate = await getElementWithTimeout(By.id('add-rfis-date'));
-  await wait(1000);
-  await rfisDate.click();
   const formattedDate = getDateTime();
-  await replaceTextFieldValue(rfisDate, formattedDate);
-  await wait(1000);
+  await getElementWithTimeout(By.id('add-rfis-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
+
+  // check date was changed correctly
+  await getElementWithTimeout(By.id('add-rfis-date'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(compareDateString(val, formattedDate)).toBe(true));
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'add-rfis-description',
-    'textarea',
-  );
-  await wait(1000);
-  await descriptionField.click();
-  await descriptionField.sendKeys(description);
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
+
+  // check that description is changed
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click create button
-  const createBtn = await getElementWithTimeout(By.id('create-rfis'));
-  await createBtn.click();
+  await getElementWithTimeout(By.id('create-rfis'))
+    .then((btn) => btn.click());
 }
 
 /**
@@ -68,41 +75,43 @@ export async function addRfis(name: string, description: string) {
  */
 export async function editRfis(name: string, description: string) {
   // Click edit button
-  const editBtn = await getElementWithTimeout(By.id('edit-rfis'));
-  await editBtn.click();
+  await getElementWithTimeout(By.id('edit-rfis'))
+    .then((btn) => btn.click());
 
   // Fill name
-  const nameField = await getElementWithTimeout(By.id('edit-rfis-name'));
-  // Sometimes fails to find name field fast enough.
-  await wait(1000);
-  await nameField.click();
-  await wait(1000);
-  await replaceTextFieldValue(nameField, name);
-  await wait(1000);
+  await getElementWithTimeout(By.id('edit-rfis-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
+
+  // check name
+  await getElementWithTimeout(By.id('edit-rfis-name'))
+    .then((elem) => elem.getAttribute('value')) // appears that .getText() fails for some reason
+    .then((val) => expect(val).toBe(name));
 
   // Fill Report Date
-  const reportDate = await getElementWithTimeout(By.id('edit-rfis-date'));
-  await wait(1000);
-  await reportDate.click();
-  await wait(1000);
   const formattedDate = getDateTime();
-  await replaceTextFieldValue(reportDate, formattedDate);
-  await wait(1000);
+  await getElementWithTimeout(By.id('edit-rfis-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
+
+  // check date was changed correctly
+  await getElementWithTimeout(By.id('edit-rfis-date'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(compareDateString(val, formattedDate)).toBe(true));
 
   // Fill description
-  const descriptionField = await getSubElementWithTimeout(
-    'id',
-    'edit-rfis-description',
-    'textarea',
-  );
-  await descriptionField.click();
-  await wait(1000);
-  await replaceTextFieldValue(descriptionField, description);
-  await wait(1000);
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
+
+  // check that description is changed
+  await getElementWithTimeout(By.className('mde-text'))
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click close button
-  const closeBtn = await getElementWithTimeout(By.id('edit-close-rfis'));
-  await closeBtn.click();
+  await getElementWithTimeout(By.id('edit-close-rfis'))
+    .then((btn) => btn.click());
 }
 
 /**
