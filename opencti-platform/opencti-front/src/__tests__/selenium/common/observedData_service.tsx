@@ -5,8 +5,11 @@ import {
   replaceTextFieldValue,
   selectRandomFromDropdown,
   getDropdownSelectorWithName,
+  compareDateString,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
+
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
 /**
  * Navigates to the Event Observed Data list displayer.
@@ -27,29 +30,37 @@ export async function navigateToEventObservedData(id = '?sortBy=created&orderAsc
  */
 export async function addEventObservedData(firstDate: string, lastDate: string) {
   // Click add button
-  const addBtn = await getElementWithTimeout(By.id('add-observed-data'));
-  await addBtn.click();
+  await getElementWithTimeout(By.id('add-observed-data'))
+    .then((btn) => btn.click());
   await wait(2000);
 
   // Fill entity
-  await wait(1000);
   const entity = await selectRandomFromDropdown(getDropdownSelectorWithName('objects'));
 
   // Fill First Observed Date
-  const firstReportDate = await getElementWithTimeout(By.id('add-observed-data-first-date'));
-  await wait(1000);
-  await firstReportDate.click();
-  await replaceTextFieldValue(firstReportDate, firstDate);
-  await wait(1000);
+  await getElementWithTimeout(By.id('add-observed-data-first-date'))
+    .then((field) => replaceTextFieldValue(field, firstDate));
+  await wait(2000);
+
+  // check that first observed date set correctly
+  await getElementWithTimeout(By.id('add-observed-data-first-date'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(compareDateString(val, firstDate)).toBe(true));
+
   // Fill Last Observed Date
-  const lastReportDate = await getElementWithTimeout(By.id('add-observed-data-last-date'));
-  await wait(1000);
-  await lastReportDate.click();
-  await replaceTextFieldValue(lastReportDate, lastDate);
-  await wait(1000);
+  await getElementWithTimeout(By.id('add-observed-data-last-date'))
+    .then((field) => replaceTextFieldValue(field, lastDate));
+  await wait(2000);
+
+  // check that last observed date set correctly
+  await getElementWithTimeout(By.id('add-observed-data-last-date'))
+    .then((elem) => elem.getAttribute('value'))
+  // .then((elem) => elem.getText())
+    .then((val) => expect(compareDateString(val, lastDate)).toBe(true));
+
   // Click create button
-  const createBtn = await getElementWithTimeout(By.id('add-observed-data-create'));
-  await createBtn.click();
+  await getElementWithTimeout(By.id('add-observed-data-create'))
+    .then((btn) => btn.click());
 
   // Returns entity
   return entity;
@@ -63,26 +74,32 @@ export async function addEventObservedData(firstDate: string, lastDate: string) 
  */
 export async function editEventObservedData(firstDate: string, lastDate: string) {
   // Click edit button
-  const editBtn = await getElementWithTimeout(By.id('EditIcon'));
-  await editBtn.click();
+  await getElementWithTimeout(By.id('EditIcon'))
+    .then((btn) => btn.click());
 
   // Updates First Observed Date
-  const firstUpdatedDate = await getElementWithTimeout(By.id('edit-observed-data-first-date'));
-  await wait(1000);
-  await firstUpdatedDate.click();
-  await replaceTextFieldValue(firstUpdatedDate, firstDate);
-  await wait(500);
+  await getElementWithTimeout(By.id('edit-observed-data-first-date'))
+    .then((field) => replaceTextFieldValue(field, firstDate));
+  await wait(2000);
+
+  // check that first observed date set correctly
+  await getElementWithTimeout(By.id('edit-observed-data-first-date'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(compareDateString(val, firstDate)).toBe(true));
 
   // Updates Last Observed Date
-  const lastUpdatedDate = await getElementWithTimeout(By.id('edit-observed-data-last-date'));
-  await wait(1000);
-  await lastUpdatedDate.click();
-  await replaceTextFieldValue(lastUpdatedDate, lastDate);
-  await wait(500);
+  await getElementWithTimeout(By.id('edit-observed-data-last-date'))
+    .then((field) => replaceTextFieldValue(field, lastDate));
+  await wait(2000);
+
+  // check that last observed date set correctly
+  await getElementWithTimeout(By.id('edit-observed-data-last-date'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(compareDateString(val, lastDate)).toBe(true));
 
   // Click close button
-  const closeBtn = await getElementWithTimeout(By.id('CloseIcon'));
-  await closeBtn.click();
+  await getElementWithTimeout(By.id('CloseIcon'))
+    .then((btn) => btn.click());
 }
 
 /**
