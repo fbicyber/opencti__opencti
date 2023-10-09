@@ -28,74 +28,39 @@ export async function navigateToAnalysesReport(id = '?sortBy=published&orderAsc=
  */
 export async function addAnalysesReport(name: string, description: string) {
   // Click add button
-  try {
-    const addBtn = await getElementWithTimeout(By.id('add-analyses-report'));
-    await addBtn.click();
-    await wait(2000);
-  } catch (error) {
-    console.error('Unable to create analyses report');
-    throw error;
-  }
+  await getElementWithTimeout(By.id('add-analyses-report'))
+    .then((btn) => (btn.click()));
+  await wait(2000);
 
   // Fill name
-  try {
-    const nameField = await getElementWithTimeout(By.id('add-analyses-report-name'), 4000);
-    await nameField.click();
-    await nameField.sendKeys(name);
-    await wait(1000);
+  await getElementWithTimeout(By.id('add-analyses-report-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
-    // check value was changed
-    await getElementWithTimeout(By.id('add-analyses-report-name'), 4000)
-      .then((elem) => elem.getText())
-      .then((val) => console.error(val));
-  } catch (error) {
-    console.error('Unable to interact with analyses report name field');
-    throw error;
-  }
+  // check value was changed
+  await getElementWithTimeout(By.id('add-analyses-report-name'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(name));
 
   // Fill Report Date
-  try {
-    const reportDate = await getElementWithTimeout(By.id('add-analyses-report-date'), 3000);
-    await reportDate.click();
-
-    // TODO: replace prepopulated datetime with current datetime
-    const formattedDate = getDateTime();
-    await replaceTextFieldValue(reportDate, formattedDate);
-    await wait(1000);
-  } catch (error) {
-    console.error('Unable to interact with analyses report date');
-    throw error;
-  }
+  const formattedDate = getDateTime();
+  await getElementWithTimeout(By.id('add-analyses-report-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
 
   // Fill description
-  try {
-    const descriptionField = await getSubElementWithTimeout(
-      'id',
-      'add-analyses-report-description',
-      'textarea',
-    );
+  await getSubElementWithTimeout('id', 'add-analyses-report-description', 'textarea')
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
-    // change the description
-    await descriptionField.click();
-    await descriptionField.sendKeys(description);
-
-    // check that description changed successfully
-    await getSubElementWithTimeout('id', 'add-analyses-report-description', 'textarea')
-      .then((elem) => elem.getText())
-      .then((val) => expect(val).toBe(description));
-  } catch (error) {
-    console.error('Unable to interact with analyses report description');
-    throw error;
-  }
+  // check that description changed successfully
+  await getSubElementWithTimeout('id', 'add-analyses-report-description', 'textarea')
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click create button
-  try {
-    const createBtn = await getElementWithTimeout(By.id('add-analyses-report-create'));
-    await createBtn.click();
-  } catch (error) {
-    console.error('Unable to create analyses report');
-    throw error;
-  }
+  await getElementWithTimeout(By.id('add-analyses-report-create'))
+    .then((btn) => (btn.click()));
 }
 /**
  * Tries to click on a Case Analyses Report with the given name.
@@ -106,79 +71,39 @@ export async function addAnalysesReport(name: string, description: string) {
  */
 export async function editAnalysesReport(name: string, description: string) {
   // Click edit button
-  try {
-    const editBtn = await getElementWithTimeout(By.id('EditIcon'));
-    await editBtn.click();
-  } catch (error) {
-    console.error('Unable to interact with edit analyses report');
-    throw error;
-  }
+
+  await getElementWithTimeout(By.id('EditIcon'))
+    .then((btn) => (btn.click()));
 
   // Fill name
-  try {
-    const nameField = await getElementWithTimeout(By.id('edit-analyses-report-name'), 3000);
-    await nameField.click();
-    await wait(1000);
+  await getElementWithTimeout(By.id('edit-analyses-report-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
-    // change the value
-    await replaceTextFieldValue(nameField, name);
-    await wait(1000);
-
-    // check value was changed
-    await getElementWithTimeout(By.id('edit-analyses-report-name'), 3000)
-      .then((elem) => elem.getText())
-      .then((val) => console.error(val));
-  } catch (error) {
-    console.error('Unable to interact with edit analyses report name');
-    throw error;
-  }
+  // check value was changed
+  await getElementWithTimeout(By.id('edit-analyses-report-name'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(name));
 
   // Fill Report Date
-  try {
-    const reportDate = await getElementWithTimeout(By.id('edit-analyses-report-date'), 3000);
-    await reportDate.click();
-    await wait(1000);
-
-    // TODO: replace prepopulated date with current time
-    const formattedDate = getDateTime();
-    await replaceTextFieldValue(reportDate, formattedDate);
-    await wait(1000);
-  } catch (error) {
-    console.error('Unable to interact with edit analyses report date');
-    throw error;
-  }
+  const formattedDate = getDateTime();
+  await getElementWithTimeout(By.id('edit-analyses-report-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
 
   // Fill description
-  try {
-    const descriptionField = await getSubElementWithTimeout(
-      'id',
-      'edit-analyses-report-description',
-      'textarea',
-    );
-    await descriptionField.click();
-    await wait(1000);
+  await getSubElementWithTimeout('id', 'edit-analyses-report-description', 'textarea')
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
-    // replace the description
-    await replaceTextFieldValue(descriptionField, description);
-    await wait(1000);
-
-    // check the description
-    await getSubElementWithTimeout('id', 'edit-analyses-report-description', 'textarea')
-      .then((elem) => elem.getText())
-      .then((val) => expect(val).toBe(description));
-  } catch (error) {
-    console.error('Unable to interact with edit analyses report description');
-    throw error;
-  }
+  // check the description
+  await getSubElementWithTimeout('id', 'edit-analyses-report-description', 'textarea')
+    .then((elem) => elem.getText())
+    .then((val) => expect(val).toBe(description));
 
   // Click close button
-  try {
-    const closeBtn = await getElementWithTimeout(By.id('CloseIcon'));
-    await closeBtn.click();
-  } catch (error) {
-    console.error('Unable to edit analyses report');
-    throw error;
-  }
+  await getElementWithTimeout(By.id('CloseIcon'))
+    .then((btn) => (btn.click()));
 }
 
 /**

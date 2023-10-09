@@ -65,12 +65,12 @@ export async function editSecurityGroups(name: string, description: string) {
   // Click edit button
   await getElementWithTimeout(By.id('EditIcon'))
     .then((btn) => btn.click());
-  await wait(5000);
+  await wait(2000);
 
   // Fill name
   await getElementWithTimeout(By.id('edit-security-groups-name'))
     .then((field) => replaceTextFieldValue(field, name));
-  await wait(5000);
+  await wait(2000);
 
   // check name filled correctly
   await getElementWithTimeout(By.id('edit-security-groups-name'))
@@ -80,7 +80,7 @@ export async function editSecurityGroups(name: string, description: string) {
   // Fill description
   await getSubElementWithTimeout('id', 'edit-security-groups-description', 'textarea')
     .then((field) => replaceTextFieldValue(field, description));
-  await wait(5000);
+  await wait(2000);
 
   await getSubElementWithTimeout('id', 'edit-security-groups-description', 'textarea')
     .then((elem) => expect(elem.getText()).resolves.toBe(description));

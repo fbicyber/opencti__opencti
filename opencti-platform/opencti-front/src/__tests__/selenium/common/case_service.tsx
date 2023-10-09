@@ -4,7 +4,7 @@ import {
   getSubElementWithTimeout,
   wait,
   replaceTextFieldValue,
-  // getDateTime,
+  getDateTime,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
 
@@ -28,164 +28,73 @@ export async function navigateToCaseIncidentResponse(id = '') {
  */
 export async function addCaseIncidentResponse(name: string, description: string) {
   // Click add button
-  try {
-    const addBtn = await getElementWithTimeout(By.id('add-incident-response'));
-    await addBtn.click();
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with add incident response add button');
-  }
+  await getElementWithTimeout(By.id('add-incident-response'))
+    .then((btn) => btn.click());
 
   // Fill name
-  try {
-    const nameField = await getElementWithTimeout(By.id('add-incident-response-name'));
-    // Sometimes fails to find name field fast enough.
-    await wait(1000);
-    await nameField.click();
-    await nameField.sendKeys(name);
-    await wait(1000);
+  await getElementWithTimeout(By.id('add-incident-response-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
-    // check that it was name set correctly
-    await getElementWithTimeout(By.id('add-incident-response-name'))
-      .then((elem) => elem.getAttribute('value'))
-      .then((val) => expect(val).toBe(name));
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with add incident response name');
-  }
+  // check that it was name set correctly
+  await getElementWithTimeout(By.id('add-incident-response-name'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(name));
 
   // Fill Incident Date
-  // try {
-  //   const incidentDate = await getElementWithTimeout(By.id('add-incident-response-date'));
-  //   await wait(1000);
-  //   await incidentDate.click();
-  //   const formattedDate = getDateTime();
-  //   await replaceTextFieldValue(incidentDate, formattedDate);
-  //   await wait(1000);
-
-  //   // check that it was date set correctly
-  //   await getElementWithTimeout(By.id('add-incident-response-date'))
-  //     .then((elem) => elem.getAttribute('value'))
-  //    // .then((val) => expect(val).toBeTruthy()); // TODO: Need to change to below after date issue fixed
-  //    .then((val) => expect(val.replace(':', '').replace(/-/g,'').replace(/\s/g, '').replace('M','')).toBe(formattedDate));
-  //   } catch (error) {
-  //   console.error(error);
-  //   console.error('Warn: Could not locate or interact with add incident response date');
-  // }
+  const formattedDate = getDateTime();
+  await getElementWithTimeout(By.id('add-incident-response-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
 
   // Fill description
-  try {
-    const descriptionField = await getSubElementWithTimeout(
-      'id',
-      'add-incident-response-description',
-      'textarea',
-    );
-    await descriptionField.click();
-    await descriptionField.sendKeys(description);
-    await wait(1000);
+  await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
-    // check that it was date set correctly
-    await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
-      .then((elem) => elem.getAttribute('value'))
-      .then((val) => expect(val).toBe(description));
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with add incident response description');
-  }
+  // check that it was date set correctly
+  await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(description));
 
   // Click create button
-  try {
-    const createBtn = await getElementWithTimeout(By.id('add-incident-response-create'));
-    await createBtn.click();
-  } catch (error) {
-    console.error(error);
-    console.error('Error: Could not create incident.');
-  }
+  await getElementWithTimeout(By.id('add-incident-response-create'))
+    .then((btn) => btn.click());
 }
 
 export async function editCaseIncidentResponse(name:string, description: string) {
   // Click edit button
-  await wait(3000);
-  try {
-    const editButton = await getElementWithTimeout(By.id('edit-case'));
-    await editButton.click();
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with edit incident response button');
-  }
+  await getElementWithTimeout(By.id('edit-case'))
+    .then((btn) => btn.click());
 
   // Fill name
-  try {
-    const nameField = await getElementWithTimeout(By.id('add-incident-response-name'));
-    // Sometimes fails to find name field fast enough.
-    await wait(1000);
-    await nameField.click();
-    await wait(2000);
-    await replaceTextFieldValue(nameField, name);
-    await wait(2000);
+  await getElementWithTimeout(By.id('add-incident-response-name'))
+    .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
-    // check that it was name set correctly
-    await getElementWithTimeout(By.id('add-incident-response-name'))
-      .then((elem) => elem.getAttribute('value'))
-      .then((val) => expect(val).toBe(name));
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with the incident response name');
-  }
+  // check that it was name set correctly
+  await getElementWithTimeout(By.id('add-incident-response-name'))
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(name));
 
   // Fill Incident Date
-  // try {
-  //   const incidentDate = await getElementWithTimeout(By.id('add-incident-response-date'));
-  //   await wait(1000);
-  //   await incidentDate.click();
-  //   await wait(2000);
-
-  //   const formattedDate = getDateTime();
-  //   await replaceTextFieldValue(incidentDate, formattedDate);
-  //   await wait(1000);
-
-  //   // check that it was date set correctly
-  //   await getElementWithTimeout(By.id('add-incident-response-date'))
-  //     .then((elem) => elem.getAttribute('value'))
-  //   //  .then((val) => expect(val).toBeTruthy()); // TODO: Need to change to below after date issue fixed
-  //   .then((val) => expect(val.replace(':', '').replace(/-/g,'').replace(/\s/g, '').replace('M','')).toBe(formattedDate));
-  // } catch (error) {
-  //   console.error(error);
-  //   console.error('Warn: Could not locate or interact with add incident response date');
-  // }
+  const formattedDate = getDateTime();
+  await getElementWithTimeout(By.id('add-incident-response-date'))
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
 
   // get the description field
-  try {
-    const descriptionField = await getSubElementWithTimeout(
-      'id',
-      'add-incident-response-description',
-      'textarea',
-    );
-    await wait(2000);
-    await descriptionField.click();
-    await wait(2000);
+  await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
+    .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
-    // change description to passed in value
-    await replaceTextFieldValue(descriptionField, description);
-    await wait(3000);
+  // check that it was date set correctly
+  await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
+    .then((elem) => elem.getAttribute('value'))
+    .then((val) => expect(val).toBe(description));
 
-    // check that it was date set correctly
-    await getSubElementWithTimeout('id', 'add-incident-response-description', 'textarea')
-      .then((elem) => elem.getAttribute('value'))
-      .then((val) => expect(val).toBe(description));
-  } catch (error) {
-    console.error(error);
-    console.error('Warn: Could not locate or interact with add incident response button');
-  }
-
-  try {
-    const closeButton = await getElementWithTimeout(By.id('CloseIcon'));
-    await closeButton.click();
-    await wait(3000);
-  } catch (error) {
-    console.error(error);
-    console.error('Error: Could not edit incident.');
-  }
+  await getElementWithTimeout(By.id('CloseIcon'))
+    .then((btn) => btn.click());
 }
 
 /**
