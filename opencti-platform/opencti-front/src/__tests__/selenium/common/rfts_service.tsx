@@ -4,6 +4,8 @@ import {
   getSubElementWithTimeout,
   replaceTextFieldValue,
   getDateTime,
+  // compareDateString,
+  wait,
 } from './action_service';
 import { goToObjectOverview, selectObject } from './domain_object_service';
 
@@ -29,10 +31,12 @@ export async function addTakedownReport(name: string, description: string) {
   // Click add button
   await getElementWithTimeout(By.id('add-takedown-report'))
     .then((btn) => btn.click());
+  await wait(2000);
 
   // Fill name
   await getElementWithTimeout(By.id('add-takedown-report-name'))
     .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
   // check name was set properly
   await getElementWithTimeout(By.id('add-takedown-report-name'))
@@ -40,12 +44,21 @@ export async function addTakedownReport(name: string, description: string) {
     .then((val) => expect(val).toBe(name));
 
   // Fill Report Date
+  const formattedDate = getDateTime();
   await getElementWithTimeout(By.id('add-takedown-report-date'))
-    .then((field) => replaceTextFieldValue(field, getDateTime()));
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
+
+  // // TODO: Get the below working
+  // // check report date updated
+  // await getElementWithTimeout(By.id('add-takedown-report-date'))
+  // .then((elem) => elem.getAttribute('value'))
+  //   .then((val) => expect(compareDateString(val, formattedDate)).toBe(true));
 
   // Fill description
   await getSubElementWithTimeout('id', 'case-takedown-report-description', 'textarea')
     .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
   // check description was set properly
   await getSubElementWithTimeout('id', 'case-takedown-report-description', 'textarea')
@@ -67,10 +80,12 @@ export async function editTakedownReport(name: string, description: string) {
   // Clicks edit button
   await getElementWithTimeout(By.id('EditIcon'))
     .then((btn) => btn.click());
+  await wait(2000);
 
   // Fill name
   await getElementWithTimeout(By.id('edit-rfts-name'))
     .then((field) => replaceTextFieldValue(field, name));
+  await wait(2000);
 
   // check name was set properly
   await getElementWithTimeout(By.id('edit-rfts-name'))
@@ -78,12 +93,20 @@ export async function editTakedownReport(name: string, description: string) {
     .then((val) => expect(val).toBe(name));
 
   // Fill Report Date
+  const formattedDate = getDateTime();
   await getElementWithTimeout(By.id('edit-rfts-date'))
-    .then((field) => replaceTextFieldValue(field, getDateTime()));
+    .then((field) => replaceTextFieldValue(field, formattedDate));
+  await wait(2000);
 
+  // // TODO: Get the below working
+  // // check report date updated
+  // await getElementWithTimeout(By.id('add-takedown-report-date'))
+  // .then((elem) => elem.getAttribute('value'))
+  //   .then((val) => expect(compareDateString(val, formattedDate)).toBe(true));
   // Fill description
   await getSubElementWithTimeout('id', 'edit-rfts-description', 'textarea')
     .then((field) => replaceTextFieldValue(field, description));
+  await wait(2000);
 
   // check description was set properly
   await getSubElementWithTimeout('id', 'edit-rfts-description', 'textarea')

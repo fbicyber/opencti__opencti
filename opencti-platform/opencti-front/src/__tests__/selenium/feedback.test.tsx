@@ -44,8 +44,8 @@ describe('Feedback Workflow', () => {
       await addCaseFeedbackResponse(DESCRIPTION);
       await wait(5000);
     } catch (error) {
-      console.error('Unable to edit feedback response');
-      fail(error);
+      console.error('Unable to create feedback response');
+      throw error;
     }
   });
 
@@ -65,7 +65,7 @@ describe('Feedback Workflow', () => {
         .then((val) => expect(val).toBe(DESCRIPTION));
     } catch (error) {
       console.error('Unable to edit feedback response');
-      fail(error);
+      throw error;
     }
   });
 
@@ -75,7 +75,7 @@ describe('Feedback Workflow', () => {
       await editCaseFeedbackResponse(NEW_NAME, NEW_DESCRIPTION);
     } catch (error) {
       console.error('Unable to edit feedback response');
-      fail(error);
+      throw error;
     }
   });
 
@@ -102,7 +102,7 @@ describe('Feedback Workflow', () => {
       await expect(t).rejects.toThrow();
     } catch (error) {
       console.error('Feedback was not deleted! Or a second one existed');
-      fail(error);
+      throw error;
     }
   });
 });

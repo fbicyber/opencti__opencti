@@ -31,15 +31,20 @@ describe('Analyses Workflow', () => {
   });
 
   test('create an analyses report', async () => {
-    await navigateToAnalysesReport();
-    await addAnalysesReport(NAME, DESCRIPTION);
+    try {
+      await navigateToAnalysesReport();
+      await wait(3000);
+      await addAnalysesReport(NAME, DESCRIPTION);
+    } catch (error) {
+      console.error('Unable to create analyses report');
+      throw error;
+    }
   });
 
   test('view an analyses report', async () => {
     try {
-      await navigateToAnalysesReport();
       await selectAnalysesReport(NAME);
-      await wait(6000);
+      await wait(3000);
 
       // check the name
       await getXpathNodeWith('text', NAME)
@@ -57,16 +62,20 @@ describe('Analyses Workflow', () => {
   });
 
   test('edit an analyses report', async () => {
-    await editAnalysesReport(NEW_NAME, NEW_DESCRIPTION);
-    await selectAnalysesReport(NEW_NAME);
+    try {
+      await selectAnalysesReport(NAME);
+      await wait(3000);
+      await editAnalysesReport(NEW_NAME, NEW_DESCRIPTION);
+    } catch (error) {
+      console.error('Unable to edit case report');
+      throw error;
+    }
   });
 
   test('delete an analyses report', async () => {
     try {
-      await navigateToAnalysesReport();
-      // if the report can't be found then this will throw error properly
-      expect(await selectAnalysesReport(NEW_NAME)).toBeUndefined();
-      await wait(5000);
+      await selectAnalysesReport(NEW_NAME);
+      await wait(3000);
 
       // delete the report
       await deleteDomainObject('delete-report-button');

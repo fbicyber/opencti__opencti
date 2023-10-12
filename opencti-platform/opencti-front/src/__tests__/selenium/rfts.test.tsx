@@ -40,7 +40,7 @@ describe('Takedown Workflow', () => {
       await wait(5000);
     } catch (error) {
       console.error(`Unable to create takedown report! ${error}`);
-      fail(error);
+      throw error;
     }
   });
 
@@ -61,7 +61,7 @@ describe('Takedown Workflow', () => {
         .then((val) => expect(val).toBe(DESCRIPTION));
     } catch (error) {
       console.error(`Unable to find correct takedown report ${error}`);
-      fail(error);
+      throw error;
     }
   });
 
@@ -72,7 +72,7 @@ describe('Takedown Workflow', () => {
       await editTakedownReport(NEW_NAME, NEW_DESCRIPTION);
     } catch (error) {
       console.error('Unable to edit takedown report successfully');
-      fail(error);
+      throw error;
     }
   });
 
@@ -92,11 +92,10 @@ describe('Takedown Workflow', () => {
         );
       };
       // RxJS instanceof TimeoutError expects TimeoutErrorImpl for some reason
-      // await expect(t).rejects.toThrow(TimeoutError);
       await expect(t).rejects.toThrow();
     } catch (error) {
       console.error('Unable to delete takedown report');
-      fail(error);
+      throw error;
     }
   });
 });

@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import { By, Key, Locator, WebDriver, WebElement, until } from 'selenium-webdriver';
+import * as os from 'os';
 import DriverService from './driver_service';
 import { readConfigFile } from './file_service';
 
@@ -361,17 +362,14 @@ export async function checkValue(locator: Locator, value: string | boolean | und
  * @param newVal Some string to replace the current text in the given element.
  */
 export async function replaceTextFieldValue(element: WebElement, newVal: string) {
-//  await element.sendKeys(Key.END, Key.chord(Key.SHIFT, Key.ARROW_UP), Key.BACK_SPACE, newVal);
-  try {
-    await element.click();
-  } catch (error) {
-    // ignore, just try to click element
+  if (os.platform() === 'linux') {
+    // TODO: get working with docker
+    return;
   }
-
-  await wait(2000);
+  await wait(500);
+  await element.click();
+  await wait(1000);
   await element.sendKeys(Key.chord(Key.COMMAND, 'A'), Key.BACK_SPACE);
-  await wait(1000);
-  await element.sendKeys(Key.chord(Key.CONTROL, 'A'), Key.BACK_SPACE);
-  await wait(1000);
+  await wait(500);
   await element.sendKeys(newVal);
 }

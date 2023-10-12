@@ -31,6 +31,7 @@ export async function pressProfileButton() {
  *
  */
 export async function attachToFeedbackResponse() {
+  // TODO -- not used/functional
   const addBtn = await getElementWithTimeout(By.id('add-feedback-file'));
   await addBtn.click();
 }

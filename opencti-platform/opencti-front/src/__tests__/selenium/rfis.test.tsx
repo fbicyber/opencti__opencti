@@ -35,14 +35,13 @@ describe('RFI Workflow', () => {
 
   test('create an RFI', async () => {
     try {
-      // create the case RFI
       await navigateToRfis();
       await wait(3000);
       await addRfis(NAME, DESCRIPTION);
       await wait(3000);
     } catch (error) {
       console.error('Failed to case request for information');
-      fail(error);
+      throw error;
     }
   });
 
@@ -63,7 +62,7 @@ describe('RFI Workflow', () => {
         .then((val) => expect(val).toBe(DESCRIPTION));
     } catch (error) {
       console.error('Unable find correct request for information');
-      fail(error);
+      throw error;
     }
   });
 
@@ -77,7 +76,7 @@ describe('RFI Workflow', () => {
       await wait(5000);
     } catch (error) {
       console.error('Failed to edit case request for information');
-      fail(error);
+      throw error;
     }
   });
 
@@ -104,7 +103,7 @@ describe('RFI Workflow', () => {
       await expect(t).rejects.toThrow();
     } catch (error) {
       console.error('Unable validate correct request for information was deleted');
-      fail(error);
+      throw error;
     }
   });
 });

@@ -41,12 +41,13 @@ describe('Event Observed Data Workflow', () => {
       await wait(5000);
     } catch (error) {
       console.error('Unable to create event observed data');
-      fail(error);
+      throw error;
     }
   });
 
   test('view an event observed data', async () => {
     try {
+      await wait(3000);
       await selectEventObservedData(ENTITY);
       await wait(3000);
 
@@ -56,17 +57,18 @@ describe('Event Observed Data Workflow', () => {
         .then((val) => expect(val).toBe(ENTITY));
     } catch (error) {
       console.error('Unable to view event observed data');
-      fail(error);
+      throw error;
     }
   });
 
   test('edit an event observed data', async () => {
     try {
       await selectEventObservedData(ENTITY);
+      await wait(3000);
       await editEventObservedData(NEW_FIRST_DATE, NEW_LAST_DATE);
     } catch (error) {
       console.error('Unable to edit event observed data');
-      fail(error);
+      throw error;
     }
   });
 
@@ -74,8 +76,11 @@ describe('Event Observed Data Workflow', () => {
     try {
       await selectEventObservedData(ENTITY);
       await wait(3000);
+
       await deleteDomainObject('delete-observable-button');
       await wait(3000);
+
+      await navigateToEventObservedData();
       // Check Observed Data no longer shows up
       const t = async () => {
         await getElementWithTimeout(
@@ -84,11 +89,10 @@ describe('Event Observed Data Workflow', () => {
         );
       };
       // RxJS instanceof TimeoutError expects TimeoutErrorImpl for some reason
-      // await expect(t).rejects.toThrow(TimeoutError);
       await expect(t).rejects.toThrow();
     } catch (error) {
-      console.error('Unable to ');
-      fail(error);
+      console.error('Unable to delete event observed data');
+      throw error;
     }
   });
 });

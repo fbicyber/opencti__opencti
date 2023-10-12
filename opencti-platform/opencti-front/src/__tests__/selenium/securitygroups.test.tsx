@@ -39,7 +39,7 @@ describe('Security Groups Workflow', () => {
       await wait(5000);
     } catch (error) {
       console.error('Unable to create new security group.');
-      fail(error);
+      throw error;
     }
   });
 
@@ -54,10 +54,11 @@ describe('Security Groups Workflow', () => {
 
       // check the description was set correctly
       await getXpathNodeWith('text', DESCRIPTION)
-        .then((elem) => expect(elem.getText()).resolves.toBe(DESCRIPTION)); // this is because name gets capslocked
+        .then((elem) => elem.getText())
+        .then((val) => expect(val).toBe(DESCRIPTION));
     } catch (error) {
       console.error('Unable to view created security group.');
-      fail(error);
+      throw error;
     }
   });
 
@@ -68,7 +69,7 @@ describe('Security Groups Workflow', () => {
       await wait(3000);
     } catch (error) {
       console.error('Unable to edit security group.');
-      fail(error);
+      throw error;
     }
   });
 
@@ -76,6 +77,7 @@ describe('Security Groups Workflow', () => {
     try {
       await selectSecurityGroups(NEW_NAME);
       await wait(3000);
+
       await deleteDomainObject();
       await wait(3000);
       // Check Case Incident Response no longer shows up
@@ -89,7 +91,7 @@ describe('Security Groups Workflow', () => {
       await expect(t).rejects.toThrow();
     } catch (error) {
       console.error('Unable to delete security group.');
-      fail(error);
+      throw error;
     }
   });
 });
