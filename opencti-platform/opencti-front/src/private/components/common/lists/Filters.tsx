@@ -29,6 +29,7 @@ interface FiltersProps {
   };
   type?: string;
   helpers?: handleFilterHelpers;
+  required?: boolean;
 }
 
 const Filters: FunctionComponent<FiltersProps> = ({
@@ -47,6 +48,7 @@ const Filters: FunctionComponent<FiltersProps> = ({
   searchContext,
   type,
   helpers,
+  required,
 }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -167,6 +169,7 @@ const Filters: FunctionComponent<FiltersProps> = ({
           variant={variant}
           type={type}
           helpers={helpers}
+          required={required}
           entityTypes={entityTypes}
         />
       ) : (

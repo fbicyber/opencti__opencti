@@ -36,6 +36,7 @@ import { Option } from '../../../common/form/ReferenceField';
 import Filters from '../../../common/lists/Filters';
 import { TriggersLinesPaginationQuery$variables } from '../../../profile/triggers/__generated__/TriggersLinesPaginationQuery.graphql';
 import { AlertLiveCreationActivityMutation, AlertLiveCreationActivityMutation$data } from './__generated__/AlertLiveCreationActivityMutation.graphql';
+import { useSchemaCreationValidation, useMandatorySchemaAttributes } from '../../../../../utils/hooks/useSchemaAttributes';
 
 const useStyles = makeStyles<Theme>((theme) => ({
   drawerPaper: {
@@ -83,12 +84,7 @@ export const triggerLiveActivityCreationMutation = graphql`
     }
 `;
 
-export const liveActivityTriggerValidation = (t: (message: string) => string) => Yup.object().shape({
-  name: Yup.string().required(t('This field is required')),
-  description: Yup.string().nullable(),
-  notifiers: Yup.array().nullable(),
-  recipients: Yup.array().min(1, t('Minimum one recipient')).required(t('This field is required')),
-});
+const OBJECT_TYPE = 'Trigger';
 
 interface TriggerActivityLiveAddInput {
   name: string;
@@ -115,6 +111,19 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
   creationCallback,
 }) => {
   const { t_i18n } = useFormatter();
+
+  const basicShape: Yup.ObjectShape = {
+    name: Yup.string(),
+    description: Yup.string().nullable(),
+    notifiers: Yup.array().nullable(),
+    recipients: Yup.array().min(1, t_i18n('Minimum one recipient')),
+  };
+  const mandatoryAttributes = useMandatorySchemaAttributes(OBJECT_TYPE);
+  const validator = useSchemaCreationValidation(
+    OBJECT_TYPE,
+    basicShape,
+  );
+
   const classes = useStyles();
   const [filters, setFilters] = useState<FilterGroup | undefined>(undefined);
   const onReset = () => {
@@ -188,6 +197,8 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
       <ObjectMembersField label={'Recipients'} style={fieldSpacingContainerStyle}
         onChange={setFieldValue}
         multiple={true} name={'recipients'}
+        // required is true because of minimum one recipients
+        required={(mandatoryAttributes.includes('recipients') || true)}
       />
       <span>
         <div style={{ marginTop: 35 }}>
@@ -216,18 +227,22 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
         variant="standard"
         name="name"
         label={t_i18n('Name')}
+        required={(mandatoryAttributes.includes('name'))}
         fullWidth={true}
       />
       <Field
         component={MarkdownField}
         name="description"
         label={t_i18n('Description')}
+        required={(mandatoryAttributes.includes('description'))}
         fullWidth={true}
         multiline={true}
         rows="4"
         style={{ marginTop: 20 }}
       />
-      <NotifierField name="notifiers" onChange={setFieldValue} />
+      <NotifierField name="notifiers" onChange={setFieldValue}
+        required={(mandatoryAttributes.includes('notifiers'))}
+      />
       {renderActivityTrigger(values, setFieldValue)}
       <FilterIconButton
         filters={filters}
@@ -265,7 +280,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
         <div className={classes.container}>
           <Formik<TriggerActivityLiveAddInput>
             initialValues={liveInitialValues}
-            validationSchema={liveActivityTriggerValidation(t_i18n)}
+            validationSchema={validator}
             onSubmit={onLiveSubmit}
             onReset={onReset}
           >
@@ -312,7 +327,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
       PaperProps={{ elevation: 1 }}
     >
       <Formik initialValues={liveInitialValues}
-        validationSchema={liveActivityTriggerValidation(t_i18n)}
+        validationSchema={validator}
         onSubmit={onLiveSubmit}
         onReset={onReset}
       >

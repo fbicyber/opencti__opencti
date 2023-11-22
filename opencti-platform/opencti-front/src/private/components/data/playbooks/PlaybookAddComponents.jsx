@@ -33,6 +33,7 @@ import ObjectLabelField from '../../common/form/ObjectLabelField';
 import StatusField from '../../common/form/StatusField';
 import { capitalizeFirstLetter } from '../../../../utils/String';
 import AutocompleteField from '../../../../components/AutocompleteField';
+import { useSchemaCreationValidation, useMandatorySchemaAttributes } from '../../../../utils/hooks/useSchemaAttributes';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import useFiltersState from '../../../../utils/filters/useFiltersState';
 
@@ -79,9 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const addComponentValidation = (t) => Yup.object().shape({
-  name: Yup.string().required(t('This field is required')),
-});
+const OBJECT_TYPE = 'Playbook';
 
 const PlaybookAddComponentsContent = ({
   searchTerm,
@@ -94,6 +93,16 @@ const PlaybookAddComponentsContent = ({
 }) => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+
+  const basicShape = {
+    name: Yup.string(),
+  };
+  const mandatoryAttributes = useMandatorySchemaAttributes(OBJECT_TYPE);
+  const validator = useSchemaCreationValidation(
+    OBJECT_TYPE,
+    basicShape,
+  );
+
   const { numberAttributes } = useAttributes();
   const currentConfig = action === 'config' ? selectedNode?.data?.configuration : null;
   const initialFilters = currentConfig?.filters ? deserializeFilterGroupForFrontend(currentConfig?.filters) : emptyFilterGroup;
@@ -395,7 +404,7 @@ const PlaybookAddComponentsContent = ({
       <div className={classes.config}>
         <Formik
           initialValues={initialValues}
-          validationSchema={addComponentValidation(t_i18n)}
+          validationSchema={validator}
           onSubmit={onSubmit}
           onReset={handleClose}
         >
@@ -413,6 +422,7 @@ const PlaybookAddComponentsContent = ({
                 variant="standard"
                 name="name"
                 label={t_i18n('Name')}
+                required={(mandatoryAttributes.includes('name'))}
                 fullWidth={true}
               />
               {Object.entries(configurationSchema?.properties ?? {}).map(

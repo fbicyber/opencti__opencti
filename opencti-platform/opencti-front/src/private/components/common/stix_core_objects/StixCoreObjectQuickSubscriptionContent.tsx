@@ -39,6 +39,7 @@ import {
   StixCoreObjectQuickSubscriptionContentPaginationQuery$variables,
 } from './__generated__/StixCoreObjectQuickSubscriptionContentPaginationQuery.graphql';
 import { deserializeFilterGroupForFrontend, findFilterFromKey, serializeFilterGroupForBackend } from '../../../../utils/filters/filtersUtils';
+import { useSchemaCreationValidation, useMandatorySchemaAttributes } from '../../../../utils/hooks/useSchemaAttributes';
 
 export const stixCoreObjectQuickSubscriptionContentQuery = graphql`
   query StixCoreObjectQuickSubscriptionContentPaginationQuery(
@@ -66,6 +67,8 @@ export const stixCoreObjectQuickSubscriptionContentQuery = graphql`
     }
   }
 `;
+
+const OBJECT_TYPE = 'Trigger';
 
 interface InstanceTriggerEditionFormValues {
   id: string;
@@ -119,6 +122,20 @@ StixCoreObjectQuickSubscriptionContentProps
 > = ({ queryRef, paginationOptions, instanceId, instanceName }) => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+
+  const basicShape: Yup.ObjectShape = {
+    name: Yup.string(),
+    description: Yup.string().nullable(),
+    event_types: Yup.array()
+      .min(1, t_i18n('Minimum one event type')),
+    notifiers: Yup.array(),
+  };
+  const mandatoryAttributes = useMandatorySchemaAttributes(OBJECT_TYPE);
+  const validator = useSchemaCreationValidation(
+    OBJECT_TYPE,
+    basicShape,
+  );
+
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   const [expandedLines, setExpandedLines] = useState<boolean>(false);
@@ -148,15 +165,6 @@ StixCoreObjectQuickSubscriptionContentProps
   const handleToggleLine = () => {
     setExpandedLines(!expandedLines);
   };
-
-  const liveTriggerValidation = () => Yup.object().shape({
-    name: Yup.string().required(t_i18n('This field is required')),
-    description: Yup.string().nullable(),
-    event_types: Yup.array()
-      .min(1, t_i18n('Minimum one event type'))
-      .required(t_i18n('This field is required')),
-    notifiers: Yup.array().required(t_i18n('This field is required')),
-  });
 
   const createInstanceTrigger = () => {
     const finalValues: TriggerLiveAddInput = {
@@ -317,7 +325,7 @@ StixCoreObjectQuickSubscriptionContentProps
       >
         <Formik
           initialValues={instanceTrigger}
-          validationSchema={liveTriggerValidation}
+          validationSchema={validator}
           onSubmit={onSubmitUpdate}
         >
           {({ submitForm, isSubmitting, values, setFieldValue }) => (
@@ -327,12 +335,16 @@ StixCoreObjectQuickSubscriptionContentProps
                 variant="standard"
                 name="name"
                 label={t_i18n('Name')}
+                required={(mandatoryAttributes.includes('name'))}
                 fullWidth={true}
               />
-              <NotifierField name="notifiers" onChange={setFieldValue} />
+              <NotifierField name="notifiers" onChange={setFieldValue}
+                required={(mandatoryAttributes.includes('notifiers'))}
+              />
               <Field
                 component={AutocompleteField}
                 name="event_types"
+                required={(mandatoryAttributes.includes('event_types'))}
                 style={fieldSpacingContainerStyle}
                 multiple={true}
                 textfieldprops={{

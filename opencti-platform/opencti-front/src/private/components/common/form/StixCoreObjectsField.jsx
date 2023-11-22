@@ -224,17 +224,19 @@ class StixCoreObjectsField extends Component {
   }
 
   render() {
-    const { t, name, style, classes, helpertext } = this.props;
+    const { t, name, style, classes, helpertext, required } = this.props;
     return (
       <div>
         <Field
           component={AutocompleteField}
           style={style}
           name={name}
+          required={required}
           multiple={true}
           textfieldprops={{
             variant: 'standard',
             label: t('Entities'),
+            required,
             helperText: helpertext,
             onFocus: this.searchStixCoreObjects.bind(this),
           }}
