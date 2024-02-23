@@ -246,6 +246,8 @@
   "Biographics": "Biographie",
   "Bookmarks are not supported in public dashboards": "Les signets ne sont pas pris en charge dans les tableaux de bord publics",
   "Browse the link": "Naviguer vers le lien",
+  "Bulk Content": "Contenu en vrac",
+  "Bulk Observable Creation": "Création observable en masse",
   "Bulk search": "Recherche de masse",
   "Bundle content": "Contenu du bundle",
   "Bundle details": "Détails du bundle",
@@ -1226,7 +1228,11 @@
   "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)": "Si ce champ contient plusieurs valeurs, vous pouvez spécifier le séparateur utilisé entre chaque valeur (par exemple | ou +)",
   "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)": "Si ce champ contient plusieurs valeurs, vous pouvez spécifier le séparateur utilisé entre chaque valeur (par exemple | ou +)",
   "If this option is selected, we will skip the first line of your CSV file": "Si cette option est sélectionnée, nous sauterons la première ligne de votre fichier CSV",
+<<<<<<< HEAD
   "If you are adding more than 50 values, please upload them through": "Si vous ajoutez plus de 50 valeurs, veuillez les télécharger via",
+=======
+  "If you are adding more than 50 entries, please consider using another data import capability for faster processing.": "Si vous ajoutez plus de 50 entrées, envisagez d'utiliser une autre fonctionnalité d'importation de données pour un traitement plus rapide.",
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "If you want to keep the associated information, we recommend deactivating the user instead.": "Si vous souhaitez conserver les informations associées, nous vous recommandons plutôt de désactiver l’utilisateur.",
   "Impact": "Impact",
   "Impacted": "Impactés",
@@ -1610,8 +1616,11 @@
   "Multiple": "Multiple",
   "Multiple (limited to 5)": "Multiple (limité à 5)",
   "Multiple entities selected": "Plusieurs entités sélectionnées",
+<<<<<<< HEAD
   "Multiple value entry is required or Cancel this form": "La saisie de plusieurs valeurs est requise ou annulez ce formulaire",
   "Multiple Values": "Valeurs multiples",
+=======
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Multiple values entered. Edit with the TT button": "Plusieurs valeurs saisies. Modifier avec le bouton TT",
   "Mutex": "Mutex",
   "My CSV file contains headers": "Mon fichier CSV contient des en-têtes",

@@ -67,14 +67,21 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
   acceptMimeTypes,
   sizeLimit = 0, // defaults to 0 = no limit
   formikErrors,
+<<<<<<< HEAD
   disabled = false,
+=======
+  disabled,
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
 }) => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [fileNameForDisplay, setFileNameForDisplay] = useState('');
   const [errorText, setErrorText] = useState('');
+<<<<<<< HEAD
   const [customFileUploaderFileName, setCustomFileUploaderFileName] = useState(t_i18n('No file selected.'));
 
+=======
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   useEffect(() => {
     if (formikErrors?.file) {
       setErrorText(formikErrors?.file);
@@ -158,14 +165,22 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
           variant="contained"
           onChange={onChange}
           className={classes.button}
+<<<<<<< HEAD
           disabled={returnDisabledStatus(disabled)}
+=======
+          disabled={disabled}
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
         >
           {t_i18n('Select your file')}
           <VisuallyHiddenInput id='customFileAttachedRef' type="file" accept={acceptMimeTypes} />
         </Button>
         <span
           id="CustomFileUploaderFileName"
+<<<<<<< HEAD
           title={fileNameForDisplay || customFileUploaderFileName}
+=======
+          title={fileNameForDisplay || t_i18n('No file selected.')}
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
           className={classes.span}
         >
           {fileNameForDisplay || customFileUploaderFileName}
