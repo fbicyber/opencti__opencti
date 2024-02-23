@@ -830,7 +830,11 @@
   "Enrich": "Enrich",
   "Enrichment": "Enrichment",
   "Enrichment connectors": "Enrichment connectors",
+<<<<<<< HEAD
   "Enter one observable per line. Observables must be the same type.": "Enter one observable per line. Observables must be the same type.",
+=======
+  "Enter one observable per line. Observables must be the same type.": "Enter one observable per line. Observables must be the same type..",
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Enterprise": "Enterprise",
   "entitie(s)": "entitie(s)",
   "Entities": "Entities",
