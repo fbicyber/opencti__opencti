@@ -257,6 +257,8 @@
   "Biographics": "传记",
   "Bookmarks are not supported in public dashboards": "公共仪表盘不支持书签",
   "Browse the link": "浏览链接",
+  "Bulk Content": "批量内容",
+  "Bulk Observable Creation": "批量可观察创建",
   "Bulk search": "批量搜索",
   "Bundle content": "捆绑包内容",
   "Bundle details": "捆绑包详情",
@@ -1253,7 +1255,11 @@
   "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)": "如果此字段包含多个值，您可以指定用于每个值之间的分隔符（例如：|或+）",
   "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)": "如果该字段包含多个值，您可以指定每个值之间的分隔符（例如 | 或 +）",
   "If this option is selected, we will skip the first line of your CSV file": "如果选择此选项，我们将跳过CSV文件的第一行",
+<<<<<<< HEAD
   "If you are adding more than 50 values, please upload them through": "如果您添加的值超过50个，请通过以下方式上传",
+=======
+  "If you are adding more than 50 entries, please consider using another data import capability for faster processing.": "如果您要添加超过 50 个条目，请考虑使用其他数据导入功能以加快处理速度。",
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "If you want to keep the associated information, we recommend deactivating the user instead.": "如果您想保留关联信息，我们建议您停用该用户。",
   "Impact": "影响",
   "Impacted": "影响",
@@ -1646,8 +1652,11 @@
   "Multiple": "多个",
   "Multiple (limited to 5)": "多次（限 5 次）",
   "Multiple entities selected": "已选择多个实体",
+<<<<<<< HEAD
   "Multiple value entry is required or Cancel this form": "需要多个值输入或取消此表单",
   "Multiple Values": "多个值",
+=======
+>>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Multiple values entered. Edit with the TT button": "输入多个值。使用 TT 按钮进行编辑",
   "Mutex": "互斥体",
   "My CSV file contains headers": "我的CSV文件包含标题",
