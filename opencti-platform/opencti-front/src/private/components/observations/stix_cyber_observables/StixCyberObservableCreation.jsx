@@ -12,8 +12,13 @@ import * as Yup from 'yup';
 import { graphql } from 'react-relay';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Tooltip from '@mui/material/Tooltip';
+import PropTypes from 'prop-types';
 import DialogActions from '@mui/material/DialogActions';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
@@ -224,13 +229,14 @@ const stixCyberObservableMutation = graphql`
   }
 `;
 let validObservables = 0;
+let errorObservables = 0;
 let totalObservables = 0;
 const error_array = [];
-const stixCyberObservableValidation = () => Yup.object().shape({
-  x_opencti_score: Yup.number().nullable(),
-  x_opencti_description: Yup.string().nullable(),
-  createIndicator: Yup.boolean(),
-});
+// const stixCyberObservableValidation = () => Yup.object().shape({
+//   x_opencti_score: Yup.number().nullable(),
+//   x_opencti_description: Yup.string().nullable(),
+//   createIndicator: Yup.boolean(),
+// });
 const StixCyberObservableCreation = ({
   contextual,
   open,
@@ -268,13 +274,6 @@ const StixCyberObservableCreation = ({
   let hashesList = [];
   const algorithm = selectedAttribute.toLowerCase();
 
-  const progressReset = () => {
-    setOpenProgressDialog(false);
-    setProgressBarMax(100);
-    validObservables = 0;
-    setProgressBar(0);
-  };
-
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
     commitMutation({
       mutation: stixCyberObservableMutation,
@@ -300,19 +299,29 @@ const StixCyberObservableCreation = ({
       },
     });
   };
-  const handleClickOpen = () => {
-    setOpenProgressDialog(true);
+
+  const progressReset = () => {
+    setOpenProgressDialog(false);
+    setProgressBarMax(100);
+    errorObservables = 0;
+    validObservables = 0;
+    setProgressBar(0);
   };
-  const handleClickClose = () => {
+  const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
       totalObservables = valueList.length;
+      // Launch Progress Bar, as data is about to be processed.
+      // Only need Progress Bar, if more than 1 element being processed
+      if (totalObservables > 1) {
+        setOpenProgressDialog(true);
+      }
       let closeFormWithAnySuccess = false;
+      errorObservables += error_array.length;
       if (error_array.length > 0) {
-        const errorObservables = error_array.length;
         let message_string = '';
         if (validObservables > 0) {
           message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
@@ -325,6 +334,10 @@ const StixCyberObservableCreation = ({
         // Long Error message with all errors
         // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
         // Toast Error Message to Screen - Will not close the form since errors exist for correction.
+        // - ##########################################################
+        // Reset the error array, for next time user submits content
+        error_array.splice(0, error_array.length);
+        // - ##########################################################
         handleErrorInForm(consolidated_errors, setErrors);
         const combinedObservables = validObservables + errorObservables;
         if (combinedObservables === totalObservables) {
@@ -348,48 +361,7 @@ const StixCyberObservableCreation = ({
       if (closeFormWithAnySuccess === true) {
         setGenericValueFieldDisabled(false);
         localHandleClose();
-      }
-    }
-    function handleHashPromiseResult() {
-      totalObservables = hashesList.length;
-      let closeFormWithAnySuccess = false;
-      if (error_array.length > 0) {
-        const errorObservables = error_array.length;
-        let message_string = '';
-        if (validObservables > 0) {
-          message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
-          closeFormWithAnySuccess = true;
-        }
-        message_string += ` ${errorObservables}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
-        const consolidated_errors = { res: { errors: error_array[0] } };
-        // Short Error message, just has total success and failure counts with translation support
-        consolidated_errors.res.errors[0].message = message_string;
-        // Long Error message with all errors
-        // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
-        // Toast Error Message to Screen - Will not close the form since errors exist for correction.
-        handleErrorInForm(consolidated_errors, setErrors);
-        const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables) {
-          progressReset();
-        }
-      } else {
-        let bulk_success_message = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
-        if (totalObservables === 1) {
-          // This is for consistent messaging when adding just (1) Observable
-          bulk_success_message = t_i18n('Observable successfully added');
-          progressReset();
-        }
-        // Toast Message on Bulk Add Success
-        MESSAGING$.notifySuccess(bulk_success_message);
-        closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables) {
-          progressReset();
-        }
-      }
-      // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true) {
-        setGenericValueFieldDisabled(false);
-        localHandleClose();
+        setOpenProgressDialog(false);
       }
     }
     function updateProgress(position, batchSize) {
@@ -397,234 +369,156 @@ const StixCyberObservableCreation = ({
         setProgressBar((prevProgress) => prevProgress + 1);
       }
     }
-    async function processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, hashNamBoolean) {
-      let promises;
-      if (hashNamBoolean === true) {
-        promises = chunkValueList.map((hash) => commitMutationWithPromise({
-          mutation: stixCyberObservableMutation,
-          variables: {
-            ...finalValues,
-            [observableType]: {
-              name: hash,
-            },
-          },
-          updater: (store) => insertNode(
-            store,
-            paginationKey,
-            paginationOptions,
-            'stixCyberObservableAdd',
-          ),
-          onCompleted: () => {
-            setSubmitting(false);
-            resetForm();
-            localHandleClose();
-            setSelectedAttribute('');
-          },
-          onError: () => {
-            setKeyFieldDisabled(false);
-            setSubmitting(false);
-          },
-        }));
-      } else {
-        promises = chunkValueList.map((hash) => commitMutationWithPromise({
-          mutation: stixCyberObservableMutation,
-          variables: {
-            ...finalValues,
-            [observableType]: {
-              hashes: [
-                {
-                  hash,
-                  algorithm,
-                }],
-            },
-          },
-          updater: (store) => insertNode(
-            store,
-            paginationKey,
-            paginationOptions,
-            'stixCyberObservableAdd',
-          ),
-          onCompleted: () => {
-            setSubmitting(false);
-            resetForm();
-            localHandleClose();
-            setSelectedAttribute('');
-          },
-          onError: () => {
-            setKeyFieldDisabled(false);
-            setSubmitting(false);
-          },
-        }));
-      }
-      await Promise.allSettled(promises).then((results) => {
-        results.forEach(({ status: promiseStatus, reason }) => {
-          if (promiseStatus === 'fulfilled') {
-            validObservables += 1;
-          } else {
-            error_array.push(reason);
-          }
-        });
-      });
-      console.log("position before updateProgress ", position);
-      updateProgress(position, batchSize);
-      handleHashPromiseResult();
-    }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
       const promises = chunkValueList.map((value) => commitMutationWithPromise({
-        mutation: stixCyberObservableMutation,
-        variables: {
-          ...finalValues,
-          [observableType]: {
-            ...adaptedValues,
-            obsContent: values.obsContent?.value,
-            value,
+          mutation: stixCyberObservableMutation,
+          variables: {
+              ...finalValues,
+              [observableType]: {
+                  ...adaptedValues,
+                  obsContent: values.obsContent?.value,
+                  value,
+              },
           },
-        },
-        updater: (store) => insertNode(
-          store,
-          paginationKey,
-          paginationOptions,
-          'stixCyberObservableAdd',
-        ),
-        onCompleted: () => {
-          setSubmitting(false);
-          resetForm();
-          localHandleClose();
-        },
-        onError: () => {
-          setSubmitting(false);
-        },
+          updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+          ),
+          onCompleted: () => {
+              setSubmitting(false);
+              resetForm();
+              localHandleClose();
+          },
+          onError: () => {
+              setSubmitting(false);
+          },
       }));
       await Promise.allSettled(promises).then((results) => {
-        results.forEach(({ status: promiseStatus, reason }) => {
-          if (promiseStatus === 'fulfilled') {
-            validObservables += 1;
-          } else {
-            error_array.push(reason);
-          }
-        });
+          results.forEach(({ status: promiseStatus, reason }) => {
+              if (promiseStatus === 'fulfilled') {
+                  validObservables += 1;
+              } else {
+                  error_array.push(reason);
+              }
+          });
       });
       updateProgress(position, batchSize);
       handlePromiseResult(valueList);
-    }
-    if (adaptedValues) { // Verify not null for DeepScan compliance
+  }
+  if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
       if (adaptedValues.value && adaptedValues.bulk_value_field && adaptedValues.value === bulkAddMsg) {
-        const array_of_bulk_values = adaptedValues.bulk_value_field.split(/\r?\n/);
-        // Trim them just to remove any extra spacing on front or rear of string
-        const trimmed_bulk_values = array_of_bulk_values.map((s) => s.trim());
-        // Remove any "" or empty resulting elements
-        const cleaned_bulk_values = trimmed_bulk_values.reduce((elements, i) => (i ? [...elements, i] : elements), []);
-        // De-duplicate by unique then rejoin
-        adaptedValues.value = [...new Set(cleaned_bulk_values)].join('\n');
+          const array_of_bulk_values = adaptedValues.bulk_value_field.split(/\r?\n/);
+          // Trim them just to remove any extra spacing on front or rear of string
+          const trimmed_bulk_values = array_of_bulk_values.map((s) => s.trim());
+          // Remove any "" or empty resulting elements
+          const cleaned_bulk_values = trimmed_bulk_values.reduce((elements, i) => (i ? [...elements, i] : elements), []);
+          // De-duplicate by unique then rejoin
+          adaptedValues.value = [...new Set(cleaned_bulk_values)].join('\n');
       }
-
+  
       if (adaptedValues.bulk_hashes_field && adaptedValues.name === bulkAddMsg) {
-        const array_of_bulk_hashes = adaptedValues.bulk_hashes_field.split(/\r?\n/);
-        // Trim them just to remove any extra spacing on front or rear of string
-        const trimmed_bulk_hashes = array_of_bulk_hashes.map((s) => s.trim());
-        // Remove any "" or empty resulting elements
-        const cleaned_bulk_hashes = trimmed_bulk_hashes.reduce((elements, i) => (i ? [...elements, i] : elements), []);
-        // De-duplicate by unique then rejoin
-        hashesList = [...new Set(cleaned_bulk_hashes)];
-
-        delete adaptedValues.hashes_MD5;
-        delete adaptedValues['hashes_SHA-1'];
-        delete adaptedValues['hashes_SHA-256'];
-        delete adaptedValues['hashes_SHA-512'];
-        delete adaptedValues.name;
-        delete adaptedValues.bulk_hashes_field;
+          const array_of_bulk_hashes = adaptedValues.bulk_hashes_field.split(/\r?\n/);
+          // Trim them just to remove any extra spacing on front or rear of string
+          const trimmed_bulk_hashes = array_of_bulk_hashes.map((s) => s.trim());
+          // Remove any "" or empty resulting elements
+          const cleaned_bulk_hashes = trimmed_bulk_hashes.reduce((elements, i) => (i ? [...elements, i] : elements), []);
+          // De-duplicate by unique then rejoin
+          hashesList = [...new Set(cleaned_bulk_hashes)];
+  
+          delete adaptedValues.hashes_MD5;
+          delete adaptedValues['hashes_SHA-1'];
+          delete adaptedValues['hashes_SHA-256'];
+          delete adaptedValues['hashes_SHA-512'];
+          delete adaptedValues.name;
+          delete adaptedValues.bulk_hashes_field;
       }
-
+  
       // Potential dicts
-      if (
-        adaptedValues.hashes_MD5
-        || adaptedValues['hashes_SHA-1']
-        || adaptedValues['hashes_SHA-256']
-        || adaptedValues['hashes_SHA-512']
-      ) {
-        adaptedValues.hashes = [];
-        if (adaptedValues.hashes_MD5.length > 0) {
-          adaptedValues.hashes.push({
-            algorithm: 'MD5',
-            hash: adaptedValues.hashes_MD5,
-          });
-        }
-        if (adaptedValues['hashes_SHA-1'].length > 0) {
-          adaptedValues.hashes.push({
-            algorithm: 'SHA-1',
-            hash: adaptedValues['hashes_SHA-1'],
-          });
-        }
-        if (adaptedValues['hashes_SHA-256'].length > 0) {
-          adaptedValues.hashes.push({
-            algorithm: 'SHA-256',
-            hash: adaptedValues['hashes_SHA-256'],
-          });
-        }
-        if (adaptedValues['hashes_SHA-512'].length > 0) {
-          adaptedValues.hashes.push({
-            algorithm: 'SHA-512',
-            hash: adaptedValues['hashes_SHA-512'],
-          });
-        }
+    if (
+      adaptedValues.hashes_MD5
+      || adaptedValues['hashes_SHA-1']
+      || adaptedValues['hashes_SHA-256']
+      || adaptedValues['hashes_SHA-512']
+    ) {
+      adaptedValues.hashes = [];
+      if (adaptedValues.hashes_MD5.length > 0) {
+        adaptedValues.hashes.push({
+          algorithm: 'MD5',
+          hash: adaptedValues.hashes_MD5,
+        });
       }
-      adaptedValues = pipe(
-        dissoc('x_opencti_description'),
-        dissoc('x_opencti_score'),
-        dissoc('createdBy'),
-        dissoc('objectMarking'),
-        dissoc('objectLabel'),
-        dissoc('externalReferences'),
-        dissoc('createIndicator'),
-        dissoc('hashes_MD5'),
-        dissoc('hashes_SHA-1'),
-        dissoc('hashes_SHA-256'),
-        dissoc('hashes_SHA-512'),
-        toPairs,
-        map((n) => (includes(n[0], dateAttributes)
-          ? [n[0], n[1] ? parse(n[1]).format() : null]
-          : n)),
-        map((n) => (includes(n[0], numberAttributes)
-          ? [n[0], n[1] ? parseInt(n[1], 10) : null]
-          : n)),
-        map((n) => (includes(n[0], multipleAttributes)
-          ? [n[0], n[1] ? n[1].split(',') : null]
-          : n)),
-        fromPairs,
-      )(adaptedValues);
-      const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
-      const hashesListTest = hashesList[0];
-      let hashesListName = '';
-      if (selectedAttribute === 'NAME') {
-        hashesListName = hashesListTest;
+      if (adaptedValues['hashes_SHA-1'].length > 0) {
+        adaptedValues.hashes.push({
+          algorithm: 'SHA-1',
+          hash: adaptedValues['hashes_SHA-1'],
+        });
       }
-      const finalValues = {
-        type: status.type,
-        x_opencti_description:
-          values.x_opencti_description.length > 0
-            ? values.x_opencti_description
-            : null,
-        x_opencti_score: parseInt(values.x_opencti_score, 10),
-        createdBy: propOr(null, 'value', values.createdBy),
-        objectMarking: pluck('value', values.objectMarking),
-        objectLabel: pluck('value', values.objectLabel),
-        externalReferences: pluck('value', values.externalReferences),
-        createIndicator: values.createIndicator,
-        [observableType]: {
-          ...adaptedValues,
-          obsContent: values.obsContent?.value,
-          name: hashesListName,
-          hashes: [
-            {
-              hash: hashesListTest,
-              algorithm,
-            }],
-        },
-      };
-      if (values.file) {
-        finalValues.file = values.file;
+      if (adaptedValues['hashes_SHA-256'].length > 0) {
+        adaptedValues.hashes.push({
+          algorithm: 'SHA-256',
+          hash: adaptedValues['hashes_SHA-256'],
+        });
       }
+      if (adaptedValues['hashes_SHA-512'].length > 0) {
+        adaptedValues.hashes.push({
+          algorithm: 'SHA-512',
+          hash: adaptedValues['hashes_SHA-512'],
+        });
+      }
+    }
+    adaptedValues = pipe(
+      dissoc('x_opencti_description'),
+      dissoc('x_opencti_score'),
+      dissoc('createdBy'),
+      dissoc('objectMarking'),
+      dissoc('objectLabel'),
+      dissoc('externalReferences'),
+      dissoc('createIndicator'),
+      dissoc('hashes_MD5'),
+      dissoc('hashes_SHA-1'),
+      dissoc('hashes_SHA-256'),
+      dissoc('hashes_SHA-512'),
+      toPairs,
+      map((n) => (includes(n[0], dateAttributes)
+        ? [n[0], n[1] ? parse(n[1]).format() : null]
+        : n)),
+      map((n) => (includes(n[0], numberAttributes)
+        ? [n[0], n[1] ? parseInt(n[1], 10) : null]
+        : n)),
+      map((n) => (includes(n[0], multipleAttributes)
+        ? [n[0], n[1] ? n[1].split(',') : null]
+        : n)),
+      fromPairs,
+    )(adaptedValues);
+    const finalValues = {
+      type: status.type,
+      x_opencti_description:
+        values.x_opencti_description.length > 0
+          ? values.x_opencti_description
+          : null,
+      x_opencti_score: parseInt(values.x_opencti_score, 10),
+      createdBy: propOr(null, 'value', values.createdBy),
+      objectMarking: pluck('value', values.objectMarking),
+      objectLabel: pluck('value', values.objectLabel),
+      externalReferences: pluck('value', values.externalReferences),
+      createIndicator: values.createIndicator,
+      [observableType]: {
+        ...adaptedValues,
+        obsContent: values.obsContent?.value,
+        name: hashesListName,
+        hashes: [
+          {
+            hash: hashesListTest,
+            algorithm,
+          }],
+      },
+    };
+    if (values.file) {
+      finalValues.file = values.file;
+    }
       const batchSize = 5;
       const commit = async () => {
         const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
@@ -684,6 +578,7 @@ const StixCyberObservableCreation = ({
       commit();
     }
   };
+};
 
   const onReset = () => {
     if (speeddial) {
@@ -961,6 +856,8 @@ const StixCyberObservableCreation = ({
                   && !n.value.startsWith('i_'),
               ),
             )(props.schemaAttributeNames.edges);
+
+            let extraFieldsToValidate = null;
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -975,14 +872,26 @@ const StixCyberObservableCreation = ({
                 initialValues['hashes_SHA-512'] = '';
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
+                // Dynamically include value field for Singular Observable type Object form validation
+                extraFieldsToValidate = { [attribute.value]: Yup.string().nullable().required() };
               } else {
                 initialValues[attribute.value] = '';
               }
             }
+            const stixCyberObservableValidationBaseFields = {
+              x_opencti_score: Yup.number().nullable(),
+              x_opencti_description: Yup.string().nullable(),
+              createIndicator: Yup.boolean(),
+            };
+            const stixCyberObservableValidationFinal = (extraRequiredFields = null) => Yup.object().shape({
+              ...stixCyberObservableValidationBaseFields,
+              ...extraRequiredFields,
+            });
+
             return (
               <Formik
                 initialValues={initialValues}
-                validationSchema={stixCyberObservableValidation()}
+                validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                 onSubmit={onSubmit}
                 onReset={onReset}
               >
@@ -991,6 +900,7 @@ const StixCyberObservableCreation = ({
                   handleReset,
                   isSubmitting,
                   setFieldValue,
+                  isValid,
                   values,
                 }) => (
                   <Form
@@ -1223,8 +1133,8 @@ const StixCyberObservableCreation = ({
                       <Button
                         variant={contextual ? 'text' : 'contained'}
                         color="secondary"
-                        onClick={() => { submitForm(); handleClickOpen(); }}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting && isValid}
+                        onClick={() => { submitForm(); }}
                         classes={{ root: classes.button }}
                       >
                         {t_i18n('Create')}
@@ -1293,7 +1203,7 @@ const StixCyberObservableCreation = ({
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClickClose}>
+              <Button onClick={handleClickCloseProgress}>
                 {t_i18n('Close')}
               </Button>
             </DialogActions>
