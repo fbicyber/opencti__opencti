@@ -5,21 +5,19 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
-import Select from '@mui/material/Select';
-import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
+import { Add, Close } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import makeStyles from '@mui/styles/makeStyles';
-import { ListItemButton, MenuItem } from '@mui/material';
+import { ListItemButton } from '@mui/material';
 import { commitMutation, handleErrorInForm, QueryRenderer, MESSAGING$, commitMutationWithPromise } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import SwitchField from '../../../../components/fields/SwitchField';
@@ -239,15 +237,8 @@ const StixCyberObservableCreation = ({
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
-  const hashes_MD5_field = document.getElementById('hashes_MD5');
-  const hashes_SHA1_field = document.getElementById('hashes_SHA-1');
-  const hashes_SHA256_field = document.getElementById('hashes_SHA-256');
-  const hashes_SHA512_field = document.getElementById('hashes_SHA-512');
-  const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
-  let hashesList = [];
-  const algorithm = selectedAttribute.toLowerCase();
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
-  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [hashesMD5Value, setHashesMD5Value] = React.useState('');
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
@@ -260,10 +251,6 @@ const StixCyberObservableCreation = ({
   let errorObservables = 0;
   let totalObservables = 0;
   const error_array = [];
-
-  console.log('algorithm is: ', algorithm);
-  console.log('hashesList');
-  console.table(hashesList);
 
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
     commitMutation({
@@ -303,32 +290,6 @@ const StixCyberObservableCreation = ({
     setHashesSHA256Value('');
     setHashesSHA512Value('');
     setKeyFieldDisabled('');
-  };
-
-  const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
-    commitMutation({
-      mutation: stixCyberObservableMutation,
-      variables: finalValues,
-      updater: (store) => insertNode(
-        store,
-        paginationKey,
-        paginationOptions,
-        'stixCyberObservableAdd',
-      ),
-      onError: (error) => {
-        handleErrorInForm(error, setErrors);
-        setSubmitting(false);
-      },
-      setSubmitting,
-      onCompleted: () => {
-        // Toast Message on Add Success
-        MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
-        setSubmitting(false);
-        resetForm();
-        setGenericValueFieldDisabled(false);
-        localHandleClose();
-      },
-    });
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -436,48 +397,6 @@ const StixCyberObservableCreation = ({
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
-      }
-    }
-    function handleHashPromiseResult() {
-      totalObservables = hashesList.length;
-      let closeFormWithAnySuccess = false;
-      if (error_array.length > 0) {
-        errorObservables = error_array.length;
-        let message_string = '';
-        if (validObservables > 0) {
-          message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
-          closeFormWithAnySuccess = true;
-        }
-        message_string += ` ${errorObservables}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
-        const consolidated_errors = { res: { errors: error_array[0] } };
-        // Short Error message, just has total success and failure counts with translation support
-        consolidated_errors.res.errors[0].message = message_string;
-        // Long Error message with all errors
-        // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
-        // Toast Error Message to Screen - Will not close the form since errors exist for correction.
-        handleErrorInForm(consolidated_errors, setErrors);
-        const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables) {
-          progressReset();
-        }
-      } else {
-        let bulk_success_message = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
-        if (totalObservables === 1) {
-          // This is for consistent messaging when adding just (1) Observable
-          bulk_success_message = t_i18n('Observable successfully added');
-          progressReset();
-        }
-        // Toast Message on Bulk Add Success
-        MESSAGING$.notifySuccess(bulk_success_message);
-        closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables) {
-          progressReset();
-        }
-      }
-      // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true) {
-        setGenericValueFieldDisabled(false);
-        localHandleClose();
       }
     }
     function updateProgress(position, batchSize) {
@@ -922,9 +841,12 @@ const StixCyberObservableCreation = ({
     const handleCloseBulkModal = (val) => {
       setOpenBulkModal(false);
       if (val != null && val.length > 0) {
-        setBulkValueFieldValue(val);
-        // Clear Attached File marker used by CustomFileUploader interaction to indicate a file need processing
+        // START - Clear Attached File from CustomFileUploader
+        const spanData = document.getElementById('CustomFileUploaderFileName');
+        spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
+        // END - Clear Attached File from CustomFileUploader
+        setBulkValueFieldValue(val);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
@@ -1000,7 +922,6 @@ const StixCyberObservableCreation = ({
             )(props.schemaAttributeNames.edges);
 
             let extraFieldsToValidate = null;
-            let requiredOneOfFields = [];
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -1013,83 +934,10 @@ const StixCyberObservableCreation = ({
                 initialValues['hashes_SHA-1'] = '';
                 initialValues['hashes_SHA-256'] = '';
                 initialValues['hashes_SHA-512'] = '';
-                // Dynamically include validation options for File Hash Options.
-                const md5Regex = /^[a-f0-9]{32}$/i;
-                const sha1Regex = /^[a-f0-9]{40}$/i;
-                const sha256Regex = /^[a-f0-9]{64}$/i;
-                const sha512Regex = /^[a-f0-9]{128}$/i;
-                extraFieldsToValidate = {
-                  hashes_MD5: Yup
-                    .string()
-                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().matches(md5Regex, t_i18n('MD5 values can only include A-F and 0-9, 32 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
-                    }),
-                  'hashes_SHA-1': Yup
-                    .string()
-                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().matches(sha1Regex, t_i18n('SHA-1 values can only include A-F and 0-9, 40 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
-                    }),
-                  'hashes_SHA-256': Yup
-                    .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().matches(sha256Regex, t_i18n('SHA-256 values can only include A-F and 0-9, 64 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
-                    }),
-                  'hashes_SHA-512': Yup
-                    .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().matches(sha512Regex, t_i18n('SHA-512 values can only include A-F and 0-9, 128 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
-                    }),
-                  name: Yup
-                    .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
-                    }),
-                };
-
-                requiredOneOfFields = [
-                  ['hashes_MD5', 'hashes_SHA-1'],
-                  ['hashes_MD5', 'hashes_SHA-256'],
-                  ['hashes_MD5', 'hashes_SHA-512'],
-                  ['hashes_MD5', 'name'],
-                  // ['hashes_SHA-1', 'hashes_MD5'],
-                  ['hashes_SHA-1', 'hashes_SHA-256'],
-                  ['hashes_SHA-1', 'hashes_SHA-512'],
-                  ['hashes_SHA-1', 'name'],
-                  // ['hashes_SHA-256', 'hashes_MD5'],
-                  // ['hashes_SHA-256', 'hashes_SHA-1'],
-                  ['hashes_SHA-256', 'hashes_SHA-512'],
-                  ['hashes_SHA-256', 'name'],
-                  // ['hashes_SHA-512', 'hashes_MD5'],
-                  // ['hashes_SHA-512', 'hashes_SHA-1'],
-                  // ['hashes_SHA-512', 'hashes_SHA-256']
-                  ['hashes_SHA-512', 'name'],
-                ];
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
                 // Dynamically include value field for Singular Observable type Object form validation
-                const exceededMessage = t_i18n('You have exceeded the max number of values.');
-                extraFieldsToValidate = {
-                  [attribute.value]: Yup
-                    .string()
-                    .when(['bulk_value_field'], {
-                      is: (a) => !a,
-                      then: () => Yup.string().required(t_i18n('A value is required')),
-                    }),
-                  bulk_value_field: Yup
-                    .string()
-                    .when([attribute.value], {
-                      is: (a) => !a,
-                      then: () => Yup.string().required(t_i18n('Multiple value entry is required or Cancel this form')).test('len', exceededMessage, (val) => val.split('\n').length < 51),
-                    }),
-                };
-                requiredOneOfFields = [
-                  [attribute.value, 'bulk_value_field'],
-                ];
+                extraFieldsToValidate = { [attribute.value]: Yup.string().nullable().required() };
               } else {
                 initialValues[attribute.value] = '';
               }
@@ -1102,7 +950,7 @@ const StixCyberObservableCreation = ({
             const stixCyberObservableValidationFinal = (extraRequiredFields = null) => Yup.object().shape({
               ...stixCyberObservableValidationBaseFields,
               ...extraRequiredFields,
-            }, requiredOneOfFields);
+            });
 
             return (
               <Formik
@@ -1286,9 +1134,7 @@ const StixCyberObservableCreation = ({
 
                               <Field
                                 id="generic_value_field"
-                                label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
-                                aria-labelledby="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
-                                aria-label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                label="value" // For unit test to locate and preserves initial name before bulk capability supported
                                 disabled={genericValueFieldDisabled}
                                 component={TextField}
                                 variant="standard"
