@@ -15,6 +15,7 @@ export const MESSAGING$ = {
   messages: MESSENGER$,
   notifyError: (text) => MESSENGER$.next([{ type: 'error', text }]),
   notifySuccess: (text) => MESSENGER$.next([{ type: 'message', text }]),
+  notifyWarning: (text) => MESSENGER$.next([{ type: 'information', text }]),
   toggleNav: new Subject(),
   redirect: new Subject(),
 };
@@ -132,6 +133,37 @@ export const extractSimpleError = (error) => {
   }
   return 'Unknown error';
 };
+
+/**
+ * Perform a mutation and return any errors
+ */
+export const commitMutationWithPromise = ({
+  mutation,
+  variables,
+  updater,
+  optimisticUpdater,
+  optimisticResponse,
+  onCompleted,
+  onError,
+}) => new Promise((resolve, reject) => {
+  CM(environment, {
+    mutation,
+    variables,
+    updater,
+    optimisticUpdater,
+    optimisticResponse,
+    onCompleted: () => {
+      onCompleted();
+      resolve();
+    },
+    onError: (error) => {
+      onError();
+      if (error && error.res && error.res.errors) {
+        reject(buildErrorMessages(error));
+      }
+    },
+  });
+});
 
 // Relay functions
 export const commitMutation = ({
