@@ -22,6 +22,7 @@ interface CustomFileUploadProps {
   }
   acceptMimeTypes?: string; // html input "accept" with MIME types only
   sizeLimit?: number; // in bytes
+  disabled?: boolean;
 }
 
 // Deprecated - https://mui.com/system/styles/basics/
@@ -66,6 +67,7 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
   acceptMimeTypes,
   sizeLimit = 0, // defaults to 0 = no limit
   formikErrors,
+  disabled,
 }) => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
@@ -137,11 +139,13 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
           variant="contained"
           onChange={onChange}
           className={classes.button}
+          disabled={disabled}
         >
           {t_i18n('Select your file')}
           <VisuallyHiddenInput type="file" accept={acceptMimeTypes} />
         </Button>
         <span
+          id="CustomFileUploaderFileName"
           title={fileNameForDisplay || t_i18n('No file selected.')}
           className={classes.span}
         >
