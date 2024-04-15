@@ -9,6 +9,7 @@ import EntityStixCoreRelationships from '../../common/stix_core_relationships/En
 import StixCoreRelationship from '../../common/stix_core_relationships/StixCoreRelationship';
 import StixDomainObjectAttackPatterns from '../../common/stix_domain_objects/StixDomainObjectAttackPatterns';
 import StixDomainObjectThreatKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatKnowledge';
+import StixDomainObjectThreatOnePageKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatOnePageKnowledge';
 import StixDomainObjectVictimology from '../../common/stix_domain_objects/StixDomainObjectVictimology';
 import EntityStixSightingRelationships from '../../events/stix_sighting_relationships/EntityStixSightingRelationships';
 import StixSightingRelationship from '../../events/stix_sighting_relationships/StixSightingRelationship';
@@ -28,8 +29,10 @@ const threatActorIndividualKnowledgeFragment = graphql`
 
 const ThreatActorIndividualKnowledgeComponent = ({
   threatActorIndividualData,
+  viewAs,
 }: {
   threatActorIndividualData: ThreatActorIndividualKnowledge_ThreatActorIndividual$key;
+  viewAs: string;
 }) => {
   const threatActorIndividual = useFragment<ThreatActorIndividualKnowledge_ThreatActorIndividual$key>(
     threatActorIndividualKnowledgeFragment,
@@ -59,11 +62,14 @@ const ThreatActorIndividualKnowledgeComponent = ({
         />
         <Route
           path="/overview"
-          element={
+          element={(viewAs === 'default' ? (
             <StixDomainObjectThreatKnowledge
               stixDomainObjectId={threatActorIndividual.id}
               stixDomainObjectType="Threat-Actor-Individual"
             />
+          ) : (
+            <StixDomainObjectThreatOnePageKnowledge />
+          ))
           }
         />
         <Route
