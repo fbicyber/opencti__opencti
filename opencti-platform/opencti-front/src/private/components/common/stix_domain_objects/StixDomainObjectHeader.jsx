@@ -361,20 +361,36 @@ const StixDomainObjectHeader = (props) => {
             classes={{ root: classes.viewAsField }}
             variant="outlined"
           >
-            <Select
-              size="small"
-              name="view-as"
-              value={viewAs}
-              onChange={onViewAs}
-              inputProps={{
-                name: 'view-as',
-                id: 'view-as',
-              }}
-              variant="outlined"
-            >
-              <MenuItem value="knowledge">{t_i18n('Knowledge entity')}</MenuItem>
-              <MenuItem value="author">{t_i18n('Author')}</MenuItem>
-            </Select>
+            {entityType === 'Individual' ? (
+              <Select
+                size="small"
+                name="view-as"
+                value={viewAs}
+                onChange={onViewAs}
+                inputProps={{
+                  name: 'view-as',
+                  id: 'view-as',
+                }}
+                variant="outlined"
+              >
+                <MenuItem value="knowledge">{t_i18n('Knowledge entity')}</MenuItem>
+                <MenuItem value="author">{t_i18n('Author')}</MenuItem>
+              </Select>
+            )
+              : (<Select
+                  size="small"
+                  name="view-as"
+                  value={viewAs}
+                  onChange={(e) => { onViewAs(e.target.value); }}
+                  inputProps={{
+                    name: 'view-as',
+                    id: 'view-as',
+                  }}
+                  variant="outlined"
+                 >
+                <MenuItem value="default">{t_i18n('Default')}</MenuItem>
+                <MenuItem value="onepage">{'OnePager' /* Not  translated */}</MenuItem>
+              </Select>)}
           </FormControl>
         </>
       )}
@@ -388,30 +404,30 @@ const StixDomainObjectHeader = (props) => {
         >
           {R.take(5, aliases).map(
             (label) => label.length > 0 && (
-            <Security
-              needs={[KNOWLEDGE_KNUPDATE]}
-              key={label}
-              placeholder={
+              <Security
+                needs={[KNOWLEDGE_KNUPDATE]}
+                key={label}
+                placeholder={
+                  <Tooltip title={label}>
+                    <Chip
+                      classes={{ root: classes.alias }}
+                      label={truncate(label, 40)}
+                    />
+                  </Tooltip>
+                }
+              >
                 <Tooltip title={label}>
                   <Chip
                     classes={{ root: classes.alias }}
                     label={truncate(label, 40)}
+                    onDelete={
+                      enableReferences
+                        ? () => handleOpenCommitDelete(label)
+                        : () => deleteAlias(label)
+                    }
                   />
                 </Tooltip>
-              }
-            >
-              <Tooltip title={label}>
-                <Chip
-                  classes={{ root: classes.alias }}
-                  label={truncate(label, 40)}
-                  onDelete={
-                        enableReferences
-                          ? () => handleOpenCommitDelete(label)
-                          : () => deleteAlias(label)
-                      }
-                />
-              </Tooltip>
-            </Security>
+              </Security>
             ),
           )}
         </div>
@@ -523,28 +539,28 @@ const StixDomainObjectHeader = (props) => {
             />
           )}
           {enableAskAi && (
-          <StixCoreObjectAskAI
-            instanceId={stixDomainObject.id}
-            instanceType={stixDomainObject.entity_type}
-            instanceName={getMainRepresentative(stixDomainObject)}
-            type={type}
-          />
+            <StixCoreObjectAskAI
+              instanceId={stixDomainObject.id}
+              instanceType={stixDomainObject.entity_type}
+              instanceName={getMainRepresentative(stixDomainObject)}
+              type={type}
+            />
           )}
           {(isKnowledgeUpdater || isKnowledgeEnricher) && (
-          <div className={classes.popover}>
-            {/* TODO remove this when all components are pure function without compose() */}
-            {!React.isValidElement(PopoverComponent) ? (
-              <PopoverComponent
-                disabled={disablePopover}
-                id={stixDomainObject.id}
-              />
-            ) : (
-              React.cloneElement(PopoverComponent, {
-                id: stixDomainObject.id,
-                disabled: disablePopover,
-              })
-            )}
-          </div>
+            <div className={classes.popover}>
+              {/* TODO remove this when all components are pure function without compose() */}
+              {!React.isValidElement(PopoverComponent) ? (
+                <PopoverComponent
+                  disabled={disablePopover}
+                  id={stixDomainObject.id}
+                />
+              ) : (
+                React.cloneElement(PopoverComponent, {
+                  id: stixDomainObject.id,
+                  disabled: disablePopover,
+                })
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -609,23 +625,23 @@ const StixDomainObjectHeader = (props) => {
                 stixDomainObject,
               ).map(
                 (label) => label.length > 0 && (
-                <ListItem key={label} disableGutters={true} dense={true}>
-                  <ListItemText primary={label} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={
-                            enableReferences
-                              ? () => handleOpenCommitDelete(label)
-                              : () => deleteAlias(label)
-                          }
-                      size="large"
-                    >
-                      <Delete />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                  <ListItem key={label} disableGutters={true} dense={true}>
+                    <ListItemText primary={label} />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={
+                          enableReferences
+                            ? () => handleOpenCommitDelete(label)
+                            : () => deleteAlias(label)
+                        }
+                        size="large"
+                      >
+                        <Delete />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 ),
               )}
             </List>
