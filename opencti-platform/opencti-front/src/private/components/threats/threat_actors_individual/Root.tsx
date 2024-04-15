@@ -2,7 +2,7 @@
 // TODO Remove this when V6
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, Route, Routes, useParams, useLocation, Navigate } from 'react-router-dom';
 import { graphql, usePreloadedQuery, useSubscription } from 'react-relay';
 import { GraphQLSubscriptionConfig } from 'relay-runtime';
@@ -93,6 +93,9 @@ const RootThreatActorIndividualComponent = ({
     queryRef,
   );
   const link = `/dashboard/threats/threat_actors_individual/${threatActorIndividualId}/knowledge`;
+
+  const [viewAs, setViewAs] = useState('default');
+
   return (
     <>
       <Routes>
@@ -146,6 +149,8 @@ const RootThreatActorIndividualComponent = ({
               stixDomainObject={data}
               PopoverComponent={ThreatActorIndividualPopover}
               enableQuickSubscription={true}
+              onViewAs={setViewAs}
+              viewAs={viewAs}
             />
             <Box
               sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: 4 }}
@@ -207,7 +212,7 @@ const RootThreatActorIndividualComponent = ({
               <Route
                 path="/knowledge/*"
                 element={
-                  <ThreatActorIndividualKnowledge threatActorIndividualData={data} />
+                  <ThreatActorIndividualKnowledge threatActorIndividualData={data} viewAs={viewAs} />
                 }
               />
               <Route
