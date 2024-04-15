@@ -2,8 +2,8 @@
 // TODO Remove this when V6
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { useMemo, useState, useState } from 'react';
-import { Link, Route, Routes, useParams, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Link, Route, Routes, useParams, useLocation, Navigate } from 'react-router-dom';
 import { graphql, usePreloadedQuery, useSubscription } from 'react-relay';
 import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Box from '@mui/material/Box';
