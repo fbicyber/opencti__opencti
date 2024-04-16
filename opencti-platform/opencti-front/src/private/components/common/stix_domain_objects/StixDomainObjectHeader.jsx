@@ -381,7 +381,7 @@ const StixDomainObjectHeader = (props) => {
                   size="small"
                   name="view-as"
                   value={viewAs}
-                  onChange={(e) => { onViewAs(e.target.value); }}
+                  onChange={onViewAs}
                   inputProps={{
                     name: 'view-as',
                     id: 'view-as',
@@ -389,7 +389,8 @@ const StixDomainObjectHeader = (props) => {
                   variant="outlined"
                  >
                 <MenuItem value="default">{t_i18n('Default')}</MenuItem>
-                <MenuItem value="onepage">{'OnePager' /* Not  translated */}</MenuItem>
+                <MenuItem value="widgetview">{'Widget View' /* Not  translated */}</MenuItem>
+                <MenuItem value="tableview">{'Table View' /* Not  translated */}</MenuItem>
               </Select>)}
           </FormControl>
         </>
