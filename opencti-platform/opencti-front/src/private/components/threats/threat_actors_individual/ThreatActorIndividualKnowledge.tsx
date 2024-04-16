@@ -9,7 +9,8 @@ import EntityStixCoreRelationships from '../../common/stix_core_relationships/En
 import StixCoreRelationship from '../../common/stix_core_relationships/StixCoreRelationship';
 import StixDomainObjectAttackPatterns from '../../common/stix_domain_objects/StixDomainObjectAttackPatterns';
 import StixDomainObjectThreatKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatKnowledge';
-import StixDomainObjectThreatOnePageKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatOnePageKnowledge';
+import StixDomainObjectThreatWidgetKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatWidgetKnowledge';
+import StixDomainObjectThreatTableKnowledge from '../../common/stix_domain_objects/StixDomainObjectThreatTableKnowledge';
 import StixDomainObjectVictimology from '../../common/stix_domain_objects/StixDomainObjectVictimology';
 import EntityStixSightingRelationships from '../../events/stix_sighting_relationships/EntityStixSightingRelationships';
 import StixSightingRelationship from '../../events/stix_sighting_relationships/StixSightingRelationship';
@@ -67,9 +68,14 @@ const ThreatActorIndividualKnowledgeComponent = ({
               stixDomainObjectId={threatActorIndividual.id}
               stixDomainObjectType="Threat-Actor-Individual"
             />
+          ) : viewAs === 'widgetview' ? (
+            <StixDomainObjectThreatWidgetKnowledge 
+              stixDomainObjectId={threatActorIndividual.id}
+              stixDomainObjectType="Threat-Actor-Individual"/>
           ) : (
-            <StixDomainObjectThreatOnePageKnowledge />
-          ))
+            <StixDomainObjectThreatTableKnowledge />
+          )
+          )
           }
         />
         <Route
