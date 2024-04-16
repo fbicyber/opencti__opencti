@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import React, { useMemo, useState } from 'react';
-import { Link, Route, Routes, useParams, useLocation, Navigate } from 'react-router-dom';
+import { Link, Route, Routes, useParams, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { graphql, usePreloadedQuery, useSubscription } from 'react-relay';
 import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Box from '@mui/material/Box';
@@ -24,6 +24,9 @@ import ThreatActorIndividualKnowledge from './ThreatActorIndividualKnowledge';
 import StixCoreObjectKnowledgeBar from '../../common/stix_core_objects/StixCoreObjectKnowledgeBar';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import { buildViewParamsFromUrlAndStorage, saveViewParameters } from '../../../../utils/ListParameters';
+import { propOr } from 'ramda';
+
 
 const subscription = graphql`
   subscription RootThreatActorIndividualSubscription($id: ID!) {
@@ -82,7 +85,19 @@ const RootThreatActorIndividualComponent = ({
     [threatActorIndividualId],
   );
   useSubscription(subConfig);
+
   const location = useLocation();
+  const navigate = useNavigate();
+  const LOCAL_STORAGE_KEY = `threat-actors-individual-${threatActorIndividualId}`;
+  const params = buildViewParamsFromUrlAndStorage(
+    navigate,
+    location,
+    LOCAL_STORAGE_KEY,
+  );
+  const [viewAs, setViewAs] = useState(propOr('default', 'viewAs', params));
+
+
+
   const { t_i18n } = useFormatter();
   const {
     threatActorIndividual: data,
@@ -94,7 +109,19 @@ const RootThreatActorIndividualComponent = ({
   );
   const link = `/dashboard/threats/threat_actors_individual/${threatActorIndividualId}/knowledge`;
 
-  const [viewAs, setViewAs] = useState('default');
+
+  
+
+  const handleChangeViewAs = (event) => {
+    setViewAs(event.target.value);
+    saveViewParameters(
+      navigate,
+      location,
+      LOCAL_STORAGE_KEY,
+      {'viewAs': event.target.value},
+      true,
+    );
+  }
 
   return (
     <>
@@ -149,7 +176,7 @@ const RootThreatActorIndividualComponent = ({
               stixDomainObject={data}
               PopoverComponent={ThreatActorIndividualPopover}
               enableQuickSubscription={true}
-              onViewAs={setViewAs}
+              onViewAs={handleChangeViewAs}
               viewAs={viewAs}
             />
             <Box
