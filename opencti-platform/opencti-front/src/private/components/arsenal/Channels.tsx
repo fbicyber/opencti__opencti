@@ -1,4 +1,5 @@
 import React from 'react';
+import useHelper from 'src/utils/hooks/useHelper';
 import ListLines from '../../../components/list_lines/ListLines';
 import ChannelsLines, { channelsLinesQuery } from './channels/ChannelsLines';
 import ChannelCreation from './channels/ChannelCreation';
@@ -16,6 +17,8 @@ const LOCAL_STORAGE_KEY = 'channels';
 
 const Channels = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<ChannelsLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -96,6 +99,9 @@ const Channels = () => {
         filters={filters}
         paginationOptions={queryPaginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ChannelCreation paginationOptions={queryPaginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -129,9 +135,11 @@ const Channels = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Arsenal') }, { label: t_i18n('Channels'), current: true }]} />
       {renderLines()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <ChannelCreation paginationOptions={queryPaginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ChannelCreation paginationOptions={queryPaginationOptions} />
+        </Security>
+      }
     </>
   );
 };
