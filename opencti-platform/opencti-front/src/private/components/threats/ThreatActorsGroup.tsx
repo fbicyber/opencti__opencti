@@ -5,6 +5,7 @@ import {
   ThreatActorsGroupCardsPaginationQuery,
   ThreatActorsGroupCardsPaginationQuery$variables,
 } from '@components/threats/threat_actors_group/__generated__/ThreatActorsGroupCardsPaginationQuery.graphql';
+import useHelper from 'src/utils/hooks/useHelper';
 import ListCards from '../../../components/list_cards/ListCards';
 import ThreatActorsGroupCards, { threatActorsGroupCardsQuery } from './threat_actors_group/ThreatActorsGroupCards';
 import ThreatActorGroupCreation from './threat_actors_group/ThreatActorGroupCreation';
@@ -20,6 +21,7 @@ const LOCAL_STORAGE_KEY = 'threatActorsGroups';
 
 const ThreatActorsGroup = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<ThreatActorsGroupCardsPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -39,6 +41,7 @@ const ThreatActorsGroup = () => {
     threatActorsGroupCardsQuery,
     paginationOptions,
   );
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const renderCards = () => {
     const {
       numberOfElements,
@@ -78,6 +81,9 @@ const ThreatActorsGroup = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ThreatActorGroupCreation paginationOptions={paginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -112,9 +118,11 @@ const ThreatActorsGroup = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Threats') }, { label: t_i18n('Threat actors (group)'), current: true }]} />
       {renderCards()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <ThreatActorGroupCreation paginationOptions={paginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ThreatActorGroupCreation paginationOptions={paginationOptions} />
+        </Security>
+      }
     </>
   );
 };
