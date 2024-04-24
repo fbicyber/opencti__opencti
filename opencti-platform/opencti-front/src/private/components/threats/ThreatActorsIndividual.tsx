@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
+import useHelper from 'src/utils/hooks/useHelper';
 import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
 import ListCards from '../../../components/list_cards/ListCards';
 import useQueryLoading from '../../../utils/hooks/useQueryLoading';
@@ -20,6 +21,7 @@ const LOCAL_STORAGE_KEY_THREAT_ACTORS_INDIVIDUAL = 'threatActorsIndividuals';
 
 const ThreatActorsIndividual = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<ThreatActorsIndividualCardsPaginationQuery$variables>(
     LOCAL_STORAGE_KEY_THREAT_ACTORS_INDIVIDUAL,
     {
@@ -39,6 +41,7 @@ const ThreatActorsIndividual = () => {
     threatActorsIndividualCardsPaginationQuery,
     paginationOptions,
   );
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const renderCards = () => {
     const {
       numberOfElements,
@@ -78,6 +81,9 @@ const ThreatActorsIndividual = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ThreatActorIndividualCreation paginationOptions={paginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -111,9 +117,11 @@ const ThreatActorsIndividual = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Threats') }, { label: t_i18n('Threat actors (individual)'), current: true }]} />
       {renderCards()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <ThreatActorIndividualCreation paginationOptions={paginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ThreatActorIndividualCreation paginationOptions={paginationOptions} />
+        </Security>
+      }
     </>
   );
 };

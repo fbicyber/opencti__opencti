@@ -13,8 +13,10 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CountryField from '@components/common/form/CountryField';
+import useHelper from 'src/utils/hooks/useHelper';
+import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
-import { handleErrorInForm } from '../../../../relay/environment';
+import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
 import CreatedByField from '../../common/form/CreatedByField';
@@ -254,6 +256,7 @@ ThreatActorIndividualFormProps
       },
       onError: (error: Error) => {
         handleErrorInForm(error, setErrors);
+        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -262,6 +265,7 @@ ThreatActorIndividualFormProps
         if (onCompleted) {
           onCompleted();
         }
+        MESSAGING$.notifySuccess(`${t_i18n('entity_Threat-Actor-Individual')} ${t_i18n('successfully created')}`);
       },
     });
   };
@@ -604,6 +608,8 @@ const ThreatActorIndividualCreation = ({
   paginationOptions: ThreatActorsIndividualCardsPaginationQuery$variables;
 }) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const updater = (store: RecordSourceSelectorProxy) => insertNode(
     store,
     'Pagination_threatActorsIndividuals',
@@ -613,7 +619,8 @@ const ThreatActorIndividualCreation = ({
   return (
     <Drawer
       title={t_i18n('Create a threat actor individual')}
-      variant={DrawerVariant.create}
+      variant={FABReplaced ? undefined : DrawerVariant.create}
+      controlledDial={FABReplaced ? CreateEntityControlledDial('entity_Threat-Actor-Individual') : undefined}
     >
       {({ onClose }) => (
         <ThreatActorIndividualCreationForm
