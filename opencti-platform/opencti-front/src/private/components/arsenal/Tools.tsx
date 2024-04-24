@@ -1,4 +1,5 @@
 import React from 'react';
+import useHelper from 'src/utils/hooks/useHelper';
 import ListLines from '../../../components/list_lines/ListLines';
 import ToolsLines, { toolsLinesQuery } from './tools/ToolsLines';
 import ToolCreation from './tools/ToolCreation';
@@ -16,6 +17,8 @@ const LOCAL_STORAGE_KEY = 'tools';
 
 const Tools = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<ToolsLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -89,6 +92,9 @@ const Tools = () => {
         filters={filters}
         paginationOptions={queryPaginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ToolCreation paginationOptions={queryPaginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -121,9 +127,11 @@ const Tools = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Arsenal') }, { label: t_i18n('Tools'), current: true }]} />
       {renderLines()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <ToolCreation paginationOptions={queryPaginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <ToolCreation paginationOptions={queryPaginationOptions} />
+        </Security>
+      }
     </>
   );
 };
