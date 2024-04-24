@@ -1,4 +1,5 @@
 import React from 'react';
+import useHelper from 'src/utils/hooks/useHelper';
 import ListLines from '../../../components/list_lines/ListLines';
 import VulnerabilitiesLines, { vulnerabilitiesLinesQuery } from './vulnerabilities/VulnerabilitiesLines';
 import VulnerabilityCreation from './vulnerabilities/VulnerabilityCreation';
@@ -17,6 +18,7 @@ const LOCAL_STORAGE_KEY = 'vulnerabilities';
 
 const Vulnerabilities = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
@@ -31,6 +33,7 @@ const Vulnerabilities = () => {
       filters: emptyFilterGroup,
     },
   );
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const {
     sortBy,
@@ -104,6 +107,9 @@ const Vulnerabilities = () => {
         filters={filters}
         paginationOptions={queryPaginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <VulnerabilityCreation paginationOptions={queryPaginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -137,9 +143,11 @@ const Vulnerabilities = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Arsenal') }, { label: t_i18n('Vulnerabilities'), current: true }]} />
       {renderLines()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <VulnerabilityCreation paginationOptions={queryPaginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <VulnerabilityCreation paginationOptions={queryPaginationOptions} />
+        </Security>
+      }
     </>
   );
 };

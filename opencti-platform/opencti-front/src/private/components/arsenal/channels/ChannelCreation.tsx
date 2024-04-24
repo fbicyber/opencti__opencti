@@ -10,7 +10,7 @@ import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
 import useHelper from 'src/utils/hooks/useHelper';
 import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
-import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
+import { handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
@@ -101,7 +101,11 @@ export const ChannelCreationForm: FunctionComponent<ChannelFormProps> = ({
     CHANNEL_TYPE,
     basicShape,
   );
-  const [commit] = useApiMutation<ChannelCreationMutation>(channelMutation);
+  const [commit] = useApiMutation<ChannelCreationMutation>(
+    channelMutation,
+    undefined,
+    { successMessage: `${t_i18n('entity_Channel')} ${t_i18n('successfully created')}` },
+  );
   const onSubmit: FormikConfig<ChannelAddInput>['onSubmit'] = (
     values,
     { setSubmitting, setErrors, resetForm },
@@ -128,7 +132,6 @@ export const ChannelCreationForm: FunctionComponent<ChannelFormProps> = ({
       },
       onError: (error) => {
         handleErrorInForm(error, setErrors);
-        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -137,7 +140,6 @@ export const ChannelCreationForm: FunctionComponent<ChannelFormProps> = ({
         if (onCompleted) {
           onCompleted();
         }
-        MESSAGING$.notifySuccess(`${t_i18n('entity_Channel')} ${t_i18n('successfully created')}`);
       },
     });
   };
