@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import { GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
+import useHelper from 'src/utils/hooks/useHelper';
 import { IntrusionSetsCardsPaginationQuery, IntrusionSetsCardsPaginationQuery$variables } from './intrusion_sets/__generated__/IntrusionSetsCardsPaginationQuery.graphql';
 import ListCards from '../../../components/list_cards/ListCards';
 import IntrusionSetsCards, { intrusionSetsCardsQuery } from './intrusion_sets/IntrusionSetsCards';
@@ -17,6 +18,7 @@ const LOCAL_STORAGE_KEY = 'intrusionSets';
 
 const IntrusionSets = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<IntrusionSetsCardsPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -35,6 +37,7 @@ const IntrusionSets = () => {
     openExports,
     numberOfElements,
   } = viewStorage;
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const queryRef = useQueryLoading<IntrusionSetsCardsPaginationQuery>(
     intrusionSetsCardsQuery,
@@ -72,6 +75,9 @@ const IntrusionSets = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <IntrusionSetCreation paginationOptions={paginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -106,9 +112,11 @@ const IntrusionSets = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Threats') }, { label: t_i18n('Intrusion sets'), current: true }]} />
       {renderCards()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <IntrusionSetCreation paginationOptions={paginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <IntrusionSetCreation paginationOptions={paginationOptions} />
+        </Security>
+      }
     </>
   );
 };

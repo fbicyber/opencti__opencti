@@ -7,8 +7,10 @@ import makeStyles from '@mui/styles/makeStyles';
 import { RecordSourceSelectorProxy } from 'relay-runtime';
 import { FormikConfig } from 'formik/dist/types';
 import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
+import useHelper from 'src/utils/hooks/useHelper';
+import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
-import { handleErrorInForm } from '../../../../relay/environment';
+import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
@@ -123,6 +125,7 @@ IntrusionSetFormProps
       },
       onError: (error) => {
         handleErrorInForm(error, setErrors);
+        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -131,6 +134,7 @@ IntrusionSetFormProps
         if (onCompleted) {
           onCompleted();
         }
+        MESSAGING$.notifySuccess(`${t_i18n('entity_Intrusion-Set')} ${t_i18n('successfully created')}`);
       },
     });
   };
@@ -235,6 +239,8 @@ const IntrusionSetCreation = ({
   paginationOptions: IntrusionSetsCardsPaginationQuery$variables;
 }) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const updater = (store: RecordSourceSelectorProxy) => insertNode(
     store,
     'Pagination_intrusionSets',
@@ -242,7 +248,11 @@ const IntrusionSetCreation = ({
     'intrusionSetAdd',
   );
   return (
-    <Drawer title={t_i18n('Create an intrusion set')} variant={DrawerVariant.create}>
+    <Drawer
+      title={t_i18n('Create an intrusion set')}
+      variant={FABReplaced ? undefined : DrawerVariant.create}
+      controlledDial={FABReplaced ? CreateEntityControlledDial('entity_Intrusion-Set') : undefined}
+    >
       {({ onClose }) => (
         <IntrusionSetCreationForm
           updater={updater}
