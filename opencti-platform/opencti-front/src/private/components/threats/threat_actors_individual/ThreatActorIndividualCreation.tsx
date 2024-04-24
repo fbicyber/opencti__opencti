@@ -16,7 +16,7 @@ import CountryField from '@components/common/form/CountryField';
 import useHelper from 'src/utils/hooks/useHelper';
 import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
-import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
+import { handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
 import CreatedByField from '../../common/form/CreatedByField';
@@ -205,6 +205,8 @@ ThreatActorIndividualFormProps
   );
   const [commit] = useApiMutation<ThreatActorIndividualCreationMutation>(
     ThreatActorIndividualMutation,
+    undefined,
+    { successMessage: `${t_i18n('entity_Threat-Actor-Individual')} ${t_i18n('successfully created')}` },
   );
 
   const onSubmit: FormikConfig<ThreatActorIndividualAddInput>['onSubmit'] = (
@@ -256,7 +258,6 @@ ThreatActorIndividualFormProps
       },
       onError: (error: Error) => {
         handleErrorInForm(error, setErrors);
-        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -265,7 +266,6 @@ ThreatActorIndividualFormProps
         if (onCompleted) {
           onCompleted();
         }
-        MESSAGING$.notifySuccess(`${t_i18n('entity_Threat-Actor-Individual')} ${t_i18n('successfully created')}`);
       },
     });
   };

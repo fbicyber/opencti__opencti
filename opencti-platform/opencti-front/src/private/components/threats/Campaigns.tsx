@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import { GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
+import useHelper from 'src/utils/hooks/useHelper';
 import { CampaignsCardsPaginationQuery$variables, CampaignsCardsPaginationQuery } from './campaigns/__generated__/CampaignsCardsPaginationQuery.graphql';
 import ListCards from '../../../components/list_cards/ListCards';
 import CampaignsCards, { campaignsCardsQuery } from './campaigns/CampaignsCards';
@@ -17,6 +18,7 @@ const LOCAL_STORAGE_KEY = 'campaigns';
 
 const Campaigns = () => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<CampaignsCardsPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -36,6 +38,7 @@ const Campaigns = () => {
     campaignsCardsQuery,
     paginationOptions,
   );
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const renderCards = () => {
     const {
       numberOfElements,
@@ -75,6 +78,9 @@ const Campaigns = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
+        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <CampaignCreation paginationOptions={paginationOptions} />
+        </Security>}
       >
         {queryRef && (
           <React.Suspense
@@ -113,9 +119,11 @@ const Campaigns = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Threats') }, { label: t_i18n('Campaigns'), current: true }]} />
       {renderCards()}
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <CampaignCreation paginationOptions={paginationOptions} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <CampaignCreation paginationOptions={paginationOptions} />
+        </Security>
+      }
     </>
   );
 };

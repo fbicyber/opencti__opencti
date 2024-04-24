@@ -10,7 +10,7 @@ import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
 import useHelper from 'src/utils/hooks/useHelper';
 import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
-import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
+import { handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
@@ -99,7 +99,11 @@ IntrusionSetFormProps
     INTRUSION_SET_TYPE,
     basicShape,
   );
-  const [commit] = useApiMutation<IntrusionSetCreationMutation>(intrusionSetMutation);
+  const [commit] = useApiMutation<IntrusionSetCreationMutation>(
+    intrusionSetMutation,
+    undefined,
+    { successMessage: `${t_i18n('entity_Intrusion-Set')} ${t_i18n('successfully created')}` },
+  );
   const onSubmit: FormikConfig<IntrusionSetAddInput>['onSubmit'] = (
     values,
     { setSubmitting, setErrors, resetForm },
@@ -125,7 +129,6 @@ IntrusionSetFormProps
       },
       onError: (error) => {
         handleErrorInForm(error, setErrors);
-        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -134,7 +137,6 @@ IntrusionSetFormProps
         if (onCompleted) {
           onCompleted();
         }
-        MESSAGING$.notifySuccess(`${t_i18n('entity_Intrusion-Set')} ${t_i18n('successfully created')}`);
       },
     });
   };

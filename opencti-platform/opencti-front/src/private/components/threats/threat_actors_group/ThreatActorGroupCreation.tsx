@@ -10,7 +10,7 @@ import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
 import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import useHelper from 'src/utils/hooks/useHelper';
 import { useFormatter } from '../../../../components/i18n';
-import { MESSAGING$, handleErrorInForm } from '../../../../relay/environment';
+import { handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
 import CreatedByField from '../../common/form/CreatedByField';
@@ -104,6 +104,8 @@ ThreatActorGroupFormProps
 
   const [commit] = useApiMutation<ThreatActorGroupCreationMutation>(
     ThreatActorGroupMutation,
+    undefined,
+    { successMessage: `${t_i18n('entity_Threat-Actor-Group')} ${t_i18n('successfully created')}` },
   );
 
   const onSubmit: FormikConfig<ThreatActorGroupAddInput>['onSubmit'] = (
@@ -132,7 +134,6 @@ ThreatActorGroupFormProps
       },
       onError: (error: Error) => {
         handleErrorInForm(error, setErrors);
-        MESSAGING$.notifyError(`${error}`);
         setSubmitting(false);
       },
       onCompleted: () => {
@@ -141,7 +142,6 @@ ThreatActorGroupFormProps
         if (onCompleted) {
           onCompleted();
         }
-        MESSAGING$.notifySuccess(`${t_i18n('entity_Threat-Actor-Group')} ${t_i18n('successfully created')}`);
       },
     });
   };

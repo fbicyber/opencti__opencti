@@ -7,6 +7,8 @@ import makeStyles from '@mui/styles/makeStyles';
 import { RecordSourceSelectorProxy } from 'relay-runtime';
 import { FormikConfig } from 'formik/dist/types';
 import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
+import useHelper from 'src/utils/hooks/useHelper';
+import CreateEntityControlledDial from '@components/common/menus/CreateEntityControlledDial';
 import { useFormatter } from '../../../../components/i18n';
 import { handleErrorInForm } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
@@ -97,7 +99,11 @@ export const CampaignCreationForm: FunctionComponent<CampaignFormProps> = ({
     basicShape,
   );
 
-  const [commit] = useApiMutation<CampaignCreationMutation>(campaignMutation);
+  const [commit] = useApiMutation<CampaignCreationMutation>(
+    campaignMutation,
+    undefined,
+    { successMessage: `${t_i18n('entity_Campaign')} ${t_i18n('successfully created')}` },
+  );
 
   const onSubmit: FormikConfig<CampaignAddInput>['onSubmit'] = (
     values,
@@ -237,9 +243,15 @@ const CampaignCreation = ({
   paginationOptions: CampaignsCardsPaginationQuery$variables;
 }) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const updater = (store: RecordSourceSelectorProxy) => insertNode(store, 'Pagination_campaigns', paginationOptions, 'campaignAdd');
   return (
-    <Drawer title={t_i18n('Create a campaign')} variant={DrawerVariant.create}>
+    <Drawer
+      title={t_i18n('Create a campaign')}
+      variant={FABReplaced ? undefined : DrawerVariant.create}
+      controlledDial={FABReplaced ? CreateEntityControlledDial('entity_Campaign') : undefined}
+    >
       {({ onClose }) => (
         <CampaignCreationForm
           updater={updater}
