@@ -27,6 +27,7 @@ import * as Yup from 'yup';
 import Fab from '@mui/material/Fab';
 import DialogContentText from '@mui/material/DialogContentText';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
+import ObjectContainersField from '../../common/form/ObjectContainersField';
 import SelectField from '../../../../components/fields/SelectField';
 import { FIVE_SECONDS } from '../../../../utils/Time';
 import { fileManagerAskJobImportMutation, scopesConn } from '../../common/files/FileManager';
@@ -574,6 +575,11 @@ class ImportContentComponent extends Component {
                     {this.state.selectedConnector?.connector_scope?.includes('text/csv')
                       && (
                         <>
+                        <ObjectContainersField
+                            name="objectContainers"
+                            style={fieldSpacingContainerStyle}
+                            setFieldValue={setFieldValue}
+                          />
                           <ObjectMarkingField
                             name="objectMarking"
                             style={fieldSpacingContainerStyle}
