@@ -27,7 +27,7 @@ import * as Yup from 'yup';
 import Fab from '@mui/material/Fab';
 import DialogContentText from '@mui/material/DialogContentText';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
-import ObjectContainersField from '../../common/form/ObjectContainersField';
+import ObjectContainerField from '../../common/form/ObjectContainerField';
 import SelectField from '../../../../components/fields/SelectField';
 import { FIVE_SECONDS } from '../../../../utils/Time';
 import { fileManagerAskJobImportMutation, scopesConn } from '../../common/files/FileManager';
@@ -160,6 +160,26 @@ export const importContentQuery = graphql`
   }
 `;
 
+export const importContentAskJobImportMutation = graphql`
+  mutation ImportContentAskJobImportMutation(
+    $fileName: ID!
+    $connectorId: String
+    $configuration: String
+    $bypassValidation: Boolean
+    $bypassEntityId: String
+  ) {
+    askJobImport(
+      fileName: $fileName
+      connectorId: $connectorId
+      configuration: $configuration
+      bypassValidation: $bypassValidation
+      bypassEntityId: $bypassEntityId
+    ) {
+      ...FileLine_file
+    }
+  }
+`;
+
 const importValidation = (t, configurations) => {
   const shape = {
     connector_id: Yup.string().required(t('This field is required')),
@@ -183,6 +203,7 @@ class ImportContentComponent extends Component {
       sortBy: 'name',
       orderAsc: true,
       selectedConnector: null,
+      containerType: null
     };
   }
 
@@ -224,6 +245,7 @@ class ImportContentComponent extends Component {
 
   onSubmitImport(values, { setSubmitting, resetForm }) {
     const { connector_id, configuration, objectMarking } = values;
+    const objectContainerId = values.objectContainer ? values.objectContainer.value : null
     let config = configuration;
     // Dynamically inject the markings chosen by the user into the csv mapper.
     const isCsvConnector = !!this.state.selectedConnector?.connector_scope?.includes('text/csv');
@@ -235,11 +257,12 @@ class ImportContentComponent extends Component {
       }
     }
     commitMutation({
-      mutation: fileManagerAskJobImportMutation,
+      mutation: importContentAskJobImportMutation,
       variables: {
         fileName: this.state.fileToImport.id,
         connectorId: connector_id,
         configuration: config,
+        bypassEntityId: objectContainerId
       },
       onCompleted: () => {
         setSubmitting(false);
@@ -552,13 +575,13 @@ class ImportContentComponent extends Component {
                     </Field>
                     {this.state.selectedConnector?.configurations?.length > 0
                       ? <Field
-                          component={SelectField}
-                          variant="standard"
-                          name="configuration"
-                          label={t('Configuration')}
-                          fullWidth={true}
-                          containerstyle={{ marginTop: 20, width: '100%' }}
-                        >
+                        component={SelectField}
+                        variant="standard"
+                        name="configuration"
+                        label={t('Configuration')}
+                        fullWidth={true}
+                        containerstyle={{ marginTop: 20, width: '100%' }}
+                      >
                         {this.state.selectedConnector.configurations?.map((config) => {
                           return (
                             <MenuItem
@@ -575,11 +598,6 @@ class ImportContentComponent extends Component {
                     {this.state.selectedConnector?.connector_scope?.includes('text/csv')
                       && (
                         <>
-                        <ObjectContainersField
-                            name="objectContainers"
-                            style={fieldSpacingContainerStyle}
-                            setFieldValue={setFieldValue}
-                          />
                           <ObjectMarkingField
                             name="objectMarking"
                             style={fieldSpacingContainerStyle}
@@ -588,6 +606,28 @@ class ImportContentComponent extends Component {
                           <DialogContentText>
                             {t('Marking definitions to use by the csv mapper...')}
                           </DialogContentText>
+                          <Field
+                            component={SelectField}
+                            variant="standard"
+                            name="context"
+                            label={t('Add to Case or Report')}
+                            fullWidth={true}
+                            containerstyle={{ marginTop: 20, width: '100%' }}
+                            onChange={(_, value) => { this.setState({ containerType: value }) }}
+                          >
+                            <MenuItem value={null}></MenuItem>
+                            <MenuItem value={'Case'}>Case</MenuItem>
+                            <MenuItem value={'Report'}>Report</MenuItem>
+                          </Field>
+                          {this.state.containerType &&
+                            <ObjectContainerField
+                              name="objectContainer"
+                              style={fieldSpacingContainerStyle}
+                              setFieldValue={setFieldValue}
+                              containerType={this.state.containerType}
+                              label={`${this.state.containerType}s`}
+                            />
+                          }
                         </>
                       )
                     }
