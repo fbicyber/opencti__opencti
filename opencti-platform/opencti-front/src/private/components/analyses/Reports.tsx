@@ -69,6 +69,7 @@ const Reports: FunctionComponent = () => {
   );
 
   const renderLines = () => {
+    console.log(queryPaginationOptions)
     const isRuntimeSort = isRuntimeFieldEnable() ?? false;
     const dataColumns = {
       name: {
