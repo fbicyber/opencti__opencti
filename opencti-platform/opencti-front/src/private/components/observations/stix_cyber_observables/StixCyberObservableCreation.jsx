@@ -337,6 +337,12 @@ const StixCyberObservableCreation = ({
         fromPairs,
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
+      const hashesListTest = hashesList[0];
+      let hashesListName = '';
+      if (selectedAttribute === 'NAME') {
+        hashesListName = hashesListTest;
+      }
+      console.table(hashesList);
       const finalValues = {
         type: status.type,
         x_opencti_description:
@@ -352,6 +358,12 @@ const StixCyberObservableCreation = ({
         [observableType]: {
           ...adaptedValues,
           obsContent: values.obsContent?.value,
+          name: hashesListName,
+          hashes: [
+            {
+              hash: hashesListTest,
+              algorithm,
+            }],
         },
       };
       if (values.file) {
