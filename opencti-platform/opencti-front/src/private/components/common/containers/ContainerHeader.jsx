@@ -447,6 +447,7 @@ const ContainerHeader = (props) => {
   const {
     container,
     PopoverComponent,
+    EditComponent,
     popoverSecurity,
     link,
     modes,
@@ -1085,6 +1086,7 @@ const ContainerHeader = (props) => {
                 {React.cloneElement(PopoverComponent, { id: container.id })}
               </Security>
             )}
+            {EditComponent}
           </div>
         </div>
         <div className="clearfix" />
