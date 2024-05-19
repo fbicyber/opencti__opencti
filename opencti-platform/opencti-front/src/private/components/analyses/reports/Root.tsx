@@ -9,6 +9,7 @@ import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Security from 'src/utils/Security';
 import StixCoreObjectSimulationResult from '../../common/stix_core_objects/StixCoreObjectSimulationResult';
 import { QueryRenderer } from '../../../../relay/environment';
 import Report from './Report';
@@ -26,7 +27,8 @@ import StixCoreObjectContent from '../../common/stix_core_objects/StixCoreObject
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
-import useGranted, { BYPASSREFERENCE } from '../../../../utils/hooks/useGranted';
+import useGranted, { BYPASSREFERENCE, KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import ReportEdition from './ReportEdition';
 
 const subscription = graphql`
   subscription RootReportSubscription($id: ID!) {
@@ -127,6 +129,9 @@ const RootReport = () => {
                     PopoverComponent={
                       <ReportPopover id={reportId} />
                     }
+                    EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                      <ReportEdition reportId={report.id} />
+                    </Security>}
                     enableQuickSubscription={true}
                     enableQuickExport={true}
                     enableAskAi={true}
@@ -194,7 +199,7 @@ const RootReport = () => {
                     <Route
                       path="/"
                       element={
-                        <Report report={report} />
+                        <Report reportFragment={report} />
                       }
                     />
                     <Route
