@@ -9,6 +9,8 @@ import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Security from 'src/utils/Security';
+import { KNOWLEDGE_KNUPDATE } from 'src/utils/hooks/useGranted';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
@@ -22,6 +24,7 @@ import { RootTaskQuery } from './__generated__/RootTaskQuery.graphql';
 import { RootTaskSubscription } from './__generated__/RootTaskSubscription.graphql';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import TaskEdition from './TaskEdition';
 
 const subscription = graphql`
   subscription RootTaskSubscription($id: ID!) {
@@ -97,6 +100,9 @@ const RootTaskComponent = ({ queryRef, taskId }) => {
           <ContainerHeader
             container={data}
             PopoverComponent={<TasksPopover id={data.id} />}
+            EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+              <TaskEdition caseId={data.id} />
+            </Security>}
             enableSuggestions={false}
             redirectToContent={true}
           />

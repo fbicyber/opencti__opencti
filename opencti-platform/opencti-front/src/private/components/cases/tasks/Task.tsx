@@ -2,6 +2,7 @@ import Grid from '@mui/material/Grid';
 import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
+import useHelper from 'src/utils/hooks/useHelper';
 import StixCoreObjectOrStixCoreRelationshipNotes from '../../analyses/notes/StixCoreObjectOrStixCoreRelationshipNotes';
 import StixCoreObjectLatestHistory from '../../common/stix_core_objects/StixCoreObjectLatestHistory';
 import StixDomainObjectOverview from '../../common/stix_domain_objects/StixDomainObjectOverview';
@@ -77,6 +78,8 @@ export const taskFragment = graphql`
 const TaskComponent = ({ data }: { data: Tasks_tasks$key }) => {
   const classes = useStyles();
   const task = useFragment(taskFragment, data);
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   return (
     <>
       <Grid
@@ -108,9 +111,11 @@ const TaskComponent = ({ data }: { data: Tasks_tasks$key }) => {
         stixCoreObjectOrStixCoreRelationshipId={task.id}
         defaultMarkings={task.objectMarking ?? []}
       />
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <TaskEdition caseId={task.id} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <TaskEdition caseId={task.id} />
+        </Security>
+      }
     </>
   );
 };
