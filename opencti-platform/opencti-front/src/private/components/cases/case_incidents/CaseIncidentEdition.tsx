@@ -30,7 +30,7 @@ const CaseIncidentEdition: FunctionComponent<{ caseId: string }> = ({ caseId }) 
           <CaseIncidentEditionContainer
             queryRef={queryRef}
             handleClose={handleClose}
-            controlledDial={EditEntityControlledDial()}
+            controlledDial={EditEntityControlledDial}
           />
         </React.Suspense>
       )}

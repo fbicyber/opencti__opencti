@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { graphql, useFragment } from 'react-relay';
 import Grid from '@mui/material/Grid';
 import makeStyles from '@mui/styles/makeStyles';
+import useHelper from 'src/utils/hooks/useHelper';
 import FeedbackDetails from './FeedbackDetails';
 import StixDomainObjectOverview from '../../common/stix_domain_objects/StixDomainObjectOverview';
 import ContainerStixObjectsOrStixRelationships from '../../common/containers/ContainerStixObjectsOrStixRelationships';
@@ -87,6 +88,8 @@ interface FeedbackProps {
 const FeedbackComponent: FunctionComponent<FeedbackProps> = ({ data }) => {
   const classes = useStyles();
   const feedbackData = useFragment(feedbackFragment, data);
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const canManage = feedbackData.currentUserAccessRight === 'admin';
   const canEdit = canManage || feedbackData.currentUserAccessRight === 'edit';
@@ -123,9 +126,11 @@ const FeedbackComponent: FunctionComponent<FeedbackProps> = ({ data }) => {
           <StixCoreObjectLatestHistory stixCoreObjectId={feedbackData.id} />
         </Grid>
       </Grid>
-      <Security needs={[KNOWLEDGE_KNUPDATE]} hasAccess={canEdit}>
-        <FeedbackEdition feedbackId={feedbackData.id} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]} hasAccess={canEdit}>
+          <FeedbackEdition feedbackId={feedbackData.id} />
+        </Security>
+      }
     </>
   );
 };

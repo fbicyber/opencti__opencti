@@ -30,7 +30,7 @@ const TaskEdition: FunctionComponent<{ caseId: string }> = ({ caseId }) => {
           <TasksEditionContainer
             queryRef={queryRef}
             handleClose={handleClose}
-            controlledDial={EditEntityControlledDial()}
+            controlledDial={EditEntityControlledDial}
           />
         </React.Suspense>
       )}

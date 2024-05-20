@@ -10,6 +10,8 @@ import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import StixCoreRelationship from '@components/common/stix_core_relationships/StixCoreRelationship';
+import Security from 'src/utils/Security';
+import { KNOWLEDGE_KNUPDATE } from 'src/utils/hooks/useGranted';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
@@ -23,6 +25,7 @@ import StixCoreObjectContent from '../../common/stix_core_objects/StixCoreObject
 import Feedback from './Feedback';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import FeedbackEdition from './FeedbackEdition';
 
 const subscription = graphql`
   subscription RootFeedbackSubscription($id: ID!) {
@@ -119,6 +122,7 @@ const RootFeedbackComponent = ({ queryRef, caseId }) => {
     }
   }
   const canManage = feedbackData?.currentUserAccessRight === 'admin';
+  const canEdit = canManage || feedbackData.currentUserAccessRight === 'edit';
   return (
     <>
       {feedbackData ? (
@@ -132,6 +136,9 @@ const RootFeedbackComponent = ({ queryRef, caseId }) => {
           <ContainerHeader
             container={feedbackData}
             PopoverComponent={<FeedbackPopover id={feedbackData.id} />}
+            EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]} hasAccess={canEdit}>
+              <FeedbackEdition feedbackId={feedbackData.id} />
+            </Security>}
             enableSuggestions={false}
             disableSharing
             enableQuickSubscription
