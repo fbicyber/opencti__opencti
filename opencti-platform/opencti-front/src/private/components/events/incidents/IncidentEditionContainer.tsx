@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import Drawer, { DrawerVariant } from '@components/common/drawer/Drawer';
 import { IncidentEditionOverview_incident$key } from '@components/events/incidents/__generated__/IncidentEditionOverview_incident.graphql';
 import { IncidentEditionDetails_incident$key } from '@components/events/incidents/__generated__/IncidentEditionDetails_incident.graphql';
+import useHelper from 'src/utils/hooks/useHelper';
 import { useFormatter } from '../../../../components/i18n';
 import IncidentEditionOverview from './IncidentEditionOverview';
 import IncidentEditionDetails from './IncidentEditionDetails';
@@ -17,6 +18,7 @@ interface IncidentEditionContainerProps {
   queryRef: PreloadedQuery<IncidentEditionContainerQuery>
   handleClose: () => void
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
 export const IncidentEditionQuery = graphql`
@@ -33,9 +35,15 @@ export const IncidentEditionQuery = graphql`
   }
 `;
 
-const IncidentEditionContainer: FunctionComponent<IncidentEditionContainerProps> = ({ queryRef, handleClose, open }) => {
+const IncidentEditionContainer: FunctionComponent<IncidentEditionContainerProps> = ({
+  queryRef,
+  handleClose,
+  open,
+  controlledDial,
+}) => {
   const { t_i18n } = useFormatter();
-
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { incident } = usePreloadedQuery(IncidentEditionQuery, queryRef);
   const [currentTab, setCurrentTab] = useState(0);
   const handleChangeTab = (event: React.SyntheticEvent, value: number) => setCurrentTab(value);
@@ -46,7 +54,8 @@ const IncidentEditionContainer: FunctionComponent<IncidentEditionContainerProps>
   return (
     <Drawer
       title={t_i18n('Update an incident')}
-      variant={open == null ? DrawerVariant.update : undefined}
+      variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
+      controlledDial={FABReplaced ? controlledDial : undefined}
       context={incident?.editContext}
       onClose={handleClose}
       open={open}

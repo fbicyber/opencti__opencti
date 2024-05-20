@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 import Grid from '@mui/material/Grid';
 import makeStyles from '@mui/styles/makeStyles';
+import useHelper from 'src/utils/hooks/useHelper';
 import IncidentDetails from './IncidentDetails';
 import IncidentEdition from './IncidentEdition';
 import Security from '../../../../utils/Security';
@@ -88,6 +89,8 @@ const Incident = ({
 }: {
   incidentData: Incident_incident$key;
 }) => {
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const classes = useStyles();
   const incident = useFragment<Incident_incident$key>(
     incidentFragment,
@@ -132,9 +135,11 @@ const Incident = ({
         stixCoreObjectOrStixCoreRelationshipId={incident.id}
         defaultMarkings={incident.objectMarking ?? []}
       />
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <IncidentEdition incidentId={incident.id} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <IncidentEdition incidentId={incident.id} />
+        </Security>
+      }
     </>
   );
 };

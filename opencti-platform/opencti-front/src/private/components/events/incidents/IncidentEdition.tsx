@@ -1,4 +1,5 @@
 import React from 'react';
+import EditEntityControlledDial from 'src/components/EditEntityButton';
 import IncidentEditionContainer, { IncidentEditionQuery } from './IncidentEditionContainer';
 import { incidentEditionOverviewFocus } from './IncidentEditionOverview';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
@@ -30,6 +31,7 @@ const IncidentEdition = ({ incidentId }: { incidentId: string }) => {
           <IncidentEditionContainer
             queryRef={queryRef}
             handleClose={handleClose}
+            controlledDial={EditEntityControlledDial()}
           />
         </React.Suspense>
       )}
