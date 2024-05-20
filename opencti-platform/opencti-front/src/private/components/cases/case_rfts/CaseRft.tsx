@@ -4,6 +4,7 @@ import React, { FunctionComponent, useRef } from 'react';
 import { useFragment } from 'react-relay';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import useHelper from 'src/utils/hooks/useHelper';
 import { convertMarkings } from '../../../../utils/edition';
 import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
@@ -48,6 +49,8 @@ interface CaseRftProps {
 const CaseRftComponent: FunctionComponent<CaseRftProps> = ({ data }) => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const ref = useRef(null);
   const caseRftData = useFragment(caseFragment, data);
   const LOCAL_STORAGE_KEY_CASE_TASKS = `cases-${caseRftData.id}-caseTask`;
@@ -173,9 +176,11 @@ const CaseRftComponent: FunctionComponent<CaseRftProps> = ({ data }) => {
         stixCoreObjectOrStixCoreRelationshipId={caseRftData.id}
         defaultMarkings={caseRftData.objectMarking ?? []}
       />
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <CaseRftEdition caseId={caseRftData.id} />
-      </Security>
+      {!FABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <CaseRftEdition caseId={caseRftData.id} />
+        </Security>
+      }
     </>
   );
 };

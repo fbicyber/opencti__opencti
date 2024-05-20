@@ -9,6 +9,7 @@ import { GraphQLSubscriptionConfig } from 'relay-runtime';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Security from 'src/utils/Security';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
@@ -25,7 +26,8 @@ import { RootCaseRftCaseQuery } from './__generated__/RootCaseRftCaseQuery.graph
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
-import useGranted, { BYPASSREFERENCE } from '../../../../utils/hooks/useGranted';
+import useGranted, { BYPASSREFERENCE, KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import CaseRftEdition from './CaseRftEdition';
 
 const subscription = graphql`
   subscription RootCaseRftCaseSubscription($id: ID!) {
@@ -119,6 +121,9 @@ const RootCaseRftComponent = ({ queryRef, caseId }) => {
           <ContainerHeader
             container={caseData}
             PopoverComponent={<CaseRftPopover id={caseData.id} />}
+            EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+              <CaseRftEdition caseId={caseData.id} />
+            </Security>}
             enableQuickSubscription={true}
             enableAskAi={true}
             redirectToContent={true}
