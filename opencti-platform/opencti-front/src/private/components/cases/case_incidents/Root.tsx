@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import StixCoreObjectSimulationResult from '@components/common/stix_core_objects/StixCoreObjectSimulationResult';
+import Security from 'src/utils/Security';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
@@ -27,7 +28,8 @@ import { RootIncidentSubscription } from '../../events/incidents/__generated__/R
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
-import useGranted, { BYPASSREFERENCE } from '../../../../utils/hooks/useGranted';
+import useGranted, { BYPASSREFERENCE, KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import CaseIncidentEdition from './CaseIncidentEdition';
 
 const subscription = graphql`
   subscription RootIncidentCaseSubscription($id: ID!) {
@@ -90,7 +92,7 @@ const RootCaseIncidentComponent = ({ queryRef, caseId }) => {
     connectorsForImport,
   } = usePreloadedQuery<RootIncidentCaseQuery>(caseIncidentQuery, queryRef);
   let paddingRight = 0;
-  const isOverview = location.pathname === `/dashboard/cases/incidents/${caseData.id}`;
+  const isOverview = location.pathname === `/dashboard/cases/incidents/${caseData?.id}`;
   if (caseData) {
     if (
       location.pathname.includes(
@@ -123,6 +125,9 @@ const RootCaseIncidentComponent = ({ queryRef, caseId }) => {
           <ContainerHeader
             container={caseData}
             PopoverComponent={<CaseIncidentPopover id={caseData.id} />}
+            EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+              <CaseIncidentEdition caseId={caseData.id} />
+            </Security>}
             enableQuickSubscription={true}
             enableAskAi={true}
             redirectToContent={true}
