@@ -31,7 +31,7 @@ const IncidentEdition = ({ incidentId }: { incidentId: string }) => {
           <IncidentEditionContainer
             queryRef={queryRef}
             handleClose={handleClose}
-            controlledDial={EditEntityControlledDial()}
+            controlledDial={EditEntityControlledDial}
           />
         </React.Suspense>
       )}

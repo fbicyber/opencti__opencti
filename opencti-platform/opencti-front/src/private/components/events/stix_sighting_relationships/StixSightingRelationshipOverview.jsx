@@ -45,6 +45,7 @@ import MarkdownDisplay from '../../../../components/MarkdownDisplay';
 
 const styles = (theme) => ({
   container: {
+    marginTop: 0,
     margin: 0,
     position: 'relative',
   },
@@ -215,6 +216,7 @@ class StixSightingRelationshipContainer extends Component {
       classes,
       stixSightingRelationship,
       paddingRight,
+      FABReplaced = false,
     } = this.props;
     const { from } = stixSightingRelationship;
     const { to } = stixSightingRelationship;
@@ -595,7 +597,7 @@ class StixSightingRelationshipContainer extends Component {
             </div>
           )}
         </div>
-        <Security needs={[KNOWLEDGE_KNUPDATE]}>
+        {!FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <Fab
             onClick={this.handleOpenEdition.bind(this)}
             color="secondary"
@@ -613,7 +615,7 @@ class StixSightingRelationshipContainer extends Component {
             handleClose={this.handleCloseEdition.bind(this)}
             handleDelete={this.handleOpenDelete.bind(this)}
           />
-        </Security>
+        </Security>}
         <Dialog
           open={this.state.displayDelete}
           PaperProps={{ elevation: 1 }}
