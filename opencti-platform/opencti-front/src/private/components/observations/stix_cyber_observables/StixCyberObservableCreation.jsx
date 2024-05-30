@@ -5,12 +5,11 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
+import Select from '@mui/material/Select';
 import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,7 +19,7 @@ import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import makeStyles from '@mui/styles/makeStyles';
-import { ListItemButton } from '@mui/material';
+import { ListItemButton, MenuItem } from '@mui/material';
 import { commitMutation, handleErrorInForm, QueryRenderer, MESSAGING$, commitMutationWithPromise } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import SwitchField from '../../../../components/fields/SwitchField';
@@ -94,21 +93,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 20px 20px 20px',
   },
 }));
-
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
 
 const stixCyberObservableMutation = graphql`
   mutation StixCyberObservableCreationMutation(
@@ -255,6 +239,13 @@ const StixCyberObservableCreation = ({
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  const hashes_MD5_field = document.getElementById('hashes_MD5');
+  const hashes_SHA1_field = document.getElementById('hashes_SHA-1');
+  const hashes_SHA256_field = document.getElementById('hashes_SHA-256');
+  const hashes_SHA512_field = document.getElementById('hashes_SHA-512');
+  const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
+  let hashesList = [];
+  const algorithm = selectedAttribute.toLowerCase();
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
@@ -312,6 +303,32 @@ const StixCyberObservableCreation = ({
     setHashesSHA256Value('');
     setHashesSHA512Value('');
     setKeyFieldDisabled('');
+  };
+
+  const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
+    commitMutation({
+      mutation: stixCyberObservableMutation,
+      variables: finalValues,
+      updater: (store) => insertNode(
+        store,
+        paginationKey,
+        paginationOptions,
+        'stixCyberObservableAdd',
+      ),
+      onError: (error) => {
+        handleErrorInForm(error, setErrors);
+        setSubmitting(false);
+      },
+      setSubmitting,
+      onCompleted: () => {
+        // Toast Message on Add Success
+        MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
+        setSubmitting(false);
+        resetForm();
+        setGenericValueFieldDisabled(false);
+        localHandleClose();
+      },
+    });
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -419,6 +436,48 @@ const StixCyberObservableCreation = ({
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
+      }
+    }
+    function handleHashPromiseResult() {
+      totalObservables = hashesList.length;
+      let closeFormWithAnySuccess = false;
+      if (error_array.length > 0) {
+        errorObservables = error_array.length;
+        let message_string = '';
+        if (validObservables > 0) {
+          message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
+          closeFormWithAnySuccess = true;
+        }
+        message_string += ` ${errorObservables}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
+        const consolidated_errors = { res: { errors: error_array[0] } };
+        // Short Error message, just has total success and failure counts with translation support
+        consolidated_errors.res.errors[0].message = message_string;
+        // Long Error message with all errors
+        // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
+        // Toast Error Message to Screen - Will not close the form since errors exist for correction.
+        handleErrorInForm(consolidated_errors, setErrors);
+        const combinedObservables = validObservables + errorObservables;
+        if (combinedObservables === totalObservables) {
+          progressReset();
+        }
+      } else {
+        let bulk_success_message = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
+        if (totalObservables === 1) {
+          // This is for consistent messaging when adding just (1) Observable
+          bulk_success_message = t_i18n('Observable successfully added');
+          progressReset();
+        }
+        // Toast Message on Bulk Add Success
+        MESSAGING$.notifySuccess(bulk_success_message);
+        closeFormWithAnySuccess = true;
+        if (validObservables === totalObservables) {
+          progressReset();
+        }
+      }
+      // Close the form if any observables were successfully added.
+      if (closeFormWithAnySuccess === true) {
+        setGenericValueFieldDisabled(false);
+        localHandleClose();
       }
     }
     function updateProgress(position, batchSize) {
@@ -663,6 +722,34 @@ const StixCyberObservableCreation = ({
       const batchSize = 5;
       const commit = async () => {
         const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        if (hashesList && selectedAttribute === 'NAME') {
+          let position = 0;
+          while (position < hashesList.length) {
+            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
+            const chunkValueList = hashesList.slice(position, position + batchSize);
+            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
+            position += batchSize;
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
+        if (hashesList && selectedAttribute !== 'NAME') {
+          let position = 0;
+          while (position < hashesList.length) {
+            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
+            const chunkValueList = hashesList.slice(position, position + batchSize);
+            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
+            position += batchSize;
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
         if (hashesList && selectedAttribute === 'NAME') {
           let position = 0;
           while (position < hashesList.length) {
