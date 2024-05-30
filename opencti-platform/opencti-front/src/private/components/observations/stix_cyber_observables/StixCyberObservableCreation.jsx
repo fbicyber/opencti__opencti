@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
+import Select from '@mui/material/Select';
 import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
@@ -20,7 +21,7 @@ import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import makeStyles from '@mui/styles/makeStyles';
-import { ListItemButton } from '@mui/material';
+import { ListItemButton, MenuItem } from '@mui/material';
 import { commitMutation, handleErrorInForm, QueryRenderer, MESSAGING$, commitMutationWithPromise } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import SwitchField from '../../../../components/fields/SwitchField';
@@ -249,19 +250,55 @@ const StixCyberObservableCreation = ({
   const { booleanAttributes, dateAttributes, multipleAttributes, numberAttributes, ignoredAttributes } = useAttributes();
   const [status, setStatus] = useState({ open: false, type: type ?? null });
   const [openProgressDialog, setOpenProgressDialog] = useState(false);
+  const [openBulkAddDialog, setOpenBulkAddDialog] = React.useState(false);
   const [progressBar, setProgressBar] = React.useState(0);
   const [progressBarMax, setProgressBarMax] = React.useState(100);
   const handleOpen = () => setStatus({ open: true, type: status.type });
   const localHandleClose = () => setStatus({ open: false, type: type ?? null });
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
+  const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  const hashes_MD5_field = document.getElementById('hashes_MD5');
+  const hashes_SHA1_field = document.getElementById('hashes_SHA-1');
+  const hashes_SHA256_field = document.getElementById('hashes_SHA-256');
+  const hashes_SHA512_field = document.getElementById('hashes_SHA-512');
+  const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
+  let hashesList = [];
+  const algorithm = selectedAttribute.toLowerCase();
 
   const progressReset = () => {
     setOpenProgressDialog(false);
     setProgressBarMax(100);
     validObservables = 0;
     setProgressBar(0);
+  };
+
+  const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
+    commitMutation({
+      mutation: stixCyberObservableMutation,
+      variables: finalValues,
+      updater: (store) => insertNode(
+        store,
+        paginationKey,
+        paginationOptions,
+        'stixCyberObservableAdd',
+      ),
+      onError: (error) => {
+        handleErrorInForm(error, setErrors);
+        setSubmitting(false);
+      },
+      setSubmitting,
+      onCompleted: () => {
+        // Toast Message on Add Success
+        MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
+        setSubmitting(false);
+        resetForm();
+        setGenericValueFieldDisabled(false);
+        localHandleClose();
+      },
+    });
   };
   const handleClickOpen = () => {
     setOpenProgressDialog(true);
@@ -313,10 +350,123 @@ const StixCyberObservableCreation = ({
         localHandleClose();
       }
     }
+    function handleHashPromiseResult() {
+      totalObservables = hashesList.length;
+      let closeFormWithAnySuccess = false;
+      if (error_array.length > 0) {
+        const errorObservables = error_array.length;
+        let message_string = '';
+        if (validObservables > 0) {
+          message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
+          closeFormWithAnySuccess = true;
+        }
+        message_string += ` ${errorObservables}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
+        const consolidated_errors = { res: { errors: error_array[0] } };
+        // Short Error message, just has total success and failure counts with translation support
+        consolidated_errors.res.errors[0].message = message_string;
+        // Long Error message with all errors
+        // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
+        // Toast Error Message to Screen - Will not close the form since errors exist for correction.
+        handleErrorInForm(consolidated_errors, setErrors);
+        const combinedObservables = validObservables + errorObservables;
+        if (combinedObservables === totalObservables) {
+          progressReset();
+        }
+      } else {
+        let bulk_success_message = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
+        if (totalObservables === 1) {
+          // This is for consistent messaging when adding just (1) Observable
+          bulk_success_message = t_i18n('Observable successfully added');
+          progressReset();
+        }
+        // Toast Message on Bulk Add Success
+        MESSAGING$.notifySuccess(bulk_success_message);
+        closeFormWithAnySuccess = true;
+        if (validObservables === totalObservables) {
+          progressReset();
+        }
+      }
+      // Close the form if any observables were successfully added.
+      if (closeFormWithAnySuccess === true) {
+        setGenericValueFieldDisabled(false);
+        localHandleClose();
+      }
+    }
     function updateProgress(position, batchSize) {
       if (position % batchSize === 0) {
         setProgressBar((prevProgress) => prevProgress + 1);
       }
+    }
+    async function processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, hashNamBoolean) {
+      let promises;
+      if (hashNamBoolean === true) {
+        promises = chunkValueList.map((hash) => commitMutationWithPromise({
+          mutation: stixCyberObservableMutation,
+          variables: {
+            ...finalValues,
+            [observableType]: {
+              name: hash,
+            },
+          },
+          updater: (store) => insertNode(
+            store,
+            paginationKey,
+            paginationOptions,
+            'stixCyberObservableAdd',
+          ),
+          onCompleted: () => {
+            setSubmitting(false);
+            resetForm();
+            localHandleClose();
+            setSelectedAttribute('');
+          },
+          onError: () => {
+            setKeyFieldDisabled(false);
+            setSubmitting(false);
+          },
+        }));
+      } else {
+        promises = chunkValueList.map((hash) => commitMutationWithPromise({
+          mutation: stixCyberObservableMutation,
+          variables: {
+            ...finalValues,
+            [observableType]: {
+              hashes: [
+                {
+                  hash,
+                  algorithm,
+                }],
+            },
+          },
+          updater: (store) => insertNode(
+            store,
+            paginationKey,
+            paginationOptions,
+            'stixCyberObservableAdd',
+          ),
+          onCompleted: () => {
+            setSubmitting(false);
+            resetForm();
+            localHandleClose();
+            setSelectedAttribute('');
+          },
+          onError: () => {
+            setKeyFieldDisabled(false);
+            setSubmitting(false);
+          },
+        }));
+      }
+      await Promise.allSettled(promises).then((results) => {
+        results.forEach(({ status: promiseStatus, reason }) => {
+          if (promiseStatus === 'fulfilled') {
+            validObservables += 1;
+          } else {
+            error_array.push(reason);
+          }
+        });
+      });
+      updateProgress(position, batchSize);
+      handleHashPromiseResult();
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
       const promises = chunkValueList.map((value) => commitMutationWithPromise({
@@ -366,6 +516,23 @@ const StixCyberObservableCreation = ({
         const cleaned_bulk_values = trimmed_bulk_values.reduce((elements, i) => (i ? [...elements, i] : elements), []);
         // De-duplicate by unique then rejoin
         adaptedValues.value = [...new Set(cleaned_bulk_values)].join('\n');
+      }
+
+      if (adaptedValues.bulk_hashes_field && adaptedValues.name === bulkAddMsg) {
+        const array_of_bulk_hashes = adaptedValues.bulk_hashes_field.split(/\r?\n/);
+        // Trim them just to remove any extra spacing on front or rear of string
+        const trimmed_bulk_hashes = array_of_bulk_hashes.map((s) => s.trim());
+        // Remove any "" or empty resulting elements
+        const cleaned_bulk_hashes = trimmed_bulk_hashes.reduce((elements, i) => (i ? [...elements, i] : elements), []);
+        // De-duplicate by unique then rejoin
+        hashesList = [...new Set(cleaned_bulk_hashes)];
+
+        delete adaptedValues.hashes_MD5;
+        delete adaptedValues['hashes_SHA-1'];
+        delete adaptedValues['hashes_SHA-256'];
+        delete adaptedValues['hashes_SHA-512'];
+        delete adaptedValues.name;
+        delete adaptedValues.bulk_hashes_field;
       }
 
       // Potential dicts
@@ -426,6 +593,11 @@ const StixCyberObservableCreation = ({
         fromPairs,
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
+      const hashesListTest = hashesList[0];
+      let hashesListName = '';
+      if (selectedAttribute === 'NAME') {
+        hashesListName = hashesListTest;
+      }
       const finalValues = {
         type: status.type,
         x_opencti_description:
@@ -441,17 +613,51 @@ const StixCyberObservableCreation = ({
         [observableType]: {
           ...adaptedValues,
           obsContent: values.obsContent?.value,
+          name: hashesListName,
+          hashes: [
+            {
+              hash: hashesListTest,
+              algorithm,
+            }],
         },
       };
       if (values.file) {
         finalValues.file = values.file;
       }
+      const batchSize = 5;
       const commit = async () => {
         const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        if (hashesList && selectedAttribute === 'NAME') {
+          let position = 0;
+          while (position < hashesList.length) {
+            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
+            const chunkValueList = hashesList.slice(position, position + batchSize);
+            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
+            position += batchSize;
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
+        if (hashesList && selectedAttribute !== 'NAME') {
+          let position = 0;
+          while (position < hashesList.length) {
+            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
+            const chunkValueList = hashesList.slice(position, position + batchSize);
+            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
+            position += batchSize;
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
         if (valueList) {
           delete adaptedValues.value;
           delete adaptedValues.bulk_value_field;
-          const batchSize = 5;
           let position = 0;
           while (position < valueList.length) {
             setProgressBarMax(Math.ceil(valueList.length / batchSize));
@@ -463,29 +669,7 @@ const StixCyberObservableCreation = ({
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
           // Observable type like File Hash or something that are not currently bulk addable.
           // No promise required here, just send the data for saving, as it is a singular add
-          commitMutation({
-            mutation: stixCyberObservableMutation,
-            variables: finalValues,
-            updater: (store) => insertNode(
-              store,
-              paginationKey,
-              paginationOptions,
-              'stixCyberObservableAdd',
-            ),
-            onError: (error) => {
-              handleErrorInForm(error, setErrors);
-              setSubmitting(false);
-            },
-            setSubmitting,
-            onCompleted: () => {
-              // Toast Message on Add Success
-              MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
-              setSubmitting(false);
-              resetForm();
-              setGenericValueFieldDisabled(false);
-              localHandleClose();
-            },
-          });
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
         }
       };
       commit();
@@ -534,6 +718,109 @@ const StixCyberObservableCreation = ({
         }}
       />
     );
+  };
+  function BulkAddDialog(props) {
+    const handleOpenBulkAddDialog = () => {
+      if (hashes_MD5_field != null && hashes_MD5_field.value != null
+        && hashes_MD5_field.value.length > 0 && hashes_MD5_field.value !== bulkAddMsg) {
+        // Trim the field to avoid inserting whitespace as a default population value
+        props.hashes.push('hashes_MD5', hashes_MD5_field.value.trim());
+      }
+      if (hashes_SHA1_field != null && hashes_SHA1_field.value != null
+        && hashes_SHA1_field.value.length > 0 && hashes_SHA1_field.value !== bulkAddMsg) {
+        // Trim the field to avoid inserting whitespace as a default population value
+        props.hashes.push('hashes_SHA-1', hashes_SHA1_field.value.trim());
+      }
+      if (hashes_SHA256_field != null && hashes_SHA256_field.value != null
+        && hashes_SHA256_field.value.length > 0 && hashes_SHA256_field.value !== bulkAddMsg) {
+        // Trim the field to avoid inserting whitespace as a default population value
+        props.hashes.push('hashes_SHA-256', hashes_SHA256_field.value.trim());
+      }
+      if (hashes_SHA512_field != null && hashes_SHA512_field.value != null
+        && hashes_SHA512_field.value.length > 0 && hashes_SHA512_field.value !== bulkAddMsg) {
+        // Trim the field to avoid inserting whitespace as a default population value
+        props.hashes.push('hashes_SHA-512', hashes_SHA512_field.value.trim());
+      }
+      setOpenBulkAddDialog(true);
+    };
+    const handleCloseBulkAddDialog = () => {
+      setOpenBulkAddDialog(false);
+      const bulk_hashes_field = document.getElementById('bulk_hashes_field');
+
+      if (bulk_hashes_field != null && bulk_hashes_field.value != null && bulk_hashes_field.value.length > 0) {
+        props.setValue('hashes_MD5', bulkAddMsg);
+        props.setValue('hashes_SHA-1', bulkAddMsg);
+        props.setValue('hashes_SHA-256', bulkAddMsg);
+        props.setValue('hashes_SHA-512', bulkAddMsg);
+        props.setValue('name', bulkAddMsg);
+        setKeyFieldDisabled(true);
+      } else {
+        props.setValue('hashes_MD5', '');
+        props.setValue('hashes_SHA-1', '');
+        props.setValue('hashes_SHA-256', '');
+        props.setValue('hashes_SHA-512', '');
+        props.setValue('name', '');
+        setKeyFieldDisabled(false);
+      }
+    };
+
+    const handleSelectChange = (event) => {
+      setSelectedAttribute(event.target.value);
+    };
+    return (
+      <React.Fragment>
+        <IconButton
+          onClick={handleOpenBulkAddDialog}
+          size="large"
+          color="primary" style={{ float: 'left', marginRight: 25 }}
+        >
+          <TextFieldsOutlined />
+        </IconButton>
+        <Dialog
+          PaperProps={{ elevation: 3 }}
+          open={openBulkAddDialog}
+          onClose={handleCloseBulkAddDialog}
+          fullWidth={true}
+        >
+          <DialogContent style={{ marginTop: 0, paddingTop: 10 }}>
+            <div id="divSelectAttributes" style={{ border: '2px solid #FFA500', paddingLeft: 10 }}>
+              {t_i18n('Create Entities from multiple: ')}
+              <Select name="attributes" id="attributes" value={selectedAttribute} onChange={handleSelectChange}>
+                <MenuItem selected disabled>Select attribute</MenuItem>
+                <MenuItem value="NAME">name</MenuItem>
+                <MenuItem value="MD5">md5</MenuItem>
+                <MenuItem value="SHA-1">sha1</MenuItem>
+                <MenuItem value="SHA-256">sha256</MenuItem>
+                <MenuItem value="SHA-512">sha512</MenuItem>
+              </Select>
+            </div>
+            <Typography style={{ float: 'left', marginTop: 10 }}>
+              <span style={{ fontSize: '0.7em' }}>{selectedAttribute}</span>
+              <span className="output"></span>
+            </Typography>
+            <Field
+              component={TextField}
+              id="bulk_hashes_field"
+              variant="standard"
+              key="bulk_hashes_field"
+              name="bulk_hashes_field"
+              fullWidth={true}
+              multiline={true}
+              rows="5"
+            />
+            <DialogActions>
+              <Button color="secondary" onClick={handleCloseBulkAddDialog}>
+                {t_i18n('Validate')}
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+      </React.Fragment>
+    );
+  }
+
+  BulkAddDialog.propTypes = {
+    setValue: PropTypes.func,
   };
 
   function BulkAddModal(props) {
@@ -627,7 +914,11 @@ const StixCyberObservableCreation = ({
   BulkAddModal.propTypes = {
     setValue: PropTypes.func,
   };
+  let stixFileBoolean = false;
   const renderForm = () => {
+    if (status.type === 'StixFile') {
+      stixFileBoolean = true;
+    }
     return (
       <QueryRenderer
         query={stixCyberObservablesLinesAttributesQuery}
@@ -694,6 +985,15 @@ const StixCyberObservableCreation = ({
                       margin: contextual ? '10px 0 0 0' : '20px 0 20px 0',
                     }}
                   >
+                    {stixFileBoolean && <div id="hiddenDiv" style={(divRowStyle)}>
+                      <p>{t_i18n('Create a single observable or multiple with ')}</p>
+                      <Tooltip title="Copy/paste text content">
+                        <BulkAddDialog
+                          setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                        />
+                      </Tooltip>
+                    </div>
+                    }
                     <div>
                       <Field
                         component={TextField}
@@ -717,6 +1017,8 @@ const StixCyberObservableCreation = ({
                           return (
                             <div key={attribute.value}>
                               <Field
+                                id="hashes_MD5"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
                                 name="hashes_MD5"
@@ -725,6 +1027,8 @@ const StixCyberObservableCreation = ({
                                 style={{ marginTop: 20 }}
                               />
                               <Field
+                                id="hashes_SHA-1"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
                                 name="hashes_SHA-1"
@@ -733,6 +1037,8 @@ const StixCyberObservableCreation = ({
                                 style={{ marginTop: 20 }}
                               />
                               <Field
+                                id="hashes_SHA-256"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
                                 name="hashes_SHA-256"
@@ -741,6 +1047,8 @@ const StixCyberObservableCreation = ({
                                 style={{ marginTop: 20 }}
                               />
                               <Field
+                                id="hashes_SHA-512"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
                                 name="hashes_SHA-512"
