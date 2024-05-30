@@ -465,6 +465,7 @@ const StixCyberObservableCreation = ({
           }
         });
       });
+      console.log("position before updateProgress ", position);
       updateProgress(position, batchSize);
       handleHashPromiseResult();
     }
@@ -632,8 +633,12 @@ const StixCyberObservableCreation = ({
           while (position < hashesList.length) {
             setProgressBarMax(Math.ceil(hashesList.length / batchSize));
             const chunkValueList = hashesList.slice(position, position + batchSize);
+            console.log('chunkValueList');
+            console.table(chunkValueList);
             processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
             position += batchSize;
+            console.log('hashesList.length is ', hashesList.length);
+            console.log('position is ', position);
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
@@ -646,8 +651,12 @@ const StixCyberObservableCreation = ({
           while (position < hashesList.length) {
             setProgressBarMax(Math.ceil(hashesList.length / batchSize));
             const chunkValueList = hashesList.slice(position, position + batchSize);
+            console.log('chunkValueList');
+            console.table(chunkValueList);
             processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
             position += batchSize;
+            console.log('hashesList.length is ', hashesList.length);
+            console.log('position is ', position);
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
@@ -915,9 +924,13 @@ const StixCyberObservableCreation = ({
     setValue: PropTypes.func,
   };
   let stixFileBoolean = false;
+  let fileDisabledBoolean = false;
   const renderForm = () => {
     if (status.type === 'StixFile') {
       stixFileBoolean = true;
+    }
+    if (genericValueFieldDisabled === true || keyFieldDisabled === true) {
+      fileDisabledBoolean = true;
     }
     return (
       <QueryRenderer
@@ -1187,7 +1200,7 @@ const StixCyberObservableCreation = ({
                     />
                     <CustomFileUploader
                       setFieldValue={setFieldValue}
-                      disabled={genericValueFieldDisabled}
+                      disabled={fileDisabledBoolean}
                     />
                     <Field
                       component={SwitchField}
