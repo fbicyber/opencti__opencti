@@ -248,6 +248,7 @@ const ProfileOverviewComponent = (props) => {
   };
 
   const handleSubmitField = (name, value) => {
+    alert("HERE " + name + " " + value);
     userValidation(t)
       .validateAt(name, { [name]: value })
       .then(() => {
