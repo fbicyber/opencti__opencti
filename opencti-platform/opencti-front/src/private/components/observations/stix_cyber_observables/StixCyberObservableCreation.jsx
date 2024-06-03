@@ -300,14 +300,6 @@ const StixCyberObservableCreation = ({
       },
     });
   };
-
-  const progressReset = () => {
-    setOpenProgressDialog(false);
-    setProgressBarMax(100);
-    errorObservables = 0;
-    validObservables = 0;
-    setProgressBar(0);
-  };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
   };
@@ -818,22 +810,27 @@ function BulkAddDialog(props) {
     setOpenBulkAddDialog(false);
     const bulk_hashes_field = document.getElementById('bulk_hashes_field');
 
-    if (bulk_hashes_field != null && bulk_hashes_field.value != null && bulk_hashes_field.value.length > 0) {
-      props.setValue('hashes_MD5', bulkAddMsg);
-      props.setValue('hashes_SHA-1', bulkAddMsg);
-      props.setValue('hashes_SHA-256', bulkAddMsg);
-      props.setValue('hashes_SHA-512', bulkAddMsg);
-      props.setValue('name', bulkAddMsg);
-      setKeyFieldDisabled(true);
-    } else {
-      props.setValue('hashes_MD5', '');
-      props.setValue('hashes_SHA-1', '');
-      props.setValue('hashes_SHA-256', '');
-      props.setValue('hashes_SHA-512', '');
-      props.setValue('name', '');
-      setKeyFieldDisabled(false);
-    }
-  };
+      if (bulk_hashes_field != null && bulk_hashes_field.value != null && bulk_hashes_field.value.length > 0) {
+        // START - Clear Attached File from CustomFileUploader
+        const spanData = document.getElementById('CustomFileUploaderFileName');
+        spanData.innerHTML = t_i18n('No file selected.');
+        props.setValue('file', null);
+        // END - Clear Attached File from CustomFileUploader
+        props.setValue('hashes_MD5', bulkAddMsg);
+        props.setValue('hashes_SHA-1', bulkAddMsg);
+        props.setValue('hashes_SHA-256', bulkAddMsg);
+        props.setValue('hashes_SHA-512', bulkAddMsg);
+        props.setValue('name', bulkAddMsg);
+        setKeyFieldDisabled(true);
+      } else {
+        props.setValue('hashes_MD5', '');
+        props.setValue('hashes_SHA-1', '');
+        props.setValue('hashes_SHA-256', '');
+        props.setValue('hashes_SHA-512', '');
+        props.setValue('name', '');
+        setKeyFieldDisabled(false);
+      }
+    };
 
   const handleSelectChange = (event) => {
     setSelectedAttribute(event.target.value);
