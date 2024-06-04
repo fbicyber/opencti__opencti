@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material';
 import inject18n from './i18n';
 import { hexToRGB } from '../utils/Colors';
 import useHelper from '../utils/hooks/useHelper';
+import useAuth from '../utils/hooks/useAuth';
 
 const styles = () => ({
   chip: {
@@ -32,6 +33,8 @@ const styles = () => ({
 const ItemStatus = (props) => {
   const { isFeatureEnable } = useHelper();
   const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const theme = useTheme();
   const { classes, t, status, variant, disabled } = props;
   const style = variant === 'inList' ? classes.chipInList : classes.chip;
@@ -39,16 +42,16 @@ const ItemStatus = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        variant={isMonochromeFeatureEnabled ? 'contained' : 'outlined'}
+        variant={isMonochrome ? 'contained' : 'outlined'}
         label={status.template.name}
         style={{
-          color: isMonochromeFeatureEnabled
+          color: isMonochrome
             ? theme.palette.chip.main
             : status.template.color,
-          borderColor: isMonochromeFeatureEnabled
+          borderColor: isMonochrome
             ? undefined
             : status.template.color,
-          backgroundColor: isMonochromeFeatureEnabled
+          backgroundColor: isMonochrome
             ? theme.palette.background.accent
             : hexToRGB(status.template.color),
         }}
@@ -58,10 +61,10 @@ const ItemStatus = (props) => {
   return (
     <Chip
       classes={{ root: style }}
-      variant={isMonochromeFeatureEnabled ? 'contained' : 'outlined'}
+      variant={isMonochrome ? 'contained' : 'outlined'}
       label={disabled ? t('Disabled') : t('Unknown')}
       style={{
-        backgroundColor: isMonochromeFeatureEnabled
+        backgroundColor: isMonochrome
           ? theme.palette.background.accent
           : undefined,
       }}

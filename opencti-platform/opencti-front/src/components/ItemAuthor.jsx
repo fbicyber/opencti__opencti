@@ -4,16 +4,19 @@ import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { resolveLink } from '../utils/Entity';
 import useHelper from '../utils/hooks/useHelper';
+import useAuth from '../utils/hooks/useAuth';
 
 const ItemAuthor = (props) => {
   const { isFeatureEnable } = useHelper();
   const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const { createdBy } = props;
   return (
     <>
       {createdBy ? (
         <Button
-          variant={isMonochromeFeatureEnabled ? 'text' : 'outlined'}
+          variant={isMonochrome ? 'text' : 'outlined'}
           color="primary"
           size="small"
           component={Link}

@@ -8,6 +8,7 @@ import { SETTINGS_SETACCESSES } from '../utils/hooks/useGranted';
 import useHelper from '../utils/hooks/useHelper';
 import ThemeDark from './ThemeDark';
 import ThemeLight from './ThemeLight';
+import useAuth from '../utils/hooks/useAuth';
 
 const systemUsers = [
   '6a4b11e1-90ca-4e42-ba42-db7bc7f7d505', // SYSTEM
@@ -32,10 +33,12 @@ const ItemCreators = (props) => {
     : ThemeLight();
   const { isFeatureEnable } = useHelper();
   const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const { creators } = props;
   const classes = useStyles();
 
-  const systemUserDisplay = (name) => (isMonochromeFeatureEnabled
+  const systemUserDisplay = (name) => (isMonochrome
     ? <Chip
         style={{
           backgroundColor: theme.palette.background.accent,
@@ -61,7 +64,7 @@ const ItemCreators = (props) => {
             needs={[SETTINGS_SETACCESSES]}
             placeholder={
               <Button
-                variant={isMonochromeFeatureEnabled ? 'text' : 'outlined'}
+                variant={isMonochrome ? 'text' : 'outlined'}
                 size="small"
                 classes={{ root: classes.button }}
                 style={{ cursor: 'default' }}
@@ -73,7 +76,7 @@ const ItemCreators = (props) => {
             {systemUsers.includes(creator.id)
               ? (systemUserDisplay(creator.name))
               : (<Button
-                  variant={isMonochromeFeatureEnabled ? 'text' : 'outlined'}
+                  variant={isMonochrome ? 'text' : 'outlined'}
                   size="small"
                   classes={{ root: classes.button }}
                   component={Link}

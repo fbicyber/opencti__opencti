@@ -8,6 +8,7 @@ import { hexToRGB } from '../utils/Colors';
 import useHelper from '../utils/hooks/useHelper';
 import ThemeDark from './ThemeDark';
 import ThemeLight from './ThemeLight';
+import useAuth from '../utils/hooks/useAuth';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -46,6 +47,8 @@ const ItemConfidence: FunctionComponent<ItemConfidenceProps> = ({ confidence, va
     : ThemeLight();
   const { isFeatureEnable } = useHelper();
   const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const { level: confidenceLevel } = useLevel(entityType, 'confidence', confidence);
   const style = variant === 'inList' ? classes.chipInList : classes.chip;
   return (
@@ -53,13 +56,13 @@ const ItemConfidence: FunctionComponent<ItemConfidenceProps> = ({ confidence, va
       <Chip
         classes={{ root: style, label: classes.label }}
         style={{
-          color: isMonochromeFeatureEnabled
+          color: isMonochrome
             ? theme.palette.chip.main
             : confidenceLevel.color,
-          borderColor: isMonochromeFeatureEnabled
+          borderColor: isMonochrome
             ? undefined
             : confidenceLevel.color,
-          backgroundColor: isMonochromeFeatureEnabled
+          backgroundColor: isMonochrome
             ? theme.palette.background.accent
             : hexToRGB(confidenceLevel.color),
         }}

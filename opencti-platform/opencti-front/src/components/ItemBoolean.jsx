@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/styles';
 import inject18n from './i18n';
 import useHelper from '../utils/hooks/useHelper';
+import useAuth from '../utils/hooks/useAuth';
 
 const styles = () => ({
   chip: {
@@ -62,6 +63,8 @@ const renderChip = (props) => {
   const { classes, label, neutralLabel, status, variant, t, reverse } = props;
   const { isFeatureEnable } = useHelper();
   const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const theme = useTheme();
   let style = classes.chip;
   if (variant === 'inList') {
@@ -79,7 +82,7 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={isMonochromeFeatureEnabled
+        style={isMonochrome
           ? monochromaticStyle
           : forwardOrReversedStyle
         }
@@ -91,7 +94,7 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={isMonochromeFeatureEnabled
+        style={isMonochrome
           ? monochromaticStyle
           : inlineStyles.blue
         }
@@ -103,7 +106,7 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={isMonochromeFeatureEnabled
+        style={isMonochrome
           ? monochromaticStyle
           : inlineStyles.ee
         }
@@ -115,7 +118,7 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={isMonochromeFeatureEnabled
+        style={isMonochrome
           ? monochromaticStyle
           : inlineStyles.blue
         }
@@ -126,7 +129,7 @@ const renderChip = (props) => {
   return (
     <Chip
       classes={{ root: style }}
-      style={isMonochromeFeatureEnabled
+      style={isMonochrome
         ? monochromaticStyle
         : forwardOrReversedStyle
       }

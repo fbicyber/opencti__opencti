@@ -12,9 +12,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import { Add, CancelOutlined } from '@mui/icons-material';
+import { Add, CancelOutlined, Clear } from '@mui/icons-material';
 import { Label } from 'mdi-material-ui';
 import makeStyles from '@mui/styles/makeStyles';
+import { useTheme } from '@mui/material';
 import { commitMutation, fetchQuery } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
 import { labelsSearchQuery } from '../../settings/LabelsQuery';
@@ -26,6 +27,10 @@ import { truncate } from '../../../../utils/String';
 import useGranted, { KNOWLEDGE_KNUPDATE, SETTINGS_SETLABELS } from '../../../../utils/hooks/useGranted';
 import CommitMessage from '../form/CommitMessage';
 import Transition from '../../../../components/Transition';
+import useHelper from '../../../../utils/hooks/useHelper';
+import ThemeDark from '../../../../components/ThemeDark';
+import ThemeLight from '../../../../components/ThemeLight';
+import useAuth from '../../../../utils/hooks/useAuth';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -49,6 +54,14 @@ const useStyles = makeStyles(() => ({
 }));
 
 const StixCoreObjectOrCoreRelationshipLabelsView = (props) => {
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
+  const { palette: { mode } } = useTheme();
+  const theme = mode === 'dark'
+    ? ThemeDark()
+    : ThemeLight();
   const classes = useStyles();
   const { t_i18n } = useFormatter();
   const {
@@ -189,27 +202,51 @@ const StixCoreObjectOrCoreRelationshipLabelsView = (props) => {
               }
             >
               <Tooltip title={label.value}>
-                <Chip
-                  key={label.id}
-                  variant="outlined"
-                  classes={{ root: classes.label }}
-                  label={truncate(label.value, 25)}
-                  style={{
-                    color: label.color,
-                    borderColor: label.color,
-                    backgroundColor: hexToRGB(label.color),
-                  }}
-                  onDelete={() => (enableReferences
-                    ? handleOpenCommitDelete(label)
-                    : handleRemoveLabel(label.id))
-                  }
-                  deleteIcon={
-                    <CancelOutlined
-                      className={classes.deleteIcon}
-                      style={{ color: label.color }}
+                {isMonochrome
+                  ? <Chip
+                      key={label.id}
+                      variant="contained"
+                      classes={{ root: classes.label }}
+                      label={truncate(label.value, 25)}
+                      style={{
+                        color: theme.palette.chip.main,
+                        backgroundColor: theme.palette.background.accent,
+                      }}
+                      onDelete={() => (enableReferences
+                        ? handleOpenCommitDelete(label)
+                        : handleRemoveLabel(label.id))
+                      }
+                      deleteIcon={
+                        <Clear
+                          style={{
+                            color: theme.palette.chip.main,
+                            fontSize: '16px',
+                          }}
+                        />
+                      }
                     />
-                  }
-                />
+                  : <Chip
+                      key={label.id}
+                      variant="outlined"
+                      classes={{ root: classes.label }}
+                      label={truncate(label.value, 25)}
+                      style={{
+                        color: label.color,
+                        borderColor: label.color,
+                        backgroundColor: hexToRGB(label.color),
+                      }}
+                      onDelete={() => (enableReferences
+                        ? handleOpenCommitDelete(label)
+                        : handleRemoveLabel(label.id))
+                      }
+                      deleteIcon={
+                        <CancelOutlined
+                          className={classes.deleteIcon}
+                          style={{ color: label.color }}
+                        />
+                      }
+                    />
+                }
               </Tooltip>
             </Security>
           ),
