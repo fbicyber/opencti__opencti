@@ -22,6 +22,7 @@ import {
 import FieldOrEmpty from '../../../../components/FieldOrEmpty';
 import ImageCarousel, { ImagesData } from '../../../../components/ImageCarousel';
 import ThreatActorIndividualLocation from './ThreatActorIndividualLocation';
+import ThreatActorIndividualLocationFunctional from './ThreatActorIndividualLocationFunctional';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -145,7 +146,10 @@ ThreatActorIndividualDetailsProps
             </Grid>
           </Grid>
           <Grid item={true} xs={hasImages ? 5 : 6}>
-            <ThreatActorIndividualLocation threatActorIndividual={data} />
+            {isMonochromeFeatureEnabled
+              ? <ThreatActorIndividualLocationFunctional data={data} />
+              : <ThreatActorIndividualLocation threatActorIndividual={data} />
+            }
             <Typography
               variant="h3"
               gutterBottom={true}

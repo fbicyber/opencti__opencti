@@ -126,30 +126,32 @@ ThreatActorIndividualLocationsComponent.propTypes = {
   threatActorIndividual: PropTypes.object,
 };
 
+export const ThreatActorIndividualLocationsFragment = graphql`
+  fragment ThreatActorIndividualLocations_locations on ThreatActorIndividual {
+    id
+    name
+    parent_types
+    entity_type
+    locations {
+      edges {
+        types
+        node {
+          id
+          parent_types
+          entity_type
+          name
+          x_opencti_aliases
+          description
+        }
+      }
+    }
+  }
+`;
+
 const ThreatActorIndividualLocations = createFragmentContainer(
   ThreatActorIndividualLocationsComponent,
   {
-    threatActorIndividual: graphql`
-      fragment ThreatActorIndividualLocations_locations on ThreatActorIndividual {
-        id
-        name
-        parent_types
-        entity_type
-        locations {
-          edges {
-            types
-            node {
-              id
-              parent_types
-              entity_type
-              name
-              x_opencti_aliases
-              description
-            }
-          }
-        }
-      }
-    `,
+    threatActorIndividual: ThreatActorIndividualLocationsFragment,
   },
 );
 
