@@ -7,6 +7,7 @@ import { compose } from 'ramda';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/styles';
 import inject18n from './i18n';
+import useHelper from '../utils/hooks/useHelper';
 
 const styles = () => ({
   chip: {
@@ -59,6 +60,8 @@ const computeInlineStyles = (theme) => ({
 
 const renderChip = (props) => {
   const { classes, label, neutralLabel, status, variant, t, reverse } = props;
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
   const theme = useTheme();
   let style = classes.chip;
   if (variant === 'inList') {
@@ -67,11 +70,19 @@ const renderChip = (props) => {
     style = classes.chipLarge;
   }
   const inlineStyles = computeInlineStyles(theme);
+  const monochromaticStyle = {
+    backgroundColor: theme.palette.background.accent,
+    color: theme.palette.chip.main,
+  };
+  const forwardOrReversedStyle = reverse ? inlineStyles.red : inlineStyles.green;
   if (status === true) {
     return (
       <Chip
         classes={{ root: style }}
-        style={reverse ? inlineStyles.red : inlineStyles.green}
+        style={isMonochromeFeatureEnabled
+          ? monochromaticStyle
+          : forwardOrReversedStyle
+        }
         label={label}
       />
     );
@@ -80,7 +91,10 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={inlineStyles.blue}
+        style={isMonochromeFeatureEnabled
+          ? monochromaticStyle
+          : inlineStyles.blue
+        }
         label={neutralLabel || t('Not applicable')}
       />
     );
@@ -89,7 +103,10 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={inlineStyles.ee}
+        style={isMonochromeFeatureEnabled
+          ? monochromaticStyle
+          : inlineStyles.ee
+        }
         label={neutralLabel || t('EE')}
       />
     );
@@ -98,7 +115,10 @@ const renderChip = (props) => {
     return (
       <Chip
         classes={{ root: style }}
-        style={inlineStyles.blue}
+        style={isMonochromeFeatureEnabled
+          ? monochromaticStyle
+          : inlineStyles.blue
+        }
         label={<CircularProgress size={10} color="primary" />}
       />
     );
@@ -106,7 +126,10 @@ const renderChip = (props) => {
   return (
     <Chip
       classes={{ root: style }}
-      style={reverse ? inlineStyles.green : inlineStyles.red}
+      style={isMonochromeFeatureEnabled
+        ? monochromaticStyle
+        : forwardOrReversedStyle
+      }
       label={label}
     />
   );

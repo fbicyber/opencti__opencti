@@ -3,8 +3,10 @@ import * as PropTypes from 'prop-types';
 import withStyles from '@mui/styles/withStyles';
 import Chip from '@mui/material/Chip';
 import { compose } from 'ramda';
+import { useTheme } from '@mui/material';
 import inject18n from './i18n';
 import { hexToRGB } from '../utils/Colors';
+import useHelper from '../utils/hooks/useHelper';
 
 const styles = () => ({
   chip: {
@@ -28,18 +30,27 @@ const styles = () => ({
 });
 
 const ItemStatus = (props) => {
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const theme = useTheme();
   const { classes, t, status, variant, disabled } = props;
   const style = variant === 'inList' ? classes.chipInList : classes.chip;
   if (status && status.template) {
     return (
       <Chip
         classes={{ root: style }}
-        variant="outlined"
+        variant={isMonochromeFeatureEnabled ? 'contained' : 'outlined'}
         label={status.template.name}
         style={{
-          color: status.template.color,
-          borderColor: status.template.color,
-          backgroundColor: hexToRGB(status.template.color),
+          color: isMonochromeFeatureEnabled
+            ? theme.palette.chip.main
+            : status.template.color,
+          borderColor: isMonochromeFeatureEnabled
+            ? undefined
+            : status.template.color,
+          backgroundColor: isMonochromeFeatureEnabled
+            ? theme.palette.background.accent
+            : hexToRGB(status.template.color),
         }}
       />
     );
@@ -47,8 +58,13 @@ const ItemStatus = (props) => {
   return (
     <Chip
       classes={{ root: style }}
-      variant="outlined"
+      variant={isMonochromeFeatureEnabled ? 'contained' : 'outlined'}
       label={disabled ? t('Disabled') : t('Unknown')}
+      style={{
+        backgroundColor: isMonochromeFeatureEnabled
+          ? theme.palette.background.accent
+          : undefined,
+      }}
     />
   );
 };

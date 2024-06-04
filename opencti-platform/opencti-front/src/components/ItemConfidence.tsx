@@ -2,8 +2,12 @@ import React, { FunctionComponent } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material';
 import { useLevel } from '../utils/hooks/useScale';
 import { hexToRGB } from '../utils/Colors';
+import useHelper from '../utils/hooks/useHelper';
+import ThemeDark from './ThemeDark';
+import ThemeLight from './ThemeLight';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -36,6 +40,12 @@ interface ItemConfidenceProps {
 
 const ItemConfidence: FunctionComponent<ItemConfidenceProps> = ({ confidence, variant, entityType }) => {
   const classes = useStyles();
+  const { palette: { mode } } = useTheme();
+  const theme = mode === 'dark'
+    ? ThemeDark()
+    : ThemeLight();
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
   const { level: confidenceLevel } = useLevel(entityType, 'confidence', confidence);
   const style = variant === 'inList' ? classes.chipInList : classes.chip;
   return (
@@ -43,9 +53,15 @@ const ItemConfidence: FunctionComponent<ItemConfidenceProps> = ({ confidence, va
       <Chip
         classes={{ root: style, label: classes.label }}
         style={{
-          color: confidenceLevel.color,
-          borderColor: confidenceLevel.color,
-          backgroundColor: hexToRGB(confidenceLevel.color),
+          color: isMonochromeFeatureEnabled
+            ? theme.palette.chip.main
+            : confidenceLevel.color,
+          borderColor: isMonochromeFeatureEnabled
+            ? undefined
+            : confidenceLevel.color,
+          backgroundColor: isMonochromeFeatureEnabled
+            ? theme.palette.background.accent
+            : hexToRGB(confidenceLevel.color),
         }}
         label={confidenceLevel.label}
       />

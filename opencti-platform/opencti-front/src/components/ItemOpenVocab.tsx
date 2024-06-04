@@ -12,6 +12,7 @@ import { ItemOpenVocabQuery } from './__generated__/ItemOpenVocabQuery.graphql';
 import useQueryLoading from '../utils/hooks/useQueryLoading';
 import ItemSeverity from './ItemSeverity';
 import ItemPriority from './ItemPriority';
+import { truncate } from '../utils/String';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -28,10 +29,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     width: 120,
     color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
     borderColor: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? 'rgba(255, 255, 255, .1)'
-        : 'rgba(0, 0, 0, .1)',
+    backgroundColor: theme.palette.background.accent,
     '& .MuiChip-label': {
       whiteSpace: 'normal',
       padding: '4px 6px',
@@ -128,7 +126,7 @@ const ItemOpenVocabComponent: FunctionComponent<ItemOpenVocabProps> = ({
   }
   if (displayMode === 'chip') {
     let chip = (
-      <Chip classes={{ root: classes.chip }} label={value || t_i18n('Unknown')} />
+      <Chip classes={{ root: classes.chip }} label={truncate(value, 20) || t_i18n('Unknown')} />
     );
     if (type === 'case_severity_ov') {
       chip = <ItemSeverity label={value || t_i18n('Unknown')} severity={value} />;
