@@ -10,6 +10,7 @@ import { BullseyeArrow, ArmFlexOutline, DramaMasks } from 'mdi-material-ui';
 import ListItemText from '@mui/material/ListItemText';
 import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
+import useHelper from 'src/utils/hooks/useHelper';
 import ExpandableMarkdown from '../../../../components/ExpandableMarkdown';
 import { useFormatter } from '../../../../components/i18n';
 import ItemOpenVocab from '../../../../components/ItemOpenVocab';
@@ -94,6 +95,8 @@ ThreatActorIndividualDetailsProps
     ThreatActorIndividualDetailsFragment,
     threatActorIndividualData,
   );
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
   const imagesCarousel: { images: ImagesData } = {
     images: {
       edges: (data.images?.edges ?? []).filter((n) => n?.node?.metaData?.inCarousel),
@@ -216,10 +219,12 @@ ThreatActorIndividualDetailsProps
               {data.roles && (
                 <List>
                   {data.roles.map((role) => (
-                    <ListItem key={role} dense={true} divider={true}>
-                      <ListItemIcon>
-                        <DramaMasks />
-                      </ListItemIcon>
+                    <ListItem key={role} dense={true} divider={true} disablePadding={isMonochromeFeatureEnabled}>
+                      {!isMonochromeFeatureEnabled
+                        && <ListItemIcon>
+                          <DramaMasks />
+                        </ListItemIcon>
+                      }
                       <ListItemText
                         primary={
                           <ItemOpenVocab
@@ -247,10 +252,12 @@ ThreatActorIndividualDetailsProps
               {data.goals && (
                 <List>
                   {data.goals.map((goal) => (
-                    <ListItem key={goal} dense={true} divider={true}>
-                      <ListItemIcon>
-                        <BullseyeArrow />
-                      </ListItemIcon>
+                    <ListItem key={goal} dense={true} divider={true} disablePadding={isMonochromeFeatureEnabled}>
+                      {!isMonochromeFeatureEnabled
+                        && <ListItemIcon>
+                          <BullseyeArrow />
+                        </ListItemIcon>
+                      }
                       <ListItemText
                         primary={<pre className={classes.smallPre}>{goal}</pre>}
                       />
@@ -276,10 +283,13 @@ ThreatActorIndividualDetailsProps
                       key={secondaryMotivation}
                       dense={true}
                       divider={true}
+                      disablePadding={isMonochromeFeatureEnabled}
                     >
-                      <ListItemIcon>
-                        <ArmFlexOutline />
-                      </ListItemIcon>
+                      {!isMonochromeFeatureEnabled
+                        && <ListItemIcon>
+                          <ArmFlexOutline />
+                        </ListItemIcon>
+                      }
                       <ListItemText
                         primary={
                           <ItemOpenVocab
@@ -311,10 +321,13 @@ ThreatActorIndividualDetailsProps
                       key={personalMotivation}
                       dense={true}
                       divider={true}
+                      disablePadding={isMonochromeFeatureEnabled}
                     >
-                      <ListItemIcon>
-                        <ArmFlexOutline />
-                      </ListItemIcon>
+                      {!isMonochromeFeatureEnabled
+                        && <ListItemIcon>
+                          <ArmFlexOutline />
+                        </ListItemIcon>
+                      }
                       <ListItemText
                         primary={
                           <ItemOpenVocab
