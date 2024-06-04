@@ -248,7 +248,11 @@ const ProfileOverviewComponent = (props) => {
   };
 
   const handleSubmitField = (name, value) => {
-    alert("HERE " + name + " " + value);
+    if (name === 'language') {
+      // WIP
+      document.documentElement.setAttribute('lang', value.slice(0, 2));
+      //localStorage.setItem('currentLang', value.slice(0, 2));
+    }
     userValidation(t)
       .validateAt(name, { [name]: value })
       .then(() => {

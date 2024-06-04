@@ -48,9 +48,14 @@ esbuild
       (f) => `<script defer="defer" src="%BASE_PATH%/static/js/${f}"></script>`
     );
     const jsImport = jsLinks.join("\n");
+   /* let language = 'en';
+    if ("currentLang" in localStorage) {
+      language = localStorage.getItem('currentLang');
+      //document.documentElement.setAttribute('lang', localStorage.getItem('currentLang'));
+    } */
     const indexHtml = `
     <!doctype html>
-    <html lang="en">
+    <html lang = "en">
         <head>
         <Helmet>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -62,7 +67,7 @@ esbuild
             <script>window.BASE_PATH = "%BASE_PATH%"</script>
             ${jsImport}
             ${cssImport}
-            <title>%APP_TITLE%</title>
+            <!-- <title>%APP_TITLE%</title> -->
           </Helmet>
         </head>
         <body>
