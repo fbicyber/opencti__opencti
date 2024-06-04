@@ -2,8 +2,12 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
+import { Chip, useTheme } from '@mui/material';
 import Security from '../utils/Security';
 import { SETTINGS_SETACCESSES } from '../utils/hooks/useGranted';
+import useHelper from '../utils/hooks/useHelper';
+import ThemeDark from './ThemeDark';
+import ThemeLight from './ThemeLight';
 
 const systemUsers = [
   '6a4b11e1-90ca-4e42-ba42-db7bc7f7d505', // SYSTEM
@@ -22,8 +26,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ItemCreators = (props) => {
+  const { palette: { mode } } = useTheme();
+  const theme = mode === 'dark'
+    ? ThemeDark()
+    : ThemeLight();
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
   const { creators } = props;
   const classes = useStyles();
+
+  const systemUserDisplay = (name) => (isMonochromeFeatureEnabled
+    ? <Chip
+        style={{
+          backgroundColor: theme.palette.background.accent,
+          color: theme.palette.chip.main,
+        }}
+        label={name}
+      />
+    : <Button
+        variant="outlined"
+        size="small"
+        classes={{ root: classes.button }}
+        style={{ cursor: 'default' }}
+      >
+      {name}
+    </Button>);
+
   return (
     <>
       {creators.map((creator) => {
@@ -33,7 +61,7 @@ const ItemCreators = (props) => {
             needs={[SETTINGS_SETACCESSES]}
             placeholder={
               <Button
-                variant="outlined"
+                variant={isMonochromeFeatureEnabled ? 'text' : 'outlined'}
                 size="small"
                 classes={{ root: classes.button }}
                 style={{ cursor: 'default' }}
@@ -42,26 +70,19 @@ const ItemCreators = (props) => {
               </Button>
             }
           >
-            {systemUsers.includes(creator.id) ? (
-              <Button
-                variant="outlined"
-                size="small"
-                classes={{ root: classes.button }}
-                style={{ cursor: 'default' }}
-              >
+            {systemUsers.includes(creator.id)
+              ? (systemUserDisplay(creator.name))
+              : (<Button
+                  variant={isMonochromeFeatureEnabled ? 'text' : 'outlined'}
+                  size="small"
+                  classes={{ root: classes.button }}
+                  component={Link}
+                  to={`/dashboard/settings/accesses/users/${creator.id}`}
+                 >
                 {creator.name}
               </Button>
-            ) : (
-              <Button
-                variant="outlined"
-                size="small"
-                classes={{ root: classes.button }}
-                component={Link}
-                to={`/dashboard/settings/accesses/users/${creator.id}`}
-              >
-                {creator.name}
-              </Button>
-            )}
+              )
+            }
           </Security>
         );
       })}
