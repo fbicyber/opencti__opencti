@@ -141,7 +141,7 @@ const ItemMarkings = ({ variant, markingDefinitions, limit }) => {
           textColor = '#ffffff';
         }
       } else if (backgroundColor.startsWith('#ffffff')) {
-        textColor = '#2b2b2b';
+        if (!isMonochrome) textColor = '#2b2b2b';
       }
       return (
         <Chip

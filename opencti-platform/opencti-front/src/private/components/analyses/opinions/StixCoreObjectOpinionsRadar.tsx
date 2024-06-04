@@ -1,13 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import * as R from 'ramda';
 import { graphql, usePreloadedQuery } from 'react-relay';
-import { useTheme } from '@mui/styles';
 import { PreloadedQuery } from 'react-relay/relay-hooks/EntryPointTypes';
+import { useTheme } from '@mui/material';
 import Chart from '../../common/charts/Chart';
 import { useFormatter } from '../../../../components/i18n';
 import { radarChartOptions } from '../../../../utils/Charts';
 import { generateGreenToRedColors } from '../../../../utils/Colors';
 import { StixCoreObjectOpinionsRadarDistributionQuery } from './__generated__/StixCoreObjectOpinionsRadarDistributionQuery.graphql';
+import useHelper from '../../../../utils/hooks/useHelper';
+import useAuth from '../../../../utils/hooks/useAuth';
+import ThemeDark from '../../../../components/ThemeDark';
+import ThemeLight from '../../../../components/ThemeLight';
 
 export const stixCoreObjectOpinionsRadarDistributionQuery = graphql`
   query StixCoreObjectOpinionsRadarDistributionQuery(
@@ -49,8 +53,15 @@ StixCoreObjectOpinionsRadarProps
   height,
   opinionOptions,
 }) => {
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const { t_i18n } = useFormatter();
-  const theme = useTheme();
+  const { palette: { mode } } = useTheme();
+  const theme = mode === 'dark'
+    ? ThemeDark()
+    : ThemeLight();
   const { opinionsDistribution } = usePreloadedQuery<StixCoreObjectOpinionsRadarDistributionQuery>(
     stixCoreObjectOpinionsRadarDistributionQuery,
     queryRef,
@@ -70,7 +81,9 @@ StixCoreObjectOpinionsRadarProps
     },
   ];
   const labels = opinionOptions.map((m) => m.label);
-  const colors = generateGreenToRedColors(opinionOptions.length);
+  const colors = isMonochrome
+    ? Array(opinionOptions.length).fill(theme.palette.chip.main)
+    : generateGreenToRedColors(opinionOptions.length);
 
   return (
     <Chart
