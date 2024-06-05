@@ -42,6 +42,7 @@ const ItemCreators = (props) => {
     ? <Chip
         style={{
           backgroundColor: theme.palette.background.accent,
+          borderRadius: 4,
           color: theme.palette.chip.main,
         }}
         label={name}
