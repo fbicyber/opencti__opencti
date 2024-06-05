@@ -1,13 +1,16 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
-const dynamicHeader = ({ title, language }) => {
+const DynamicHeader = ({ title, language, description = [] }) => {
   return (
-    <Helmet htmlAttributes>
-      <html lang = {language} />
-      <title>OpenCTI | {title}</title>
-    </Helmet>
+    <div>
+      <Helmet>
+        htmlAttributes{{ lang: { language } }}
+        <title>OpenCTI | {title}</title>
+        <meta name="description" content={description} data-rh="true"></meta>
+      </Helmet>
+    </div>
   );
 };
-
-export default dynamicHeader;
+// Usage: <dynamicHeader title="" language="" description=""/>
+export default DynamicHeader;
