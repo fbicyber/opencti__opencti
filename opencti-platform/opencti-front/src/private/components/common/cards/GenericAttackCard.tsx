@@ -236,7 +236,7 @@ export const GenericAttackCard: FunctionComponent<GenericAttackCardProps> = ({
           </div>
           <div className={classes.objectLabel}>
             <StixCoreObjectLabels
-              labels={cardData.objectLabel}
+              labels={(cardData.objectLabel?.edges ?? []).map(({ node }) => ({ ...node }))}
               onClick={onLabelClick}
             />
           </div>
