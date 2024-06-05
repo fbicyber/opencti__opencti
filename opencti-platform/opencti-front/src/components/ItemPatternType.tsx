@@ -1,6 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import Chip from '@mui/material/Chip';
 import makeStyles from '@mui/styles/makeStyles';
+import { useTheme } from '@mui/material';
+import useHelper from '../utils/hooks/useHelper';
+import useAuth from '../utils/hooks/useAuth';
+import ThemeDark from './ThemeDark';
+import ThemeLight from './ThemeLight';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -95,12 +100,25 @@ const ItemPatternType: FunctionComponent<ItemPatternTypeProps> = ({
   label,
 }) => {
   const classes = useStyles();
+  const { palette: { mode } } = useTheme();
+  const theme = mode === 'dark'
+    ? ThemeDark()
+    : ThemeLight();
+  const { isFeatureEnable } = useHelper();
+  const isMonochromeFeatureEnabled = isFeatureEnable('MONOCHROME_LABELS');
+  const { me: { monochrome_labels } } = useAuth();
+  const isMonochrome = isMonochromeFeatureEnabled && monochrome_labels;
   const style = variant === 'inList' ? classes.chipInList : classes.chip;
   const hasPredefinedStyle = Object.keys(inlineStyles).includes(label);
+  const normalStyle = hasPredefinedStyle ? inlineStyles[label] : inlineStyles.stix;
+  const monochromaticStyle = {
+    color: theme.palette.chip.main,
+    backgroundColor: theme.palette.background.accent,
+  };
   return (
     <Chip
       className={style}
-      style={hasPredefinedStyle ? inlineStyles[label] : inlineStyles.stix}
+      style={isMonochrome ? monochromaticStyle : normalStyle}
       label={label}
     />
   );
