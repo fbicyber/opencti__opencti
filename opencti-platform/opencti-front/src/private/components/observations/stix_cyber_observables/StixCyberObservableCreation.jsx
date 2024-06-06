@@ -400,7 +400,6 @@ const StixCyberObservableCreation = ({
       }
     }
     function updateProgress(position, batchSize) {
-      console.log('Reached updateProgress');
       if (position % batchSize === 0) {
         setProgressBar((prevProgress) => prevProgress + 1);
       }
