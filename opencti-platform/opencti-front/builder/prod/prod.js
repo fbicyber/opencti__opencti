@@ -48,27 +48,20 @@ esbuild
       (f) => `<script defer="defer" src="%BASE_PATH%/static/js/${f}"></script>`
     );
     const jsImport = jsLinks.join("\n");
-   /* let language = 'en';
-    if ("currentLang" in localStorage) {
-      language = localStorage.getItem('currentLang');
-      //document.documentElement.setAttribute('lang', localStorage.getItem('currentLang'));
-    } */
     const indexHtml = `
     <!doctype html>
     <html lang="en">
         <head>
-          <Helmet>
-          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
-          <meta name="viewport" content="width=device-width,initial-scale=1">
-          <meta name="dеѕсrірtіоn" content="%APP_DESCRIPTION%">
-          <link id="favicon" rel="shortcut icon" href="%APP_FAVICON%">
-          <link id="manifest" rel="manifest" href="%APP_MANIFEST%">
-          <script>window.BASE_PATH = "%BASE_PATH%"</script>
-          ${jsImport}
-          ${cssImport}
-          <title>%APP_TITLE%</title>
-          </Helmet>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <meta name="dеѕсrірtіоn" content="%APP_DESCRIPTION%">
+            <link id="favicon" rel="shortcut icon" href="%APP_FAVICON%">
+            <link id="manifest" rel="manifest" href="%APP_MANIFEST%">
+            <script>window.BASE_PATH = "%BASE_PATH%"</script>
+            ${jsImport}
+            ${cssImport}
+            <title>%APP_TITLE%</title>
         </head>
         <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>

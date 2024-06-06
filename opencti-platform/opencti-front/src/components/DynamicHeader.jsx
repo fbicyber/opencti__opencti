@@ -1,16 +1,27 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import useAuth from '../utils/hooks/useAuth';
 
-const DynamicHeader = ({ title, language, description = [] }) => {
+// Usage: <DynamicHeader title={t_i18n('Page Title Here')}></DynamicHeader>
+const DynamicHeader = ({ title = 'OpenCTI - Cyber Threat Intelligence Platform' }) => {
+  const { me: currentMe } = useAuth();
+  // current Browser Language is:
+  const defaultBrowserLang = navigator.language || navigator.userLanguage;
+  let pageLanguage = currentMe.language;
+  if (pageLanguage === 'auto' || pageLanguage === 'au') {
+    pageLanguage = defaultBrowserLang;
+  }
+  pageLanguage = (pageLanguage).substring(0, 2); // Make it two chars for HTML 'lang' tag compliance, ISO 639-1 Language Codes
+
+  const helmetContext = {};
   return (
-    <div>
+    <HelmetProvider context={helmetContext}>
       <Helmet>
-        htmlAttributes{{ lang: { language } }}
-        <title>OpenCTI | {title}</title>
-        <meta name="description" content={description} data-rh="true"></meta>
+        <html lang={pageLanguage} />
+        <title>{title}</title>
       </Helmet>
-    </div>
+    </HelmetProvider>
   );
 };
-// Usage: <dynamicHeader title="" language="" description=""/>
+
 export default DynamicHeader;

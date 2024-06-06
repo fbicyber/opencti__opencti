@@ -17,6 +17,7 @@ import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFi
 import { useFormatter } from '../../../components/i18n';
 import ExportContextProvider from '../../../utils/ExportContextProvider';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'groupings';
 
@@ -202,6 +203,7 @@ const Groupings: FunctionComponent<GroupingsProps> = () => {
           <GroupingCreation paginationOptions={queryPaginationOptions} />
         </Security>
       }
+      <DynamicHeader title={t_i18n('OpenCTI - Analyses: Groupings')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

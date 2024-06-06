@@ -17,6 +17,7 @@ import NoteCreation from './notes/NoteCreation';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'notes';
 
@@ -192,6 +193,7 @@ const Notes: FunctionComponent = () => {
           <NoteCreation paginationOptions={queryPaginationOptions} />
         </Security>
       }
+      <DynamicHeader title={t_i18n('OpenCTI - Analyses: Notes')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

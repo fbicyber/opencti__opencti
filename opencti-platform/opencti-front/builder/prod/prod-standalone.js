@@ -50,16 +50,14 @@ esbuild
     <!doctype html>
     <html lang="en">
         <head>
-        <Helmet>
-          <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-          <script>window.BASE_PATH = "%BASE_PATH%"</script>
-          <meta name="viewport" content="width=device-width,initial-scale=1">
-          <title></title>
-          <link id="favicon" rel="shortcut icon" href="">
-          ${jsImport}
-          ${cssImport}
-        </Helmet>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <script>window.BASE_PATH = "%BASE_PATH%"</script>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title></title>
+        <link id="favicon" rel="shortcut icon" href="">
+        ${jsImport}
+        ${cssImport}
         </head>
         <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>

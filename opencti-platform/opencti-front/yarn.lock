@@ -4782,13 +4782,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/async@npm:^3":
-  version: 3.2.24
-  resolution: "@types/async@npm:3.2.24"
-  checksum: 10/9f330a2fbaa93672a343e456cb81ddd8e5034056116afeafaa04019d20643c4443b4bb03801a24d265c0bc89ffacf1fb8301f2ed62f8f3331682c317fa75d6a5
-  languageName: node
-  linkType: hard
-
 "@types/babel__core@npm:^7.0.0, @types/babel__core@npm:^7.1.7, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
@@ -6547,13 +6540,6 @@ __metadata:
   version: 4.0.1
   resolution: "async-hook-domain@npm:4.0.1"
   checksum: 10/267a93bc62f9835fa8cc42b55fbbe27d8b2607e7e5c27d4c6dd85ea87676a356b8ae42591c85e04c859e8db615912a32662f98293be21a8f718152b71bc06413
-  languageName: node
-  linkType: hard
-
-"async@npm:^3.2.5":
-  version: 3.2.5
-  resolution: "async@npm:3.2.5"
-  checksum: 10/323c3615c3f0ab1ac25a6f953296bc0ac3213d5e0f1c0debdb12964e55963af288d570293c11e44f7967af58c06d2a88d0ea588c86ec0fbf62fa98037f604a0f
   languageName: node
   linkType: hard
 
@@ -15233,6 +15219,7 @@ __metadata:
     react-force-graph-2d: "npm:1.25.5"
     react-force-graph-3d: "npm:1.24.3"
     react-grid-layout: "npm:1.4.4"
+    react-helmet-async: "npm:^2.0.5"
     react-intl: "npm:6.6.8"
     react-leaflet: "npm:4.2.1"
     react-markdown: "npm:9.0.1"
@@ -16631,6 +16618,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "react-fast-compare@npm:3.2.2"
+  checksum: 10/a6826180ba75cefba1c8d3ac539735f9b627ca05d3d307fe155487f5d0228d376dac6c9708d04a283a7b9f9aee599b637446635b79c8c8753d0b4eece56c125c
+  languageName: node
+  linkType: hard
+
 "react-force-graph-2d@npm:1.25.5":
   version: 1.25.5
   resolution: "react-force-graph-2d@npm:1.25.5"
@@ -16671,6 +16665,19 @@ __metadata:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
   checksum: 10/43c9bc7e8ce5a902720ebe559b1551724615c617391b040a0a275597748e1927b293c5ddcb73053b1925909e1c293948b4969a35799d541bf9d8886e07ac0085
+  languageName: node
+  linkType: hard
+
+"react-helmet-async@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "react-helmet-async@npm:2.0.5"
+  dependencies:
+    invariant: "npm:^2.2.4"
+    react-fast-compare: "npm:^3.2.2"
+    shallowequal: "npm:^1.1.0"
+  peerDependencies:
+    react: ^16.6.0 || ^17.0.0 || ^18.0.0
+  checksum: 10/03a8fbf4779c90899012809da09a6b174a2e11e2db4c7f4e61672903dd4e2f3bb732619da4254fc874c502251a07c8da01c752ed7d6df429c7718cf8451d176a
   languageName: node
   linkType: hard
 
@@ -16946,15 +16953,6 @@ __metadata:
   peerDependencies:
     react: ^16.0.0 || ^17.0.0 || ^18.0.0
   checksum: 10/06457fe5bcaa44aeca998905b6849304742ea1cc2d3841e4a0964c745ff392bc4dec07f8c779f317faacce3a0bf6f84e15020ac0fa81adb931067dbb0baf707b
-  languageName: node
-  linkType: hard
-
-"react-side-effect@npm:^2.1.0":
-  version: 2.1.2
-  resolution: "react-side-effect@npm:2.1.2"
-  peerDependencies:
-    react: ^16.3.0 || ^17.0.0 || ^18.0.0
-  checksum: 10/8c31aaec5b383d942ff1775b12c45022239d1250d1a00a238bac3c07e0fe266c71991e2814ae16a5d9b855bcd96ba95817d48ab3f34738f0bb32036ebb1abb1a
   languageName: node
   linkType: hard
 
@@ -18085,6 +18083,13 @@ __metadata:
   dependencies:
     kind-of: "npm:^6.0.2"
   checksum: 10/e066bd540cfec5e1b0f78134853e0d892d1c8945fb9a926a579946052e7cb0c70ca4fc34f875a8083aa7910d751805d36ae64af250a6de6f3d28f9fa7be6c21b
+  languageName: node
+  linkType: hard
+
+"shallowequal@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "shallowequal@npm:1.1.0"
+  checksum: 10/f4c1de0837f106d2dbbfd5d0720a5d059d1c66b42b580965c8f06bb1db684be8783538b684092648c981294bf817869f743a066538771dbecb293df78f765e00
   languageName: node
   linkType: hard
 

@@ -20,6 +20,7 @@ import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../..
 import { useFormatter } from '../../../components/i18n';
 import ExportContextProvider from '../../../utils/ExportContextProvider';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'externalReferences';
 
@@ -177,6 +178,7 @@ const ExternalReferences: FunctionComponent<ExternalReferencesProps> = () => {
           />
         </Security>
       }
+      <DynamicHeader title={t_i18n('OpenCTI - Analyses: External References')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

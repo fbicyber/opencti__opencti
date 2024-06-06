@@ -17,6 +17,7 @@ import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../..
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import ExportContextProvider from '../../../utils/ExportContextProvider';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'reports';
 
@@ -193,6 +194,7 @@ const Reports: FunctionComponent = () => {
           <ReportCreation paginationOptions={queryPaginationOptions} />
         </Security>
       }
+      <DynamicHeader title={t_i18n('OpenCTI - Analyses: Reports')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

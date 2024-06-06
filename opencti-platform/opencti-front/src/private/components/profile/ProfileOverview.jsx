@@ -18,7 +18,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/styles';
 import { ListItem, ListItemText, Switch } from '@mui/material';
-import DynamicHeader from 'src/components/DynamicHeader';
 import NotifierField from '../common/form/NotifierField';
 import inject18n, { useFormatter } from '../../../components/i18n';
 import TextField from '../../../components/TextField';
@@ -52,6 +51,7 @@ const styles = () => ({
     padding: '20px 0 0',
   },
 });
+
 const profileOverviewFieldPatch = graphql`
   mutation ProfileOverviewFieldPatchMutation(
     $input: [EditInput]!
@@ -248,11 +248,6 @@ const ProfileOverviewComponent = (props) => {
   };
 
   const handleSubmitField = (name, value) => {
-    if (name === 'language') {
-      // WIP
-      document.documentElement.setAttribute('lang', value.slice(0, 2));
-      // localStorage.setItem('currentLang', value.slice(0, 2));
-    }
     userValidation(t)
       .validateAt(name, { [name]: value })
       .then(() => {

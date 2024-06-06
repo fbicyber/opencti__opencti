@@ -27,6 +27,7 @@ import LocationMiniMapTargets from './common/location/LocationMiniMapTargets';
 import StixRelationshipsHorizontalBars from './common/stix_relationships/StixRelationshipsHorizontalBars';
 import DashboardView from './workspaces/dashboards/Dashboard';
 import useQueryLoading from '../../utils/hooks/useQueryLoading';
+import DynamicHeader from '../../components/DynamicHeader';
 
 // region styles
 // Deprecated - https://mui.com/system/styles/basics/
@@ -584,6 +585,7 @@ const LOCAL_STORAGE_KEY = 'dashboard';
 
 const DashboardComponent = ({ queryRef }) => {
   const classes = useStyles();
+  const { t_i18n } = useFormatter();
   const { me: currentMe, ...context } = useAuth();
   const data = usePreloadedQuery(dashboardQuery, queryRef);
   const me = useFragment(dashboardMeFragment, data.me);
@@ -601,6 +603,7 @@ const DashboardComponent = ({ queryRef }) => {
     // Handle old conf
     defaultDashboard = dashboard;
   }
+
   return (
     <UserContext.Provider value={{ me: { ...currentMe, ...me }, ...context }}>
       <div className={classes.root} data-testid="dashboard-page">
@@ -614,6 +617,7 @@ const DashboardComponent = ({ queryRef }) => {
         )}
       </div>
       <DashboardSettings />
+      <DynamicHeader title={t_i18n('OpenCTI Dashboard')}></DynamicHeader>
     </UserContext.Provider>
   );
 };
