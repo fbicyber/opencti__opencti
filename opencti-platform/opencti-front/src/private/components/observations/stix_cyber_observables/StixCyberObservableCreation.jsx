@@ -360,9 +360,7 @@ const StixCyberObservableCreation = ({
     }
     function handleHashPromiseResult() {
       totalObservables = hashesList.length;
-      console.log('totalObservables - ', totalObservables);
       if (totalObservables > 1) {
-        console.log('opened progress dialog');
         setOpenProgressDialog(true);
       }
       let closeFormWithAnySuccess = false;
@@ -411,7 +409,6 @@ const StixCyberObservableCreation = ({
       }
     }
     function updateProgress(position, batchSize) {
-      console.log('Reached updateProgress');
       if (position % batchSize === 0) {
         setProgressBar((prevProgress) => prevProgress + 1);
       }
@@ -651,12 +648,8 @@ const StixCyberObservableCreation = ({
           while (position < hashesList.length) {
             setProgressBarMax(Math.ceil(hashesList.length / batchSize));
             const chunkValueList = hashesList.slice(position, position + batchSize);
-            console.log('chunkValueList');
-            console.log(JSON.stringify(chunkValueList, null, 4));
             processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
             position += batchSize;
-            console.log('hashesList.length is ', hashesList.length);
-            console.log('position is ', position);
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
@@ -669,12 +662,8 @@ const StixCyberObservableCreation = ({
           while (position < hashesList.length) {
             setProgressBarMax(Math.ceil(hashesList.length / batchSize));
             const chunkValueList = hashesList.slice(position, position + batchSize);
-            console.log('chunkValueList');
-            console.log(JSON.stringify(chunkValueList, null, 4));
             processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
             position += batchSize;
-            console.log('hashesList.length is ', hashesList.length);
-            console.log('position is ', position);
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
