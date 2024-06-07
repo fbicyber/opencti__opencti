@@ -617,7 +617,7 @@ const DashboardComponent = ({ queryRef }) => {
         )}
       </div>
       <DashboardSettings />
-      <DynamicHeader title={t_i18n('OpenCTI Dashboard')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Dashboard')}></DynamicHeader>
     </UserContext.Provider>
   );
 };

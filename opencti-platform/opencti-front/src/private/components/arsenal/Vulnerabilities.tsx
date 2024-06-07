@@ -12,6 +12,7 @@ import useAuth from '../../../utils/hooks/useAuth';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'vulnerabilities';
 
@@ -140,6 +141,7 @@ const Vulnerabilities = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <VulnerabilityCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Arsenal: Vulnerabilities')}></DynamicHeader>
     </>
   );
 };

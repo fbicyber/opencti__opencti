@@ -16,6 +16,7 @@ import { ModuleHelper } from '../../../utils/platformModulesHelper';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'observedDatas';
 
@@ -166,6 +167,7 @@ const ObservedDatas: FunctionComponent = () => {
           <Security needs={[KNOWLEDGE_KNUPDATE]}>
             <ObservedDataCreation paginationOptions={queryPaginationOptions}/>
           </Security>
+          <DynamicHeader title={t_i18n('OpenCTI - Events: Observed Data')}></DynamicHeader>
         </ExportContextProvider>
       )}
     </UserContext.Consumer>

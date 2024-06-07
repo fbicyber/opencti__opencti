@@ -16,6 +16,7 @@ import { InfrastructureLine_node$data } from './infrastructures/__generated__/In
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY_INFRASTRUCTURES = 'infrastructures';
 
@@ -177,6 +178,7 @@ const Infrastructures = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <InfrastructureCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Observations: Infrastructures')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

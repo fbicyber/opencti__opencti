@@ -16,6 +16,7 @@ import { IncidentsLinesPaginationQuery, IncidentsLinesPaginationQuery$variables 
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY = 'incidents';
 
@@ -182,6 +183,7 @@ const Incidents: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <IncidentCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Events: Incidents')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

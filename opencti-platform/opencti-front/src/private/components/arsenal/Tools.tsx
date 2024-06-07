@@ -11,6 +11,7 @@ import { ToolsLinesPaginationQuery, ToolsLinesPaginationQuery$variables } from '
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'tools';
 
@@ -124,6 +125,7 @@ const Tools = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <ToolCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Arsenal: Tools')}></DynamicHeader>
     </>
   );
 };

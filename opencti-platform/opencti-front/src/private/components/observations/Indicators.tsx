@@ -16,6 +16,7 @@ import { IndicatorLineDummyComponent } from './indicators/IndicatorLine';
 import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'indicators-list';
 
@@ -195,6 +196,7 @@ const Indicators = () => {
         <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <IndicatorCreation paginationOptions={queryPaginationOptions}/>
         </Security>
+        <DynamicHeader title={t_i18n('OpenCTI - Observations: Indicators')}></DynamicHeader>
       </div>
     </ExportContextProvider>
   );

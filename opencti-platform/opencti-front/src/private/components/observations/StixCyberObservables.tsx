@@ -18,6 +18,7 @@ import { StixCyberObservableLine_node$data } from './stix_cyber_observables/__ge
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'stixCyberObservables';
 
@@ -204,6 +205,7 @@ const StixCyberObservables: FunctionComponent = () => {
           inputValue={undefined}
         />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Observations: Observables')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

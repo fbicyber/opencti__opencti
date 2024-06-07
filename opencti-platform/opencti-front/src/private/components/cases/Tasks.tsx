@@ -12,6 +12,7 @@ import { TasksLine_node$data } from './tasks/__generated__/TasksLine_node.graphq
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY_TASKS = 'cases-casesTasks';
 
@@ -128,6 +129,7 @@ const Tasks = () => {
            <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <TaskCreation paginationOptions={paginationOptions} />
         </Security> */}
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Tasks')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

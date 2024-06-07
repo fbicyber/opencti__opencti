@@ -13,6 +13,7 @@ import { FeedbackLine_node$data } from './feedbacks/__generated__/FeedbackLine_n
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 interface FeedbacksProps {
   inputValue?: string;
@@ -174,6 +175,7 @@ const Feedbacks: FunctionComponent<FeedbacksProps> = () => {
     <ExportContextProvider>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Cases') }, { label: t_i18n('Feedbacks'), current: true }]}/>
       {renderLines()}
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Feedbacks')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

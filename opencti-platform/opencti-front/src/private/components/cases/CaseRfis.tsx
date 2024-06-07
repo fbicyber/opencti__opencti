@@ -16,6 +16,7 @@ import { CaseRfiLineCase_node$data } from './case_rfis/__generated__/CaseRfiLine
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 interface CaseRfisProps {
   inputValue?: string;
@@ -186,6 +187,7 @@ const CaseRfis: FunctionComponent<CaseRfisProps> = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CaseRfiCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Request for Information')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

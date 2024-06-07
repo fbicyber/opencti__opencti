@@ -11,6 +11,7 @@ import { ChannelsLinesPaginationQuery, ChannelsLinesPaginationQuery$variables } 
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'channels';
 
@@ -132,6 +133,7 @@ const Channels = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <ChannelCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Arsenal: Channels')}></DynamicHeader>
     </>
   );
 };

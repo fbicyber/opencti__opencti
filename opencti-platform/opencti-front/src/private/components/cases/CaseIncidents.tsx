@@ -19,6 +19,7 @@ import { CaseIncidentLineCase_node$data } from './case_incidents/__generated__/C
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 interface CaseIncidentsProps {
   inputValue?: string;
@@ -195,6 +196,7 @@ const CaseIncidents: FunctionComponent<CaseIncidentsProps> = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CaseIncidentCreation paginationOptions={queryPaginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Case Incidents')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

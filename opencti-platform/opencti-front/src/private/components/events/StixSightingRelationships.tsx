@@ -14,6 +14,7 @@ import ExportContextProvider from '../../../utils/ExportContextProvider';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const dataColumns = {
   x_opencti_negative: {
@@ -173,6 +174,7 @@ const StixSightingRelationships = () => {
     <ExportContextProvider>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Events') }, { label: t_i18n('Sightings'), current: true }]} />
       {renderLines()}
+      <DynamicHeader title={t_i18n('OpenCTI - Events: Sightings')}></DynamicHeader>
     </ExportContextProvider>
   );
 };
