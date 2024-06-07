@@ -11,6 +11,7 @@ import { DataSourceLineDummy } from './data_sources/DataSourceLine';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY_DATA_SOURCES = 'dataSources';
 
@@ -116,6 +117,7 @@ const DataSources: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <DataSourceCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Techniques: Data Sources')}></DynamicHeader>
     </>
   );
 };

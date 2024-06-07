@@ -59,6 +59,7 @@ class Sectors extends Component {
     return (
       <>
         <Breadcrumbs variant="list" elements={[{ label: t('Entities') }, { label: t('Sectors'), current: true }]} />
+        document.title('OpenCTI - Entities: Sectors');
         <div className={classes.parameters}>
           <div style={{ float: 'left', marginRight: 20 }}>
             <SearchInput

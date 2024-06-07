@@ -15,6 +15,7 @@ import ThreatActorIndividualCreation from './threat_actors_individual/ThreatActo
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY_THREAT_ACTORS_INDIVIDUAL = 'threatActorsIndividuals';
 
@@ -114,6 +115,7 @@ const ThreatActorsIndividual = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <ThreatActorIndividualCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Threats: Threat Actors (Individual)')}></DynamicHeader>
     </>
   );
 };

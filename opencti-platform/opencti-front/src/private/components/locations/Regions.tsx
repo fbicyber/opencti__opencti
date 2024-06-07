@@ -11,6 +11,7 @@ import { RegionLineDummy } from './regions/RegionLine';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'regions';
 
@@ -110,6 +111,7 @@ const Regions: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <RegionCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Locations: Regions')}></DynamicHeader>
     </>
   );
 };

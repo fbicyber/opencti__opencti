@@ -16,6 +16,7 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'relationships';
 
@@ -191,6 +192,7 @@ const Relationships = () => {
     <ExportContextProvider>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Relationships'), current: true }]} />
       {renderLines()}
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Relationships')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

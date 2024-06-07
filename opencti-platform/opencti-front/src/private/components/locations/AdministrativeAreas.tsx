@@ -14,6 +14,7 @@ import {
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'administrative-areas';
 
@@ -116,6 +117,7 @@ const AdministrativeAreas: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <AdministrativeAreaCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Locations: Administrative Areas')}></DynamicHeader>
     </>
   );
 };

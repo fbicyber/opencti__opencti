@@ -11,6 +11,7 @@ import DataComponentLineDummy from './data_components/DataComponentLineDummy';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY_DATA_COMPONENTS = 'dataComponents';
 
@@ -120,6 +121,7 @@ const DataComponents: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <DataComponentCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Techniques: Data Components')}></DynamicHeader>
     </>
   );
 };

@@ -11,6 +11,7 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { GqlFilterGroup } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 interface WorkspacesProps {
   type: string;
@@ -137,6 +138,7 @@ const Workspaces: FunctionComponent<WorkspacesProps> = ({
           type={type}
         />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Workspaces')}></DynamicHeader>
     </>
   );
 };

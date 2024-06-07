@@ -15,6 +15,7 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'threatActorsGroups';
 
@@ -115,6 +116,7 @@ const ThreatActorsGroup = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <ThreatActorGroupCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Threats: Threat Actors (Group)')}></DynamicHeader>
     </>
   );
 };

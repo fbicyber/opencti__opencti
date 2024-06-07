@@ -11,6 +11,7 @@ import { CountryLineDummy } from './countries/CountryLine';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'countries';
 
@@ -110,6 +111,7 @@ const Countries: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CountryCreation paginationOptions={paginationOptions} />
       </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Locations: Countries')}></DynamicHeader>
     </>
   );
 };
