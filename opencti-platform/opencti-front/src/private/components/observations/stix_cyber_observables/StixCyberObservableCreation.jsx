@@ -9,7 +9,6 @@ import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -96,16 +95,16 @@ const useStyles = makeStyles((theme) => ({
 
 function LinearProgressWithLabel(props) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ width: '100%', mr: 1 }}>
         <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
+      </div>
+      <div style={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
           props.value,
         )}%`}</Typography>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
