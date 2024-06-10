@@ -9,7 +9,6 @@ import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -94,16 +93,16 @@ const useStyles = makeStyles((theme) => ({
 
 function LinearProgressWithLabel(props) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ width: '100%', mr: 1 }}>
         <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
+      </div>
+      <div style={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
           props.value,
         )}%`}</Typography>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
@@ -222,15 +221,7 @@ const stixCyberObservableMutation = graphql`
     }
   }
 `;
-let validObservables = 0;
-let errorObservables = 0;
-let totalObservables = 0;
-const error_array = [];
-// const stixCyberObservableValidation = () => Yup.object().shape({
-//   x_opencti_score: Yup.number().nullable(),
-//   x_opencti_description: Yup.string().nullable(),
-//   createIndicator: Yup.boolean(),
-// });
+
 const StixCyberObservableCreation = ({
   contextual,
   open,
@@ -257,6 +248,10 @@ const StixCyberObservableCreation = ({
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  let validObservables = 0;
+  let errorObservables = 0;
+  let totalObservables = 0;
+  const error_array = [];
 
   const progressReset = () => {
     setOpenProgressDialog(false);
@@ -545,7 +540,7 @@ const StixCyberObservableCreation = ({
     );
   };
 
-  function BulkAddModal(props) {
+  function BulkAdd(props) {
     const [openBulkModal, setOpenBulkModal] = React.useState(false);
     const handleOpenBulkModal = () => {
       const generic_value_field = document.getElementById('generic_value_field');
@@ -602,7 +597,7 @@ const StixCyberObservableCreation = ({
         >
           <DialogTitle>{t_i18n('Bulk Observable Creation')}</DialogTitle>
           <DialogContent style={{ marginTop: 0, paddingTop: 0 }}>
-            <Typography id="add-bulk-observable-instructions" variant="subtitle1" component="subtitle1" style={{ whiteSpace: 'pre-line' }}>
+            <Typography variant="subtitle1" component="subtitle1" style={{ whiteSpace: 'pre-line' }}>
               <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
                 {t_i18n('Enter one observable per line. Observables must be the same type.')}
                 <br></br>
@@ -633,7 +628,7 @@ const StixCyberObservableCreation = ({
       </React.Fragment>
     );
   }
-  BulkAddModal.propTypes = {
+  BulkAdd.propTypes = {
     setValue: PropTypes.func,
   };
   const renderForm = () => {
@@ -848,7 +843,7 @@ const StixCyberObservableCreation = ({
                           return (
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
-                                <BulkAddModal
+                                <BulkAdd
                                   setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
                                 />
                               </Tooltip>
@@ -987,13 +982,13 @@ const StixCyberObservableCreation = ({
               {'Progress'}
             </DialogTitle>
             <DialogContent>
-              <Box sx={{ minWidth: '500px', width: '100%' }}>
+              <div style={{ minWidth: '500px', width: '100%' }}>
                 <LinearProgressWithLabel
                   classes={{ root: classes.progress }}
                   variant="determinate"
                   value={100 * (progressBar / progressBarMax)}
                 />
-              </Box>
+              </div>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClickCloseProgress}>
