@@ -12,6 +12,7 @@ import NotificationsToolBar from './notifications/NotificationsToolBar';
 import { emptyFilterGroup, useGetDefaultFilterObject, isFilterGroupNotEmpty, useRemoveIdAndIncorrectKeysFromFilterGroupObject } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY = 'notifiers';
 
@@ -162,6 +163,7 @@ const Notifications: FunctionComponent = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Notifications'), current: true }]} />
       {renderLines()}
+      <DynamicHeader title={t_i18n('OpenCTI - Notifications')}></DynamicHeader>
     </>
   );
 };

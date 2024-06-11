@@ -13,6 +13,7 @@ import useGranted, { SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '..
 import useEnterpriseEdition from '../../../utils/hooks/useEnterpriseEdition';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -107,6 +108,7 @@ const Users = () => {
   return (
     <div className={classes.container} data-testid="users-settings-page">
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Security') }, { label: t_i18n('Users'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Security: Users')}></DynamicHeader>
       <AccessesMenu />
       {isSetAccess || isEnterpriseEdition ? (
         renderLines()

@@ -14,6 +14,7 @@ import { useFormatter } from '../../../components/i18n';
 import CustomizationMenu from './CustomizationMenu';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'notifiers';
 
@@ -72,6 +73,7 @@ const Notifiers = () => {
     <div className={classes.container}>
       <CustomizationMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Customization') }, { label: t_i18n('Notifiers'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Customization: Notifiers')}></DynamicHeader>
       <NotifierCreation paginationOptions={paginationOptions} />
       <ListLines
         helpers={storageHelpers}

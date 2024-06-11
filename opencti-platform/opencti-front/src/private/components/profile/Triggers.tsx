@@ -9,6 +9,7 @@ import TriggerCreation from './triggers/TriggerCreation';
 import { emptyFilterGroup, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY_TRIGGERS = 'triggers';
 
@@ -115,6 +116,7 @@ const Triggers: FunctionComponent = () => {
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Triggers'), current: true }]} />
       {renderLines()}
       <TriggerCreation paginationOptions={paginationOptions} />
+      <DynamicHeader title={t_i18n('OpenCTI - Triggers')}></DynamicHeader>
     </>
   );
 };

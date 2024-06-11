@@ -12,6 +12,7 @@ import { RULE_ENGINE } from '../../../utils/platformModulesHelper';
 import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
 import CustomizationMenu from './CustomizationMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'rules';
 
@@ -44,6 +45,7 @@ const Rules = () => {
     <div className={classes.container}>
       <CustomizationMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Customization') }, { label: t_i18n('Rules engine'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Customization: Rules Engine')}></DynamicHeader>
       <UserContext.Consumer>
         {({ platformModuleHelpers }) => {
           if (!platformModuleHelpers.isRuleEngineEnable()) {

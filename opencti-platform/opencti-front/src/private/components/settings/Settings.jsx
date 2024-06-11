@@ -30,6 +30,7 @@ import SettingsAnalytics from './settings_analytics/SettingsAnalytics';
 import ItemBoolean from '../../../components/ItemBoolean';
 import { availableLanguage } from '../../../components/AppIntlProvider';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -298,6 +299,7 @@ const Settings = () => {
             return (
               <>
                 <Breadcrumbs variant="object" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Parameters'), current: true }]} />
+                <DynamicHeader title={t_i18n('OpenCTI - Settings: Parameters')}></DynamicHeader>
                 <Grid container={true} spacing={3}>
                   <Grid item={true} xs={6}>
                     <Typography variant="h4" gutterBottom={true}>

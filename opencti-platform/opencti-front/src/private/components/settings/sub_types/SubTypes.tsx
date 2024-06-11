@@ -11,6 +11,7 @@ import ToolBar from './ToolBar';
 import CustomizationMenu from '../CustomizationMenu';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY_SUB_TYPES = 'sub-types';
 
@@ -75,6 +76,7 @@ const SubTypes = () => {
     <div className={classes.container}>
       <CustomizationMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Customization') }, { label: t_i18n('Entity types'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Customization: Entity Types')}></DynamicHeader>
       <ListLines
         handleSearch={helpers.handleSearch}
         keyword={searchTerm}

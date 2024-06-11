@@ -17,6 +17,7 @@ import { DecayRulesLine_node$data } from './__generated__/DecayRulesLine_node.gr
 import useAuth from '../../../../utils/hooks/useAuth';
 import { INDICATOR_DECAY_MANAGER } from '../../../../utils/platformModulesHelper';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'view-decay-rules';
 
@@ -157,6 +158,7 @@ const DecayRules = () => {
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Customization') }, { label: t_i18n('Decay rules'), current: true }]} />
       {renderLines()}
       <DecayRuleCreation paginationOptions={queryPaginationOptions} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Customization: Decay Rules')}></DynamicHeader>
     </div>
   );
 };

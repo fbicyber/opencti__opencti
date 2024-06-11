@@ -14,6 +14,7 @@ import type { DeleteOperationsLinesPaginationQuery, DeleteOperationsLinesPaginat
 import { DataColumns } from '../../../components/list_lines';
 import useAuth from '../../../utils/hooks/useAuth';
 import useEntityToggle from '../../../utils/hooks/useEntityToggle';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'trash';
 
@@ -163,6 +164,7 @@ const Trash: React.FC = () => {
     <ExportContextProvider>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Trash'), current: true }]} />
       {renderLines()}
+      <DynamicHeader title={t_i18n('OpenCTI - Trash')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

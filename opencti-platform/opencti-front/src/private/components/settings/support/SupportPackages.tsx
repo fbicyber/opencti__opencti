@@ -21,6 +21,7 @@ import { insertNode } from '../../../../utils/store';
 import { SETTINGS } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'support-packages';
 
@@ -123,7 +124,7 @@ const SupportPackages = () => {
   };
 
   return (
-    <Security needs={[SETTINGS]} placeholder={<>{t_i18n('You do not have any access to the knowledge of this OpenCTI instance.')}</>}>
+    <><Security needs={[SETTINGS]} placeholder={<>{t_i18n('You do not have any access to the knowledge of this OpenCTI instance.')}</>}>
       <div>
         <Breadcrumbs variant="list"
           elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Support packages'), current: true }]}
@@ -143,13 +144,13 @@ const SupportPackages = () => {
               >
                 {t_i18n('Generate Support Package')}
               </Button>
-              <div className="clearfix"/>
+              <div className="clearfix" />
               <Alert
                 severity="warning"
                 variant="outlined"
                 style={{ position: 'relative', marginTop: 20, marginBottom: 20 }}
               >
-                {t_i18n('Even if we do our best to prevent logging any data, the support package may contains some sensitive information that you may not want to share with everyone.')}<br/>
+                {t_i18n('Even if we do our best to prevent logging any data, the support package may contains some sensitive information that you may not want to share with everyone.')}<br />
                 {t_i18n('Before creating a ticket with your support package takes some time to check if you can safely share the content depending of your security policy.')}
               </Alert>
               <Paper variant="outlined" style={{
@@ -166,6 +167,8 @@ const SupportPackages = () => {
         </Grid>
       </div>
     </Security>
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Support')}></DynamicHeader>
+    </>
   );
 };
 

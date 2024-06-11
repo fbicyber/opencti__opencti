@@ -27,6 +27,7 @@ import { FileIndexingConfigurationQuery } from './__generated__/FileIndexingConf
 import { TEN_SECONDS } from '../../../../utils/Time';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 const interval$ = interval(TEN_SECONDS);
 
@@ -91,6 +92,7 @@ const FileIndexingComponent: FunctionComponent<FileIndexingComponentProps> = ({
   return (
     <>
       <Breadcrumbs variant="object" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('File indexing'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: File Indexing')}></DynamicHeader>
       {!isEnterpriseEdition ? (
         <EnterpriseEdition feature="File indexing" />
       ) : (

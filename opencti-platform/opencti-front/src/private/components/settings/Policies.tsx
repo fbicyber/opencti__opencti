@@ -33,6 +33,7 @@ import useEnterpriseEdition from '../../../utils/hooks/useEnterpriseEdition';
 import ItemBoolean from '../../../components/ItemBoolean';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import useApiMutation from '../../../utils/hooks/useApiMutation';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -197,6 +198,7 @@ const PoliciesComponent: FunctionComponent<PoliciesComponentProps> = ({
     <div className={classes.container}>
       <AccessesMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Security') }, { label: t_i18n('Policies'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Security: Roles')}></DynamicHeader>
       <Grid container={true} spacing={3}>
         <Grid item={true} xs={12}>
           <Formik

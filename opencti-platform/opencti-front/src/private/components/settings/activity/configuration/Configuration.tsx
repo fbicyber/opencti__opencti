@@ -46,6 +46,7 @@ import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import useApiMutation from '../../../../../utils/hooks/useApiMutation';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../../utils/hooks/useGranted';
 import Security from '../../../../../utils/Security';
+import DynamicHeader from '../../../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -135,6 +136,7 @@ ConfigurationComponentProps
       <div className={classes.container}>
         <ActivityMenu />
         <Breadcrumbs variant="object" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Activity') }, { label: t_i18n('Configuration'), current: true }]} />
+        <DynamicHeader title={t_i18n('OpenCTI - Settings: Activity')}></DynamicHeader>
         <Grid container={true} spacing={3}>
           <Grid item={true} xs={12}>
             <Typography variant="h4" gutterBottom={true}>
