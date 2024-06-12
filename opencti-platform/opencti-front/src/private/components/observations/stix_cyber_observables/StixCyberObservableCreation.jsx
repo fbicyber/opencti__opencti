@@ -5,11 +5,10 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
-import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
+import { Add, Close } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Tooltip from '@mui/material/Tooltip';
@@ -92,21 +91,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 20px 20px 20px',
   },
 }));
-
-function LinearProgressWithLabel(props) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </div>
-      <div style={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </div>
-    </div>
-  );
-}
 
 const stixCyberObservableMutation = graphql`
   mutation StixCyberObservableCreationMutation(
@@ -1073,7 +1057,7 @@ const StixCyberObservableCreation = ({
             return (
               <Formik
                 initialValues={initialValues}
-                validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                validationSchema={stixCyberObservableValidationFinal()}
                 onSubmit={onSubmit}
                 onReset={onReset}
               >
