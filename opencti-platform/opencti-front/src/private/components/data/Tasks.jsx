@@ -10,6 +10,7 @@ import useAuth from '../../../utils/hooks/useAuth';
 import { TASK_MANAGER } from '../../../utils/platformModulesHelper';
 import ProcessingMenu from './ProcessingMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -59,6 +60,7 @@ const Tasks = () => {
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Processing') }, { label: t_i18n('Tasks'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Processing: Tasks')}></DynamicHeader>
       <ProcessingMenu />
       <Typography variant="h4" gutterBottom={true}>
         {t_i18n('In progress tasks')}

@@ -11,6 +11,7 @@ import SharingMenu from './SharingMenu';
 import { OrderMode, PaginationOptions } from '../../../components/list_lines';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const Taxii = () => {
   const { t_i18n } = useFormatter();
@@ -116,6 +117,7 @@ const Taxii = () => {
     }}
     >
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Data sharing') }, { label: t_i18n('TAXII collections'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Data Sharing: TAXII Collections')}></DynamicHeader>
       <SharingMenu/>
       {taxiiState.view === 'lines' ? renderLines(paginationOptions) : null}
       <TaxiiCollectionCreation paginationOptions={paginationOptions}/>

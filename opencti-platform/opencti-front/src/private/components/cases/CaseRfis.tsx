@@ -187,7 +187,7 @@ const CaseRfis: FunctionComponent<CaseRfisProps> = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CaseRfiCreation paginationOptions={queryPaginationOptions} />
       </Security>
-      <DynamicHeader title={t_i18n('OpenCTI - Cases: Request for Information')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Requests for Information')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

@@ -11,6 +11,7 @@ import CaseTemplateLineDummy from './CaseTemplateLineDummy';
 import CaseTemplateLines, { caseTemplatesLinesQuery } from './CaseTemplateLines';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -106,6 +107,7 @@ const CaseTemplates = () => {
     <div className={classes.container}>
       <LabelsVocabulariesMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Taxonomies') }, { label: t_i18n('Case templates'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Taxonomies: Case Templates')}></DynamicHeader>
       {renderLines()}
       <CaseTemplateCreation
         paginationOptions={paginationOptions}

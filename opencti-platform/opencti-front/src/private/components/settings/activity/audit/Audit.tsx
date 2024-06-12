@@ -220,12 +220,12 @@ const Audit = () => {
   return (
     <div className={classes.container}>
       <ActivityMenu/>
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Activity')}></DynamicHeader>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Activity') }, {
         label: t_i18n('Events'),
         current: true,
       }]}
       />
-      <DynamicHeader title={t_i18n('OpenCTI - Settings: Activity')}></DynamicHeader>
       {settings.platform_demo && (
         <Alert severity="info" variant="outlined" style={{ marginBottom: 30 }}>
           {t_i18n(

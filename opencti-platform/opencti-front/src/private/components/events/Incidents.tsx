@@ -183,7 +183,7 @@ const Incidents: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <IncidentCreation paginationOptions={queryPaginationOptions} />
       </Security>
-      <DynamicHeader title={t_i18n('OpenCTI - Events: Incidents')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Events: Incident Responses')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

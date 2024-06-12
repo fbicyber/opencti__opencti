@@ -15,6 +15,7 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
 import Security from '../../../utils/Security';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'ingestionCsvs';
 
@@ -122,6 +123,7 @@ const IngestionCsv = () => {
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Ingestion') }, { label: t_i18n('CSV feeds'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Ingestion: CSV Feeds')}></DynamicHeader>
       <IngestionMenu/>
       {renderLines()}
       <Security needs={[KNOWLEDGE_KNUPDATE]}>

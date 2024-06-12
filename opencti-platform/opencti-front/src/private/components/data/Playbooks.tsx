@@ -30,6 +30,7 @@ import type { Theme } from '../../../components/Theme';
 import useEnterpriseEdition from '../../../utils/hooks/useEnterpriseEdition';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const LOCAL_STORAGE_KEY_PLAYBOOKS = 'playbooks';
 
@@ -119,6 +120,7 @@ const Playbooks: FunctionComponent = () => {
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Processing') }, { label: t_i18n('Automation'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Processing: Automation')}></DynamicHeader>
       <ProcessingMenu />
       {isEnterpriseEdition ? (
         <>

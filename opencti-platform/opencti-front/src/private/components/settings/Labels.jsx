@@ -13,6 +13,7 @@ import LabelsVocabulariesMenu from './LabelsVocabulariesMenu';
 import ToolBar from '../data/ToolBar';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import withRouter from '../../../utils/compat-router/withRouter';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -245,6 +246,7 @@ class Labels extends Component {
       <div className={classes.container}>
         <LabelsVocabulariesMenu />
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Taxonomies') }, { label: t('Labels'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Taxonomies: Labels')}></DynamicHeader>
         {view === 'lines' ? this.renderLines(paginationOptions, contextFilters) : ''}
         <LabelCreation paginationOptions={paginationOptions} />
       </div>

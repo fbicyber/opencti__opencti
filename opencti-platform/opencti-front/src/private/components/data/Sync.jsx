@@ -12,6 +12,7 @@ import { useFormatter } from '../../../components/i18n';
 import { SYNC_MANAGER } from '../../../utils/platformModulesHelper';
 import IngestionMenu from './IngestionMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'sync';
 
@@ -77,6 +78,7 @@ const Sync = () => {
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Ingestion') }, { label: t_i18n('Remote OCTI streams'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Ingestion: Remote OCTI Streams')}></DynamicHeader>
       <IngestionMenu/>
       <ListLines
         sortBy={viewStorage.sortBy}

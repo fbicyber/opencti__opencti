@@ -42,6 +42,7 @@ import { truncate } from '../../../../utils/String';
 import { fieldSpacingContainerStyle } from '../../../../utils/field';
 import withRouter from '../../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 const interval$ = interval(FIVE_SECONDS);
 
@@ -322,6 +323,7 @@ class ImportContentComponent extends Component {
     return (
       <>
         <Breadcrumbs variant="list" elements={[{ label: t('Data') }, { label: t('Import'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Data: Import')}></DynamicHeader>
         <Grid
           container={true}
           spacing={3}

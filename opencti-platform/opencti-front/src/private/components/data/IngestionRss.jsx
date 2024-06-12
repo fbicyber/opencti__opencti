@@ -11,6 +11,7 @@ import { useFormatter } from '../../../components/i18n';
 import { INGESTION_MANAGER } from '../../../utils/platformModulesHelper';
 import IngestionMenu from './IngestionMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'ingestionRss';
 
@@ -71,6 +72,7 @@ const IngestionRss = () => {
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Ingestion') }, { label: t_i18n('RSS feeds'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Data: Ingestion: RSS Feeds')}></DynamicHeader>
       <IngestionMenu/>
       <ListLines
         helpers={storageHelpers}

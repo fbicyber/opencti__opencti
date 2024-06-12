@@ -11,6 +11,7 @@ import MarkingDefinitionCreation from './marking_definitions/MarkingDefinitionCr
 import AccessesMenu from './AccessesMenu';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -120,6 +121,7 @@ class MarkingDefinitions extends Component {
     return (
       <div className={classes.container}>
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Security') }, { label: t('Marking definitions'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Security: Marking Definitions')}></DynamicHeader>
         <AccessesMenu />
         {view === 'lines' ? this.renderLines(paginationOptions) : ''}
         <MarkingDefinitionCreation paginationOptions={paginationOptions} />

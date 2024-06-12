@@ -14,6 +14,7 @@ import Loader, { LoaderVariant } from '../../../components/Loader';
 import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY_CSV_MAPPERS = 'csvMappers';
 
@@ -76,6 +77,7 @@ const CsvMappers = () => {
         >
           <div className={classes.container}>
             <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Processing') }, { label: t_i18n('CSV mappers'), current: true }]} />
+            <DynamicHeader title={t_i18n('OpenCTI - Data: Processing: CSV Mappers')}></DynamicHeader>
             <ProcessingMenu />
             <ListLines
               helpers={helpers}

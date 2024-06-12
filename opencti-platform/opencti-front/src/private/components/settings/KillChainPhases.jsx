@@ -12,6 +12,7 @@ import KillChainPhaseCreation from './kill_chain_phases/KillChainPhaseCreation';
 import LabelsVocabulariesMenu from './LabelsVocabulariesMenu';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -133,6 +134,7 @@ class KillChainPhases extends Component {
       <div className={classes.container}>
         <LabelsVocabulariesMenu />
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Taxonomies') }, { label: t('Kill chain phases'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Taxonomies: Kill Chain Phases')}></DynamicHeader>
         {view === 'lines' ? this.renderLines(paginationOptions) : ''}
         <KillChainPhaseCreation paginationOptions={paginationOptions} />
       </div>

@@ -12,6 +12,7 @@ import Security from '../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const LOCAL_STORAGE_KEY = 'narratives';
 
@@ -59,6 +60,7 @@ class Narratives extends Component {
     return (
       <>
         <Breadcrumbs variant="list" elements={[{ label: t('Techniques') }, { label: t('Narratives'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Techniques: Narratives')}></DynamicHeader>
         <div className={classes.parameters}>
           <div style={{ float: 'left', marginRight: 20 }}>
             <SearchInput

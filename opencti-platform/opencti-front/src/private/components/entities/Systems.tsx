@@ -118,7 +118,7 @@ const Systems = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <SystemCreation paginationOptions={paginationOptions} />
       </Security>
-      <DynamicHeader title={t_i18n('OpenCTI - Entitiess: Systems')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Entities: Systems')}></DynamicHeader>
     </>
   );
 };

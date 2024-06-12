@@ -10,6 +10,7 @@ import SearchInput from '../../../components/SearchInput';
 import { buildViewParamsFromUrlAndStorage, saveViewParameters } from '../../../utils/ListParameters';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -58,6 +59,7 @@ class Sessions extends Component {
       <div className={classes.container}>
         <AccessesMenu />
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Security') }, { label: t('Sessions'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Security: Sessions')}></DynamicHeader>
         <div className={classes.parameters}>
           <div style={{ float: 'left', marginRight: 20 }}>
             <SearchInput

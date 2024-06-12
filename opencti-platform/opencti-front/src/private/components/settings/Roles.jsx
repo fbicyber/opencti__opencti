@@ -11,6 +11,7 @@ import AccessesMenu from './AccessesMenu';
 import RoleCreation from './roles/RoleCreation';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -116,6 +117,7 @@ class Roles extends Component {
     return (
       <div className={classes.container} data-testid='roles-settings-page'>
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Security') }, { label: t('Roles'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Security: Roles')}></DynamicHeader>
         <AccessesMenu />
         {view === 'lines' ? this.renderLines(paginationOptions) : ''}
         <RoleCreation paginationOptions={paginationOptions} />

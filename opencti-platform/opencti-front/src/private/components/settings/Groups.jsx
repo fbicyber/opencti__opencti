@@ -12,6 +12,7 @@ import GroupCreation from './groups/GroupCreation';
 import AccessesMenu from './AccessesMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import withRouter from '../../../utils/compat-router/withRouter';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 export const groupsSearchQuery = graphql`
   query GroupsSearchQuery($search: String) {
@@ -153,6 +154,7 @@ class Groups extends Component {
     return (
       <div className={classes.container} data-testid="groups-settings-page">
         <Breadcrumbs variant="list" elements={[{ label: t('Settings') }, { label: t('Security') }, { label: t('Groups'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Settings: Security: Groups')}></DynamicHeader>
         <AccessesMenu />
         {view === 'lines' ? this.renderLines(paginationOptions) : ''}
         <GroupCreation paginationOptions={paginationOptions} />

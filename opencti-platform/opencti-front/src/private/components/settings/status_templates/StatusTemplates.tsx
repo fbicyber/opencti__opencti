@@ -10,6 +10,7 @@ import { StatusTemplatesLinesPaginationQuery, StatusTemplatesLinesPaginationQuer
 import LabelsVocabulariesMenu from '../LabelsVocabulariesMenu';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
+import DynamicHeader from '../../../../components/DynamicHeader';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -98,6 +99,7 @@ const StatusTemplates = () => {
     <div className={classes.container}>
       <LabelsVocabulariesMenu />
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Taxonomies') }, { label: t_i18n('Status templates'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Settings: Taxonomies: Status Templates')}></DynamicHeader>
       {renderLines()}
       <StatusTemplateCreation
         paginationOptions={paginationOptions}

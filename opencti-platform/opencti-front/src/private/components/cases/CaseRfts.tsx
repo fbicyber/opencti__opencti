@@ -188,7 +188,7 @@ const CaseRfts: FunctionComponent<CaseRftsProps> = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CaseRftCreation paginationOptions={queryPaginationOptions} />
       </Security>
-      <DynamicHeader title={t_i18n('OpenCTI - Cases: Request for Takedown')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Cases: Requests for Takedown')}></DynamicHeader>
     </ExportContextProvider>
   );
 };

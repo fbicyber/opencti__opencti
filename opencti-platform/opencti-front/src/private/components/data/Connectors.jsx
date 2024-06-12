@@ -9,6 +9,7 @@ import WorkersStatus, { workersStatusQuery } from './connectors/WorkersStatus';
 import ConnectorsStatus, { connectorsStatusQuery } from './connectors/ConnectorsStatus';
 import Loader from '../../../components/Loader';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -22,6 +23,7 @@ class Connectors extends Component {
     return (
       <div className={classes.container}>
         <Breadcrumbs variant="list" elements={[{ label: t('Data') }, { label: t('Ingestion') }, { label: t('Connectors'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Data: Ingestion: Connectors')}></DynamicHeader>
         <IngestionMenu/>
         <QueryRenderer
           query={workersStatusQuery}

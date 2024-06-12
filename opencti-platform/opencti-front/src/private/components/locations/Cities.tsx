@@ -111,7 +111,7 @@ const Cities: FunctionComponent = () => {
       <Security needs={[KNOWLEDGE_KNUPDATE]}>
         <CityCreation paginationOptions={paginationOptions} />
       </Security>
-      <DynamicHeader title={t_i18n('OpenCTI - Location: Cities')}></DynamicHeader>
+      <DynamicHeader title={t_i18n('OpenCTI - Locations: Cities')}></DynamicHeader>
     </>
   );
 };

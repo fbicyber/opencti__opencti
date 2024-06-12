@@ -12,6 +12,7 @@ import Security from '../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
 import withRouter from '../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   parameters: {
@@ -59,6 +60,7 @@ class Sectors extends Component {
     return (
       <>
         <Breadcrumbs variant="list" elements={[{ label: t('Entities') }, { label: t('Sectors'), current: true }]} />
+        <DynamicHeader title={t('OpenCTI - Entities: Sectors')}></DynamicHeader>
         <div className={classes.parameters}>
           <div style={{ float: 'left', marginRight: 20 }}>
             <SearchInput
