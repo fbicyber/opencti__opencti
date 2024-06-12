@@ -32,6 +32,7 @@ import { fieldSpacingContainerStyle } from '../../../utils/field';
 import OtpInputField, { OTP_CODE_SIZE } from '../../../public/components/OtpInputField';
 import ItemCopy from '../../../components/ItemCopy';
 import { availableLanguage } from '../../../components/AppIntlProvider';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const styles = () => ({
   container: {
@@ -277,6 +278,7 @@ const ProfileOverviewComponent = (props) => {
   };
   return (
     <div className={classes.container}>
+      <DynamicHeader title={t('OpenCTI - Profile')}></DynamicHeader>
       <Dialog
         open={display2FA}
         PaperProps={{ elevation: 1 }}

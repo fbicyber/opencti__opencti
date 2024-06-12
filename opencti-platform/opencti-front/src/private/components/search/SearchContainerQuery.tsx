@@ -12,6 +12,7 @@ import { decodeSearchKeyword } from '../../../utils/SearchUtils';
 import useAuth from '../../../utils/hooks/useAuth';
 import { SearchContainerQueryFilesCountQuery } from './__generated__/SearchContainerQueryFilesCountQuery.graphql';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import DynamicHeader from '../../../components/DynamicHeader';
 
 const searchContainerQueryFilesCountQuery = graphql`
   query SearchContainerQueryFilesCountQuery($search: String) {
@@ -35,6 +36,7 @@ const SearchContainer: FunctionComponent<SearchRootComponentProps> = ({ children
   return (
     <ExportContextProvider>
       <Breadcrumbs variant="standard" elements={[{ label: t_i18n('Search') }, { label: t_i18n('Advanced search'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Search: Advanced Search')}></DynamicHeader>
       <Box
         sx={{
           borderBottom: 1,

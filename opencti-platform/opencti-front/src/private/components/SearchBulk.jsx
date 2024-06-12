@@ -30,6 +30,7 @@ import { hexToRGB, itemColor } from '../../utils/Colors';
 import ItemMarkings from '../../components/ItemMarkings';
 import { export_max_size } from '../../utils/utils';
 import Breadcrumbs from '../../components/Breadcrumbs';
+import DynamicHeader from '../../components/DynamicHeader';
 
 const SEARCH$ = new Subject().pipe(debounce(() => timer(500)));
 
@@ -437,6 +438,7 @@ const SearchBulk = () => {
   return (
     <>
       <Breadcrumbs variant="standard" elements={[{ label: t_i18n('Search') }, { label: t_i18n('Bulk search'), current: true }]} />
+      <DynamicHeader title={t_i18n('OpenCTI - Search: Bulk Search')}></DynamicHeader>
       <div className={classes.container}>
         <ToggleButtonGroup
           size="small"
