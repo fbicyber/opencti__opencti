@@ -5,14 +5,12 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
-import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
+import { Add, Close } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
@@ -40,6 +38,8 @@ import useVocabularyCategory from '../../../../utils/hooks/useVocabularyCategory
 import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
+import ProgressDialog from '../../../../components/ProgressDialog';
+import BulkAddComponent from '../../../../components/BulkAddComponent';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -90,21 +90,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 20px 20px 20px',
   },
 }));
-
-function LinearProgressWithLabel(props) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </div>
-      <div style={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </div>
-    </div>
-  );
-}
 
 const stixCyberObservableMutation = graphql`
   mutation StixCyberObservableCreationMutation(
@@ -248,6 +233,9 @@ const StixCyberObservableCreation = ({
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [openBulkModal, setOpenBulkModal] = React.useState(false);
   let validObservables = 0;
   let errorObservables = 0;
   let totalObservables = 0;
@@ -259,6 +247,8 @@ const StixCyberObservableCreation = ({
     errorObservables = 0;
     validObservables = 0;
     setProgressBar(0);
+    setGenericValueFieldValue('');
+    setBulkValueFieldValue('');
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -357,7 +347,7 @@ const StixCyberObservableCreation = ({
     }
     if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
-      if (adaptedValues.value && adaptedValues.bulk_value_field && adaptedValues.value === bulkAddMsg) {
+      if (adaptedValues.bulk_value_field && (adaptedValues.value || genericValueFieldValue === bulkAddMsg)) {
         const array_of_bulk_values = adaptedValues.bulk_value_field.split(/\r?\n/);
         // Trim them just to remove any extra spacing on front or rear of string
         const trimmed_bulk_values = array_of_bulk_values.map((s) => s.trim());
@@ -541,31 +531,29 @@ const StixCyberObservableCreation = ({
   };
 
   function BulkAdd(props) {
-    const [openBulkModal, setOpenBulkModal] = React.useState(false);
     const handleOpenBulkModal = () => {
-      const generic_value_field = document.getElementById('generic_value_field');
-      if (generic_value_field != null && generic_value_field.value != null
-        && generic_value_field.value.length > 0 && generic_value_field.value !== bulkAddMsg) {
+      if (genericValueFieldValue != null && genericValueFieldValue.length > 0 && genericValueFieldValue !== bulkAddMsg) {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.setValue('bulk_value_field', generic_value_field.value.trim());
+        setBulkValueFieldValue(genericValueFieldValue.trim());
       }
       setOpenBulkModal(true);
     };
-    const handleCloseBulkModal = () => {
+    const handleCloseBulkModal = (val) => {
       setOpenBulkModal(false);
-      const bulk_value_field = document.getElementById('bulk_value_field');
-      if (bulk_value_field != null && bulk_value_field.value != null && bulk_value_field.value.length > 0) {
+      if (val != null && val.length > 0) {
         // START - Clear Attached File from CustomFileUploader
         const spanData = document.getElementById('CustomFileUploaderFileName');
         spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
         // END - Clear Attached File from CustomFileUploader
+        setBulkValueFieldValue(val);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
-        props.setValue('value', bulkAddMsg);
+        setGenericValueFieldValue(bulkAddMsg);
       } else {
-        props.setValue('value', '');
+        setBulkValueFieldValue('');
+        setGenericValueFieldValue('');
         setGenericValueFieldDisabled(false);
       }
     };
@@ -575,57 +563,20 @@ const StixCyberObservableCreation = ({
         // If one-liner field isn't disabled, then you are it seems deciding
         // not to use the bulk add feature, so we will clear the field, since its population
         // is used to process the bul_value_field versus the generic_value_field
-        props.setValue('bulk_value_field', '');
+        setBulkValueFieldValue('');
+        setGenericValueFieldValue('');
       }
       // else - you previously entered data and you just are canceling out of the popup window
       // but keeping your entry in the form.
     };
     return (
-      <React.Fragment>
-        <IconButton
-          onClick={handleOpenBulkModal}
-          size="large"
-          color="primary" style={{ float: 'right', marginRight: 25 }}
-        >
-          <TextFieldsOutlined />
-        </IconButton>
-        <Dialog
-          PaperProps={{ elevation: 3 }}
-          open={openBulkModal}
-          onClose={handleCloseBulkModal}
-          fullWidth={true}
-        >
-          <DialogTitle>{t_i18n('Bulk Observable Creation')}</DialogTitle>
-          <DialogContent style={{ marginTop: 0, paddingTop: 0 }}>
-            <Typography variant="subtitle1" component="subtitle1" style={{ whiteSpace: 'pre-line' }}>
-              <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
-                {t_i18n('Enter one observable per line. Observables must be the same type.')}
-                <br></br>
-                {t_i18n('If you are adding more than 50 entries, please consider using another data import capability for faster processing.')}
-              </div>
-            </Typography>
-            <Field
-              component={TextField}
-              id="bulk_value_field"
-              label={t_i18n('Bulk Content')}
-              variant="outlined"
-              key="bulk_value_field"
-              name="bulk_value_field"
-              fullWidth={true}
-              multiline={true}
-              rows="5"
-            />
-            <DialogActions>
-              <Button onClick={localHandleCancelClearBulkModal}>
-                {t_i18n('Cancel')}
-              </Button>
-              <Button color="secondary" onClick={handleCloseBulkModal}>
-                {t_i18n('Continue')}
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
-      </React.Fragment>
+      <BulkAddComponent
+        openBulkModal={openBulkModal}
+        bulkValueFieldValue={bulkValueFieldValue}
+        handleOpenBulkModal={handleOpenBulkModal}
+        handleCloseBulkModal={handleCloseBulkModal}
+        localHandleCancelClearBulkModal={localHandleCancelClearBulkModal}
+      />
     );
   }
   BulkAdd.propTypes = {
@@ -662,7 +613,7 @@ const StixCyberObservableCreation = ({
               ),
             )(props.schemaAttributeNames.edges);
 
-            let extraFieldsToValidate = null;
+            // let extraFieldsToValidate = null;
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -678,7 +629,7 @@ const StixCyberObservableCreation = ({
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
                 // Dynamically include value field for Singular Observable type Object form validation
-                extraFieldsToValidate = { [attribute.value]: Yup.string().nullable().required() };
+                // extraFieldsToValidate = { [attribute.value]: Yup.string().nullable().required() };
               } else {
                 initialValues[attribute.value] = '';
               }
@@ -696,7 +647,7 @@ const StixCyberObservableCreation = ({
             return (
               <Formik
                 initialValues={initialValues}
-                validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                validationSchema={stixCyberObservableValidationFinal()}
                 onSubmit={onSubmit}
                 onReset={onReset}
               >
@@ -854,11 +805,13 @@ const StixCyberObservableCreation = ({
                                 disabled={genericValueFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={genericValueFieldValue}
                                 key={attribute.value}
                                 name={attribute.value}
                                 fullWidth={true}
                                 multiline={true}
                                 rows="1"
+                                onChange={(name, value) => setGenericValueFieldValue(value)}
                               />
                             </div>
                           );
@@ -975,27 +928,13 @@ const StixCyberObservableCreation = ({
           </div>
         </Drawer>
         <React.Fragment>
-          <Dialog
-            open={openProgressDialog}
-          >
-            <DialogTitle id="alert-dialog-title">
-              {'Progress'}
-            </DialogTitle>
-            <DialogContent>
-              <div style={{ minWidth: '500px', width: '100%' }}>
-                <LinearProgressWithLabel
-                  classes={{ root: classes.progress }}
-                  variant="determinate"
-                  value={100 * (progressBar / progressBarMax)}
-                />
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClickCloseProgress}>
-                {t_i18n('Close')}
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <ProgressDialog
+            openProgressDialog={openProgressDialog}
+            bulkValueFieldValue={bulkValueFieldValue}
+            progressBar={progressBar}
+            progressBarMax={progressBarMax}
+            handleClickCloseProgress={handleClickCloseProgress}
+          />
         </React.Fragment>
       </>
     );
