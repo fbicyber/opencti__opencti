@@ -27,6 +27,9 @@ import StixCoreObjectKnowledgeBar from '../../common/stix_core_objects/StixCoreO
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import ThreatActorIndividualEdition from './ThreatActorIndividualEdition';
 
 const subscription = graphql`
   subscription RootThreatActorIndividualSubscription($id: ID!) {
@@ -142,6 +145,11 @@ const RootThreatActorIndividualComponent = ({
               entityType="Threat-Actor-Individual"
               stixDomainObject={data}
               PopoverComponent={ThreatActorIndividualPopover}
+              EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                <ThreatActorIndividualEdition
+                  threatActorIndividualId={data.id}
+                />
+              </Security>}
               enableQuickSubscription={true}
             />
             <Box

@@ -24,11 +24,13 @@ import ThreatActorIndividualEditionDemographics from './ThreatActorIndividualEdi
 import ThreatActorIndividualEditionBiographics from './ThreatActorIndividualEditionBiographics';
 import { ThreatActorIndividualEditionContainerQuery } from './__generated__/ThreatActorIndividualEditionContainerQuery.graphql';
 import ThreatActorIndividualEditionDetails from './ThreatActorIndividualEditionDetails';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 interface ThreatActorIndividualEditionContainerProps {
   queryRef: PreloadedQuery<ThreatActorIndividualEditionContainerQuery>;
   handleClose: () => void;
   open?: boolean;
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
 }
 
 export const ThreatActorIndividualEditionQuery = graphql`
@@ -50,8 +52,10 @@ export const ThreatActorIndividualEditionQuery = graphql`
 const THREAT_ACTOR_TYPE = 'Threat-Actor-Individual';
 const ThreatActorIndividualEditionContainer: FunctionComponent<
 ThreatActorIndividualEditionContainerProps
-> = ({ handleClose, queryRef, open }) => {
+> = ({ handleClose, queryRef, open, controlledDial }) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { threatActorIndividual } = usePreloadedQuery<ThreatActorIndividualEditionContainerQuery>(
     ThreatActorIndividualEditionQuery,
     queryRef,
@@ -64,10 +68,11 @@ ThreatActorIndividualEditionContainerProps
     return (
       <Drawer
         title={t_i18n('Update a threat actor individual')}
-        variant={open == null ? DrawerVariant.update : undefined}
+        variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
         context={threatActorIndividual?.editContext}
         onClose={handleClose}
         open={open}
+        controlledDial={FABReplaced ? controlledDial : undefined}
       >
         {({ onClose }) => (
           <>
