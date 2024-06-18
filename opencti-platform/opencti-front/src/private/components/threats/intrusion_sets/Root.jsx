@@ -23,6 +23,9 @@ import StixCoreObjectKnowledgeBar from '../../common/stix_core_objects/StixCoreO
 import inject18n from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import IntrusionSetEdition from './IntrusionSetEdition';
 
 const subscription = graphql`
   subscription RootIntrusionSetSubscription($id: ID!) {
@@ -143,6 +146,9 @@ class RootIntrusionSet extends Component {
                       entityType="Intrusion-Set"
                       stixDomainObject={intrusionSet}
                       PopoverComponent={<IntrusionSetPopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <IntrusionSetEdition intrusionSetId={intrusionSet.id} />
+                      </Security>}
                       enableQuickSubscription={true}
                       enableAskAi={true}
                     />
