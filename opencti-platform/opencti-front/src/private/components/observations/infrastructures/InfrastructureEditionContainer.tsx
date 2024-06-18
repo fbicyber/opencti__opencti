@@ -6,6 +6,7 @@ import InfrastructureEditionOverview from './InfrastructureEditionOverview';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import { InfrastructureEditionContainerQuery } from './__generated__/InfrastructureEditionContainerQuery.graphql';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 export const infrastructureEditionContainerQuery = graphql`
   query InfrastructureEditionContainerQuery($id: String!) {
@@ -23,10 +24,18 @@ interface InfrastructureEditionContainerProps {
   handleClose: () => void
   queryRef: PreloadedQuery<InfrastructureEditionContainerQuery>
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
-const InfrastructureEditionContainer: FunctionComponent<InfrastructureEditionContainerProps> = ({ handleClose, queryRef, open }) => {
+const InfrastructureEditionContainer: FunctionComponent<InfrastructureEditionContainerProps> = ({
+  handleClose,
+  queryRef,
+  open,
+  controlledDial,
+}) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const { infrastructure } = usePreloadedQuery(infrastructureEditionContainerQuery, queryRef);
 
@@ -34,10 +43,11 @@ const InfrastructureEditionContainer: FunctionComponent<InfrastructureEditionCon
     return (
       <Drawer
         title={t_i18n('Update an infrastructure')}
-        variant={open == null ? DrawerVariant.update : undefined}
+        variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
         context={infrastructure.editContext}
         onClose={handleClose}
         open={open}
+        controlledDial={FABReplaced ? controlledDial : undefined}
       >
         {({ onClose }) => (
           <InfrastructureEditionOverview
