@@ -6,6 +6,7 @@ import DataComponentEditionOverview from './DataComponentEditionOverview';
 import { DataComponentEditionContainerQuery } from './__generated__/DataComponentEditionContainerQuery.graphql';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 export const dataComponentEditionQuery = graphql`
   query DataComponentEditionContainerQuery($id: String!) {
@@ -23,20 +24,29 @@ interface DataComponentEditionContainerProps {
   queryRef: PreloadedQuery<DataComponentEditionContainerQuery>
   handleClose: () => void
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
-const DataComponentEditionContainer: FunctionComponent<DataComponentEditionContainerProps> = ({ queryRef, handleClose, open }) => {
+const DataComponentEditionContainer: FunctionComponent<DataComponentEditionContainerProps> = ({
+  queryRef,
+  handleClose,
+  open,
+  controlledDial,
+}) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { dataComponent } = usePreloadedQuery(dataComponentEditionQuery, queryRef);
 
   if (dataComponent) {
     return (
       <Drawer
         title={t_i18n('Update a data component')}
-        variant={open == null ? DrawerVariant.update : undefined}
+        variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
         context={dataComponent.editContext}
         onClose={handleClose}
         open={open}
+        controlledDial={FABReplaced ? controlledDial : undefined}
       >
         {({ onClose }) => (
           <DataComponentEditionOverview
