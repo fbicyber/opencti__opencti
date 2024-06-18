@@ -7,11 +7,13 @@ import { useFormatter } from '../../../../components/i18n';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import { CityEditionContainerQuery } from './__generated__/CityEditionContainerQuery.graphql';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 interface CityEditionContainerProps {
   queryRef: PreloadedQuery<CityEditionContainerQuery>
   handleClose: () => void
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
 export const cityEditionQuery = graphql`
@@ -29,8 +31,11 @@ const CityEditionContainer: FunctionComponent<CityEditionContainerProps> = ({
   queryRef,
   handleClose,
   open,
+  controlledDial,
 }) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { city } = usePreloadedQuery(cityEditionQuery, queryRef);
   if (city === null) {
     return <ErrorNotFound />;
@@ -38,10 +43,11 @@ const CityEditionContainer: FunctionComponent<CityEditionContainerProps> = ({
   return (
     <Drawer
       title={t_i18n('Update a city')}
-      variant={open == null ? DrawerVariant.update : undefined}
+      variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
       context={city?.editContext}
       onClose={handleClose}
       open={open}
+      controlledDial={FABReplaced ? controlledDial : undefined}
     >
       {({ onClose }) => (
         <CityEditionOverview
