@@ -22,6 +22,9 @@ import inject18n from '../../../../components/i18n';
 import withRouter from '../../../../utils/compat-router/withRouter';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import ChannelEdition from './ChannelEdition';
 
 const subscription = graphql`
   subscription RootChannelSubscription($id: ID!) {
@@ -129,6 +132,9 @@ class RootChannel extends Component {
                       entityType="Channel"
                       stixDomainObject={channel}
                       PopoverComponent={<ChannelPopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <ChannelEdition channelId={channel.id} />
+                      </Security>}
                       enableQuickSubscription={true}
                     />
                     <Box
