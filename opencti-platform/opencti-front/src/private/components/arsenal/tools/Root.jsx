@@ -22,6 +22,9 @@ import ErrorNotFound from '../../../../components/ErrorNotFound';
 import inject18n from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import ToolEdition from './ToolEdition';
 
 const subscription = graphql`
   subscription RootToolSubscription($id: ID!) {
@@ -131,6 +134,9 @@ class RootTool extends Component {
                       entityType="Tool"
                       stixDomainObject={tool}
                       PopoverComponent={<ToolPopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <ToolEdition toolId={tool.id} />
+                      </Security>}
                       enableQuickSubscription={true}
                     />
                     <Box
