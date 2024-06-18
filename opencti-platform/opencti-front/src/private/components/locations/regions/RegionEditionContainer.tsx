@@ -6,11 +6,13 @@ import RegionEditionOverview from './RegionEditionOverview';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import { RegionEditionContainerQuery } from './__generated__/RegionEditionContainerQuery.graphql';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 interface RegionEditionContainerProps {
   handleClose: () => void
   queryRef: PreloadedQuery<RegionEditionContainerQuery>
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
 export const regionEditionQuery = graphql`
@@ -25,17 +27,25 @@ export const regionEditionQuery = graphql`
   }
 `;
 
-const RegionEditionContainer: FunctionComponent<RegionEditionContainerProps> = ({ handleClose, queryRef, open }) => {
+const RegionEditionContainer: FunctionComponent<RegionEditionContainerProps> = ({
+  handleClose,
+  queryRef,
+  open,
+  controlledDial,
+}) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { region } = usePreloadedQuery(regionEditionQuery, queryRef);
   if (region) {
     return (
       <Drawer
         title={t_i18n('Update a region')}
-        variant={open == null ? DrawerVariant.update : undefined}
+        variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
         context={region.editContext}
         onClose={handleClose}
         open={open}
+        controlledDial={FABReplaced ? controlledDial : undefined}
       >
         {({ onClose }) => (
           <RegionEditionOverview
