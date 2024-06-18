@@ -22,6 +22,9 @@ import ErrorNotFound from '../../../../components/ErrorNotFound';
 import inject18n from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import NarrativeEdition from './NarrativeEdition';
 
 const subscription = graphql`
   subscription RootNarrativeSubscription($id: ID!) {
@@ -130,6 +133,9 @@ class RootNarrative extends Component {
                       disableSharing={true}
                       stixDomainObject={props.narrative}
                       PopoverComponent={<NarrativePopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <NarrativeEdition narrativeId={narrative.id} />
+                      </Security>}
                     />
                     <Box
                       sx={{
