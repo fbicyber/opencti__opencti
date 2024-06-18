@@ -22,6 +22,9 @@ import ErrorNotFound from '../../../../components/ErrorNotFound';
 import inject18n from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import VulnerabilityEdition from './VulnerabilityEdition';
 
 const subscription = graphql`
   subscription RootVulnerabilitySubscription($id: ID!) {
@@ -130,6 +133,9 @@ class RootVulnerability extends Component {
                       entityType="Vulnerability"
                       stixDomainObject={vulnerability}
                       PopoverComponent={<VulnerabilityPopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <VulnerabilityEdition vulnerabilityId={vulnerability.id} />
+                      </Security>}
                       enableQuickSubscription={true}
                       isOpenctiAlias={true}
                     />
