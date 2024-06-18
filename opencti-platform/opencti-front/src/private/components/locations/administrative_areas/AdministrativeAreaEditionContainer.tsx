@@ -9,11 +9,13 @@ import { useFormatter } from '../../../../components/i18n';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import { AdministrativeAreaEditionContainerQuery } from './__generated__/AdministrativeAreaEditionContainerQuery.graphql';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 interface AdministrativeAreaEditionContainerProps {
   queryRef: PreloadedQuery<AdministrativeAreaEditionContainerQuery>
   handleClose: () => void
   open?: boolean
+  controlledDial?: ({ onOpen }: { onOpen: () => void }) => JSX.Element
 }
 
 export const administrativeAreaEditionQuery = graphql`
@@ -27,8 +29,15 @@ export const administrativeAreaEditionQuery = graphql`
     }
   }
 `;
-const AdministrativeAreaEditionContainer: FunctionComponent<AdministrativeAreaEditionContainerProps> = ({ queryRef, handleClose, open }) => {
+const AdministrativeAreaEditionContainer: FunctionComponent<AdministrativeAreaEditionContainerProps> = ({
+  queryRef,
+  handleClose,
+  open,
+  controlledDial,
+}) => {
   const { t_i18n } = useFormatter();
+  const { isFeatureEnable } = useHelper();
+  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { administrativeArea } = usePreloadedQuery(administrativeAreaEditionQuery, queryRef);
   if (administrativeArea === null) {
     return <ErrorNotFound />;
@@ -36,10 +45,11 @@ const AdministrativeAreaEditionContainer: FunctionComponent<AdministrativeAreaEd
   return (
     <Drawer
       title={t_i18n('Update an area')}
-      variant={open == null ? DrawerVariant.update : undefined}
+      variant={!FABReplaced && open == null ? DrawerVariant.update : undefined}
       context={administrativeArea?.editContext}
       onClose={handleClose}
       open={open}
+      controlledDial={FABReplaced ? controlledDial : undefined}
     >
       {({ onClose }) => (
         <AdministrativeAreaEditionOverview
