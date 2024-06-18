@@ -23,6 +23,9 @@ import StixCoreObjectKnowledgeBar from '../../common/stix_core_objects/StixCoreO
 import inject18n from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { getCurrentTab, getPaddingRight } from '../../../../utils/utils';
+import Security from '../../../../utils/Security';
+import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
+import CampaignEdition from './CampaignEdition';
 
 const subscription = graphql`
   subscription RootCampaignSubscription($id: ID!) {
@@ -137,6 +140,9 @@ class RootCampaign extends Component {
                       entityType="Campaign"
                       stixDomainObject={campaign}
                       PopoverComponent={<CampaignPopover />}
+                      EditComponent={<Security needs={[KNOWLEDGE_KNUPDATE]}>
+                        <CampaignEdition campaignId={campaign.id} />
+                      </Security>}
                       enableQuickSubscription={true}
                     />
                     <Box
