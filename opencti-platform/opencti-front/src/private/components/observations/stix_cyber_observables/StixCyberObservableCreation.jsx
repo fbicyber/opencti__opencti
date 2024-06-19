@@ -236,7 +236,7 @@ const StixCyberObservableCreation = ({
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
-  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [hashesMD5Value, setHashesMD5Value] = React.useState('');
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
@@ -869,12 +869,9 @@ const StixCyberObservableCreation = ({
     const handleCloseBulkModal = (val) => {
       setOpenBulkModal(false);
       if (val != null && val.length > 0) {
-        // START - Clear Attached File from CustomFileUploader
-        const spanData = document.getElementById('CustomFileUploaderFileName');
-        spanData.innerHTML = t_i18n('No file selected.');
-        props.setValue('file', null);
-        // END - Clear Attached File from CustomFileUploader
         setBulkValueFieldValue(val);
+        // Clear Attached File marker used by CustomFileUploader interaction to indicate a file need processing
+        props.setValue('file', null);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
@@ -1057,7 +1054,7 @@ const StixCyberObservableCreation = ({
             return (
               <Formik
                 initialValues={initialValues}
-                validationSchema={stixCyberObservableValidationFinal()}
+                validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                 onSubmit={onSubmit}
                 onReset={onReset}
               >
