@@ -67,12 +67,13 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
   acceptMimeTypes,
   sizeLimit = 0, // defaults to 0 = no limit
   formikErrors,
-  disabled,
+  disabled = false,
 }) => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [fileNameForDisplay, setFileNameForDisplay] = useState('');
   const [errorText, setErrorText] = useState('');
+  const [customFileUploaderFileName, setCustomFileUploaderFileName] = useState(t_i18n('No file selected.'));
 
   useEffect(() => {
     if (formikErrors?.file) {
@@ -123,6 +124,25 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
     }
   };
 
+  function returnDisabledStatus(disabledStatus: boolean): boolean {
+    if (disabledStatus === true) {
+      if (customFileUploaderFileName !== t_i18n('No file selected.')) {
+        setCustomFileUploaderFileName(t_i18n('No file selected.'));
+      }
+      if (fileNameForDisplay !== '') {
+        setFileNameForDisplay('');
+        // Clear the actual attached file, allows for onChange to detect if user wants to re-attach same file
+        // if field becomes enabled again.
+        const currentAttachedFile = document.getElementById('customFileAttachedRef') as HTMLInputElement || null;
+        if (currentAttachedFile) {
+          currentAttachedFile.value = '';
+        }
+      }
+    }
+
+    return disabledStatus;
+  }
+
   return (
     <div className={classes.div}>
       <InputLabel shrink={true} variant="standard">
@@ -139,17 +159,17 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
           variant="contained"
           onChange={onChange}
           className={classes.button}
-          disabled={disabled}
+          disabled={returnDisabledStatus(disabled)}
         >
           {t_i18n('Select your file')}
-          <VisuallyHiddenInput type="file" accept={acceptMimeTypes} />
+          <VisuallyHiddenInput id='customFileAttachedRef' type="file" accept={acceptMimeTypes} />
         </Button>
         <span
           id="CustomFileUploaderFileName"
-          title={fileNameForDisplay || t_i18n('No file selected.')}
+          title={fileNameForDisplay || customFileUploaderFileName}
           className={classes.span}
         >
-          {fileNameForDisplay || t_i18n('No file selected.')}
+          {fileNameForDisplay || customFileUploaderFileName}
         </span>
       </Box>
       {!!errorText && (
