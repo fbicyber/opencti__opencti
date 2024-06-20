@@ -5,23 +5,19 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
-import Select from '@mui/material/Select';
-import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
+import { Add, Close } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import makeStyles from '@mui/styles/makeStyles';
-import { ListItemButton, MenuItem } from '@mui/material';
+import { ListItemButton } from '@mui/material';
 import { commitMutation, handleErrorInForm, QueryRenderer, MESSAGING$, commitMutationWithPromise } from '../../../../relay/environment';
 import TextField from '../../../../components/TextField';
 import SwitchField from '../../../../components/fields/SwitchField';
@@ -42,6 +38,9 @@ import useVocabularyCategory from '../../../../utils/hooks/useVocabularyCategory
 import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
+import ProgressDialog from '../../../../components/ProgressDialog';
+import BulkAddComponent from '../../../../components/BulkAddComponent';
+import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -92,21 +91,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 20px 20px 20px',
   },
 }));
-
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
 
 const stixCyberObservableMutation = graphql`
   mutation StixCyberObservableCreationMutation(
@@ -223,15 +207,7 @@ const stixCyberObservableMutation = graphql`
     }
   }
 `;
-let validObservables = 0;
-let errorObservables = 0;
-let totalObservables = 0;
-const error_array = [];
-// const stixCyberObservableValidation = () => Yup.object().shape({
-//   x_opencti_score: Yup.number().nullable(),
-//   x_opencti_description: Yup.string().nullable(),
-//   createIndicator: Yup.boolean(),
-// });
+
 const StixCyberObservableCreation = ({
   contextual,
   open,
@@ -261,13 +237,24 @@ const StixCyberObservableCreation = ({
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
-  const hashes_MD5_field = document.getElementById('hashes_MD5');
-  const hashes_SHA1_field = document.getElementById('hashes_SHA-1');
-  const hashes_SHA256_field = document.getElementById('hashes_SHA-256');
-  const hashes_SHA512_field = document.getElementById('hashes_SHA-512');
+  const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [openBulkModal, setOpenBulkModal] = React.useState(false);
+  const [hashesMD5Value, setHashesMD5Value] = React.useState('');
+  const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
+  const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
+  const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
   const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
   let hashesList = [];
   const algorithm = selectedAttribute.toLowerCase();
+  let validObservables = 0;
+  let errorObservables = 0;
+  let totalObservables = 0;
+  const error_array = [];
+
+  console.log('algorithm is: ', algorithm);
+  console.log('hashesList');
+  console.table(hashesList);
 
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
     commitMutation({
@@ -300,6 +287,13 @@ const StixCyberObservableCreation = ({
     errorObservables = 0;
     validObservables = 0;
     setProgressBar(0);
+    setGenericValueFieldValue('');
+    setBulkValueFieldValue('');
+    setHashesMD5Value('');
+    setHashesSHA1Value('');
+    setHashesSHA256Value('');
+    setHashesSHA512Value('');
+    setKeyFieldDisabled('');
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -359,6 +353,7 @@ const StixCyberObservableCreation = ({
       }
     }
     function handleHashPromiseResult() {
+      console.log('Entered handleHashPromiseResult()');
       totalObservables = hashesList.length;
       if (totalObservables > 1) {
         setOpenProgressDialog(true);
@@ -415,6 +410,9 @@ const StixCyberObservableCreation = ({
     }
     async function processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, hashNamBoolean) {
       let promises;
+      console.log('hashNamBoolean is: ', hashNamBoolean);
+      console.log('chunkValueList');
+      console.table(chunkValueList);
       if (hashNamBoolean === true) {
         promises = chunkValueList.map((hash) => commitMutationWithPromise({
           mutation: stixCyberObservableMutation,
@@ -442,6 +440,8 @@ const StixCyberObservableCreation = ({
           },
         }));
       } else {
+        console.log('Entered else statement');
+        console.log('algorithm before promises is: ', algorithm);
         promises = chunkValueList.map((hash) => commitMutationWithPromise({
           mutation: stixCyberObservableMutation,
           variables: {
@@ -524,7 +524,7 @@ const StixCyberObservableCreation = ({
     }
     if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
-      if (adaptedValues.value && adaptedValues.bulk_value_field && adaptedValues.value === bulkAddMsg) {
+      if (adaptedValues.bulk_value_field && (adaptedValues.value || genericValueFieldValue === bulkAddMsg)) {
         const array_of_bulk_values = adaptedValues.bulk_value_field.split(/\r?\n/);
         // Trim them just to remove any extra spacing on front or rear of string
         const trimmed_bulk_values = array_of_bulk_values.map((s) => s.trim());
@@ -559,6 +559,8 @@ const StixCyberObservableCreation = ({
         || adaptedValues['hashes_SHA-512']
       ) {
         adaptedValues.hashes = [];
+        console.log('adaptedValues.hashes');
+        console.table(adaptedValues);
         if (adaptedValues.hashes_MD5.length > 0) {
           adaptedValues.hashes.push({
             algorithm: 'MD5',
@@ -737,106 +739,66 @@ const StixCyberObservableCreation = ({
   };
   function BulkAddDialog(props) {
     const handleOpenBulkAddDialog = () => {
-      if (hashes_MD5_field != null && hashes_MD5_field.value != null
-        && hashes_MD5_field.value.length > 0 && hashes_MD5_field.value !== bulkAddMsg) {
+      console.log('handleOpenBulkAddDialog - selectedAttribute is: ', selectedAttribute);
+      if (hashesMD5Value != null && hashesMD5Value.length > 0 && hashesMD5Value !== bulkAddMsg) {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.hashes.push('hashes_MD5', hashes_MD5_field.value.trim());
+        // props.hashes.push('hashes_MD5', hashesMD5Value.trim());
+        setBulkValueFieldValue(hashesMD5Value.trim());
       }
-      if (hashes_SHA1_field != null && hashes_SHA1_field.value != null
-        && hashes_SHA1_field.value.length > 0 && hashes_SHA1_field.value !== bulkAddMsg) {
+      if (hashesSHA1Value != null && hashesSHA1Value.length > 0 && hashesSHA1Value !== bulkAddMsg && selectedAttribute === 'SHA-1') {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.hashes.push('hashes_SHA-1', hashes_SHA1_field.value.trim());
+        // props.hashes.push('hashes_SHA-1', hashesSHA1Value.trim());
+        setBulkValueFieldValue(hashesSHA1Value.trim());
       }
-      if (hashes_SHA256_field != null && hashes_SHA256_field.value != null
-        && hashes_SHA256_field.value.length > 0 && hashes_SHA256_field.value !== bulkAddMsg) {
+      if (hashesSHA256Value != null && hashesSHA256Value.length > 0 && hashesSHA256Value !== bulkAddMsg && selectedAttribute === 'SHA-256') {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.hashes.push('hashes_SHA-256', hashes_SHA256_field.value.trim());
+        // props.hashes.push('hashes_SHA-256', hashesSHA256Value.trim());
+        setBulkValueFieldValue(hashesSHA256Value.trim());
       }
-      if (hashes_SHA512_field != null && hashes_SHA512_field.value != null
-        && hashes_SHA512_field.value.length > 0 && hashes_SHA512_field.value !== bulkAddMsg) {
+      if (hashesSHA512Value != null && hashesSHA512Value.length > 0 && hashesSHA512Value !== bulkAddMsg && selectedAttribute === 'SHA-512') {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.hashes.push('hashes_SHA-512', hashes_SHA512_field.value.trim());
+        // props.hashes.push('hashes_SHA-512', hashesSHA512Value.trim());
+        setBulkValueFieldValue(hashesSHA512Value.trim());
       }
       setOpenBulkAddDialog(true);
     };
-    const handleCloseBulkAddDialog = () => {
+    const handleCloseBulkAddDialog = (val) => {
       setOpenBulkAddDialog(false);
-      const bulk_hashes_field = document.getElementById('bulk_hashes_field');
-
-      if (bulk_hashes_field != null && bulk_hashes_field.value != null && bulk_hashes_field.value.length > 0) {
+      if (val != null && val.length > 0) {
         // START - Clear Attached File from CustomFileUploader
         const spanData = document.getElementById('CustomFileUploaderFileName');
         spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
         // END - Clear Attached File from CustomFileUploader
-        props.setValue('hashes_MD5', bulkAddMsg);
-        props.setValue('hashes_SHA-1', bulkAddMsg);
-        props.setValue('hashes_SHA-256', bulkAddMsg);
-        props.setValue('hashes_SHA-512', bulkAddMsg);
+        setHashesMD5Value(bulkAddMsg);
+        setHashesSHA1Value(bulkAddMsg);
+        setHashesSHA256Value(bulkAddMsg);
+        setHashesSHA512Value(bulkAddMsg);
         props.setValue('name', bulkAddMsg);
         setKeyFieldDisabled(true);
       } else {
-        props.setValue('hashes_MD5', '');
-        props.setValue('hashes_SHA-1', '');
-        props.setValue('hashes_SHA-256', '');
-        props.setValue('hashes_SHA-512', '');
+        setHashesMD5Value('');
+        setHashesSHA1Value('');
+        setHashesSHA256Value('');
+        setHashesSHA512Value('');
         props.setValue('name', '');
         setKeyFieldDisabled(false);
       }
     };
-
-    const handleSelectChange = (event) => {
-      setSelectedAttribute(event.target.value);
+    const handleParentSelectAttribute = (value) => {
+      console.log('In handleParentSelectAttribute function');
+      console.log('value is: ', value);
+      setSelectedAttribute(value);
+      console.log('ParentSelectAttribute is: ', selectedAttribute);
     };
     return (
-      <React.Fragment>
-        <IconButton
-          onClick={handleOpenBulkAddDialog}
-          size="large"
-          color="primary" style={{ float: 'left', marginRight: 25 }}
-        >
-          <TextFieldsOutlined />
-        </IconButton>
-        <Dialog
-          PaperProps={{ elevation: 3 }}
-          open={openBulkAddDialog}
-          onClose={handleCloseBulkAddDialog}
-          fullWidth={true}
-        >
-          <DialogContent style={{ marginTop: 0, paddingTop: 10 }}>
-            <div id="divSelectAttributes" style={{ border: '2px solid #FFA500', paddingLeft: 10 }}>
-              {t_i18n('Create Entities from multiple: ')}
-              <Select name="attributes" id="attributes" value={selectedAttribute} onChange={handleSelectChange}>
-                <MenuItem selected disabled>Select attribute</MenuItem>
-                <MenuItem value="NAME">name</MenuItem>
-                <MenuItem value="MD5">md5</MenuItem>
-                <MenuItem value="SHA-1">sha1</MenuItem>
-                <MenuItem value="SHA-256">sha256</MenuItem>
-                <MenuItem value="SHA-512">sha512</MenuItem>
-              </Select>
-            </div>
-            <Typography style={{ float: 'left', marginTop: 10 }}>
-              <span style={{ fontSize: '0.7em' }}>{selectedAttribute}</span>
-              <span className="output"></span>
-            </Typography>
-            <Field
-              component={TextField}
-              id="bulk_hashes_field"
-              variant="standard"
-              key="bulk_hashes_field"
-              name="bulk_hashes_field"
-              fullWidth={true}
-              multiline={true}
-              rows="5"
-            />
-            <DialogActions>
-              <Button color="secondary" onClick={handleCloseBulkAddDialog}>
-                {t_i18n('Validate')}
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
-      </React.Fragment>
+      <BulkAddDialogComponent
+        openBulkAddDialog={openBulkAddDialog}
+        bulkValueFieldValue={bulkValueFieldValue}
+        handleOpenBulkAddDialog={handleOpenBulkAddDialog}
+        handleCloseBulkAddDialog={handleCloseBulkAddDialog}
+        handleParentSelectAttribute={handleParentSelectAttribute}
+      />
     );
   }
 
@@ -844,32 +806,30 @@ const StixCyberObservableCreation = ({
     setValue: PropTypes.func,
   };
 
-  function BulkAddModal(props) {
-    const [openBulkModal, setOpenBulkModal] = React.useState(false);
+  function BulkAdd(props) {
     const handleOpenBulkModal = () => {
-      const generic_value_field = document.getElementById('generic_value_field');
-      if (generic_value_field != null && generic_value_field.value != null
-        && generic_value_field.value.length > 0 && generic_value_field.value !== bulkAddMsg) {
+      if (genericValueFieldValue != null && genericValueFieldValue.length > 0 && genericValueFieldValue !== bulkAddMsg) {
         // Trim the field to avoid inserting whitespace as a default population value
-        props.setValue('bulk_value_field', generic_value_field.value.trim());
+        setBulkValueFieldValue(genericValueFieldValue.trim());
       }
       setOpenBulkModal(true);
     };
-    const handleCloseBulkModal = () => {
+    const handleCloseBulkModal = (val) => {
       setOpenBulkModal(false);
-      const bulk_value_field = document.getElementById('bulk_value_field');
-      if (bulk_value_field != null && bulk_value_field.value != null && bulk_value_field.value.length > 0) {
+      if (val != null && val.length > 0) {
         // START - Clear Attached File from CustomFileUploader
         const spanData = document.getElementById('CustomFileUploaderFileName');
         spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
         // END - Clear Attached File from CustomFileUploader
+        setBulkValueFieldValue(val);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
-        props.setValue('value', bulkAddMsg);
+        setGenericValueFieldValue(bulkAddMsg);
       } else {
-        props.setValue('value', '');
+        setBulkValueFieldValue('');
+        setGenericValueFieldValue('');
         setGenericValueFieldDisabled(false);
       }
     };
@@ -879,60 +839,23 @@ const StixCyberObservableCreation = ({
         // If one-liner field isn't disabled, then you are it seems deciding
         // not to use the bulk add feature, so we will clear the field, since its population
         // is used to process the bul_value_field versus the generic_value_field
-        props.setValue('bulk_value_field', '');
+        setBulkValueFieldValue('');
+        setGenericValueFieldValue('');
       }
       // else - you previously entered data and you just are canceling out of the popup window
       // but keeping your entry in the form.
     };
     return (
-      <React.Fragment>
-        <IconButton
-          onClick={handleOpenBulkModal}
-          size="large"
-          color="primary" style={{ float: 'right', marginRight: 25 }}
-        >
-          <TextFieldsOutlined />
-        </IconButton>
-        <Dialog
-          PaperProps={{ elevation: 3 }}
-          open={openBulkModal}
-          onClose={handleCloseBulkModal}
-          fullWidth={true}
-        >
-          <DialogTitle>{t_i18n('Bulk Observable Creation')}</DialogTitle>
-          <DialogContent style={{ marginTop: 0, paddingTop: 0 }}>
-            <Typography id="add-bulk-observable-instructions" variant="subtitle1" component="subtitle1" style={{ whiteSpace: 'pre-line' }}>
-              <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
-                {t_i18n('Enter one observable per line. Observables must be the same type.')}
-                <br></br>
-                {t_i18n('If you are adding more than 50 entries, please consider using another data import capability for faster processing.')}
-              </div>
-            </Typography>
-            <Field
-              component={TextField}
-              id="bulk_value_field"
-              label={t_i18n('Bulk Content')}
-              variant="outlined"
-              key="bulk_value_field"
-              name="bulk_value_field"
-              fullWidth={true}
-              multiline={true}
-              rows="5"
-            />
-            <DialogActions>
-              <Button onClick={localHandleCancelClearBulkModal}>
-                {t_i18n('Cancel')}
-              </Button>
-              <Button color="secondary" onClick={handleCloseBulkModal}>
-                {t_i18n('Continue')}
-              </Button>
-            </DialogActions>
-          </DialogContent>
-        </Dialog>
-      </React.Fragment>
+      <BulkAddComponent
+        openBulkModal={openBulkModal}
+        bulkValueFieldValue={bulkValueFieldValue}
+        handleOpenBulkModal={handleOpenBulkModal}
+        handleCloseBulkModal={handleCloseBulkModal}
+        localHandleCancelClearBulkModal={localHandleCancelClearBulkModal}
+      />
     );
   }
-  BulkAddModal.propTypes = {
+  BulkAdd.propTypes = {
     setValue: PropTypes.func,
   };
   let stixFileBoolean = false;
@@ -1061,40 +984,48 @@ const StixCyberObservableCreation = ({
                                 disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesMD5Value}
                                 name="hashes_MD5"
                                 label={t_i18n('hash_md5')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesMD5Value(value)}
                               />
                               <Field
                                 id="hashes_SHA-1"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA1Value}
                                 name="hashes_SHA-1"
                                 label={t_i18n('hash_sha-1')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA1Value(value)}
                               />
                               <Field
                                 id="hashes_SHA-256"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA256Value}
                                 name="hashes_SHA-256"
                                 label={t_i18n('hash_sha-256')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA256Value(value)}
                               />
                               <Field
                                 id="hashes_SHA-512"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA512Value}
                                 name="hashes_SHA-512"
                                 label={t_i18n('hash_sha-512')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA512Value(value)}
                               />
                             </div>
                           );
@@ -1172,7 +1103,7 @@ const StixCyberObservableCreation = ({
                           return (
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
-                                <BulkAddModal
+                                <BulkAdd
                                   setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
                                 />
                               </Tooltip>
@@ -1183,11 +1114,13 @@ const StixCyberObservableCreation = ({
                                 disabled={genericValueFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={genericValueFieldValue}
                                 key={attribute.value}
                                 name={attribute.value}
                                 fullWidth={true}
                                 multiline={true}
                                 rows="1"
+                                onChange={(name, value) => setGenericValueFieldValue(value)}
                               />
                             </div>
                           );
@@ -1304,27 +1237,13 @@ const StixCyberObservableCreation = ({
           </div>
         </Drawer>
         <React.Fragment>
-          <Dialog
-            open={openProgressDialog}
-          >
-            <DialogTitle id="alert-dialog-title">
-              {'Progress'}
-            </DialogTitle>
-            <DialogContent>
-              <Box sx={{ minWidth: '500px', width: '100%' }}>
-                <LinearProgressWithLabel
-                  classes={{ root: classes.progress }}
-                  variant="determinate"
-                  value={100 * (progressBar / progressBarMax)}
-                />
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClickCloseProgress}>
-                {t_i18n('Close')}
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <ProgressDialog
+            openProgressDialog={openProgressDialog}
+            bulkValueFieldValue={bulkValueFieldValue}
+            progressBar={progressBar}
+            progressBarMax={progressBarMax}
+            handleClickCloseProgress={handleClickCloseProgress}
+          />
         </React.Fragment>
       </>
     );
