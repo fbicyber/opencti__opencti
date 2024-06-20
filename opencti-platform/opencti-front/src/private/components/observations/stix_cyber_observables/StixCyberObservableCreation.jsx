@@ -872,7 +872,9 @@ const StixCyberObservableCreation = ({
 
                               <Field
                                 id="generic_value_field"
-                                label="value" // For unit test to locate and preserves initial name before bulk capability supported
+                                label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                aria-labelledby="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                aria-label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
                                 disabled={genericValueFieldDisabled}
                                 component={TextField}
                                 variant="standard"
