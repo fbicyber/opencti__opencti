@@ -22,7 +22,7 @@ const Workspaces: FunctionComponent<WorkspacesProps> = ({
 }) => {
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
-  const FAB_REPLACED = isFeatureEnable('FAB_REPLACEMENT');
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const {
     viewStorage,
     paginationOptions,
@@ -113,7 +113,7 @@ const Workspaces: FunctionComponent<WorkspacesProps> = ({
           secondaryAction={true}
           paginationOptions={workspacePaginationOptions}
           numberOfElements={numberOfElements}
-          createButton={FAB_REPLACED && <Security needs={[EXPLORE_EXUPDATE]}>
+          createButton={isFABReplaced && <Security needs={[EXPLORE_EXUPDATE]}>
             <WorkspaceCreation
               paginationOptions={workspacePaginationOptions}
               type={type}
@@ -152,7 +152,7 @@ const Workspaces: FunctionComponent<WorkspacesProps> = ({
         : [{ label: t_i18n('Investigations'), current: true }]}
       />
       {renderLines()}
-      {!FAB_REPLACED
+      {!isFABReplaced
         && (<Security needs={[EXPLORE_EXUPDATE, INVESTIGATION_INUPDATE]}>
           <WorkspaceCreation
             paginationOptions={workspacePaginationOptions}

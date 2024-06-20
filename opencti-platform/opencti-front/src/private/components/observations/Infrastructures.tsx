@@ -17,12 +17,16 @@ import { InfrastructureLine_node$data } from './infrastructures/__generated__/In
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 export const LOCAL_STORAGE_KEY_INFRASTRUCTURES = 'infrastructures';
 
 const Infrastructures = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Infrastructures | Observations'));
   const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
@@ -68,7 +72,6 @@ const Infrastructures = () => {
   } = useEntityToggle<InfrastructureLine_node$data>(
     LOCAL_STORAGE_KEY_INFRASTRUCTURES,
   );
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const renderLines = () => {
     const isRuntimeSort = isRuntimeFieldEnable() ?? false;
     const dataColumns = {

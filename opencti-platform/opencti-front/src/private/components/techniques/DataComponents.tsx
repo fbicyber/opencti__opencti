@@ -12,13 +12,16 @@ import DataComponentLineDummy from './data_components/DataComponentLineDummy';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY_DATA_COMPONENTS = 'dataComponents';
 
 const DataComponents: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Data Components | Techniques'));
   const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACED');
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<DataComponentsLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY_DATA_COMPONENTS,
     {

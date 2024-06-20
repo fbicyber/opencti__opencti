@@ -17,6 +17,7 @@ import CaseRftCreation from './case_rfts/CaseRftCreation';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 interface CaseRftsProps {
   inputValue?: string;
@@ -26,7 +27,10 @@ export const LOCAL_STORAGE_KEY = 'caseRfts';
 
 const CaseRfts: FunctionComponent<CaseRftsProps> = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Requests for Takedown | Cases'));
   const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
@@ -44,7 +48,6 @@ const CaseRfts: FunctionComponent<CaseRftsProps> = () => {
       filters: emptyFilterGroup,
     },
   );
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const {
     sortBy,

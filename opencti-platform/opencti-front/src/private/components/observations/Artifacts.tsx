@@ -17,12 +17,16 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { useBuildEntityTypeBasedFilterContext, emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'artifacts';
 
 const Artifacts: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Artifacts | Observations'));
   const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
@@ -66,8 +70,6 @@ const Artifacts: FunctionComponent = () => {
     artifactsLinesQuery,
     queryPaginationOptions,
   );
-
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const dataColumns = {
     observable_value: {

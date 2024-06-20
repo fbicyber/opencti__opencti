@@ -17,12 +17,16 @@ import { IndicatorLineDummyComponent } from './indicators/IndicatorLine';
 import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext, useGetDefaultFilterObject } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'indicators-list';
 
 const Indicators = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Indicators | Observations'));
   const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const {
     viewStorage,
     paginationOptions,
@@ -74,7 +78,6 @@ const Indicators = () => {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
   const isRuntimeSort = isRuntimeFieldEnable() ?? false;
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const renderLines = () => {
     let numberOfSelectedElements = Object.keys(selectedElements || {}).length;
