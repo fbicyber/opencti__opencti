@@ -15,13 +15,16 @@ import {
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'administrative-areas';
 
 const AdministrativeAreas: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Administrative Areas | Locations'));
   const { isFeatureEnable } = useHelper();
-  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<AdministrativeAreasLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -85,7 +88,7 @@ const AdministrativeAreas: FunctionComponent = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
-        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+        createButton={isFABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <AdministrativeAreaCreation paginationOptions={paginationOptions} />
         </Security>}
       >
@@ -119,7 +122,7 @@ const AdministrativeAreas: FunctionComponent = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Locations') }, { label: t_i18n('Administrative areas'), current: true }]} />
       {renderLines()}
-      {!FABReplaced
+      {!isFABReplaced
         && <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <AdministrativeAreaCreation paginationOptions={paginationOptions} />
         </Security>

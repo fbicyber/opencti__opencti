@@ -16,13 +16,16 @@ import { useFormatter } from '../../../components/i18n';
 import useHelper from '../../../utils/hooks/useHelper';
 import useEntityToggle from '../../../utils/hooks/useEntityToggle';
 import ExportContextProvider from '../../../utils/ExportContextProvider';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'channels';
 
 const Channels = () => {
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const FAB_REPLACED = isFeatureEnable('FAB_REPLACEMENT');
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Channels | Arsenal'));
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<ChannelsLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -117,7 +120,7 @@ const Channels = () => {
           paginationOptions={queryPaginationOptions}
           numberOfElements={numberOfElements}
           iconExtension={true}
-          createButton={isFABReplaced && (
+          createButton={FAB_REPLACED && (
             <Security needs={[KNOWLEDGE_KNUPDATE, KNOWLEDGE_KNPARTICIPATE]}>
               <ChannelCreation paginationOptions={queryPaginationOptions} />
             </Security>
@@ -171,7 +174,7 @@ const Channels = () => {
     <ExportContextProvider>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Arsenal') }, { label: t_i18n('Channels'), current: true }]} />
       {renderLines()}
-      {!isFABReplaced && (
+      {!FAB_REPLACED && (
         <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <ChannelCreation paginationOptions={queryPaginationOptions} />
         </Security>

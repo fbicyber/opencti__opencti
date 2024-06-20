@@ -12,13 +12,16 @@ import { CountryLineDummy } from './countries/CountryLine';
 import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
 import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'countries';
 
 const Countries: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Countries | Locations'));
   const { isFeatureEnable } = useHelper();
-  const FABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<CountriesLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     {
@@ -82,7 +85,7 @@ const Countries: FunctionComponent = () => {
         filters={filters}
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
-        createButton={FABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+        createButton={isFABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <CountryCreation paginationOptions={paginationOptions} />
         </Security>}
       >
@@ -113,7 +116,7 @@ const Countries: FunctionComponent = () => {
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Locations') }, { label: t_i18n('Countries'), current: true }]} />
       {renderLines()}
-      {!FABReplaced
+      {!isFABReplaced
         && <Security needs={[KNOWLEDGE_KNUPDATE]}>
           <CountryCreation paginationOptions={paginationOptions} />
         </Security>
