@@ -17,7 +17,7 @@ type BulkAddComponentProps = {
     openBulkModal: boolean
     bulkValueFieldValue: string
     handleOpenBulkModal: () => void
-    handleCloseBulkModal: (val : any) => void
+    handleCloseBulkModal: (val: any) => void
     localHandleCancelClearBulkModal: () => void
 };
 
@@ -40,8 +40,8 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
                 setWarningVisible(true);
             }
         } else if (warningVisible === true) {
-                setWarningVisible(false);
-            }
+            setWarningVisible(false);
+        }
     }
     useEffect(() => {
         setLocalBulkValueField(bulkValueFieldValue);
@@ -52,8 +52,8 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
                 onClick={handleOpenBulkModal}
                 variant={'outlined'}
                 size={'small'}
-                label={t_i18n('Add Multiple Values')}
-                aria-label={t_i18n('Add Multiple Values')}
+                aria-label={'add_multiple_values_button'}
+                aria-labelledby={'add_multiple_values_button'}
                 style={{ float: 'right', marginRight: 5, marginTop: 10 }}
             >
                 {t_i18n('Add Multiple Values')}
@@ -71,7 +71,7 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
                         <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
                             {t_i18n('Enter one observable per line. Observables must be the same type.')}
                             <br></br>
-                            {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>
+                            {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
                         </div>
                     </Typography>
                     <Field
@@ -87,15 +87,15 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
                         rows="5"
                         onChange={(name: any, value: any) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
                     />
-                    { warningVisible
-                         && (<div style={ { color: 'red' } }>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a></div>)}
+                    {warningVisible
+                        && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
                     <DialogActions>
                         <Button onClick={localHandleCancelClearBulkModal}>
                             {t_i18n('Cancel')}
                         </Button>
-                        { !warningVisible && (<Button color="secondary" onClick={() => handleCloseBulkModal(localBulkValueField)}>
-                                                {t_i18n('Continue')}
-                                            </Button>)}
+                        {!warningVisible && (<Button color="secondary" onClick={() => handleCloseBulkModal(localBulkValueField)}>
+                            {t_i18n('Continue')}
+                        </Button>)}
                     </DialogActions>
                 </DialogContent>
             </Dialog>
