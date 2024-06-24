@@ -12,10 +12,40 @@ import DialogTitle from '@mui/material/DialogTitle';
 import makeStyles from '@mui/styles/makeStyles';
 import { useFormatter } from './i18n';
 
+class ProgressDialog {
+    public constructor(private currentIncrement: number, private currentMaxIncrement: number = 100) {}
+
+    public getCurrentIncrement(): number {
+        return this.currentIncrement;
+    }
+
+    public getCurrentMaxIncrement(): number {
+        return this.currentMaxIncrement;
+    }
+
+    public resetCurrentIncrement(): number {
+        this.currentIncrement = 0;
+        return this.currentIncrement;
+    }
+
+    public resetCurrentMaxIncrement(incrementValue: number): number {
+        this.currentMaxIncrement = incrementValue;
+        return this.currentMaxIncrement;
+    }
+
+    public setCurrentIncrement(incrementValue: number): number {
+        this.currentIncrement += incrementValue;
+        return this.currentIncrement;
+    }
+
+    public setCurrentMaxIncrement(incrementMaxValue: number): number {
+        this.currentMaxIncrement = incrementMaxValue;
+        return this.currentMaxIncrement;
+    }
+}
+
 type ProgressDialogProps = {
     openProgressDialog: boolean
-    progressBar: number
-    progressBarMax: number
     handleClickCloseProgress: () => void
 };
 
@@ -28,6 +58,7 @@ type LinearProgressProps = {
     variant?: 'determinate' | 'indeterminate' | 'buffer' | 'query';
     value: number
 };
+
 const LinearProgressWithLabel = (props: LinearProgressProps) => {
     return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -42,18 +73,20 @@ const LinearProgressWithLabel = (props: LinearProgressProps) => {
         </div>
     );
 };
+
 const useStyles = makeStyles(() => ({
     progress: {},
 }));
 
-const ProgressDialog: React.FC<ProgressDialogProps> = ({
+export const progressDialogStats = new ProgressDialog(0);
+
+const ProgressDialogContainer: React.FC<ProgressDialogProps> = ({
     openProgressDialog,
-    progressBar,
-    progressBarMax,
     handleClickCloseProgress,
 }) => {
     const { t_i18n } = useFormatter();
     const classes = useStyles();
+
     return (
         <Dialog
             open={openProgressDialog}
@@ -66,7 +99,7 @@ const ProgressDialog: React.FC<ProgressDialogProps> = ({
                     <LinearProgressWithLabel
                         classes={{ root: classes.progress }}
                         variant="determinate"
-                        value={100 * (progressBar / progressBarMax)}
+                        value={100 * (progressDialogStats.getCurrentIncrement() / progressDialogStats.getCurrentMaxIncrement())}
                     />
                 </div>
             </DialogContent>
@@ -79,4 +112,4 @@ const ProgressDialog: React.FC<ProgressDialogProps> = ({
     );
 };
 
-export default ProgressDialog;
+export default ProgressDialogContainer;

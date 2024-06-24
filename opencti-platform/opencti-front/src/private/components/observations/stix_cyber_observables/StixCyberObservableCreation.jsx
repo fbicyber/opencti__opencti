@@ -38,8 +38,11 @@ import useVocabularyCategory from '../../../../utils/hooks/useVocabularyCategory
 import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
-import ProgressDialog from '../../../../components/ProgressDialog';
+import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
+
 import BulkAddComponent from '../../../../components/BulkAddComponent';
+
+// const sleepCustomFunction = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -226,8 +229,7 @@ const StixCyberObservableCreation = ({
   const { booleanAttributes, dateAttributes, multipleAttributes, numberAttributes, ignoredAttributes } = useAttributes();
   const [status, setStatus] = useState({ open: false, type: type ?? null });
   const [openProgressDialog, setOpenProgressDialog] = useState(false);
-  const [progressBar, setProgressBar] = React.useState(0);
-  const [progressBarMax, setProgressBarMax] = React.useState(100);
+  const [allBatchesCompleted, setAllBatchesCompleted] = useState(false);
   const handleOpen = () => setStatus({ open: true, type: status.type });
   const localHandleClose = () => setStatus({ open: false, type: type ?? null });
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
@@ -243,10 +245,10 @@ const StixCyberObservableCreation = ({
 
   const progressReset = () => {
     setOpenProgressDialog(false);
-    setProgressBarMax(100);
     errorObservables = 0;
     validObservables = 0;
-    setProgressBar(0);
+    progressDialogStats.resetCurrentIncrement();
+    progressDialogStats.resetCurrentMaxIncrement(100);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
   };
@@ -278,7 +280,7 @@ const StixCyberObservableCreation = ({
         // - ##########################################################
         handleErrorInForm(consolidated_errors, setErrors);
         const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables) {
+        if (combinedObservables === totalObservables && allBatchesCompleted === true) {
           progressReset();
         }
       } else {
@@ -286,17 +288,18 @@ const StixCyberObservableCreation = ({
         if (totalObservables === 1) {
           // This is for consistent messaging when adding just (1) Observable
           bulk_success_message = t_i18n('Observable successfully added');
+          setAllBatchesCompleted(true);
           progressReset();
         }
         // Toast Message on Bulk Add Success
         MESSAGING$.notifySuccess(bulk_success_message);
         closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables) {
+        if (validObservables === totalObservables && allBatchesCompleted === true) {
           progressReset();
         }
       }
       // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true) {
+      if (closeFormWithAnySuccess === true && allBatchesCompleted === true) {
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
@@ -304,7 +307,7 @@ const StixCyberObservableCreation = ({
     }
     function updateProgress(position, batchSize) {
       if (position % batchSize === 0) {
-        setProgressBar((prevProgress) => prevProgress + 1);
+        progressDialogStats.setCurrentIncrement(1);
       }
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
@@ -333,6 +336,7 @@ const StixCyberObservableCreation = ({
           setSubmitting(false);
         },
       }));
+      // Send out a batchSize of promises and await their return
       await Promise.allSettled(promises).then((results) => {
         results.forEach(({ status: promiseStatus, reason }) => {
           if (promiseStatus === 'fulfilled') {
@@ -342,6 +346,7 @@ const StixCyberObservableCreation = ({
           }
         });
       });
+      // Update progress based on batchSize returned
       updateProgress(position, batchSize);
       handlePromiseResult(valueList);
     }
@@ -435,6 +440,7 @@ const StixCyberObservableCreation = ({
       if (values.file) {
         finalValues.file = values.file;
       }
+
       const commit = async () => {
         const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
         // Launch Progress Bar, as value data is about to be processed.
@@ -446,12 +452,23 @@ const StixCyberObservableCreation = ({
           delete adaptedValues.value;
           delete adaptedValues.bulk_value_field;
           const batchSize = 5;
+          let currentBatch = 0;
           let position = 0;
+          // Determine the number of batch class required to help compute % complete rate
+          const totalBatches = Math.ceil(valueList.length / batchSize);
+          progressDialogStats.resetCurrentMaxIncrement(totalBatches);
           while (position < valueList.length) {
-            setProgressBarMax(Math.ceil(valueList.length / batchSize));
+            // setProgressBarMax(Math.ceil(valueList.length / batchSize));
             const chunkValueList = valueList.slice(position, position + batchSize);
+            currentBatch += 1;
+            if (currentBatch === totalBatches) {
+              setAllBatchesCompleted(true);
+            }
             processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
             position += batchSize;
+            // Testing Force a sleep just to see progress bar movement
+            // await sleepCustomFunction(5000);
+
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
@@ -1000,15 +1017,15 @@ const StixCyberObservableCreation = ({
             {!status.type ? renderList() : renderForm()}
           </div>
         </Drawer>
-        <React.Fragment>
-          <ProgressDialog
-            openProgressDialog={openProgressDialog}
-            bulkValueFieldValue={bulkValueFieldValue}
-            progressBar={progressBar}
-            progressBarMax={progressBarMax}
-            handleClickCloseProgress={handleClickCloseProgress}
-          />
-        </React.Fragment>
+
+        <ProgressDialogContainer
+          openProgressDialog={openProgressDialog}
+          bulkValueFieldValue={bulkValueFieldValue}
+          // progressBar={progressBar}
+          // progressBarMax={progressBarMax}
+          handleClickCloseProgress={handleClickCloseProgress}
+        />
+
       </>
     );
   };
