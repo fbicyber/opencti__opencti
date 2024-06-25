@@ -39,10 +39,15 @@ import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
-
 import BulkAddComponent from '../../../../components/BulkAddComponent';
 
-// const sleepCustomFunction = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
+// Sleep Function used to:
+// Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+// the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+// a requirement. This can be removed after testing, if desired, or left in with the purpose
+// of forcing the user to see progress.
+// eslint-disable-next-line no-promise-executor-return
+const sleepCustomFunction = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -229,7 +234,6 @@ const StixCyberObservableCreation = ({
   const { booleanAttributes, dateAttributes, multipleAttributes, numberAttributes, ignoredAttributes } = useAttributes();
   const [status, setStatus] = useState({ open: false, type: type ?? null });
   const [openProgressDialog, setOpenProgressDialog] = useState(false);
-  const [allBatchesCompleted, setAllBatchesCompleted] = useState(false);
   const handleOpen = () => setStatus({ open: true, type: status.type });
   const localHandleClose = () => setStatus({ open: false, type: type ?? null });
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
@@ -254,6 +258,7 @@ const StixCyberObservableCreation = ({
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
+    progressDialogStats.setBatchingCancelled(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
@@ -280,7 +285,7 @@ const StixCyberObservableCreation = ({
         // - ##########################################################
         handleErrorInForm(consolidated_errors, setErrors);
         const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables && allBatchesCompleted === true) {
+        if (combinedObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       } else {
@@ -288,18 +293,18 @@ const StixCyberObservableCreation = ({
         if (totalObservables === 1) {
           // This is for consistent messaging when adding just (1) Observable
           bulk_success_message = t_i18n('Observable successfully added');
-          setAllBatchesCompleted(true);
+          progressDialogStats.setBatchingCompleted(true);
           progressReset();
         }
         // Toast Message on Bulk Add Success
         MESSAGING$.notifySuccess(bulk_success_message);
         closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables && allBatchesCompleted === true) {
+        if (validObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       }
       // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true && allBatchesCompleted === true) {
+      if (closeFormWithAnySuccess === true && progressDialogStats.getBatchingCompleted() === true) {
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
@@ -311,44 +316,47 @@ const StixCyberObservableCreation = ({
       }
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
-      const promises = chunkValueList.map((value) => commitMutationWithPromise({
-        mutation: stixCyberObservableMutation,
-        variables: {
-          ...finalValues,
-          [observableType]: {
-            ...adaptedValues,
-            obsContent: values.obsContent?.value,
-            value,
+      // If batching has not been cancelled with the close button the progress widget - continue processing
+      if (!progressDialogStats.getBatchingCancelled()) {
+        const promises = chunkValueList.map((value) => commitMutationWithPromise({
+          mutation: stixCyberObservableMutation,
+          variables: {
+            ...finalValues,
+            [observableType]: {
+              ...adaptedValues,
+              obsContent: values.obsContent?.value,
+              value,
+            },
           },
-        },
-        updater: (store) => insertNode(
-          store,
-          paginationKey,
-          paginationOptions,
-          'stixCyberObservableAdd',
-        ),
-        onCompleted: () => {
-          setSubmitting(false);
-          resetForm();
-          localHandleClose();
-        },
-        onError: () => {
-          setSubmitting(false);
-        },
-      }));
-      // Send out a batchSize of promises and await their return
-      await Promise.allSettled(promises).then((results) => {
-        results.forEach(({ status: promiseStatus, reason }) => {
-          if (promiseStatus === 'fulfilled') {
-            validObservables += 1;
-          } else {
-            error_array.push(reason);
-          }
+          updater: (store) => insertNode(
+            store,
+            paginationKey,
+            paginationOptions,
+            'stixCyberObservableAdd',
+          ),
+          onCompleted: () => {
+            setSubmitting(false);
+            resetForm();
+            localHandleClose();
+          },
+          onError: () => {
+            setSubmitting(false);
+          },
+        }));
+        // Send out a batchSize of promises and await their return
+        await Promise.allSettled(promises).then((results) => {
+          results.forEach(({ status: promiseStatus, reason }) => {
+            if (promiseStatus === 'fulfilled') {
+              validObservables += 1;
+            } else {
+              error_array.push(reason);
+            }
+          });
         });
-      });
-      // Update progress based on batchSize returned
-      updateProgress(position, batchSize);
-      handlePromiseResult(valueList);
+        // Update progress based on batchSize returned
+        updateProgress(position, batchSize);
+        handlePromiseResult(valueList);
+      }
     }
     if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
@@ -458,17 +466,18 @@ const StixCyberObservableCreation = ({
           const totalBatches = Math.ceil(valueList.length / batchSize);
           progressDialogStats.resetCurrentMaxIncrement(totalBatches);
           while (position < valueList.length) {
-            // setProgressBarMax(Math.ceil(valueList.length / batchSize));
             const chunkValueList = valueList.slice(position, position + batchSize);
             currentBatch += 1;
             if (currentBatch === totalBatches) {
-              setAllBatchesCompleted(true);
+              progressDialogStats.setBatchingCompleted(true);
             }
             processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
             position += batchSize;
-            // Testing Force a sleep just to see progress bar movement
-            // await sleepCustomFunction(5000);
-
+            // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+            // the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+            // a requirement. This can be removed after testing, if desired, or left in with the purpose
+            // of forcing the user to see progress.
+            await sleepCustomFunction(2000); // eslint-disable-line no-await-in-loop
           }
         } else {
           // No 'values' were submitted to save, but other parts of form were possibly filled out for different
@@ -1021,8 +1030,6 @@ const StixCyberObservableCreation = ({
         <ProgressDialogContainer
           openProgressDialog={openProgressDialog}
           bulkValueFieldValue={bulkValueFieldValue}
-          // progressBar={progressBar}
-          // progressBarMax={progressBarMax}
           handleClickCloseProgress={handleClickCloseProgress}
         />
 

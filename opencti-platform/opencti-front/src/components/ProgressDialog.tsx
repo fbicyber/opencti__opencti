@@ -13,7 +13,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import { useFormatter } from './i18n';
 
 class ProgressDialog {
-    public constructor(private currentIncrement: number, private currentMaxIncrement: number = 100) {}
+    public constructor(
+        private currentIncrement: number,
+        private currentMaxIncrement: number = 100,
+        private batchingCompleted: boolean = false,
+        private batchingCancelled: boolean = false,
+    ) {}
 
     public getCurrentIncrement(): number {
         return this.currentIncrement;
@@ -21,6 +26,14 @@ class ProgressDialog {
 
     public getCurrentMaxIncrement(): number {
         return this.currentMaxIncrement;
+    }
+
+    public getBatchingCompleted(): boolean {
+        return this.batchingCompleted;
+    }
+
+    public getBatchingCancelled(): boolean {
+        return this.batchingCancelled;
     }
 
     public resetCurrentIncrement(): number {
@@ -41,6 +54,16 @@ class ProgressDialog {
     public setCurrentMaxIncrement(incrementMaxValue: number): number {
         this.currentMaxIncrement = incrementMaxValue;
         return this.currentMaxIncrement;
+    }
+
+    public setBatchingCompleted(batchingFlag = false): boolean {
+        this.batchingCompleted = batchingFlag;
+        return this.batchingCompleted;
+    }
+
+    public setBatchingCancelled(batchingFlag = false): boolean {
+        this.batchingCancelled = batchingFlag;
+        return this.batchingCancelled;
     }
 }
 
