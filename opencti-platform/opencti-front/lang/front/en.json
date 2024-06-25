@@ -1255,11 +1255,8 @@
   "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)": "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)",
   "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)": "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)",
   "If this option is selected, we will skip the first line of your CSV file": "If this option is selected, we will skip the first line of your CSV file",
-<<<<<<< HEAD
   "If you are adding more than 50 values, please upload them through": "If you are adding more than 50 values, please upload them through",
-=======
   "If you are adding more than 50 entries, please consider using another data import capability for faster processing.": "If you are adding more than 50 entries, please consider using another data import capability for faster processing.",
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "If you want to keep the associated information, we recommend deactivating the user instead.": "If you want to keep the associated information, we recommend deactivating the user instead.",
   "Impact": "Impact",
   "Impacted": "Impacted",
@@ -1652,11 +1649,8 @@
   "Multiple": "Multiple",
   "Multiple (limited to 5)": "Multiple (limited to 5)",
   "Multiple entities selected": "Multiple entities selected",
-<<<<<<< HEAD
   "Multiple value entry is required or Cancel this form": "Multiple value entry is required or Cancel this form",
   "Multiple Values": "Multiple Values",
-=======
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Multiple values entered. Edit with the TT button": "Multiple values entered. Edit with the TT button",
   "Mutex": "Mutex",
   "My CSV file contains headers": "My CSV file contains headers",

@@ -1255,11 +1255,7 @@
   "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)": "このフィールドに複数の値が含まれている場合、各値の間に使用されるセパレータを指定できます（例：|または+）",
   "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)": "このフィールドに複数の値が含まれる場合、各値の間に使用される区切り文字を指定できます (たとえば | または +)",
   "If this option is selected, we will skip the first line of your CSV file": "このオプションが選択されている場合、CSVファイルの最初の行はスキップされます",
-<<<<<<< HEAD
   "If you are adding more than 50 values, please upload them through": "50個を超える値を追加する場合は、を介してアップロードしてください",
-=======
-  "If you are adding more than 50 entries, please consider using another data import capability for faster processing.": "50 を超えるエントリを追加する場合は、処理を高速化するために別のデータ インポート機能の使用を検討してください。",
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "If you want to keep the associated information, we recommend deactivating the user instead.": "関連情報を保持したい場合は、代わりにユーザーを非アクティブ化することをお勧めします。",
   "Impact": "衝撃",
   "Impacted": "影響",
@@ -1652,11 +1648,8 @@
   "Multiple": "複数",
   "Multiple (limited to 5)": "複数（5回まで）",
   "Multiple entities selected": "複数のエンティティが選択されました",
-<<<<<<< HEAD
   "Multiple value entry is required or Cancel this form": "複数の値を入力するか、このフォームをキャンセルする必要があります",
   "Multiple Values": "複数値",
-=======
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Multiple values entered. Edit with the TT button": "複数の値が入力されました。 TTボタンで編集",
   "Mutex": "ミューテックス",
   "My CSV file contains headers": "CSVファイルにヘッダーが含まれています",
