@@ -1228,11 +1228,7 @@
   "If this field contains multiple values, you can specify the separator used between each value (for instance | or +)": "Si este campo contiene múltiples valores, puede especificar el separador utilizado entre cada valor (por ejemplo, | o +)",
   "If this field contains multiple values, you can specify the separator used between each values (for instance | or +)": "Si este campo contiene varios valores, puede especificar el separador utilizado entre cada valor (por ejemplo | o +)",
   "If this option is selected, we will skip the first line of your CSV file": "Si esta opción está seleccionada, saltaremos la primera línea de su archivo CSV",
-<<<<<<< HEAD
   "If you are adding more than 50 values, please upload them through": "Si va a añadir más de 50 valores, cárguelos a través de",
-=======
-  "If you are adding more than 50 entries, please consider using another data import capability for faster processing.": "Si está agregando más de 50 entradas, considere utilizar otra capacidad de importación de datos para un procesamiento más rápido.",
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "If you want to keep the associated information, we recommend deactivating the user instead.": "Si desea conservar la información asociada, le recomendamos desactivar el usuario.",
   "Impact": "Impacto",
   "Impacted": "Impactado",
@@ -1616,11 +1612,8 @@
   "Multiple": "Múltiple",
   "Multiple (limited to 5)": "Múltiple (limitado a 5)",
   "Multiple entities selected": "Múltiples entidades seleccionadas",
-<<<<<<< HEAD
   "Multiple value entry is required or Cancel this form": "Se requiere una entrada de valor múltiple o cancelar este formulario",
   "Multiple Values": "Valores múltiples",
-=======
->>>>>>> 6213c67e8 ([frontend] Added multiple line value fields support added commit with promise for SCO support)
   "Multiple values entered. Edit with the TT button": "Se ingresaron varios valores. Editar con el botón TT",
   "Mutex": "Mutex",
   "My CSV file contains headers": "Mi archivo CSV contiene encabezados",

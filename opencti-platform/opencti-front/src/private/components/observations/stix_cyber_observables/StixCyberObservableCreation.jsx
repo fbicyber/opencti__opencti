@@ -697,26 +697,56 @@ const StixCyberObservableCreation = ({
           // No promise required here, just send the data for saving, as it is a singular add
           noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
         }
-        if (valueList) {
-          delete adaptedValues.value;
-          delete adaptedValues.bulk_value_field;
-          let position = 0;
-          while (position < valueList.length) {
-            setProgressBarMax(Math.ceil(valueList.length / batchSize));
-            const chunkValueList = valueList.slice(position, position + batchSize);
-            processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
-            position += batchSize;
+        const commit = async () => {
+          const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+          // Launch Progress Bar, as value data is about to be processed.
+          // Only need Progress Bar, if more than 1 element being processed
+          if (valueList !== undefined && valueList.length > 1) {
+            setOpenProgressDialog(true);
           }
-        } else {
-          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-          // Observable type like File Hash or something that are not currently bulk addable.
-          // No promise required here, just send the data for saving, as it is a singular add
-          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
-        }
-      };
-      commit();
-    }
-  };
+          if (valueList) {
+            delete adaptedValues.value;
+            delete adaptedValues.bulk_value_field;
+            const batchSize = 5;
+            let position = 0;
+            while (position < valueList.length) {
+              setProgressBarMax(Math.ceil(valueList.length / batchSize));
+              const chunkValueList = valueList.slice(position, position + batchSize);
+              processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
+              position += batchSize;
+            }
+          } else {
+            // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+            // Observable type like File Hash or something that are not currently bulk addable.
+            // No promise required here, just send the data for saving, as it is a singular add
+            commitMutation({
+              mutation: stixCyberObservableMutation,
+              variables: finalValues,
+              updater: (store) => insertNode(
+                store,
+                paginationKey,
+                paginationOptions,
+                'stixCyberObservableAdd',
+              ),
+              onError: (error) => {
+                handleErrorInForm(error, setErrors);
+                setSubmitting(false);
+              },
+              setSubmitting,
+              onCompleted: () => {
+                // Toast Message on Add Success
+                MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
+                setSubmitting(false);
+                resetForm();
+                setGenericValueFieldDisabled(false);
+                localHandleClose();
+              },
+            });
+          }
+        };
+        commit();
+      }
+    };
 
   const onReset = () => {
     if (speeddial) {
@@ -922,6 +952,7 @@ const StixCyberObservableCreation = ({
             )(props.schemaAttributeNames.edges);
 
             let extraFieldsToValidate = null;
+            let requiredOneOfFields = [];
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -934,10 +965,83 @@ const StixCyberObservableCreation = ({
                 initialValues['hashes_SHA-1'] = '';
                 initialValues['hashes_SHA-256'] = '';
                 initialValues['hashes_SHA-512'] = '';
+                // Dynamically include validation options for File Hash Options.
+                const md5Regex = /^[a-f0-9]{32}$/i;
+                const sha1Regex = /^[a-f0-9]{40}$/i;
+                const sha256Regex = /^[a-f0-9]{64}$/i;
+                const sha512Regex = /^[a-f0-9]{128}$/i;
+                extraFieldsToValidate = {
+                  hashes_MD5: Yup
+                    .string()
+                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().matches(md5Regex, t_i18n('MD5 values can only include A-F and 0-9, 32 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                  'hashes_SHA-1': Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().matches(sha1Regex, t_i18n('SHA-1 values can only include A-F and 0-9, 40 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                  'hashes_SHA-256': Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().matches(sha256Regex, t_i18n('SHA-256 values can only include A-F and 0-9, 64 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                  'hashes_SHA-512': Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().matches(sha512Regex, t_i18n('SHA-512 values can only include A-F and 0-9, 128 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                  name: Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                };
+
+                requiredOneOfFields = [
+                  ['hashes_MD5', 'hashes_SHA-1'],
+                  ['hashes_MD5', 'hashes_SHA-256'],
+                  ['hashes_MD5', 'hashes_SHA-512'],
+                  ['hashes_MD5', 'name'],
+                  // ['hashes_SHA-1', 'hashes_MD5'],
+                  ['hashes_SHA-1', 'hashes_SHA-256'],
+                  ['hashes_SHA-1', 'hashes_SHA-512'],
+                  ['hashes_SHA-1', 'name'],
+                  // ['hashes_SHA-256', 'hashes_MD5'],
+                  // ['hashes_SHA-256', 'hashes_SHA-1'],
+                  ['hashes_SHA-256', 'hashes_SHA-512'],
+                  ['hashes_SHA-256', 'name'],
+                  // ['hashes_SHA-512', 'hashes_MD5'],
+                  // ['hashes_SHA-512', 'hashes_SHA-1'],
+                  // ['hashes_SHA-512', 'hashes_SHA-256']
+                  ['hashes_SHA-512', 'name'],
+                ];
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
                 // Dynamically include value field for Singular Observable type Object form validation
-                extraFieldsToValidate = { [attribute.value]: Yup.string().nullable().required() };
+                const exceededMessage = t_i18n('You have exceeded the max number of values.');
+                extraFieldsToValidate = {
+                  [attribute.value]: Yup
+                    .string()
+                    .when(['bulk_value_field'], {
+                      is: (a) => !a,
+                      then: () => Yup.string().required(t_i18n('A value is required')),
+                    }),
+                  bulk_value_field: Yup
+                    .string()
+                    .when([attribute.value], {
+                      is: (a) => !a,
+                      then: () => Yup.string().required(t_i18n('Multiple value entry is required or Cancel this form')).test('len', exceededMessage, (val) => val.split('\n').length < 51),
+                    }),
+                };
+                requiredOneOfFields = [
+                  [attribute.value, 'bulk_value_field'],
+                ];
               } else {
                 initialValues[attribute.value] = '';
               }
@@ -950,7 +1054,7 @@ const StixCyberObservableCreation = ({
             const stixCyberObservableValidationFinal = (extraRequiredFields = null) => Yup.object().shape({
               ...stixCyberObservableValidationBaseFields,
               ...extraRequiredFields,
-            });
+            }, requiredOneOfFields);
 
             return (
               <Formik
