@@ -348,7 +348,7 @@ const LeftBar = () => {
   const settingsMessagesBannerHeight = useSettingsMessagesBannerHeight();
   const { dimension } = useDimensions();
   const isMobile = dimension.width < 768;
-    /* WIP Code */
+  /* WIP Code */
   /* const submenuColor = (isSelected = false) => ({
     color: isSelected
       ? theme.palette.primary.main
@@ -508,10 +508,7 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Analyses')}
-                    sx={[color: !navOpen && handleSelectedMenuOpen('analyses')
-                      ? theme.palette.primary.main
-                      : theme.palette.common
-                     ]}
+                    sx={{ color: theme.palette.primary.main }} // WIP - Insert conditional logic here to change top level
                   />
                 )}
                 {navOpen && (selectedMenu.includes('analyses') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
@@ -739,6 +736,17 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Entities')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('entities') && {
+                        color: theme.palette.primary.main,
+                        backgroundColor: theme.palette.background.nav,
+                      },
+                    ]}
                   />
                 )}
                 {navOpen && (selectedMenu.includes('entities') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
