@@ -348,6 +348,12 @@ const LeftBar = () => {
   const settingsMessagesBannerHeight = useSettingsMessagesBannerHeight();
   const { dimension } = useDimensions();
   const isMobile = dimension.width < 768;
+    /* WIP Code */
+  /* const submenuColor = (isSelected = false) => ({
+    color: isSelected
+      ? theme.palette.primary.main
+      : theme.palette.background.default,
+  }); */
   const generateSubMenu = (menu, entries) => {
     return navOpen ? (
       <Collapse in={selectedMenu.includes(menu)} timeout="auto" unmountOnExit={true}>
@@ -359,6 +365,11 @@ const LeftBar = () => {
                   component={Link}
                   to={entry.link}
                   selected={entry.exact ? location.pathname === entry.link : location.pathname.includes(entry.link)}
+                  sx={(selected) => ({
+                    color: selected
+                      ? theme.palette.primary.main
+                      : theme.palette.common.white,
+                  })}
                   dense={true}
                   classes={{ root: classes.menuSubItem }}
                 >
@@ -368,6 +379,7 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuSubItemText }}
                     primary={t_i18n(entry.label)}
+                    // WIP Insert logic here to change color?
                   />
                 </MenuItem>
               </StyledTooltip>
@@ -496,6 +508,10 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Analyses')}
+                    sx={[color: !navOpen && handleSelectedMenuOpen('analyses')
+                      ? theme.palette.primary.main
+                      : theme.palette.common
+                     ]}
                   />
                 )}
                 {navOpen && (selectedMenu.includes('analyses') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
