@@ -43,7 +43,7 @@ import BulkAddComponent from '../../../../components/BulkAddComponent';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
-// the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+// the use of the System Import. This was discussed at one point - but is maybe no longer
 // a requirement. This can be removed after testing, if desired, or left in with the purpose
 // of forcing the user to see progress.
 // eslint-disable-next-line no-promise-executor-return
@@ -242,19 +242,19 @@ const StixCyberObservableCreation = ({
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
-  let validObservables = 0;
-  let errorObservables = 0;
   let totalObservables = 0;
-  const error_array = [];
 
   const progressReset = () => {
     setOpenProgressDialog(false);
-    errorObservables = 0;
-    validObservables = 0;
     progressDialogStats.resetCurrentIncrement();
     progressDialogStats.resetCurrentMaxIncrement(100);
+    progressDialogStats.resetSuccessCount();
+    progressDialogStats.resetErrorCount();
+    progressDialogStats.setBatchingCompleted(false);
+    progressDialogStats.setBatchingCancelled(false);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
+    totalObservables = 0;
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -265,42 +265,33 @@ const StixCyberObservableCreation = ({
     function handlePromiseResult(valueList) {
       totalObservables = valueList.length;
       let closeFormWithAnySuccess = false;
-      errorObservables += error_array.length;
-      if (error_array.length > 0) {
-        let message_string = '';
-        if (validObservables > 0) {
-          message_string = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
+      if (progressDialogStats.getBatchingCompleted() === true) {
+        if (progressDialogStats.getErrorCount() > 0) {
+          let message_string = '';
+          if (progressDialogStats.getSuccessCount() > 0) {
+            message_string = `${progressDialogStats.getSuccessCount()}/${totalObservables} ${t_i18n('were added successfully.')}`;
+            closeFormWithAnySuccess = true;
+          }
+          message_string += ` ${progressDialogStats.getErrorCount()}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
+          const consolidated_errors = { res: { errors: [{ message: '' }] } };
+          // Short Error message, just has total success and failure counts with translation support
+          consolidated_errors.res.errors[0].message = message_string;
+          handleErrorInForm(consolidated_errors, setErrors);
+          const combinedObservables = progressDialogStats.getSuccessCount() + progressDialogStats.getErrorCount();
+          if (combinedObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
+            progressReset();
+          }
+        } else {
+          let bulk_success_message = `${progressDialogStats.getSuccessCount()}/${totalObservables} ${t_i18n('were added successfully.')}`;
+          if (totalObservables === 1) {
+            // This is for consistent messaging when adding just (1) Observable
+            bulk_success_message = t_i18n('Observable successfully added');
+            progressDialogStats.setBatchingCompleted(true);
+            progressReset();
+          }
+          // Toast Message on Bulk Add Success
+          MESSAGING$.notifySuccess(bulk_success_message);
           closeFormWithAnySuccess = true;
-        }
-        message_string += ` ${errorObservables}/${totalObservables} ${t_i18n('observables contained errors and were not added.')} `;
-        const consolidated_errors = { res: { errors: error_array[0] } };
-        // Short Error message, just has total success and failure counts with translation support
-        consolidated_errors.res.errors[0].message = message_string;
-        // Long Error message with all errors
-        // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
-        // Toast Error Message to Screen - Will not close the form since errors exist for correction.
-        // - ##########################################################
-        // Reset the error array, for next time user submits content
-        error_array.splice(0, error_array.length);
-        // - ##########################################################
-        handleErrorInForm(consolidated_errors, setErrors);
-        const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
-          progressReset();
-        }
-      } else {
-        let bulk_success_message = `${validObservables}/${totalObservables} ${t_i18n('were added successfully.')}`;
-        if (totalObservables === 1) {
-          // This is for consistent messaging when adding just (1) Observable
-          bulk_success_message = t_i18n('Observable successfully added');
-          progressDialogStats.setBatchingCompleted(true);
-          progressReset();
-        }
-        // Toast Message on Bulk Add Success
-        MESSAGING$.notifySuccess(bulk_success_message);
-        closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
-          progressReset();
         }
       }
       // Close the form if any observables were successfully added.
@@ -308,6 +299,7 @@ const StixCyberObservableCreation = ({
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
+        progressReset();
       }
     }
     function updateProgress(position, batchSize) {
@@ -316,7 +308,7 @@ const StixCyberObservableCreation = ({
       }
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
-      // If batching has not been cancelled with the close button the progress widget - continue processing
+      // If batching has not been cancelled with the close button on the progress widget - continue processing
       if (!progressDialogStats.getBatchingCancelled()) {
         const promises = chunkValueList.map((value) => commitMutationWithPromise({
           mutation: stixCyberObservableMutation,
@@ -345,11 +337,11 @@ const StixCyberObservableCreation = ({
         }));
         // Send out a batchSize of promises and await their return
         await Promise.allSettled(promises).then((results) => {
-          results.forEach(({ status: promiseStatus, reason }) => {
+          results.forEach(({ status: promiseStatus }) => {
             if (promiseStatus === 'fulfilled') {
-              validObservables += 1;
+              progressDialogStats.updateSuccessCount(1);
             } else {
-              error_array.push(reason);
+              progressDialogStats.updateErrorCount(1);
             }
           });
         });
@@ -462,7 +454,7 @@ const StixCyberObservableCreation = ({
           const batchSize = 5;
           let currentBatch = 0;
           let position = 0;
-          // Determine the number of batch class required to help compute % complete rate
+          // Determine the number of batches required to help compute % complete rate
           const totalBatches = Math.ceil(valueList.length / batchSize);
           progressDialogStats.resetCurrentMaxIncrement(totalBatches);
           while (position < valueList.length) {
@@ -473,8 +465,12 @@ const StixCyberObservableCreation = ({
             }
             processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
             position += batchSize;
+            if (progressDialogStats.getBatchingCancelled()) {
+              position = valueList.length + 1; // Stop looping by moving position to end due to cancel button clicked
+              progressReset();
+            }
             // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
-            // the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+            // the use of the System Import. This was discussed at one point - but is maybe no longer
             // a requirement. This can be removed after testing, if desired, or left in with the purpose
             // of forcing the user to see progress.
             await sleepCustomFunction(2000); // eslint-disable-line no-await-in-loop
