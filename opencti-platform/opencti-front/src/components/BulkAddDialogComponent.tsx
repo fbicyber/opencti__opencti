@@ -34,6 +34,19 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
     const { t_i18n } = useFormatter();
     const [localBulkValueField, setLocalBulkValueField] = React.useState(['']);
     const [selectedLocalAttribute, setSelectedLocalAttribute] = React.useState('');
+    const [warningVisible, setWarningVisible] = React.useState(false);
+
+    function monitorBulkValue(value: string) {
+        const observable_lines = value.split('\n');
+        // 50 lines have been entered based on \n newlines - warn user and remove Continue button.
+        if (observable_lines.length >= 51) {
+            if (warningVisible === false) {
+                setWarningVisible(true);
+            }
+        } else if (warningVisible === true) {
+            setWarningVisible(false);
+        }
+    }
     const handleSelectChange = (event: any) => {
         setSelectedLocalAttribute(event.target.value);
         console.log('value is: ', event.target.value);
@@ -84,8 +97,10 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
                         fullWidth={true}
                         multiline={true}
                         rows="5"
-                        onChange={(name: any, value: any) => setLocalBulkValueField(value)}
+                        onChange={(name: any, value: any) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
                     />
+                    {warningVisible
+                        && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
                     <DialogActions>
                         <Button color="secondary" onClick={() => { handleCloseBulkAddDialog(localBulkValueField); handleParentSelectAttribute(selectedLocalAttribute); }}>
                             {t_i18n('Validate')}

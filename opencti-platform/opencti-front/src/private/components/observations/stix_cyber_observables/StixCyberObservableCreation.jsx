@@ -5,12 +5,10 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
-import { Add, Close, TextFieldsOutlined } from '@mui/icons-material';
+import { Add, Close } from '@mui/icons-material';
 import { assoc, compose, dissoc, filter, fromPairs, includes, map, pipe, pluck, prop, propOr, sortBy, toLower, toPairs } from 'ramda';
 import * as Yup from 'yup';
 import { graphql } from 'react-relay';
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Tooltip from '@mui/material/Tooltip';
@@ -40,9 +38,17 @@ import useVocabularyCategory from '../../../../utils/hooks/useVocabularyCategory
 import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
-import ProgressDialog from '../../../../components/ProgressDialog';
+import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
 import BulkAddComponent from '../../../../components/BulkAddComponent';
 import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
+
+// Sleep Function used to:
+// Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+// the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+// a requirement. This can be removed after testing, if desired, or left in with the purpose
+// of forcing the user to see progress.
+// eslint-disable-next-line no-promise-executor-return
+// const sleepCustomFunction = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -93,21 +99,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px 20px 20px 20px',
   },
 }));
-
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
 
 const stixCyberObservableMutation = graphql`
   mutation StixCyberObservableCreationMutation(
@@ -253,7 +244,7 @@ const StixCyberObservableCreation = ({
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
-  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [hashesMD5Value, setHashesMD5Value] = React.useState('');
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
@@ -261,11 +252,11 @@ const StixCyberObservableCreation = ({
   const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
   const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
   let hashesList = [];
+  const error_array = [];
   const algorithm = selectedAttribute.toLowerCase();
   let validObservables = 0;
   let errorObservables = 0;
   let totalObservables = 0;
-  const error_array = [];
 
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
     commitMutation({
@@ -294,10 +285,10 @@ const StixCyberObservableCreation = ({
   };
   const progressReset = () => {
     setOpenProgressDialog(false);
-    setProgressBarMax(100);
     errorObservables = 0;
     validObservables = 0;
-    setProgressBar(0);
+    progressDialogStats.resetCurrentIncrement();
+    progressDialogStats.resetCurrentMaxIncrement(100);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
     setHashesMD5Value('');
@@ -308,16 +299,12 @@ const StixCyberObservableCreation = ({
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
+    progressDialogStats.setBatchingCancelled(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
       totalObservables = valueList.length;
-      // Launch Progress Bar, as data is about to be processed.
-      // Only need Progress Bar, if more than 1 element being processed
-      if (totalObservables > 1) {
-        setOpenProgressDialog(true);
-      }
       let closeFormWithAnySuccess = false;
       errorObservables += error_array.length;
       if (error_array.length > 0) {
@@ -339,7 +326,7 @@ const StixCyberObservableCreation = ({
         // - ##########################################################
         handleErrorInForm(consolidated_errors, setErrors);
         const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables) {
+        if (combinedObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       } else {
@@ -347,17 +334,18 @@ const StixCyberObservableCreation = ({
         if (totalObservables === 1) {
           // This is for consistent messaging when adding just (1) Observable
           bulk_success_message = t_i18n('Observable successfully added');
+          progressDialogStats.setBatchingCompleted(true);
           progressReset();
         }
         // Toast Message on Bulk Add Success
         MESSAGING$.notifySuccess(bulk_success_message);
         closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables) {
+        if (validObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       }
       // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true) {
+      if (closeFormWithAnySuccess === true && progressDialogStats.getBatchingCompleted() === true) {
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
@@ -384,13 +372,9 @@ const StixCyberObservableCreation = ({
         // Long Error message with all errors
         // consolidated_errors.res.errors[0].message = message_string + error_messages.join('\n');
         // Toast Error Message to Screen - Will not close the form since errors exist for correction.
-        // - ##########################################################
-        // Reset the error array, for next time user submits content
-        error_array.splice(0, error_array.length);
-        // - ##########################################################
         handleErrorInForm(consolidated_errors, setErrors);
         const combinedObservables = validObservables + errorObservables;
-        if (combinedObservables === totalObservables) {
+        if (combinedObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       } else {
@@ -398,17 +382,18 @@ const StixCyberObservableCreation = ({
         if (totalObservables === 1) {
           // This is for consistent messaging when adding just (1) Observable
           bulk_success_message = t_i18n('Observable successfully added');
+          progressDialogStats.setBatchingCompleted(true);
           progressReset();
         }
         // Toast Message on Bulk Add Success
         MESSAGING$.notifySuccess(bulk_success_message);
         closeFormWithAnySuccess = true;
-        if (validObservables === totalObservables) {
+        if (validObservables === totalObservables && progressDialogStats.getBatchingCompleted() === true) {
           progressReset();
         }
       }
       // Close the form if any observables were successfully added.
-      if (closeFormWithAnySuccess === true) {
+      if (closeFormWithAnySuccess === true && progressDialogStats.getBatchingCompleted() === true) {
         setGenericValueFieldDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
@@ -416,122 +401,133 @@ const StixCyberObservableCreation = ({
     }
     function updateProgress(position, batchSize) {
       if (position % batchSize === 0) {
-        setProgressBar((prevProgress) => prevProgress + 1);
+        progressDialogStats.setCurrentIncrement(1);
       }
     }
     async function processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, hashNamBoolean) {
-      let promises;
-      console.log('hashNamBoolean is: ', hashNamBoolean);
-      console.log('chunkValueList');
-      console.table(chunkValueList);
-      if (hashNamBoolean === true) {
-        promises = chunkValueList.map((hash) => commitMutationWithPromise({
-          mutation: stixCyberObservableMutation,
-          variables: {
-            ...finalValues,
-            [observableType]: {
-              name: hash,
+      // If batching has not been cancelled with the close button the progress widget - continue processing
+      if (!progressDialogStats.getBatchingCancelled()) {
+        let promises;
+        console.log('hashNamBoolean is: ', hashNamBoolean);
+        console.log('chunkValueList');
+        console.table(chunkValueList);
+        if (hashNamBoolean === true) {
+          console.log('HashNameBoolean is true');
+          promises = chunkValueList.map((hash) => commitMutationWithPromise({
+            mutation: stixCyberObservableMutation,
+            variables: {
+              ...finalValues,
+              [observableType]: {
+                name: hash,
+              },
             },
-          },
-          updater: (store) => insertNode(
-            store,
-            paginationKey,
-            paginationOptions,
-            'stixCyberObservableAdd',
-          ),
-          onCompleted: () => {
-            setSubmitting(false);
-            resetForm();
-            localHandleClose();
-            setSelectedAttribute('');
-          },
-          onError: () => {
-            setKeyFieldDisabled(false);
-            setSubmitting(false);
-          },
-        }));
-      } else {
-        console.log('Entered else statement');
-        console.log('algorithm before promises is: ', algorithm);
-        promises = chunkValueList.map((hash) => commitMutationWithPromise({
-          mutation: stixCyberObservableMutation,
-          variables: {
-            ...finalValues,
-            [observableType]: {
-              hashes: [
-                {
-                  hash,
-                  algorithm,
-                }],
+            updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+            ),
+            onCompleted: () => {
+              setSubmitting(false);
+              resetForm();
+              localHandleClose();
+              setSelectedAttribute('');
             },
-          },
-          updater: (store) => insertNode(
-            store,
-            paginationKey,
-            paginationOptions,
-            'stixCyberObservableAdd',
-          ),
-          onCompleted: () => {
-            setSubmitting(false);
-            resetForm();
-            localHandleClose();
-            setSelectedAttribute('');
-          },
-          onError: () => {
-            setKeyFieldDisabled(false);
-            setSubmitting(false);
-          },
-        }));
-      }
-      await Promise.allSettled(promises).then((results) => {
-        results.forEach(({ status: promiseStatus, reason }) => {
-          if (promiseStatus === 'fulfilled') {
-            validObservables += 1;
-          } else {
-            error_array.push(reason);
-          }
+            onError: () => {
+              setKeyFieldDisabled(false);
+              setSubmitting(false);
+            },
+          }));
+        } else {
+          console.log('HashNameBoolean is false');
+          console.log('Entered else statement');
+          console.log('algorithm before promises is: ', algorithm);
+          promises = chunkValueList.map((hash) => commitMutationWithPromise({
+            mutation: stixCyberObservableMutation,
+            variables: {
+              ...finalValues,
+              [observableType]: {
+                hashes: [
+                  {
+                    hash,
+                    algorithm,
+                  }],
+              },
+            },
+            updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+            ),
+            onCompleted: () => {
+              setSubmitting(false);
+              resetForm();
+              localHandleClose();
+              setSelectedAttribute('');
+            },
+            onError: () => {
+              setKeyFieldDisabled(false);
+              setSubmitting(false);
+            },
+          }));
+        }
+        await Promise.allSettled(promises).then((results) => {
+          results.forEach(({ status: promiseStatus, reason }) => {
+            if (promiseStatus === 'fulfilled') {
+              validObservables += 1;
+            } else {
+              error_array.push(reason);
+            }
+          });
         });
-      });
-      updateProgress(position, batchSize);
-      handleHashPromiseResult();
+        console.log('position before updateProgress ', position);
+        updateProgress(position, batchSize);
+        handleHashPromiseResult();
+      }
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
-      const promises = chunkValueList.map((value) => commitMutationWithPromise({
-        mutation: stixCyberObservableMutation,
-        variables: {
-          ...finalValues,
-          [observableType]: {
-            ...adaptedValues,
-            obsContent: values.obsContent?.value,
-            value,
+      // If batching has not been cancelled with the close button the progress widget - continue processing
+      if (!progressDialogStats.getBatchingCancelled()) {
+        const promises = chunkValueList.map((value) => commitMutationWithPromise({
+          mutation: stixCyberObservableMutation,
+          variables: {
+            ...finalValues,
+            [observableType]: {
+              ...adaptedValues,
+              obsContent: values.obsContent?.value,
+              value,
+            },
           },
-        },
-        updater: (store) => insertNode(
-          store,
-          paginationKey,
-          paginationOptions,
-          'stixCyberObservableAdd',
-        ),
-        onCompleted: () => {
-          setSubmitting(false);
-          resetForm();
-          localHandleClose();
-        },
-        onError: () => {
-          setSubmitting(false);
-        },
-      }));
-      await Promise.allSettled(promises).then((results) => {
-        results.forEach(({ status: promiseStatus, reason }) => {
-          if (promiseStatus === 'fulfilled') {
-            validObservables += 1;
-          } else {
-            error_array.push(reason);
-          }
+          updater: (store) => insertNode(
+            store,
+            paginationKey,
+            paginationOptions,
+            'stixCyberObservableAdd',
+          ),
+          onCompleted: () => {
+            setSubmitting(false);
+            resetForm();
+            localHandleClose();
+          },
+          onError: () => {
+            setSubmitting(false);
+          },
+        }));
+        // Send out a batchSize of promises and await their return
+        await Promise.allSettled(promises).then((results) => {
+          results.forEach(({ status: promiseStatus, reason }) => {
+            if (promiseStatus === 'fulfilled') {
+              validObservables += 1;
+            } else {
+              error_array.push(reason);
+            }
+          });
         });
-      });
-      updateProgress(position, batchSize);
-      handlePromiseResult(valueList);
+        // Update progress based on batchSize returned
+        updateProgress(position, batchSize);
+        handlePromiseResult(valueList);
+      }
     }
     if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
@@ -570,8 +566,6 @@ const StixCyberObservableCreation = ({
         || adaptedValues['hashes_SHA-512']
       ) {
         adaptedValues.hashes = [];
-        console.log('adaptedValues.hashes');
-        console.table(adaptedValues);
         if (adaptedValues.hashes_MD5.length > 0) {
           adaptedValues.hashes.push({
             algorithm: 'MD5',
@@ -622,10 +616,10 @@ const StixCyberObservableCreation = ({
         fromPairs,
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
-      const hashesListTest = hashesList[0];
+      const hashesListInitial = hashesList[0];
       let hashesListName = '';
       if (selectedAttribute === 'NAME') {
-        hashesListName = hashesListTest;
+        hashesListName = hashesListInitial;
       }
       const finalValues = {
         type: status.type,
@@ -645,7 +639,7 @@ const StixCyberObservableCreation = ({
           name: hashesListName,
           hashes: [
             {
-              hash: hashesListTest,
+              hash: hashesListInitial,
               algorithm,
             }],
         },
@@ -656,112 +650,98 @@ const StixCyberObservableCreation = ({
       const batchSize = 5;
       const commit = async () => {
         const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
-        if (hashesList && selectedAttribute === 'NAME') {
-          let position = 0;
-          while (position < hashesList.length) {
-            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
-            const chunkValueList = hashesList.slice(position, position + batchSize);
-            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
-            position += batchSize;
-          }
-        } else {
-          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-          // Observable type like File Hash or something that are not currently bulk addable.
-          // No promise required here, just send the data for saving, as it is a singular add
-          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        // Launch Progress Bar, as value data is about to be processed.
+        // Only need Progress Bar, if more than 1 element being processed
+        if (valueList !== undefined && valueList.length > 1) {
+          setOpenProgressDialog(true);
         }
-        if (hashesList && selectedAttribute !== 'NAME') {
+        if (hashesList) {
+          let currentBatch = 0;
           let position = 0;
+          const totalBatches = Math.ceil(valueList.length / batchSize);
+          progressDialogStats.resetCurrentMaxIncrement(totalBatches);
           while (position < hashesList.length) {
-            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
             const chunkValueList = hashesList.slice(position, position + batchSize);
-            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
-            position += batchSize;
-          }
-        } else {
-          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-          // Observable type like File Hash or something that are not currently bulk addable.
-          // No promise required here, just send the data for saving, as it is a singular add
-          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
-        }
-        if (hashesList && selectedAttribute === 'NAME') {
-          let position = 0;
-          while (position < hashesList.length) {
-            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
-            const chunkValueList = hashesList.slice(position, position + batchSize);
-            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
-            position += batchSize;
-          }
-        } else {
-          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-          // Observable type like File Hash or something that are not currently bulk addable.
-          // No promise required here, just send the data for saving, as it is a singular add
-          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
-        }
-        if (hashesList && selectedAttribute !== 'NAME') {
-          let position = 0;
-          while (position < hashesList.length) {
-            setProgressBarMax(Math.ceil(hashesList.length / batchSize));
-            const chunkValueList = hashesList.slice(position, position + batchSize);
-            processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
-            position += batchSize;
-          }
-        } else {
-          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-          // Observable type like File Hash or something that are not currently bulk addable.
-          // No promise required here, just send the data for saving, as it is a singular add
-          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
-        }
-        const commit = async () => {
-          const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
-          // Launch Progress Bar, as value data is about to be processed.
-          // Only need Progress Bar, if more than 1 element being processed
-          if (valueList !== undefined && valueList.length > 1) {
-            setOpenProgressDialog(true);
-          }
-          if (valueList) {
-            delete adaptedValues.value;
-            delete adaptedValues.bulk_value_field;
-            const batchSize = 5;
-            let position = 0;
-            while (position < valueList.length) {
-              setProgressBarMax(Math.ceil(valueList.length / batchSize));
-              const chunkValueList = valueList.slice(position, position + batchSize);
-              processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
-              position += batchSize;
+            currentBatch += 1;
+            if (currentBatch === totalBatches) {
+              progressDialogStats.setBatchingCompleted(true);
             }
-          } else {
-            // No 'values' were submitted to save, but other parts of form were possibly filled out for different
-            // Observable type like File Hash or something that are not currently bulk addable.
-            // No promise required here, just send the data for saving, as it is a singular add
-            commitMutation({
-              mutation: stixCyberObservableMutation,
-              variables: finalValues,
-              updater: (store) => insertNode(
-                store,
-                paginationKey,
-                paginationOptions,
-                'stixCyberObservableAdd',
-              ),
-              onError: (error) => {
-                handleErrorInForm(error, setErrors);
-                setSubmitting(false);
-              },
-              setSubmitting,
-              onCompleted: () => {
-                // Toast Message on Add Success
-                MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
-                setSubmitting(false);
-                resetForm();
-                setGenericValueFieldDisabled(false);
-                localHandleClose();
-              },
-            });
+            console.log('selectedAttribute is: ', selectedAttribute);
+            if (selectedAttribute !== 'NAME') {
+              console.log('selectedAttribute !== NAME');
+              processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
+            }
+            if (selectedAttribute === 'NAME') {
+              console.log('selectedAttribute === NAME');
+              processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
+            }
+            position += batchSize;
+            // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+            // the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+            // a requirement. This can be removed after testing, if desired, or left in with the purpose
+            // of forcing the user to see progress.
+            // await sleepCustomFunction(2000); // eslint-disable-line no-await-in-loop
           }
-        };
-        commit();
-      }
-    };
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
+        if (valueList) {
+          delete adaptedValues.value;
+          delete adaptedValues.bulk_value_field;
+          let currentBatch = 0;
+          let position = 0;
+          // Determine the number of batch class required to help compute % complete rate
+          const totalBatches = Math.ceil(valueList.length / batchSize);
+          progressDialogStats.resetCurrentMaxIncrement(totalBatches);
+          while (position < valueList.length) {
+            const chunkValueList = valueList.slice(position, position + batchSize);
+            currentBatch += 1;
+            if (currentBatch === totalBatches) {
+              progressDialogStats.setBatchingCompleted(true);
+            }
+            processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList);
+            position += batchSize;
+            // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+            // the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+            // a requirement. This can be removed after testing, if desired, or left in with the purpose
+            // of forcing the user to see progress.
+            await sleepCustomFunction(2000); // eslint-disable-line no-await-in-loop
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          commitMutation({
+            mutation: stixCyberObservableMutation,
+            variables: finalValues,
+            updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+            ),
+            onError: (error) => {
+              handleErrorInForm(error, setErrors);
+              setSubmitting(false);
+            },
+            setSubmitting,
+            onCompleted: () => {
+              // Toast Message on Add Success
+              MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
+              setSubmitting(false);
+              resetForm();
+              setGenericValueFieldDisabled(false);
+              localHandleClose();
+            },
+          });
+        }
+      };
+      commit();
+    }
+  };
 
   const onReset = () => {
     if (speeddial) {
@@ -886,9 +866,12 @@ const StixCyberObservableCreation = ({
     const handleCloseBulkModal = (val) => {
       setOpenBulkModal(false);
       if (val != null && val.length > 0) {
-        setBulkValueFieldValue(val);
-        // Clear Attached File marker used by CustomFileUploader interaction to indicate a file need processing
+        // START - Clear Attached File from CustomFileUploader
+        const spanData = document.getElementById('CustomFileUploaderFileName');
+        spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
+        // END - Clear Attached File from CustomFileUploader
+        setBulkValueFieldValue(val);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
@@ -1376,15 +1359,13 @@ const StixCyberObservableCreation = ({
             {!status.type ? renderList() : renderForm()}
           </div>
         </Drawer>
-        <React.Fragment>
-          <ProgressDialog
-            openProgressDialog={openProgressDialog}
-            bulkValueFieldValue={bulkValueFieldValue}
-            progressBar={progressBar}
-            progressBarMax={progressBarMax}
-            handleClickCloseProgress={handleClickCloseProgress}
-          />
-        </React.Fragment>
+
+        <ProgressDialogContainer
+          openProgressDialog={openProgressDialog}
+          bulkValueFieldValue={bulkValueFieldValue}
+          handleClickCloseProgress={handleClickCloseProgress}
+        />
+
       </>
     );
   };
