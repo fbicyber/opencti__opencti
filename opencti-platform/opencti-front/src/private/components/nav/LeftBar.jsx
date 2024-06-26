@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   menuItemText: {
     padding: '1px 0 0 15px',
-    fontWeight: 500,
+    fontWeight: 1000,
     fontSize: 14,
   },
   menuSubItemText: {
@@ -348,12 +348,6 @@ const LeftBar = () => {
   const settingsMessagesBannerHeight = useSettingsMessagesBannerHeight();
   const { dimension } = useDimensions();
   const isMobile = dimension.width < 768;
-  /* WIP Code */
-  /* const submenuColor = (isSelected = false) => ({
-    color: isSelected
-      ? theme.palette.primary.main
-      : theme.palette.background.default,
-  }); */
   const generateSubMenu = (menu, entries) => {
     return navOpen ? (
       <Collapse in={selectedMenu.includes(menu)} timeout="auto" unmountOnExit={true}>
@@ -365,11 +359,7 @@ const LeftBar = () => {
                   component={Link}
                   to={entry.link}
                   selected={entry.exact ? location.pathname === entry.link : location.pathname.includes(entry.link)}
-                  sx={(selected) => ({
-                    color: selected
-                      ? theme.palette.primary.main
-                      : theme.palette.common.white,
-                  })}
+                  sx={{ color: theme.palette.primary.main }}
                   dense={true}
                   classes={{ root: classes.menuSubItem }}
                 >
@@ -379,7 +369,6 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuSubItemText }}
                     primary={t_i18n(entry.label)}
-                    // WIP Insert logic here to change color?
                   />
                 </MenuItem>
               </StyledTooltip>
@@ -465,11 +454,12 @@ const LeftBar = () => {
               component={Link}
               to="/dashboard"
               selected={location.pathname === '/dashboard'}
+              sx ={{ color: location.pathname === '/dashboard' ? theme.palette.primary.main : theme.palette.common.white }}
               dense={true}
               classes={{ root: classes.menuItem }}
             >
               <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                <DashboardOutlined />
+                {navOpen && (location.pathname === '/dashboard' ? <DashboardOutlined color="primary"/> : <DashboardOutlined />)}
               </ListItemIcon>
               {navOpen && (
                 <ListItemText
@@ -502,26 +492,35 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <AssignmentOutlined />
+                  {navOpen && (selectedMenu.includes('analyses') ? <AssignmentOutlined color="primary"/> : <AssignmentOutlined />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Analyses')}
-                    sx={{ color: theme.palette.primary.main }} // WIP - Insert conditional logic here to change top level
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('analyses') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('analyses') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('analyses') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideAnalyses && generateSubMenu(
               'analyses',
               [
-                { type: 'Report', link: '/dashboard/analyses/reports', label: 'Reports', icon: <DescriptionOutlined fontSize="small" /> },
-                { type: 'Grouping', link: '/dashboard/analyses/groupings', label: 'Groupings', icon: <WorkspacesOutlined fontSize="small" /> },
-                { type: 'Malware-Analysis', link: '/dashboard/analyses/malware_analyses', label: 'Malware analyses', icon: <BiotechOutlined fontSize="small" /> },
-                { type: 'Note', link: '/dashboard/analyses/notes', label: 'Notes', icon: <SubjectOutlined fontSize="inherit" /> },
-                { type: 'External-Reference', link: '/dashboard/analyses/external_references', label: 'External references', icon: <LocalOfferOutlined fontSize="small" /> },
+                { type: 'Report', link: '/dashboard/analyses/reports', label: 'Reports', icon: <DescriptionOutlined fontSize="small" color="primary"/> },
+                { type: 'Grouping', link: '/dashboard/analyses/groupings', label: 'Groupings', icon: <WorkspacesOutlined fontSize="small" color="primary"/> },
+                { type: 'Malware-Analysis', link: '/dashboard/analyses/malware_analyses', label: 'Malware analyses', icon: <BiotechOutlined fontSize="small" color="primary" /> },
+                { type: 'Note', link: '/dashboard/analyses/notes', label: 'Notes', icon: <SubjectOutlined fontSize="inherit" color="primary" /> },
+                { type: 'External-Reference', link: '/dashboard/analyses/external_references', label: 'External references', icon: <LocalOfferOutlined fontSize="small" color="primary" /> },
               ],
             )}
             {!hideCases && (
@@ -535,25 +534,35 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <CasesOutlined />
+                  {navOpen && (selectedMenu.includes('cases') ? <CasesOutlined color="primary"/> : <CasesOutlined />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Cases')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('cases') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('cases') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('cases') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideCases && generateSubMenu(
               'cases',
               [
-                { type: 'Case-Incident', link: '/dashboard/cases/incidents', label: 'Incident responses', icon: <BriefcaseEyeOutline fontSize="small" /> },
-                { type: 'Case-Rfi', link: '/dashboard/cases/rfis', label: 'Requests for information', icon: <BriefcaseSearchOutline fontSize="small" /> },
-                { type: 'Case-Rft', link: '/dashboard/cases/rfts', label: 'Requests for takedown', icon: <BriefcaseRemoveOutline fontSize="small" /> },
-                { type: 'Task', link: '/dashboard/cases/tasks', label: 'Tasks', icon: <TaskAltOutlined fontSize="small" /> },
-                { type: 'Feedback', link: '/dashboard/cases/feedbacks', label: 'Feedbacks', icon: <BriefcaseEditOutline fontSize="small" /> },
+                { type: 'Case-Incident', link: '/dashboard/cases/incidents', label: 'Incident responses', icon: <BriefcaseEyeOutline fontSize="small" color="primary"/> },
+                { type: 'Case-Rfi', link: '/dashboard/cases/rfis', label: 'Requests for information', icon: <BriefcaseSearchOutline fontSize="small" color="primary"/> },
+                { type: 'Case-Rft', link: '/dashboard/cases/rfts', label: 'Requests for takedown', icon: <BriefcaseRemoveOutline fontSize="small" color="primary"/> },
+                { type: 'Task', link: '/dashboard/cases/tasks', label: 'Tasks', icon: <TaskAltOutlined fontSize="small" color="primary"/> },
+                { type: 'Feedback', link: '/dashboard/cases/feedbacks', label: 'Feedbacks', icon: <BriefcaseEditOutline fontSize="small" color="primary"/> },
               ],
             )}
             {!hideEvents && (
@@ -567,23 +576,33 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <Timetable />
+                  {navOpen && (selectedMenu.includes('events') ? <Timetable color="primary"/> : <Timetable />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Events')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('events') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('events') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('events') ? <ExpandLessOutlined color="primary" /> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideEvents && generateSubMenu(
               'events',
               [
-                { type: 'Incident', link: '/dashboard/events/incidents', label: 'Incidents', icon: <Fire fontSize="small" /> },
-                { type: 'stix-sighting-relationship', link: '/dashboard/events/sightings', label: 'Sightings', icon: <VisibilityOutlined fontSize="small" /> },
-                { type: 'Observed-Data', link: '/dashboard/events/observed_data', label: 'Observed datas', icon: <WifiTetheringOutlined fontSize="small" /> },
+                { type: 'Incident', link: '/dashboard/events/incidents', label: 'Incidents', icon: <Fire fontSize="small" color="primary"/> },
+                { type: 'stix-sighting-relationship', link: '/dashboard/events/sightings', label: 'Sightings', icon: <VisibilityOutlined fontSize="small" color="primary"/> },
+                { type: 'Observed-Data', link: '/dashboard/events/observed_data', label: 'Observed datas', icon: <WifiTetheringOutlined fontSize="small" color="primary"/> },
               ],
             )}
             {!hideObservations && (
@@ -597,24 +616,34 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <Binoculars />
+                  {navOpen && (selectedMenu.includes('observations') ? <Binoculars color="primary"/> : <Binoculars />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Observations')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('observations') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('observations') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('observations') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideObservations && generateSubMenu(
               'observations',
               [
-                { type: 'Stix-Cyber-Observable', link: '/dashboard/observations/observables', label: 'Observables', icon: <HexagonOutline fontSize="small" /> },
-                { type: 'Artifact', link: '/dashboard/observations/artifacts', label: 'Artifacts', icon: <ArchiveOutline fontSize="small" /> },
-                { type: 'Indicator', link: '/dashboard/observations/indicators', label: 'Indicators', icon: <ShieldSearch fontSize="small" /> },
-                { type: 'Infrastructure', link: '/dashboard/observations/infrastructures', label: 'Infrastructures', icon: <ServerNetwork fontSize="small" /> },
+                { type: 'Stix-Cyber-Observable', link: '/dashboard/observations/observables', label: 'Observables', icon: <HexagonOutline fontSize="small" color="primary" /> },
+                { type: 'Artifact', link: '/dashboard/observations/artifacts', label: 'Artifacts', icon: <ArchiveOutline fontSize="small" color="primary"/> },
+                { type: 'Indicator', link: '/dashboard/observations/indicators', label: 'Indicators', icon: <ShieldSearch fontSize="small" color="primary"/> },
+                { type: 'Infrastructure', link: '/dashboard/observations/infrastructures', label: 'Infrastructures', icon: <ServerNetwork fontSize="small" color="primary"/> },
               ],
             )}
           </MenuList>
@@ -631,29 +660,39 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <FlaskOutline />
+                  {navOpen && (selectedMenu.includes('threats') ? <FlaskOutline color="primary"/> : <FlaskOutline />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Threats')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('threats') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('threats') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('threats') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideThreats && generateSubMenu(
               'threats',
               [
-                { type: 'Threat-Actor-Group', link: '/dashboard/threats/threat_actors_group', label: 'Threat actors (group)', icon: <AccountMultipleOutline fontSize="small" /> },
+                { type: 'Threat-Actor-Group', link: '/dashboard/threats/threat_actors_group', label: 'Threat actors (group)', icon: <AccountMultipleOutline fontSize="small" color="primary"/> },
                 {
                   type: 'Threat-Actor-Individual',
                   link: '/dashboard/threats/threat_actors_individual',
                   label: 'Threat actors (individual)',
-                  icon: <LaptopAccount fontSize="small" />,
+                  icon: <LaptopAccount fontSize="small" color="primary"/>,
                 },
-                { type: 'Intrusion-Set', link: '/dashboard/threats/intrusion_sets', label: 'Intrusion sets', icon: <DiamondOutlined fontSize="small" /> },
-                { type: 'Campaign', link: '/dashboard/threats/campaigns', label: 'Campaigns', icon: <ChessKnight fontSize="small" /> },
+                { type: 'Intrusion-Set', link: '/dashboard/threats/intrusion_sets', label: 'Intrusion sets', icon: <DiamondOutlined fontSize="small" color="primary"/> },
+                { type: 'Campaign', link: '/dashboard/threats/campaigns', label: 'Campaigns', icon: <ChessKnight fontSize="small" color="primary"/> },
               ],
             )}
             {!hideArsenal && (
@@ -667,24 +706,34 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <LayersOutlined />
+                  {navOpen && (selectedMenu.includes('aresenal') ? <LayersOutlined color="primary"/> : <LayersOutlined />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Arsenal')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('arsenal') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('arsenal') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('arsenal') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideArsenal && generateSubMenu(
               'arsenal',
               [
-                { type: 'Malware', link: '/dashboard/arsenal/malwares', label: 'Malwares', icon: <Biohazard fontSize="small" /> },
-                { type: 'Channel', link: '/dashboard/arsenal/channels', label: 'Channels', icon: <SurroundSoundOutlined fontSize="small" /> },
-                { type: 'Tool', link: '/dashboard/arsenal/tools', label: 'Tools', icon: <WebAssetOutlined fontSize="small" /> },
-                { type: 'Vulnerability', link: '/dashboard/arsenal/vulnerabilities', label: 'Vulnerabilities', icon: <BugReportOutlined fontSize="small" /> },
+                { type: 'Malware', link: '/dashboard/arsenal/malwares', label: 'Malwares', icon: <Biohazard fontSize="small" color="primary"/> },
+                { type: 'Channel', link: '/dashboard/arsenal/channels', label: 'Channels', icon: <SurroundSoundOutlined fontSize="small" color="primary"/> },
+                { type: 'Tool', link: '/dashboard/arsenal/tools', label: 'Tools', icon: <WebAssetOutlined fontSize="small" color="primary"/> },
+                { type: 'Vulnerability', link: '/dashboard/arsenal/vulnerabilities', label: 'Vulnerabilities', icon: <BugReportOutlined fontSize="small" color="primary"/> },
               ],
             )}
             {!hideTechniques && (
@@ -698,25 +747,35 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <ConstructionOutlined />
+                  {navOpen && (selectedMenu.includes('techniques') ? <ConstructionOutlined color="primary"/> : <ConstructionOutlined />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Techniques')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('techniques') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('techniques') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('techniques') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideTechniques && generateSubMenu(
               'techniques',
               [
-                { type: 'Attack-Pattern', link: '/dashboard/techniques/attack_patterns', label: 'Attack patterns', icon: <LockPattern fontSize="small" /> },
-                { type: 'Narrative', link: '/dashboard/techniques/narratives', label: 'Narratives', icon: <SpeakerNotesOutlined fontSize="small" /> },
-                { type: 'Course-Of-Action', link: '/dashboard/techniques/courses_of_action', label: 'Courses of action', icon: <ProgressWrench fontSize="small" /> },
-                { type: 'Data-Component', link: '/dashboard/techniques/data_components', label: 'Data components', icon: <SourceOutlined fontSize="small" /> },
-                { type: 'Data-Source', link: '/dashboard/techniques/data_sources', label: 'Data sources', icon: <StreamOutlined fontSize="small" /> },
+                { type: 'Attack-Pattern', link: '/dashboard/techniques/attack_patterns', label: 'Attack patterns', icon: <LockPattern fontSize="small" color="primary"/> },
+                { type: 'Narrative', link: '/dashboard/techniques/narratives', label: 'Narratives', icon: <SpeakerNotesOutlined fontSize="small" color="primary"/> },
+                { type: 'Course-Of-Action', link: '/dashboard/techniques/courses_of_action', label: 'Courses of action', icon: <ProgressWrench fontSize="small" color="primary"/> },
+                { type: 'Data-Component', link: '/dashboard/techniques/data_components', label: 'Data components', icon: <SourceOutlined fontSize="small" color="primary"/> },
+                { type: 'Data-Source', link: '/dashboard/techniques/data_sources', label: 'Data sources', icon: <StreamOutlined fontSize="small" color="primary"/> },
               ],
             )}
             {!hideEntities && (
@@ -730,7 +789,7 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <FolderTableOutline />
+                  {navOpen && (selectedMenu.includes('entities') ? <FolderTableOutline color="primary"/> : <FolderTableOutline />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
@@ -744,22 +803,21 @@ const LeftBar = () => {
                       },
                       selectedMenu.includes('entities') && {
                         color: theme.palette.primary.main,
-                        backgroundColor: theme.palette.background.nav,
                       },
                     ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('entities') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('entities') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideEntities && generateSubMenu(
               'entities',
               [
-                { type: 'Sector', link: '/dashboard/entities/sectors', label: 'Sectors', icon: <DomainOutlined fontSize="small" /> },
-                { type: 'Event', link: '/dashboard/entities/events', label: 'Events', icon: <EventOutlined fontSize="small" /> },
-                { type: 'Organization', link: '/dashboard/entities/organizations', label: 'Organizations', icon: <AccountBalanceOutlined fontSize="small" /> },
-                { type: 'System', link: '/dashboard/entities/systems', label: 'Systems', icon: <StorageOutlined fontSize="small" /> },
-                { type: 'Individual', link: '/dashboard/entities/individuals', label: 'Individuals', icon: <PersonOutlined fontSize="small" /> },
+                { type: 'Sector', link: '/dashboard/entities/sectors', label: 'Sectors', icon: <DomainOutlined fontSize="small" color="primary" /> },
+                { type: 'Event', link: '/dashboard/entities/events', label: 'Events', icon: <EventOutlined fontSize="small" color="primary"/> },
+                { type: 'Organization', link: '/dashboard/entities/organizations', label: 'Organizations', icon: <AccountBalanceOutlined fontSize="small" color="primary" /> },
+                { type: 'System', link: '/dashboard/entities/systems', label: 'Systems', icon: <StorageOutlined fontSize="small" color="primary" /> },
+                { type: 'Individual', link: '/dashboard/entities/individuals', label: 'Individuals', icon: <PersonOutlined fontSize="small" color="primary" /> },
               ],
             )}
             {!hideLocations && (
@@ -773,25 +831,35 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <GlobeModel />
+                  {navOpen && (selectedMenu.includes('locations') ? <GlobeModel color="primary"/> : <GlobeModel />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Locations')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('locations') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('locations') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('locations') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
             )}
             {!hideLocations && generateSubMenu(
               'locations',
               [
-                { type: 'Region', link: '/dashboard/locations/regions', label: 'Regions', icon: <PublicOutlined fontSize="small" /> },
-                { type: 'Country', link: '/dashboard/locations/countries', label: 'Countries', icon: <FlagOutlined fontSize="small" /> },
-                { type: 'Administrative-Area', link: '/dashboard/locations/administrative_areas', label: 'Administrative areas', icon: <MapOutlined fontSize="small" /> },
-                { type: 'City', link: '/dashboard/locations/cities', label: 'Cities', icon: <CityVariantOutline fontSize="small" /> },
-                { type: 'Position', link: '/dashboard/locations/positions', label: 'Positions', icon: <PlaceOutlined fontSize="small" /> },
+                { type: 'Region', link: '/dashboard/locations/regions', label: 'Regions', icon: <PublicOutlined fontSize="small" color="primary" /> },
+                { type: 'Country', link: '/dashboard/locations/countries', label: 'Countries', icon: <FlagOutlined fontSize="small" color="primary"/> },
+                { type: 'Administrative-Area', link: '/dashboard/locations/administrative_areas', label: 'Administrative areas', icon: <MapOutlined fontSize="small" color="primary" /> },
+                { type: 'City', link: '/dashboard/locations/cities', label: 'Cities', icon: <CityVariantOutline fontSize="small" color="primary" /> },
+                { type: 'Position', link: '/dashboard/locations/positions', label: 'Positions', icon: <PlaceOutlined fontSize="small" color="primary" /> },
               ],
             )}
           </MenuList>
@@ -809,12 +877,13 @@ const LeftBar = () => {
                   classes={{ root: classes.menuItem }}
                 >
                   <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                    <InsertChartOutlinedOutlined />
+                    {navOpen && (location.pathname.includes('/dashboard/workspaces/dashboards') ? <InsertChartOutlinedOutlined color="primary"/> : <InsertChartOutlinedOutlined />)}
                   </ListItemIcon>
                   {navOpen && (
                     <ListItemText
                       classes={{ primary: classes.menuItemText }}
                       primary={t_i18n('Dashboards')}
+                      sx={{ color: location.pathname === '/dashboard/workspaces/dashboards' ? theme.palette.primary.main : theme.palette.common.white }}
                     />
                   )}
                 </MenuItem>
@@ -830,12 +899,13 @@ const LeftBar = () => {
                   classes={{ root: classes.menuItem }}
                 >
                   <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                    <ExploreOutlined />
+                    {navOpen && (location.pathname.includes('/dashboard/workspaces/investigations') ? <ExploreOutlined color="primary"/> : <ExploreOutlined />)}
                   </ListItemIcon>
                   {navOpen && (
                     <ListItemText
                       classes={{ primary: classes.menuItemText }}
                       primary={t_i18n('Investigations')}
+                      sx={{ color: location.pathname === '/dashboard/workspaces/investigations' ? theme.palette.primary.main : theme.palette.common.white }}
                     />
                   )}
                 </MenuItem>
@@ -852,15 +922,25 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  <Database />
+                  {navOpen && (selectedMenu.includes('data') ? <Database color="primary"/> : <Database />)}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
                     classes={{ primary: classes.menuItemText }}
                     primary={t_i18n('Data')}
+                    sx={[
+                      {
+                        navOpen: {
+                          color: theme.palette.common.white,
+                        },
+                      },
+                      selectedMenu.includes('data') && {
+                        color: theme.palette.primary.main,
+                      },
+                    ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('data') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                {navOpen && (selectedMenu.includes('data') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
               </MenuItem>
               {generateSubMenu(
                 'data',
@@ -884,12 +964,13 @@ const LeftBar = () => {
                   classes={{ root: classes.menuItem }}
                 >
                   <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                    <DeleteOutlined />
+                    {navOpen && (location.pathname.includes('/dashboard/trash') ? <DeleteOutlined color="primary"/> : <DeleteOutlined />)}
                   </ListItemIcon>
                   {navOpen && (
                     <ListItemText
                       classes={{ primary: classes.menuItemText }}
                       primary={t_i18n('Trash')}
+                      sx={{ color: location.pathname === '/dashboard/trash' ? theme.palette.primary.main : theme.palette.common.white }}
                     />
                   )}
                 </MenuItem>
@@ -914,7 +995,7 @@ const LeftBar = () => {
                     classes={{ root: classes.menuItem }}
                   >
                     <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                      <CogOutline />
+                      {!navOpen && (location.pathname.includes('/dashboard/settings') ? <CogOutline color="primary"/> : <CogOutline />)}
                     </ListItemIcon>
                     {navOpen && (
                       <ListItemText
@@ -935,15 +1016,25 @@ const LeftBar = () => {
                   onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
                 >
                   <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                    <CogOutline />
+                    {navOpen && (selectedMenu.includes('settings') ? <CogOutline color="primary"/> : <CogOutline />)}
                   </ListItemIcon>
                   {navOpen && (
                     <ListItemText
                       classes={{ primary: classes.menuItemText }}
                       primary={t_i18n('Settings')}
+                      sx={[
+                        {
+                          navOpen: {
+                            color: theme.palette.common.white,
+                          },
+                        },
+                        selectedMenu.includes('settings') && {
+                          color: theme.palette.primary.main,
+                        },
+                      ]}
                     />
                   )}
-                  {navOpen && (selectedMenu.includes('settings') ? <ExpandLessOutlined /> : <ExpandMoreOutlined />)}
+                  {navOpen && (selectedMenu.includes('settings') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
                 </MenuItem>
               )}
               {isGrantedToSettings && generateSubMenu(
