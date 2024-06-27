@@ -240,6 +240,7 @@ const StixCyberObservableCreation = ({
   const localHandleClose = () => setStatus({ open: false, type: type ?? null });
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
+  const [bulkValueFieldValueDisabled, setBulkValueFieldValueDisabled] = useState(false);
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
@@ -343,6 +344,7 @@ const StixCyberObservableCreation = ({
       // Close the form if any observables were successfully added.
       if (closeFormWithAnySuccess === true && progressDialogStats.getBatchingCompleted() === true) {
         setGenericValueFieldDisabled(false);
+        setBulkValueFieldValueDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
         progressReset();
@@ -685,6 +687,7 @@ const StixCyberObservableCreation = ({
               setSubmitting(false);
               resetForm();
               setGenericValueFieldDisabled(false);
+              setBulkValueFieldValueDisabled(false);
               localHandleClose();
             },
           });
@@ -768,6 +771,8 @@ const StixCyberObservableCreation = ({
         const spanData = document.getElementById('CustomFileUploaderFileName');
         spanData.innerHTML = t_i18n('No file selected.');
         props.setValue('file', null);
+        // This will disable the file upload button in addition disabling the value box for direct input.
+        setBulkValueFieldValueDisabled(true);
         // END - Clear Attached File from CustomFileUploader
         setHashesMD5Value(bulkAddMsg);
         setHashesSHA1Value(bulkAddMsg);
@@ -818,12 +823,14 @@ const StixCyberObservableCreation = ({
         props.setValue('file', null);
         // This will disable the file upload button in addition disabling the value box for direct input.
         setGenericValueFieldDisabled(true);
+        setBulkValueFieldValueDisabled(true);
         // Swap value box message to display that TT was used to input multiple values.
         setGenericValueFieldValue(bulkAddMsg);
       } else {
         setBulkValueFieldValue('');
         setGenericValueFieldValue('');
         setGenericValueFieldDisabled(false);
+        setBulkValueFieldValueDisabled(false);
       }
     };
     const localHandleCancelClearBulkModal = () => {
@@ -888,6 +895,7 @@ const StixCyberObservableCreation = ({
 
             let extraFieldsToValidate = null;
             let requiredOneOfFields = [];
+            let disabledBoolean = false;
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -991,6 +999,9 @@ const StixCyberObservableCreation = ({
               ...extraRequiredFields,
             }, requiredOneOfFields);
 
+            if (genericValueFieldDisabled === true || bulkValueFieldValueDisabled === true) {
+              disabledBoolean = true;
+            }
             return (
               <Formik
                 initialValues={initialValues}
@@ -1225,7 +1236,7 @@ const StixCyberObservableCreation = ({
                     />
                     <CustomFileUploader
                       setFieldValue={setFieldValue}
-                      disabled={genericValueFieldDisabled}
+                      disabled={disabledBoolean}
                     />
                     <Field
                       component={SwitchField}
