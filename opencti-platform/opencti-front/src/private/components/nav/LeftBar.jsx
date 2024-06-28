@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { createStyles, makeStyles, styled, useTheme } from '@mui/styles';
@@ -359,7 +360,12 @@ const LeftBar = () => {
                   component={Link}
                   to={entry.link}
                   selected={entry.exact ? location.pathname === entry.link : location.pathname.includes(entry.link)}
-                  sx={{ color: theme.palette.primary.main }}
+                  // sx={{ color: location.pathname === entry.link ? theme.palette.primary.main : theme.palette.common.white }}
+                  sx={{
+                    color: location.pathname === entry.link && location.pathname.includes(entry.link)
+                      ? theme.palette.primary.main
+                      : theme.palette.common.white,
+                  }}
                   dense={true}
                   classes={{ root: classes.menuSubItem }}
                 >
@@ -369,6 +375,7 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuSubItemText }}
                     primary={t_i18n(entry.label)}
+                    sx={{ color: location.pathname === entry.link ? theme.palette.primary.main : theme.palette.common.white }}
                   />
                 </MenuItem>
               </StyledTooltip>
@@ -616,7 +623,7 @@ const LeftBar = () => {
                 onMouseLeave={() => !navOpen && handleSelectedMenuClose()}
               >
                 <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
-                  {navOpen && (selectedMenu.includes('observations') ? <Binoculars color="primary"/> : <Binoculars />)}
+                  {selectedMenu.includes('observations') && location.pathname.includes('observations') ? <Binoculars color="primary"/> : <Binoculars />}
                 </ListItemIcon>
                 {navOpen && (
                   <ListItemText
@@ -624,26 +631,27 @@ const LeftBar = () => {
                     primary={t_i18n('Observations')}
                     sx={[
                       {
-                        navOpen: {
-                          color: theme.palette.common.white,
-                        },
-                      },
-                      selectedMenu.includes('observations') && {
-                        color: theme.palette.primary.main,
+                        color: location.pathname.includes('/dashboard/observations') && selectedMenu.includes('observations')
+                          ? theme.palette.primary.main
+                          : theme.palette.common.main,
                       },
                     ]}
                   />
                 )}
-                {navOpen && (selectedMenu.includes('observations') ? <ExpandLessOutlined color="primary"/> : <ExpandMoreOutlined />)}
+                {(selectedMenu.includes('observations')) ? !location.pathname.includes('/dashboard/observations')
+                  ? <ExpandLessOutlined />
+                  : <ExpandLessOutlined color="primary" />
+                  : <ExpandMoreOutlined />
+                }
               </MenuItem>
             )}
             {!hideObservations && generateSubMenu(
               'observations',
               [
-                { type: 'Stix-Cyber-Observable', link: '/dashboard/observations/observables', label: 'Observables', icon: <HexagonOutline fontSize="small" color="primary" /> },
-                { type: 'Artifact', link: '/dashboard/observations/artifacts', label: 'Artifacts', icon: <ArchiveOutline fontSize="small" color="primary"/> },
-                { type: 'Indicator', link: '/dashboard/observations/indicators', label: 'Indicators', icon: <ShieldSearch fontSize="small" color="primary"/> },
-                { type: 'Infrastructure', link: '/dashboard/observations/infrastructures', label: 'Infrastructures', icon: <ServerNetwork fontSize="small" color="primary"/> },
+                { type: 'Stix-Cyber-Observable', link: '/dashboard/observations/observables', label: 'Observables', icon: <HexagonOutline fontSize="small" /> },
+                { type: 'Artifact', link: '/dashboard/observations/artifacts', label: 'Artifacts', icon: <ArchiveOutline fontSize="small"/> },
+                { type: 'Indicator', link: '/dashboard/observations/indicators', label: 'Indicators', icon: <ShieldSearch fontSize="small"/> },
+                { type: 'Infrastructure', link: '/dashboard/observations/infrastructures', label: 'Infrastructures', icon: <ServerNetwork fontSize="small" /> },
               ],
             )}
           </MenuList>
