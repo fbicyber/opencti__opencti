@@ -107,6 +107,9 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
           {warningVisible
             && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
           <DialogActions>
+            <Button onClick={handleCloseBulkAddDialog}>
+              {t_i18n('Cancel')}
+            </Button>
             {!warningVisible && (<Button color="secondary" onClick={() => { handleCloseBulkAddDialog(localBulkValueField); handleParentSelectAttribute(selectedLocalAttribute); }}>
               {t_i18n('Validate')}
             </Button>)}
