@@ -111,8 +111,8 @@ type LinearProgressProps = {
 
 const LinearProgressWithLabel = (props: LinearProgressProps) => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ width: '100%', marginRight: 1 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ flex: '1' }}>
         <LinearProgress {...props} />
       </div>
       <div style={{ minWidth: 35 }}>
@@ -142,7 +142,7 @@ const ProgressDialogContainer: React.FC<ProgressDialogProps> = ({
       open={openProgressDialog}
     >
       <DialogTitle id="alert-dialog-title">
-        {'Progress'}
+        {t_i18n('Progress')}
       </DialogTitle>
       <DialogContent>
         <div style={{ minWidth: '500px', width: '100%' }}>

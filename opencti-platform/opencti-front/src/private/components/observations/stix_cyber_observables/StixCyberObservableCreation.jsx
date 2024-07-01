@@ -955,8 +955,6 @@ const StixCyberObservableCreation = ({
                       label={t_i18n('Create an indicator from this observable')}
                       containerstyle={{ marginTop: 20 }}
                     />
-                    <div>
-                    </div>
                     <div className={classes.buttons}>
                       <Button
                         variant={contextual ? 'text' : 'contained'}
