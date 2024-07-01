@@ -360,9 +360,8 @@ const LeftBar = () => {
                   component={Link}
                   to={entry.link}
                   selected={entry.exact ? location.pathname === entry.link : location.pathname.includes(entry.link)}
-                  // sx={{ color: location.pathname === entry.link ? theme.palette.primary.main : theme.palette.common.white }}
                   sx={{
-                    color: location.pathname === entry.link && location.pathname.includes(entry.link)
+                    color: location.pathname.includes(entry.link.substring(0, entry.link.lastIndexOf('/')))
                       ? theme.palette.primary.main
                       : theme.palette.common.white,
                   }}
@@ -375,7 +374,6 @@ const LeftBar = () => {
                   <ListItemText
                     classes={{ primary: classes.menuSubItemText }}
                     primary={t_i18n(entry.label)}
-                    sx={{ color: location.pathname === entry.link ? theme.palette.primary.main : theme.palette.common.white }}
                   />
                 </MenuItem>
               </StyledTooltip>
@@ -648,10 +646,22 @@ const LeftBar = () => {
             {!hideObservations && generateSubMenu(
               'observations',
               [
-                { type: 'Stix-Cyber-Observable', link: '/dashboard/observations/observables', label: 'Observables', icon: <HexagonOutline fontSize="small" /> },
-                { type: 'Artifact', link: '/dashboard/observations/artifacts', label: 'Artifacts', icon: <ArchiveOutline fontSize="small"/> },
-                { type: 'Indicator', link: '/dashboard/observations/indicators', label: 'Indicators', icon: <ShieldSearch fontSize="small"/> },
-                { type: 'Infrastructure', link: '/dashboard/observations/infrastructures', label: 'Infrastructures', icon: <ServerNetwork fontSize="small" /> },
+                { type: 'Stix-Cyber-Observable',
+                  link: '/dashboard/observations/observables',
+                  label: 'Observables',
+                  icon: location.pathname.includes('/dashboard/observations') && selectedMenu.includes('observations') ? <HexagonOutline color="primary" fontSize="small" /> : <HexagonOutline fontSize="small" /> },
+                { type: 'Artifact',
+                  link: '/dashboard/observations/artifacts',
+                  label: 'Artifacts',
+                  icon: location.pathname.includes('/dashboard/observations') && selectedMenu.includes('observations') ? <ArchiveOutline color="primary" fontSize="small"/> : <ArchiveOutline fontSize="small"/> },
+                { type: 'Indicator',
+                  link: '/dashboard/observations/indicators',
+                  label: 'Indicators',
+                  icon: location.pathname.includes('/dashboard/observations') && selectedMenu.includes('observations') ? <ShieldSearch color="primary" fontSize="small"/> : <ShieldSearch fontSize="small"/> },
+                { type: 'Infrastructure',
+                  link: '/dashboard/observations/infrastructures',
+                  label: 'Infrastructures',
+                  icon: location.pathname.includes('/dashboard/observations') && selectedMenu.includes('observations') ? <ServerNetwork color="primary" fontSize="small" /> : <ServerNetwork fontSize="small" /> },
               ],
             )}
           </MenuList>
