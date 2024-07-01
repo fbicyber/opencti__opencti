@@ -253,8 +253,8 @@ const StixCyberObservableCreation = ({
   const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
   const divRowStyle = { display: 'flex', flexWrap: 'wrap' };
   let hashesList = [];
-  const algorithm = selectedAttribute.toLowerCase();
   let totalObservables = 0;
+  let algorithm = selectedAttribute.toLowerCase();
 
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
     commitMutation({
@@ -560,7 +560,14 @@ const StixCyberObservableCreation = ({
         fromPairs,
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
-      const hashesListInitial = hashesList[0];
+      let hashesListInitial;
+
+      if (hashesList.length >= 1) {
+        hashesListInitial = hashesList.slice(0, 1)[0];
+      } else {
+        hashesListInitial = adaptedValues.hashes[0].hash;
+        algorithm = adaptedValues.hashes[0].algorithm;
+      }
       let hashesListName = '';
       if (selectedAttribute === 'NAME') {
         hashesListName = hashesListInitial;
@@ -1051,6 +1058,78 @@ const StixCyberObservableCreation = ({
                       />
                       {attributes.map((attribute) => {
                         if (attribute.value === 'hashes') {
+                          if (selectedAttribute === 'MD5') {
+                            return (
+                              <div key={attribute.value}>
+                                <Field
+                                  id="hashes_MD5"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesMD5Value}
+                                  name="hashes_MD5"
+                                  label={t_i18n('hash_md5')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesMD5Value(value)}
+                                />
+                              </div>
+                            );
+                          }
+                          if (selectedAttribute === 'SHA-1') {
+                            return (
+                              <div key={attribute.value}>
+                                <Field
+                                  id="hashes_SHA-1"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA1Value}
+                                  name="hashes_SHA-1"
+                                  label={t_i18n('hash_sha-1')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA1Value(value)}
+                                />
+                              </div>
+                            );
+                          }
+                          if (selectedAttribute === 'SHA-256') {
+                            return (
+                              <div key={attribute.value}>
+                                <Field
+                                  id="hashes_SHA-256"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA256Value}
+                                  name="hashes_SHA-256"
+                                  label={t_i18n('hash_sha-256')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA256Value(value)}
+                                />
+                              </div>
+                            );
+                          }
+                          if (selectedAttribute === 'SHA-512') {
+                            return (
+                              <div key={attribute.value}>
+                                <Field
+                                  id="hashes_SHA-512"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA512Value}
+                                  name="hashes_SHA-512"
+                                  label={t_i18n('hash_sha-512')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA512Value(value)}
+                                />
+                              </div>
+                            );
+                          }
                           return (
                             <div key={attribute.value}>
                               <Field
