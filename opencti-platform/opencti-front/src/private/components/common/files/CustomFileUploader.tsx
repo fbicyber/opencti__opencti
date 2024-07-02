@@ -73,7 +73,7 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
   const classes = useStyles();
   const [fileNameForDisplay, setFileNameForDisplay] = useState('');
   const [errorText, setErrorText] = useState('');
-  const [customFileUploaderFileName, setCustomFileUploaderFileName] = useState(t_i18n('No file selected.'));
+  const customFileUploaderFileName = t_i18n('No file selected.');
 
   useEffect(() => {
     if (formikErrors?.file) {
@@ -81,7 +81,19 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
     } else {
       setErrorText('');
     }
-  }, [formikErrors]);
+
+    if (disabled) {
+      if (fileNameForDisplay !== '') {
+        setFileNameForDisplay('');
+        // Clear the actual attached file, allows for onChange to detect if user wants to re-attach same file
+        // if field becomes enabled again.
+        const currentAttachedFile = document.getElementById('customFileAttachedRef') as HTMLInputElement || null;
+        if (currentAttachedFile) {
+          currentAttachedFile.value = '';
+        }
+      }
+    }
+  }, [formikErrors, disabled]);
 
   const onChange = async (event: FormEvent) => {
     const inputElement = event.target as HTMLInputElement;
@@ -124,25 +136,6 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
     }
   };
 
-  function returnDisabledStatus(disabledStatus: boolean): boolean {
-    if (disabledStatus === true) {
-      if (customFileUploaderFileName !== t_i18n('No file selected.')) {
-        setCustomFileUploaderFileName(t_i18n('No file selected.'));
-      }
-      if (fileNameForDisplay !== '') {
-        setFileNameForDisplay('');
-        // Clear the actual attached file, allows for onChange to detect if user wants to re-attach same file
-        // if field becomes enabled again.
-        const currentAttachedFile = document.getElementById('customFileAttachedRef') as HTMLInputElement || null;
-        if (currentAttachedFile) {
-          currentAttachedFile.value = '';
-        }
-      }
-    }
-
-    return disabledStatus;
-  }
-
   return (
     <div className={classes.div}>
       <InputLabel shrink={true} variant="standard">
@@ -159,13 +152,12 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
           variant="contained"
           onChange={onChange}
           className={classes.button}
-          disabled={returnDisabledStatus(disabled)}
+          disabled={disabled}
         >
           {t_i18n('Select your file')}
           <VisuallyHiddenInput id='customFileAttachedRef' type="file" accept={acceptMimeTypes} />
         </Button>
         <span
-          id="CustomFileUploaderFileName"
           title={fileNameForDisplay || customFileUploaderFileName}
           className={classes.span}
         >
