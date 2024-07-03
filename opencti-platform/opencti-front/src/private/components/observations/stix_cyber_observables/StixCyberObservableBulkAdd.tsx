@@ -1,13 +1,11 @@
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import BulkAddComponent from '../../../../components/BulkAddComponent';
-import React from 'react';
-
 
 interface StixCyberObservableBulkAddProps {
   genericValueFieldValue: string;
   setBulkValueFieldValue: (value: React.SetStateAction<string>) => void;
   bulkValueFieldValue: string;
-  setFieldValue: (name: string, value:any) => void;
+  setFieldValue: (name: string, value:null | string) => void;
   setGenericValueFieldDisabled: (value: React.SetStateAction<boolean>) => void;
   genericValueFieldDisabled: boolean;
   setGenericValueFieldValue: (value: React.SetStateAction<string>) => void;
@@ -21,10 +19,9 @@ const StixCyberObservableBulkAdd: FunctionComponent<StixCyberObservableBulkAddPr
   setFieldValue,
   setGenericValueFieldDisabled,
   genericValueFieldDisabled,
-  setGenericValueFieldValue, 
-  bulkAddMsg, 
+  setGenericValueFieldValue,
+  bulkAddMsg,
 }) => {
-
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
 
   const handleOpenBulkModal = () => {
@@ -71,6 +68,6 @@ const StixCyberObservableBulkAdd: FunctionComponent<StixCyberObservableBulkAddPr
       localHandleCancelClearBulkModal={localHandleCancelClearBulkModal}
     />
   );
-}
+};
 
-export default StixCyberObservableBulkAdd
+export default StixCyberObservableBulkAdd;

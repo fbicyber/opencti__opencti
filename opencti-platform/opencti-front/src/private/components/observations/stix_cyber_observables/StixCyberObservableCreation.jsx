@@ -12,7 +12,6 @@ import { graphql } from 'react-relay';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Tooltip from '@mui/material/Tooltip';
-import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -241,7 +240,6 @@ const StixCyberObservableCreation = ({
   const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
-  let totalObservables = 0;
 
   const progressReset = () => {
     setOpenProgressDialog(false);
@@ -253,7 +251,6 @@ const StixCyberObservableCreation = ({
     progressDialogStats.setBatchingCancelled(false);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
-    totalObservables = 0;
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -262,7 +259,7 @@ const StixCyberObservableCreation = ({
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
-      totalObservables = valueList.length;
+      const totalObservables = valueList.length;
       let closeFormWithAnySuccess = false;
       if (progressDialogStats.getBatchingCompleted() === true) {
         if (progressDialogStats.getErrorCount() > 0) {
@@ -551,7 +548,7 @@ const StixCyberObservableCreation = ({
     );
   };
 
-   const renderForm = () => {
+  const renderForm = () => {
     return (
       <QueryRenderer
         query={stixCyberObservablesLinesAttributesQuery}
@@ -838,14 +835,14 @@ const StixCyberObservableCreation = ({
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
                                 <StixCyberObservableBulkAdd
-                                genericValueFieldValue={genericValueFieldValue}
-                                setBulkValueFieldValue={setBulkValueFieldValue}
-                                bulkValueFieldValue={bulkValueFieldValue}
-                                setFieldValue={setFieldValue}
-                                setGenericValueFieldDisabled={setGenericValueFieldDisabled}
-                                genericValueFieldDisabled={genericValueFieldDisabled}
-                                setGenericValueFieldValue={setGenericValueFieldValue}
-                                bulkAddMsg={bulkAddMsg}
+                                  genericValueFieldValue={genericValueFieldValue}
+                                  setBulkValueFieldValue={setBulkValueFieldValue}
+                                  bulkValueFieldValue={bulkValueFieldValue}
+                                  setFieldValue={setFieldValue}
+                                  setGenericValueFieldDisabled={setGenericValueFieldDisabled}
+                                  genericValueFieldDisabled={genericValueFieldDisabled}
+                                  setGenericValueFieldValue={setGenericValueFieldValue}
+                                  bulkAddMsg={bulkAddMsg}
                                 />
                               </Tooltip>
 
