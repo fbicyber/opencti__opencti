@@ -81,7 +81,9 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
     } else {
       setErrorText('');
     }
+  }, [formikErrors]);
 
+  useEffect(() => {
     if (disabled) {
       if (fileNameForDisplay !== '') {
         setFileNameForDisplay('');
@@ -93,7 +95,7 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
         }
       }
     }
-  }, [formikErrors, disabled]);
+  }, [disabled]);
 
   const onChange = async (event: FormEvent) => {
     const inputElement = event.target as HTMLInputElement;

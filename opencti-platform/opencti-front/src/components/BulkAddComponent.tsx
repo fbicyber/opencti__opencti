@@ -70,7 +70,6 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
             label={t_i18n('Multiple Values')}
             variant="outlined"
             value={localBulkValueField}
-            key="bulk_value_field"
             name="bulk_value_field"
             fullWidth={true}
             multiline={true}

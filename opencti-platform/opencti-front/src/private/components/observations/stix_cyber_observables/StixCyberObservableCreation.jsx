@@ -39,7 +39,7 @@ import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
-import BulkAddComponent from '../../../../components/BulkAddComponent';
+import StixCyberObservableBulkAdd from './StixCyberObservableBulkAdd';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
@@ -238,10 +238,9 @@ const StixCyberObservableCreation = ({
   const localHandleClose = () => setStatus({ open: false, type: type ?? null });
   const selectType = (selected) => setStatus({ open: status.open, type: selected });
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
-  const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
-  const [openBulkModal, setOpenBulkModal] = React.useState(false);
   let totalObservables = 0;
 
   const progressReset = () => {
@@ -552,56 +551,7 @@ const StixCyberObservableCreation = ({
     );
   };
 
-  function BulkAdd(props) {
-    const handleOpenBulkModal = () => {
-      if (genericValueFieldValue != null && genericValueFieldValue.length > 0 && genericValueFieldValue !== bulkAddMsg) {
-        // Trim the field to avoid inserting whitespace as a default population value
-        setBulkValueFieldValue(genericValueFieldValue.trim());
-      }
-      setOpenBulkModal(true);
-    };
-    const handleCloseBulkModal = (val) => {
-      setOpenBulkModal(false);
-      if (val != null && val.length > 0) {
-        setBulkValueFieldValue(val);
-        // Clear Attached File marker used by CustomFileUploader interaction to indicate a file need processing
-        props.setValue('file', null);
-        // This will disable the file upload button in addition disabling the value box for direct input.
-        setGenericValueFieldDisabled(true);
-        // Swap value box message to display that TT was used to input multiple values.
-        setGenericValueFieldValue(bulkAddMsg);
-      } else {
-        setBulkValueFieldValue('');
-        setGenericValueFieldValue('');
-        setGenericValueFieldDisabled(false);
-      }
-    };
-    const localHandleCancelClearBulkModal = () => {
-      setOpenBulkModal(false);
-      if (!genericValueFieldDisabled) {
-        // If one-liner field isn't disabled, then you are it seems deciding
-        // not to use the bulk add feature, so we will clear the field, since its population
-        // is used to process the bul_value_field versus the generic_value_field
-        setBulkValueFieldValue('');
-        setGenericValueFieldValue('');
-      }
-      // else - you previously entered data and you just are canceling out of the popup window
-      // but keeping your entry in the form.
-    };
-    return (
-      <BulkAddComponent
-        openBulkModal={openBulkModal}
-        bulkValueFieldValue={bulkValueFieldValue}
-        handleOpenBulkModal={handleOpenBulkModal}
-        handleCloseBulkModal={handleCloseBulkModal}
-        localHandleCancelClearBulkModal={localHandleCancelClearBulkModal}
-      />
-    );
-  }
-  BulkAdd.propTypes = {
-    setValue: PropTypes.func,
-  };
-  const renderForm = () => {
+   const renderForm = () => {
     return (
       <QueryRenderer
         query={stixCyberObservablesLinesAttributesQuery}
@@ -887,8 +837,15 @@ const StixCyberObservableCreation = ({
                           return (
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
-                                <BulkAdd
-                                  setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                <StixCyberObservableBulkAdd
+                                genericValueFieldValue={genericValueFieldValue}
+                                setBulkValueFieldValue={setBulkValueFieldValue}
+                                bulkValueFieldValue={bulkValueFieldValue}
+                                setFieldValue={setFieldValue}
+                                setGenericValueFieldDisabled={setGenericValueFieldDisabled}
+                                genericValueFieldDisabled={genericValueFieldDisabled}
+                                setGenericValueFieldValue={setGenericValueFieldValue}
+                                bulkAddMsg={bulkAddMsg}
                                 />
                               </Tooltip>
 
