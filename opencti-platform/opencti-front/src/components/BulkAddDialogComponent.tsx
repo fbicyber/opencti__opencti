@@ -14,6 +14,7 @@ import TextField from './TextField';
 type BulkAddDialogComponentProps = {
   openBulkAddDialog: boolean
   bulkValueFieldValue: string
+  multiValue: boolean
   handleOpenBulkAddDialog: () => void
   handleCloseBulkAddDialog: (val: any) => void
   handleParentSelectAttribute: (val: any) => void
@@ -22,6 +23,7 @@ type BulkAddDialogComponentProps = {
 const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
   openBulkAddDialog,
   bulkValueFieldValue,
+  multiValue,
   handleOpenBulkAddDialog,
   handleCloseBulkAddDialog,
   handleParentSelectAttribute,
@@ -50,17 +52,15 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
   }, [bulkValueFieldValue]);
   return (
     <React.Fragment>
-      <Button
+      {multiValue && (<Button
         onClick={handleOpenBulkAddDialog}
         variant={'outlined'}
         size={'small'}
-        aria-label={'add_multiple_values_button'}
-        aria-labelledby={'add_multiple_values_button'}
-        style={{ float: 'right', marginRight: 5, marginTop: 10 }}
-      >
-        {t_i18n('Add Multiple Values')}
-      </Button>
-
+        aria-label={'edit_values_button'}
+        aria-labelledby={'edit_values_button'}
+        style={{ float: 'right', marginRight: 5, marginTop: 10 }} >
+        {t_i18n('Edit Values')}
+      </Button>)}
       <Dialog
         PaperProps={{ elevation: 3 }}
         fullWidth={true}
@@ -69,7 +69,17 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
       >
         <DialogTitle>{t_i18n('Add Multiple Observable Values')}</DialogTitle>
         <DialogContent style={{ marginTop: 0, paddingTop: 10 }}>
-          <div id="divSelectAttributes" style={{ border: '2px solid #FFA500', paddingLeft: 10 }}>
+          <Typography style={{ float: 'left', marginTop: 10 }}>
+            <span className="output"></span>
+          </Typography>
+          <Typography variant="subtitle1" style={{ whiteSpace: 'pre-line' }}>
+            <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
+              {t_i18n('Enter one observable per line. Observables must be the same type.')}
+              <br></br>
+              {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
+            </div>
+          </Typography>
+          <div id="divSelectAttributes" style={{ paddingBottom: 15 }}>
             {t_i18n('Create Entities from multiple: ')}
             <Select name="attributes" id="attributes" value={selectedLocalAttribute} onChange={handleSelectChange}>
               <MenuItem selected disabled>Select attribute</MenuItem>
@@ -80,17 +90,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
               <MenuItem value="SHA-512">sha512</MenuItem>
             </Select>
           </div>
-          <Typography style={{ float: 'left', marginTop: 10 }}>
-            <span style={{ fontSize: '0.7em' }}>{selectedLocalAttribute}</span>
-            <span className="output"></span>
-          </Typography>
-          <Typography variant="subtitle1" style={{ whiteSpace: 'pre-line' }}>
-            <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
-              {t_i18n('Enter one observable per line. Observables must be the same type.')}
-              <br></br>
-              {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
-            </div>
-          </Typography>
+          <div/>
           <Field
             component={TextField}
             id="bulk_hashes_field"
@@ -111,7 +111,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
               {t_i18n('Cancel')}
             </Button>
             {!warningVisible && (<Button color="secondary" onClick={() => { handleCloseBulkAddDialog(localBulkValueField); handleParentSelectAttribute(selectedLocalAttribute); }}>
-              {t_i18n('Validate')}
+              {t_i18n('Continue')}
             </Button>)}
           </DialogActions>
         </DialogContent>
