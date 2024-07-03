@@ -1648,7 +1648,7 @@
   "Multiple entities selected": "複数のエンティティが選択されました",
   "Multiple value entry is required or Cancel this form": "複数の値を入力するか、このフォームをキャンセルする必要があります",
   "Multiple Values": "複数値",
-  "Multiple values entered. Edit with the TT button": "複数の値が入力されました。 TTボタンで編集",
+  "Multiple values entered. Edit by clicking Add Multiple Values": "複数の値が入力されました。「複数の値を追加」をクリックして編集します",
   "Mutex": "ミューテックス",
   "My CSV file contains headers": "CSVファイルにヘッダーが含まれています",
   "N/A": "該当なし",
