@@ -14,7 +14,6 @@ import TextField from './TextField';
 type BulkAddDialogComponentProps = {
   openBulkAddDialog: boolean
   bulkValueFieldValue: string
-  multiValue: boolean
   handleOpenBulkAddDialog: () => void
   handleCloseBulkAddDialog: (val: any) => void
   handleParentSelectAttribute: (val: any) => void
@@ -23,7 +22,6 @@ type BulkAddDialogComponentProps = {
 const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
   openBulkAddDialog,
   bulkValueFieldValue,
-  multiValue,
   handleOpenBulkAddDialog,
   handleCloseBulkAddDialog,
   handleParentSelectAttribute,
@@ -52,7 +50,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
   }, [bulkValueFieldValue]);
   return (
     <React.Fragment>
-      {multiValue && (<Button
+      <Button
         onClick={handleOpenBulkAddDialog}
         variant={'outlined'}
         size={'small'}
@@ -60,7 +58,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
         aria-labelledby={'edit_values_button'}
         style={{ float: 'right', marginRight: 5, marginTop: 10 }} >
         {t_i18n('Edit Values')}
-      </Button>)}
+      </Button>
       <Dialog
         PaperProps={{ elevation: 3 }}
         fullWidth={true}

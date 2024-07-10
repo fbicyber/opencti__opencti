@@ -54,7 +54,7 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
         <Grid item xs={4}></Grid>
         <Grid item xs={12}>
           <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
-            {t_i18n('Enter one observable per line. Observables must be the same type.')}
+            {t_i18n('Enter one observable per line. Observables must be the same type')}
             <br></br>
             {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
           </div>
@@ -66,8 +66,8 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
               id="attributes"
               value={selectedLocalAttribute}
               onChange={handleSelectChange}
-              label='Select attribute'
             >
+              <MenuItem selected disabled>Select attribute</MenuItem>
               <MenuItem value="NAME">name</MenuItem>
               <MenuItem value="MD5">md5</MenuItem>
               <MenuItem value="SHA-1">sha1</MenuItem>
