@@ -4,7 +4,8 @@ import React, { useEffect } from 'react';
 import { Grid, MenuItem } from '@mui/material';
 import Select from '@mui/material/Select';
 import { useFormatter } from './i18n';
-import TextField from '@mui/material/TextField';
+import TextField from './TextField';
+import { Field } from 'formik';
 
 type BulkAddFormComponentProps = {
   bulkValueFieldValue: string
@@ -36,11 +37,6 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
   const handleSelectChange = (event: any) => {
     setSelectedLocalAttribute(event.target.value);
   };
-  const handleTextChange = (event: any) => {
-    setLocalBulkValueField(event.target.value);
-    monitorBulkValue(event.target.value);
-    console.log('LocalBulkValueField is ', localBulkValueField);
-  };
   useEffect(() => {
     setLocalBulkValueField([bulkValueFieldValue]);
   }, [bulkValueFieldValue]);
@@ -62,6 +58,7 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
         </Grid>
         <Grid item xs={12}>
           <div id="divSelectAttributes" style={{ paddingBottom: 15, width: 15 }}>
+            {t_i18n('Create Entities from multiple: ')}
             <Select
               name="attributes"
               id="attributes"
@@ -78,7 +75,8 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
           </div>
         </Grid>
         <Grid item xs={12}>
-          <TextField
+          <Field
+            component={TextField}
             id="bulk_hashes_field"
             label={t_i18n('Multiple Values')}
             variant="outlined"
@@ -88,12 +86,14 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
             fullWidth={true}
             multiline={true}
             rows="5"
-            onChange={handleTextChange}
+            onChange={(name: string, value: string[]) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
           />
-        </Grid>
-        <Grid item xs={8}>
           {warningVisible
             && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
+        </Grid>
+        <Grid item xs={8}>
+          {/* {warningVisible
+            && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)} */}
         </Grid>
         <Grid item xs={2}>
           <Button onClick={handleCloseBulkAddForm}>

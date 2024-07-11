@@ -88,7 +88,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
               <MenuItem value="SHA-512">sha512</MenuItem>
             </Select>
           </div>
-          <div/>
+          <div />
           <Field
             component={TextField}
             id="bulk_hashes_field"

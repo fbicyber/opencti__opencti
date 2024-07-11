@@ -46,6 +46,7 @@ import ProgressDialogContainer, { progressDialogStats } from '../../../../compon
 import BulkAddComponent from '../../../../components/BulkAddComponent';
 import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
 import BulkAddFormComponent from '../../../../components/BulkAddFormComponent';
+import { Store24Hour } from 'mdi-material-ui';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
@@ -315,12 +316,6 @@ const StixCyberObservableCreation = ({
     progressDialogStats.setBatchingCancelled(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
-    console.log('values');
-    console.log(values);
-    console.log('valueList');
-    console.log(valueList);
-    console.log('hashesList');
-    console.log(hashesList);
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
       if (valueList.length > 1) {
@@ -590,8 +585,6 @@ const StixCyberObservableCreation = ({
       if (selectedAttribute === 'NAME') {
         hashesListName = hashesListInitial;
       }
-      console.log('hashesList');
-      console.log(hashesList);
       const finalValues = {
         type: status.type,
         x_opencti_description:
@@ -621,8 +614,6 @@ const StixCyberObservableCreation = ({
 
       const commit = async () => {
         valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
-        console.log('valueList');
-        console.table(valueList);
         const batchSize = 5;
         // Launch Progress Bar, as value data is about to be processed.
         // Only need Progress Bar, if more than 1 element being processed
@@ -771,8 +762,6 @@ const StixCyberObservableCreation = ({
   };
   function BulkAddForm(props) {
     const handleCloseBulkAddForm = (val) => {
-      console.log('val');
-      console.log(val);
       if (val != null && val.length > 0) {
         setNextForm(false);
         setFinalForm(true);
@@ -783,8 +772,6 @@ const StixCyberObservableCreation = ({
         setHashesSHA512Value(bulkAddMsg);
         props.setValue('name', bulkAddMsg);
         setKeyFieldDisabled(true);
-        console.log('bulkValueFieldValue');
-        console.table(bulkValueFieldValue);
       } else {
         setNextForm(false);
         setFinalForm(false);
@@ -799,7 +786,6 @@ const StixCyberObservableCreation = ({
     const handleParentSelectAttribute = (value) => {
       setSelectedAttribute(value);
     };
-    console.log('bulkValueFieldValue is ', bulkValueFieldValue);
     return (
       <BulkAddFormComponent
         bulkValueFieldValue={bulkValueFieldValue}
@@ -1111,35 +1097,9 @@ const StixCyberObservableCreation = ({
                       </Button>
                     </FormControl>
                   </form>}
-                  {nextForm && multiValue && <Formik
+                  {<Formik
                     initialValues={initialValues}
-                    // validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
-                    onSubmit={onSubmit}
-                    onReset={onReset}
-                  >
-                    {({
-                      setFieldValue,
-                    }) => (
-                      <Form
-                        style={{
-                          margin: contextual ? '10px 0 0 0' : '20px 0 20px 0',
-                        }}
-                      >
-                        <div>
-                          <div id="hiddenDiv" style={(divRowStyle)}>
-                            <Tooltip title="Copy/paste text content">
-                              <BulkAddForm
-                                setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
-                              />
-                            </Tooltip>
-                          </div>
-                        </div>
-                      </Form>
-                    )}
-                  </Formik>}
-                  {finalForm && <Formik
-                    initialValues={initialValues}
-                    // validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                    validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                     onSubmit={onSubmit}
                     onReset={onReset}
                   >
@@ -1156,262 +1116,270 @@ const StixCyberObservableCreation = ({
                           margin: contextual ? '10px 0 0 0' : '20px 0 20px 0',
                         }}
                       >
-                        <div>
-                          <Field
-                            component={TextField}
-                            variant="standard"
-                            name="x_opencti_score"
-                            label={t_i18n('Score')}
-                            fullWidth={true}
-                            type="number"
-                          />
-                          <Field
-                            component={MarkdownField}
-                            name="x_opencti_description"
-                            label={t_i18n('Description')}
-                            fullWidth={true}
-                            multiline={true}
-                            rows="4"
-                            style={{ marginTop: 20 }}
-                          />
-                          <div id="hiddenDiv" style={(divRowStyle)}>
-                            <Tooltip title="Copy/paste text content">
-                              <BulkAddDialog
-                                setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
-                              />
-                            </Tooltip>
+                        {nextForm && multiValue && <div id="hiddenDiv" style={(divRowStyle)}>
+                          <Tooltip title="Copy/paste text content">
+                            <BulkAddForm
+                              setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                            />
+                          </Tooltip>
+                        </div>}
+                        {finalForm && <div>
+                          <div>
+                            <Field
+                              component={TextField}
+                              variant="standard"
+                              name="x_opencti_score"
+                              label={t_i18n('Score')}
+                              fullWidth={true}
+                              type="number"
+                            />
+                            <Field
+                              component={MarkdownField}
+                              name="x_opencti_description"
+                              label={t_i18n('Description')}
+                              fullWidth={true}
+                              multiline={true}
+                              rows="4"
+                              style={{ marginTop: 20 }}
+                            />
+                            <div id="hiddenDiv" style={(divRowStyle)}>
+                              <Tooltip title="Copy/paste text content">
+                                <BulkAddDialog
+                                  setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                />
+                              </Tooltip>
+                            </div>
+                            {attributes.map((attribute) => {
+                              if (attribute.value === 'hashes') {
+                                if (selectedAttribute === 'MD5') {
+                                  setNameFieldDisabled(true);
+                                  return (
+                                    <div key={attribute.value} >
+                                      <Field
+                                        id="hashes_MD5"
+                                        disabled={keyFieldDisabled}
+                                        component={TextField}
+                                        variant="standard"
+                                        value={hashesMD5Value}
+                                        name="hashes_MD5"
+                                        label={t_i18n('hash_md5')}
+                                        fullWidth={true}
+                                        style={{ marginTop: 20 }
+                                        }
+                                        onChange={(name, value) => setHashesMD5Value(value)
+                                        }
+                                      />
+                                    </div>
+                                  );
+                                }
+                                if (selectedAttribute === 'SHA-1') {
+                                  setNameFieldDisabled(true);
+                                  return (
+                                    <div key={attribute.value} >
+                                      <Field
+                                        id="hashes_SHA-1"
+                                        disabled={keyFieldDisabled}
+                                        component={TextField}
+                                        variant="standard"
+                                        value={hashesSHA1Value}
+                                        name="hashes_SHA-1"
+                                        label={t_i18n('hash_sha-1')}
+                                        fullWidth={true}
+                                        style={{ marginTop: 20 }
+                                        }
+                                        onChange={(name, value) => setHashesSHA1Value(value)}
+                                      />
+                                    </div>
+                                  );
+                                }
+                                if (selectedAttribute === 'SHA-256') {
+                                  setNameFieldDisabled(true);
+                                  return (
+                                    <div key={attribute.value} >
+                                      <Field
+                                        id="hashes_SHA-256"
+                                        disabled={keyFieldDisabled}
+                                        component={TextField}
+                                        variant="standard"
+                                        value={hashesSHA256Value}
+                                        name="hashes_SHA-256"
+                                        label={t_i18n('hash_sha-256')}
+                                        fullWidth={true}
+                                        style={{ marginTop: 20 }
+                                        }
+                                        onChange={(name, value) => setHashesSHA256Value(value)}
+                                      />
+                                    </div>
+                                  );
+                                }
+                                if (selectedAttribute === 'SHA-512') {
+                                  setNameFieldDisabled(true);
+                                  return (
+                                    <div key={attribute.value} >
+                                      <Field
+                                        id="hashes_SHA-512"
+                                        disabled={keyFieldDisabled}
+                                        component={TextField}
+                                        variant="standard"
+                                        value={hashesSHA512Value}
+                                        name="hashes_SHA-512"
+                                        label={t_i18n('hash_sha-512')}
+                                        fullWidth={true}
+                                        style={{ marginTop: 20 }
+                                        }
+                                        onChange={(name, value) => setHashesSHA512Value(value)}
+                                      />
+                                    </div>
+                                  );
+                                }
+                              }
+                              if (isVocabularyField(status.type, attribute.value)) {
+                                return (
+                                  <OpenVocabField
+                                    key={attribute.value}
+                                    label={t_i18n(attribute.value)}
+                                    type={fieldToCategory(
+                                      status.type,
+                                      attribute.value,
+                                    )}
+                                    name={attribute.value}
+                                    onChange={(name, value) => setFieldValue(name, value)
+                                    }
+                                    containerStyle={fieldSpacingContainerStyle}
+                                    multiple={false}
+                                  />
+                                );
+                              }
+                              if (includes(attribute.value, dateAttributes)) {
+                                return (
+                                  <Field
+                                    component={DateTimePickerField}
+                                    key={attribute.value}
+                                    name={attribute.value}
+                                    withSeconds={true}
+                                    textFieldProps={{
+                                      label: attribute.value,
+                                      variant: 'standard',
+                                      fullWidth: true,
+                                      style: { marginTop: 20 },
+                                    }}
+                                  />
+                                );
+                              }
+                              if (includes(attribute.value, numberAttributes)) {
+                                return (
+                                  <Field
+                                    component={TextField}
+                                    variant="standard"
+                                    key={attribute.value}
+                                    name={attribute.value}
+                                    label={attribute.value}
+                                    fullWidth={true}
+                                    type="number"
+                                    style={{ marginTop: 20 }}
+                                  />
+                                );
+                              }
+                              if (includes(attribute.value, booleanAttributes)) {
+                                return (
+                                  <Field
+                                    component={SwitchField}
+                                    type="checkbox"
+                                    key={attribute.value}
+                                    name={attribute.value}
+                                    label={attribute.value}
+                                    fullWidth={true}
+                                    containerstyle={{ marginTop: 20 }}
+                                  />
+                                );
+                              }
+                              if (attribute.value === 'obsContent') {
+                                return (
+                                  <ArtifactField
+                                    key={attribute.value}
+                                    attributeName={attribute.value}
+                                    onChange={setFieldValue}
+                                  />
+                                );
+                              }
+                              if (attribute.value === 'name' && nameFieldDisabled === false) {
+                                return (
+                                  <Field
+                                    component={TextField}
+                                    variant="standard"
+                                    key={attribute.value}
+                                    name={attribute.value}
+                                    label={attribute.value}
+                                    fullWidth={true}
+                                    style={{ marginTop: 20 }}
+                                  />);
+                              }
+                              if (attribute.value !== 'name') {
+                                return (
+                                  <Field
+                                    component={TextField}
+                                    variant="standard"
+                                    key={attribute.value}
+                                    name={attribute.value}
+                                    label={attribute.value}
+                                    fullWidth={true}
+                                    style={{ marginTop: 20 }}
+                                  />);
+                              }
+                            })}
                           </div>
-                          {attributes.map((attribute) => {
-                            if (attribute.value === 'hashes') {
-                              if (selectedAttribute === 'MD5') {
-                                setNameFieldDisabled(true);
-                                return (
-                                  <div key={attribute.value} >
-                                    <Field
-                                      id="hashes_MD5"
-                                      disabled={keyFieldDisabled}
-                                      component={TextField}
-                                      variant="standard"
-                                      value={hashesMD5Value}
-                                      name="hashes_MD5"
-                                      label={t_i18n('hash_md5')}
-                                      fullWidth={true}
-                                      style={{ marginTop: 20 }
-                                      }
-                                      onChange={(name, value) => setHashesMD5Value(value)
-                                      }
-                                    />
-                                  </div>
-                                );
-                              }
-                              if (selectedAttribute === 'SHA-1') {
-                                setNameFieldDisabled(true);
-                                return (
-                                  <div key={attribute.value} >
-                                    <Field
-                                      id="hashes_SHA-1"
-                                      disabled={keyFieldDisabled}
-                                      component={TextField}
-                                      variant="standard"
-                                      value={hashesSHA1Value}
-                                      name="hashes_SHA-1"
-                                      label={t_i18n('hash_sha-1')}
-                                      fullWidth={true}
-                                      style={{ marginTop: 20 }
-                                      }
-                                      onChange={(name, value) => setHashesSHA1Value(value)}
-                                    />
-                                  </div>
-                                );
-                              }
-                              if (selectedAttribute === 'SHA-256') {
-                                console.log('hashesSHA256Value is ', hashesSHA256Value);
-                                setNameFieldDisabled(true);
-                                return (
-                                  <div key={attribute.value} >
-                                    <Field
-                                      id="hashes_SHA-256"
-                                      disabled={keyFieldDisabled}
-                                      component={TextField}
-                                      variant="standard"
-                                      value={hashesSHA256Value}
-                                      name="hashes_SHA-256"
-                                      label={t_i18n('hash_sha-256')}
-                                      fullWidth={true}
-                                      style={{ marginTop: 20 }
-                                      }
-                                      onChange={(name, value) => setHashesSHA256Value(value)}
-                                    />
-                                  </div>
-                                );
-                              }
-                              if (selectedAttribute === 'SHA-512') {
-                                setNameFieldDisabled(true);
-                                return (
-                                  <div key={attribute.value} >
-                                    <Field
-                                      id="hashes_SHA-512"
-                                      disabled={keyFieldDisabled}
-                                      component={TextField}
-                                      variant="standard"
-                                      value={hashesSHA512Value}
-                                      name="hashes_SHA-512"
-                                      label={t_i18n('hash_sha-512')}
-                                      fullWidth={true}
-                                      style={{ marginTop: 20 }
-                                      }
-                                      onChange={(name, value) => setHashesSHA512Value(value)}
-                                    />
-                                  </div>
-                                );
-                              }
-                            }
-                            if (isVocabularyField(status.type, attribute.value)) {
-                              return (
-                                <OpenVocabField
-                                  key={attribute.value}
-                                  label={t_i18n(attribute.value)}
-                                  type={fieldToCategory(
-                                    status.type,
-                                    attribute.value,
-                                  )}
-                                  name={attribute.value}
-                                  onChange={(name, value) => setFieldValue(name, value)
-                                  }
-                                  containerStyle={fieldSpacingContainerStyle}
-                                  multiple={false}
-                                />
-                              );
-                            }
-                            if (includes(attribute.value, dateAttributes)) {
-                              return (
-                                <Field
-                                  component={DateTimePickerField}
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  withSeconds={true}
-                                  textFieldProps={{
-                                    label: attribute.value,
-                                    variant: 'standard',
-                                    fullWidth: true,
-                                    style: { marginTop: 20 },
-                                  }}
-                                />
-                              );
-                            }
-                            if (includes(attribute.value, numberAttributes)) {
-                              return (
-                                <Field
-                                  component={TextField}
-                                  variant="standard"
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  label={attribute.value}
-                                  fullWidth={true}
-                                  type="number"
-                                  style={{ marginTop: 20 }}
-                                />
-                              );
-                            }
-                            if (includes(attribute.value, booleanAttributes)) {
-                              return (
-                                <Field
-                                  component={SwitchField}
-                                  type="checkbox"
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  label={attribute.value}
-                                  fullWidth={true}
-                                  containerstyle={{ marginTop: 20 }}
-                                />
-                              );
-                            }
-                            if (attribute.value === 'obsContent') {
-                              return (
-                                <ArtifactField
-                                  key={attribute.value}
-                                  attributeName={attribute.value}
-                                  onChange={setFieldValue}
-                                />
-                              );
-                            }
-                            if (attribute.value === 'name' && nameFieldDisabled === false) {
-                              return (
-                                <Field
-                                  component={TextField}
-                                  variant="standard"
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  label={attribute.value}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                />);
-                            }
-                            if (attribute.value !== 'name') {
-                              return (
-                                <Field
-                                  component={TextField}
-                                  variant="standard"
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  label={attribute.value}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                />);
-                            }
-                          })}
-                        </div>
-                        <CreatedByField
-                          name="createdBy"
-                          style={fieldSpacingContainerStyle}
-                          setFieldValue={setFieldValue}
-                        />
-                        <ObjectLabelField
-                          name="objectLabel"
-                          style={fieldSpacingContainerStyle}
-                          setFieldValue={setFieldValue}
-                          values={values.objectLabel}
-                        />
-                        <ObjectMarkingField
-                          name="objectMarking"
-                          style={fieldSpacingContainerStyle}
-                        />
-                        <ExternalReferencesField
-                          name="externalReferences"
-                          style={fieldSpacingContainerStyle}
-                          setFieldValue={setFieldValue}
-                          values={values.externalReferences}
-                        />
-                        <CustomFileUploader
-                          setFieldValue={setFieldValue}
-                          disabled={disabledBoolean}
-                        />
-                        <Field
-                          component={SwitchField}
-                          type="checkbox"
-                          name="createIndicator"
-                          label={t_i18n('Create an indicator from this observable')}
-                          containerstyle={{ marginTop: 20 }}
-                        />
-                        <div className={classes.buttons}>
-                          <Button
-                            variant={contextual ? 'text' : 'contained'}
-                            onClick={() => { handleReset; setNextForm(false); setFinalForm(false) }}
-                            disabled={isSubmitting}
-                            classes={{ root: classes.button }}
-                          >
-                            {t_i18n('Cancel')}
-                          </Button>
-                          <Button
-                            variant={contextual ? 'text' : 'contained'}
-                            color="secondary"
-                            disabled={isSubmitting && isValid}
-                            onClick={() => { submitForm(); }}
-                            classes={{ root: classes.button }}
-                          >
-                            {t_i18n('Create')}
-                          </Button>
-                        </div>
+                          <CreatedByField
+                            name="createdBy"
+                            style={fieldSpacingContainerStyle}
+                            setFieldValue={setFieldValue}
+                          />
+                          <ObjectLabelField
+                            name="objectLabel"
+                            style={fieldSpacingContainerStyle}
+                            setFieldValue={setFieldValue}
+                            values={values.objectLabel}
+                          />
+                          <ObjectMarkingField
+                            name="objectMarking"
+                            style={fieldSpacingContainerStyle}
+                          />
+                          <ExternalReferencesField
+                            name="externalReferences"
+                            style={fieldSpacingContainerStyle}
+                            setFieldValue={setFieldValue}
+                            values={values.externalReferences}
+                          />
+                          <CustomFileUploader
+                            setFieldValue={setFieldValue}
+                            disabled={disabledBoolean}
+                          />
+                          <Field
+                            component={SwitchField}
+                            type="checkbox"
+                            name="createIndicator"
+                            label={t_i18n('Create an indicator from this observable')}
+                            containerstyle={{ marginTop: 20 }}
+                          />
+                          <div className={classes.buttons}>
+                            <Button
+                              variant={contextual ? 'text' : 'contained'}
+                              onClick={() => { handleReset; setNextForm(false); setFinalForm(false); setMultiValue(false) }}
+                              disabled={isSubmitting}
+                              classes={{ root: classes.button }}
+                            >
+                              {t_i18n('Cancel')}
+                            </Button>
+                            <Button
+                              variant={contextual ? 'text' : 'contained'}
+                              color="secondary"
+                              disabled={isSubmitting && isValid}
+                              onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false);}}
+                              classes={{ root: classes.button }}
+                            >
+                              {t_i18n('Create')}
+                            </Button>
+                          </div>
+                        </div>}
                       </Form>
                     )}
                   </Formik>
@@ -1634,7 +1602,7 @@ const StixCyberObservableCreation = ({
                             variant={contextual ? 'text' : 'contained'}
                             color="secondary"
                             disabled={isSubmitting && isValid}
-                            onClick={() => { submitForm(); }}
+                            onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false) }}
                             classes={{ root: classes.button }}
                           >
                             {t_i18n('Create')}
@@ -1647,6 +1615,7 @@ const StixCyberObservableCreation = ({
                 </div>
               );
             } else {
+              console.log('entered else');
               return (
                 <Formik
                   initialValues={initialValues}
@@ -1896,7 +1865,7 @@ const StixCyberObservableCreation = ({
                           variant={contextual ? 'text' : 'contained'}
                           color="secondary"
                           disabled={isSubmitting && isValid}
-                          onClick={() => { submitForm(); }}
+                          onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false) }}
                           classes={{ root: classes.button }}
                         >
                           {t_i18n('Create')}
