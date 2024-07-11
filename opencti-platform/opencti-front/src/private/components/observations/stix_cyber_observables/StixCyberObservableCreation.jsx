@@ -248,6 +248,7 @@ const StixCyberObservableCreation = ({
   const [bulkValueFieldValueDisabled, setBulkValueFieldValueDisabled] = useState(false);
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
+  const [nameFieldDisabled, setNameFieldDisabled] = useState(false);
   const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
@@ -262,6 +263,7 @@ const StixCyberObservableCreation = ({
   const [multiValue, setMultiValue] = React.useState(false);
   const divRowStyle = { display: 'flex', flexWrap: 'wrap', float: 'right' };
   let hashesList = [];
+  let valueList = [];
   let algorithm = selectedAttribute.toLowerCase();
   let totalObservables = 0;
 
@@ -306,12 +308,19 @@ const StixCyberObservableCreation = ({
     setHashesSHA256Value('');
     setHashesSHA512Value('');
     setKeyFieldDisabled('');
+    setNameFieldDisabled(false);
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
     progressDialogStats.setBatchingCancelled(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
+    console.log('values');
+    console.log(values);
+    console.log('valueList');
+    console.log(valueList);
+    console.log('hashesList');
+    console.log(hashesList);
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
       if (valueList.length > 1) {
@@ -581,6 +590,8 @@ const StixCyberObservableCreation = ({
       if (selectedAttribute === 'NAME') {
         hashesListName = hashesListInitial;
       }
+      console.log('hashesList');
+      console.log(hashesList);
       const finalValues = {
         type: status.type,
         x_opencti_description:
@@ -609,7 +620,9 @@ const StixCyberObservableCreation = ({
       }
 
       const commit = async () => {
-        const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        console.log('valueList');
+        console.table(valueList);
         const batchSize = 5;
         // Launch Progress Bar, as value data is about to be processed.
         // Only need Progress Bar, if more than 1 element being processed
@@ -758,32 +771,35 @@ const StixCyberObservableCreation = ({
   };
   function BulkAddForm(props) {
     const handleCloseBulkAddForm = (val) => {
-      setNextForm(false);
-      setFinalForm(true);
+      console.log('val');
+      console.log(val);
       if (val != null && val.length > 0) {
+        setNextForm(false);
+        setFinalForm(true);
         setBulkValueFieldValueDisabled(true);
-        // END - Clear Attached File from CustomFileUploader
         setHashesMD5Value(bulkAddMsg);
         setHashesSHA1Value(bulkAddMsg);
         setHashesSHA256Value(bulkAddMsg);
         setHashesSHA512Value(bulkAddMsg);
         props.setValue('name', bulkAddMsg);
         setKeyFieldDisabled(true);
-        console.log('reached here (1)');
+        console.log('bulkValueFieldValue');
+        console.table(bulkValueFieldValue);
       } else {
+        setNextForm(false);
+        setFinalForm(false);
         setHashesMD5Value('');
         setHashesSHA1Value('');
         setHashesSHA256Value('');
         setHashesSHA512Value('');
         props.setValue('name', '');
         setKeyFieldDisabled(false);
-        console.log('reached here (2)');
       }
     }
     const handleParentSelectAttribute = (value) => {
       setSelectedAttribute(value);
-      console.log('Selected Attribute is ', selectedAttribute);
     };
+    console.log('bulkValueFieldValue is ', bulkValueFieldValue);
     return (
       <BulkAddFormComponent
         bulkValueFieldValue={bulkValueFieldValue}
@@ -1076,7 +1092,6 @@ const StixCyberObservableCreation = ({
             let message_string_bold = t_i18n('name, md5, sha1, sha256, sha512');
             let message_string_multi = `${t_i18n('Add multiple values for one of the following:')} ${message_string_bold}`;
             let message_string_single = `${t_i18n('Add individual values for one of the following:')} ${message_string_bold}`;
-            console.log('selectedAttribute is ', selectedAttribute);
             if (stixFileBoolean === true) {
               return (
                 <div>
@@ -1098,17 +1113,12 @@ const StixCyberObservableCreation = ({
                   </form>}
                   {nextForm && multiValue && <Formik
                     initialValues={initialValues}
-                    validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                    // validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                     onSubmit={onSubmit}
                     onReset={onReset}
                   >
                     {({
-                      submitForm,
-                      handleReset,
-                      isSubmitting,
                       setFieldValue,
-                      isValid,
-                      values,
                     }) => (
                       <Form
                         style={{
@@ -1129,7 +1139,7 @@ const StixCyberObservableCreation = ({
                   </Formik>}
                   {finalForm && <Formik
                     initialValues={initialValues}
-                    validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                    // validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                     onSubmit={onSubmit}
                     onReset={onReset}
                   >
@@ -1174,6 +1184,7 @@ const StixCyberObservableCreation = ({
                           {attributes.map((attribute) => {
                             if (attribute.value === 'hashes') {
                               if (selectedAttribute === 'MD5') {
+                                setNameFieldDisabled(true);
                                 return (
                                   <div key={attribute.value} >
                                     <Field
@@ -1194,6 +1205,7 @@ const StixCyberObservableCreation = ({
                                 );
                               }
                               if (selectedAttribute === 'SHA-1') {
+                                setNameFieldDisabled(true);
                                 return (
                                   <div key={attribute.value} >
                                     <Field
@@ -1213,6 +1225,8 @@ const StixCyberObservableCreation = ({
                                 );
                               }
                               if (selectedAttribute === 'SHA-256') {
+                                console.log('hashesSHA256Value is ', hashesSHA256Value);
+                                setNameFieldDisabled(true);
                                 return (
                                   <div key={attribute.value} >
                                     <Field
@@ -1232,6 +1246,7 @@ const StixCyberObservableCreation = ({
                                 );
                               }
                               if (selectedAttribute === 'SHA-512') {
+                                setNameFieldDisabled(true);
                                 return (
                                   <div key={attribute.value} >
                                     <Field
@@ -1320,16 +1335,30 @@ const StixCyberObservableCreation = ({
                                 />
                               );
                             }
-                            return (
-                              <Field
-                                component={TextField}
-                                variant="standard"
-                                key={attribute.value}
-                                name={attribute.value}
-                                label={attribute.value}
-                                fullWidth={true}
-                                style={{ marginTop: 20 }}
-                              />);
+                            if (attribute.value === 'name' && nameFieldDisabled === false) {
+                              return (
+                                <Field
+                                  component={TextField}
+                                  variant="standard"
+                                  key={attribute.value}
+                                  name={attribute.value}
+                                  label={attribute.value}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                />);
+                            }
+                            if (attribute.value !== 'name') {
+                              return (
+                                <Field
+                                  component={TextField}
+                                  variant="standard"
+                                  key={attribute.value}
+                                  name={attribute.value}
+                                  label={attribute.value}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                />);
+                            }
                           })}
                         </div>
                         <CreatedByField
@@ -1367,7 +1396,7 @@ const StixCyberObservableCreation = ({
                         <div className={classes.buttons}>
                           <Button
                             variant={contextual ? 'text' : 'contained'}
-                            onClick={() => { handleReset; setNextForm(false) }}
+                            onClick={() => { handleReset; setNextForm(false); setFinalForm(false) }}
                             disabled={isSubmitting}
                             classes={{ root: classes.button }}
                           >

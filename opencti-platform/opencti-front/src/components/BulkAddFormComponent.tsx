@@ -39,6 +39,7 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
   const handleTextChange = (event: any) => {
     setLocalBulkValueField(event.target.value);
     monitorBulkValue(event.target.value);
+    console.log('LocalBulkValueField is ', localBulkValueField);
   };
   useEffect(() => {
     setLocalBulkValueField([bulkValueFieldValue]);
@@ -91,10 +92,10 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
           />
         </Grid>
         <Grid item xs={8}>
-        </Grid>
-        <Grid item xs={2}>
           {warningVisible
             && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
+        </Grid>
+        <Grid item xs={2}>
           <Button onClick={handleCloseBulkAddForm}>
             {t_i18n('Cancel')}
           </Button>
