@@ -56,7 +56,8 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
         size={'small'}
         aria-label={'edit_values_button'}
         aria-labelledby={'edit_values_button'}
-        style={{ float: 'right', marginRight: 5, marginTop: 10 }} >
+        style={{ float: 'right', marginRight: 5, marginTop: 10 }}
+      >
         {t_i18n('Edit Values')}
       </Button>
       <Dialog

@@ -46,7 +46,6 @@ import ProgressDialogContainer, { progressDialogStats } from '../../../../compon
 import BulkAddComponent from '../../../../components/BulkAddComponent';
 import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
 import BulkAddFormComponent from '../../../../components/BulkAddFormComponent';
-import { Store24Hour } from 'mdi-material-ui';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
@@ -782,7 +781,7 @@ const StixCyberObservableCreation = ({
         props.setValue('name', '');
         setKeyFieldDisabled(false);
       }
-    }
+    };
     const handleParentSelectAttribute = (value) => {
       setSelectedAttribute(value);
     };
@@ -1075,9 +1074,9 @@ const StixCyberObservableCreation = ({
                 setMultiValue(false);
               }
             };
-            let message_string_bold = t_i18n('name, md5, sha1, sha256, sha512');
-            let message_string_multi = `${t_i18n('Add multiple values for one of the following:')} ${message_string_bold}`;
-            let message_string_single = `${t_i18n('Add individual values for one of the following:')} ${message_string_bold}`;
+            const message_string_bold = t_i18n('name, md5, sha1, sha256, sha512');
+            const message_string_multi = `${t_i18n('Add multiple values for one of the following:')} ${message_string_bold}`;
+            const message_string_single = `${t_i18n('Add individual values for one of the following:')} ${message_string_bold}`;
             if (stixFileBoolean === true) {
               return (
                 <div>
@@ -1093,7 +1092,7 @@ const StixCyberObservableCreation = ({
                         <FormControlLabel value="single" control={<Radio />} label={message_string_single} />
                       </RadioGroup>
                       <Button sx={{ mt: 1, mr: 1 }} type="submit" variant="outlined">
-                        {t_i18n("Continue")}
+                        {t_i18n('Continue')}
                       </Button>
                     </FormControl>
                   </form>}
@@ -1363,7 +1362,7 @@ const StixCyberObservableCreation = ({
                           <div className={classes.buttons}>
                             <Button
                               variant={contextual ? 'text' : 'contained'}
-                              onClick={() => { handleReset; setNextForm(false); setFinalForm(false); setMultiValue(false) }}
+                              onClick={() => { handleReset; setFinalForm(false); }}
                               disabled={isSubmitting}
                               classes={{ root: classes.button }}
                             >
@@ -1373,7 +1372,7 @@ const StixCyberObservableCreation = ({
                               variant={contextual ? 'text' : 'contained'}
                               color="secondary"
                               disabled={isSubmitting && isValid}
-                              onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false);}}
+                              onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false); }}
                               classes={{ root: classes.button }}
                             >
                               {t_i18n('Create')}
@@ -1389,7 +1388,7 @@ const StixCyberObservableCreation = ({
                     validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
                     onSubmit={onSubmit}
                     onReset={onReset}
-                  >
+                                              >
                     {({
                       submitForm,
                       handleReset,
@@ -1592,7 +1591,7 @@ const StixCyberObservableCreation = ({
                         <div className={classes.buttons}>
                           <Button
                             variant={contextual ? 'text' : 'contained'}
-                            onClick={() => { handleReset; setNextForm(false) }}
+                            onClick={() => { handleReset; setNextForm(false); }}
                             disabled={isSubmitting}
                             classes={{ root: classes.button }}
                           >
@@ -1602,7 +1601,7 @@ const StixCyberObservableCreation = ({
                             variant={contextual ? 'text' : 'contained'}
                             color="secondary"
                             disabled={isSubmitting && isValid}
-                            onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false) }}
+                            onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false); }}
                             classes={{ root: classes.button }}
                           >
                             {t_i18n('Create')}
@@ -1614,198 +1613,134 @@ const StixCyberObservableCreation = ({
                   }
                 </div>
               );
-            } else {
-              console.log('entered else');
-              return (
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
-                  onSubmit={onSubmit}
-                  onReset={onReset}
-                >
-                  {({
-                    submitForm,
-                    handleReset,
-                    isSubmitting,
-                    setFieldValue,
-                    isValid,
-                    values,
-                  }) => (
-                    <Form
-                      style={{
-                        margin: contextual ? '10px 0 0 0' : '20px 0 20px 0',
-                      }}
-                    >
-                      <div>
-                        <Field
-                          component={TextField}
-                          variant="standard"
-                          name="x_opencti_score"
-                          label={t_i18n('Score')}
-                          fullWidth={true}
-                          type="number"
-                        />
-                        <Field
-                          component={MarkdownField}
-                          name="x_opencti_description"
-                          label={t_i18n('Description')}
-                          fullWidth={true}
-                          multiline={true}
-                          rows="4"
-                          style={{ marginTop: 20 }}
-                        />
-                        {attributes.map((attribute) => {
-                          if (attribute.value === 'hashes') {
-                            return (
-                              <div key={attribute.value}>
-                                <Field
-                                  id="hashes_MD5"
-                                  disabled={keyFieldDisabled}
-                                  component={TextField}
-                                  variant="standard"
-                                  value={hashesMD5Value}
-                                  name="hashes_MD5"
-                                  label={t_i18n('hash_md5')}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                  onChange={(name, value) => setHashesMD5Value(value)}
-                                />
-                                <Field
-                                  id="hashes_SHA-1"
-                                  disabled={keyFieldDisabled}
-                                  component={TextField}
-                                  variant="standard"
-                                  value={hashesSHA1Value}
-                                  name="hashes_SHA-1"
-                                  label={t_i18n('hash_sha-1')}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                  onChange={(name, value) => setHashesSHA1Value(value)}
-                                />
-                                <Field
-                                  id="hashes_SHA-256"
-                                  disabled={keyFieldDisabled}
-                                  component={TextField}
-                                  variant="standard"
-                                  value={hashesSHA256Value}
-                                  name="hashes_SHA-256"
-                                  label={t_i18n('hash_sha-256')}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                  onChange={(name, value) => setHashesSHA256Value(value)}
-                                />
-                                <Field
-                                  id="hashes_SHA-512"
-                                  disabled={keyFieldDisabled}
-                                  component={TextField}
-                                  variant="standard"
-                                  value={hashesSHA512Value}
-                                  name="hashes_SHA-512"
-                                  label={t_i18n('hash_sha-512')}
-                                  fullWidth={true}
-                                  style={{ marginTop: 20 }}
-                                  onChange={(name, value) => setHashesSHA512Value(value)}
-                                />
-                              </div>
-                            );
-                          }
-                          if (isVocabularyField(status.type, attribute.value)) {
-                            return (
-                              <OpenVocabField
-                                key={attribute.value}
-                                label={t_i18n(attribute.value)}
-                                type={fieldToCategory(
-                                  status.type,
-                                  attribute.value,
-                                )}
-                                name={attribute.value}
-                                onChange={(name, value) => setFieldValue(name, value)
-                                }
-                                containerStyle={fieldSpacingContainerStyle}
-                                multiple={false}
-                              />
-                            );
-                          }
-                          if (includes(attribute.value, dateAttributes)) {
-                            return (
+            }
+            return (
+              <Formik
+                initialValues={initialValues}
+                validationSchema={stixCyberObservableValidationFinal(extraFieldsToValidate)}
+                onSubmit={onSubmit}
+                onReset={onReset}
+              >
+                {({
+                  submitForm,
+                  handleReset,
+                  isSubmitting,
+                  setFieldValue,
+                  isValid,
+                  values,
+                }) => (
+                  <Form
+                    style={{
+                      margin: contextual ? '10px 0 0 0' : '20px 0 20px 0',
+                    }}
+                  >
+                    <div>
+                      <Field
+                        component={TextField}
+                        variant="standard"
+                        name="x_opencti_score"
+                        label={t_i18n('Score')}
+                        fullWidth={true}
+                        type="number"
+                      />
+                      <Field
+                        component={MarkdownField}
+                        name="x_opencti_description"
+                        label={t_i18n('Description')}
+                        fullWidth={true}
+                        multiline={true}
+                        rows="4"
+                        style={{ marginTop: 20 }}
+                      />
+                      {attributes.map((attribute) => {
+                        if (attribute.value === 'hashes') {
+                          return (
+                            <div key={attribute.value}>
                               <Field
-                                component={DateTimePickerField}
-                                key={attribute.value}
-                                name={attribute.value}
-                                withSeconds={true}
-                                textFieldProps={{
-                                  label: attribute.value,
-                                  variant: 'standard',
-                                  fullWidth: true,
-                                  style: { marginTop: 20 },
-                                }}
-                              />
-                            );
-                          }
-                          if (includes(attribute.value, numberAttributes)) {
-                            return (
-                              <Field
+                                id="hashes_MD5"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
-                                key={attribute.value}
-                                name={attribute.value}
-                                label={attribute.value}
+                                value={hashesMD5Value}
+                                name="hashes_MD5"
+                                label={t_i18n('hash_md5')}
                                 fullWidth={true}
-                                type="number"
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesMD5Value(value)}
                               />
-                            );
-                          }
-                          if (includes(attribute.value, booleanAttributes)) {
-                            return (
                               <Field
-                                component={SwitchField}
-                                type="checkbox"
-                                key={attribute.value}
-                                name={attribute.value}
-                                label={attribute.value}
+                                id="hashes_SHA-1"
+                                disabled={keyFieldDisabled}
+                                component={TextField}
+                                variant="standard"
+                                value={hashesSHA1Value}
+                                name="hashes_SHA-1"
+                                label={t_i18n('hash_sha-1')}
                                 fullWidth={true}
-                                containerstyle={{ marginTop: 20 }}
+                                style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA1Value(value)}
                               />
-                            );
-                          }
-                          if (attribute.value === 'obsContent') {
-                            return (
-                              <ArtifactField
-                                key={attribute.value}
-                                attributeName={attribute.value}
-                                onChange={setFieldValue}
+                              <Field
+                                id="hashes_SHA-256"
+                                disabled={keyFieldDisabled}
+                                component={TextField}
+                                variant="standard"
+                                value={hashesSHA256Value}
+                                name="hashes_SHA-256"
+                                label={t_i18n('hash_sha-256')}
+                                fullWidth={true}
+                                style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA256Value(value)}
                               />
-                            );
-                          }
-                          if (attribute.value === 'value') {
-                            return (
-                              <div key={attribute.value}>
-                                <Tooltip title="Copy/paste text content">
-                                  <BulkAdd
-                                    setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
-                                  />
-                                </Tooltip>
-
-                                <Field
-                                  id="generic_value_field"
-                                  label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
-                                  aria-labelledby="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
-                                  aria-label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
-                                  disabled={genericValueFieldDisabled}
-                                  component={TextField}
-                                  variant="standard"
-                                  value={genericValueFieldValue}
-                                  key={attribute.value}
-                                  name={attribute.value}
-                                  fullWidth={true}
-                                  multiline={true}
-                                  rows="1"
-                                  onChange={(name, value) => setGenericValueFieldValue(value)}
-                                />
-                              </div>
-                            );
-                          }
+                              <Field
+                                id="hashes_SHA-512"
+                                disabled={keyFieldDisabled}
+                                component={TextField}
+                                variant="standard"
+                                value={hashesSHA512Value}
+                                name="hashes_SHA-512"
+                                label={t_i18n('hash_sha-512')}
+                                fullWidth={true}
+                                style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA512Value(value)}
+                              />
+                            </div>
+                          );
+                        }
+                        if (isVocabularyField(status.type, attribute.value)) {
+                          return (
+                            <OpenVocabField
+                              key={attribute.value}
+                              label={t_i18n(attribute.value)}
+                              type={fieldToCategory(
+                                status.type,
+                                attribute.value,
+                              )}
+                              name={attribute.value}
+                              onChange={(name, value) => setFieldValue(name, value)
+                              }
+                              containerStyle={fieldSpacingContainerStyle}
+                              multiple={false}
+                            />
+                          );
+                        }
+                        if (includes(attribute.value, dateAttributes)) {
+                          return (
+                            <Field
+                              component={DateTimePickerField}
+                              key={attribute.value}
+                              name={attribute.value}
+                              withSeconds={true}
+                              textFieldProps={{
+                                label: attribute.value,
+                                variant: 'standard',
+                                fullWidth: true,
+                                style: { marginTop: 20 },
+                              }}
+                            />
+                          );
+                        }
+                        if (includes(attribute.value, numberAttributes)) {
                           return (
                             <Field
                               component={TextField}
@@ -1814,68 +1749,128 @@ const StixCyberObservableCreation = ({
                               name={attribute.value}
                               label={attribute.value}
                               fullWidth={true}
+                              type="number"
                               style={{ marginTop: 20 }}
-                            />);
-                        })}
-                      </div>
-                      <CreatedByField
-                        name="createdBy"
-                        style={fieldSpacingContainerStyle}
-                        setFieldValue={setFieldValue}
-                      />
-                      <ObjectLabelField
-                        name="objectLabel"
-                        style={fieldSpacingContainerStyle}
-                        setFieldValue={setFieldValue}
-                        values={values.objectLabel}
-                      />
-                      <ObjectMarkingField
-                        name="objectMarking"
-                        style={fieldSpacingContainerStyle}
-                      />
-                      <ExternalReferencesField
-                        name="externalReferences"
-                        style={fieldSpacingContainerStyle}
-                        setFieldValue={setFieldValue}
-                        values={values.externalReferences}
-                      />
-                      <CustomFileUploader
-                        setFieldValue={setFieldValue}
-                        disabled={disabledBoolean}
-                      />
-                      <Field
-                        component={SwitchField}
-                        type="checkbox"
-                        name="createIndicator"
-                        label={t_i18n('Create an indicator from this observable')}
-                        containerstyle={{ marginTop: 20 }}
-                      />
-                      <div>
-                      </div>
-                      <div className={classes.buttons}>
-                        <Button
-                          variant={contextual ? 'text' : 'contained'}
-                          onClick={handleReset}
-                          disabled={isSubmitting}
-                          classes={{ root: classes.button }}
-                        >
-                          {t_i18n('Cancel')}
-                        </Button>
-                        <Button
-                          variant={contextual ? 'text' : 'contained'}
-                          color="secondary"
-                          disabled={isSubmitting && isValid}
-                          onClick={() => { submitForm(); setNextForm(false); setFinalForm(false); setMultiValue(false) }}
-                          classes={{ root: classes.button }}
-                        >
-                          {t_i18n('Create')}
-                        </Button>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
-              );
-            }
+                            />
+                          );
+                        }
+                        if (includes(attribute.value, booleanAttributes)) {
+                          return (
+                            <Field
+                              component={SwitchField}
+                              type="checkbox"
+                              key={attribute.value}
+                              name={attribute.value}
+                              label={attribute.value}
+                              fullWidth={true}
+                              containerstyle={{ marginTop: 20 }}
+                            />
+                          );
+                        }
+                        if (attribute.value === 'obsContent') {
+                          return (
+                            <ArtifactField
+                              key={attribute.value}
+                              attributeName={attribute.value}
+                              onChange={setFieldValue}
+                            />
+                          );
+                        }
+                        if (attribute.value === 'value') {
+                          return (
+                            <div key={attribute.value}>
+                              <Tooltip title="Copy/paste text content">
+                                <BulkAdd
+                                  setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                />
+                              </Tooltip>
+
+                              <Field
+                                id="generic_value_field"
+                                label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                aria-labelledby="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                aria-label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
+                                disabled={genericValueFieldDisabled}
+                                component={TextField}
+                                variant="standard"
+                                value={genericValueFieldValue}
+                                key={attribute.value}
+                                name={attribute.value}
+                                fullWidth={true}
+                                multiline={true}
+                                rows="1"
+                                onChange={(name, value) => setGenericValueFieldValue(value)}
+                              />
+                            </div>
+                          );
+                        }
+                        return (
+                          <Field
+                            component={TextField}
+                            variant="standard"
+                            key={attribute.value}
+                            name={attribute.value}
+                            label={attribute.value}
+                            fullWidth={true}
+                            style={{ marginTop: 20 }}
+                          />);
+                      })}
+                    </div>
+                    <CreatedByField
+                      name="createdBy"
+                      style={fieldSpacingContainerStyle}
+                      setFieldValue={setFieldValue}
+                    />
+                    <ObjectLabelField
+                      name="objectLabel"
+                      style={fieldSpacingContainerStyle}
+                      setFieldValue={setFieldValue}
+                      values={values.objectLabel}
+                    />
+                    <ObjectMarkingField
+                      name="objectMarking"
+                      style={fieldSpacingContainerStyle}
+                    />
+                    <ExternalReferencesField
+                      name="externalReferences"
+                      style={fieldSpacingContainerStyle}
+                      setFieldValue={setFieldValue}
+                      values={values.externalReferences}
+                    />
+                    <CustomFileUploader
+                      setFieldValue={setFieldValue}
+                      disabled={disabledBoolean}
+                    />
+                    <Field
+                      component={SwitchField}
+                      type="checkbox"
+                      name="createIndicator"
+                      label={t_i18n('Create an indicator from this observable')}
+                      containerstyle={{ marginTop: 20 }}
+                    />
+                    <div className={classes.buttons}>
+                      <Button
+                        variant={contextual ? 'text' : 'contained'}
+                        onClick={handleReset}
+                        disabled={isSubmitting}
+                        classes={{ root: classes.button }}
+                      >
+                        {t_i18n('Cancel')}
+                      </Button>
+                      <Button
+                        variant={contextual ? 'text' : 'contained'}
+                        color="secondary"
+                        disabled={isSubmitting && isValid}
+                        onClick={() => { submitForm(); }}
+                        classes={{ root: classes.button }}
+                      >
+                        {t_i18n('Create')}
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            );
           }
           return <div />;
         }}

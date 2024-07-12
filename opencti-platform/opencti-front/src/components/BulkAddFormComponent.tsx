@@ -1,11 +1,10 @@
-
 import Button from '@mui/material/Button';
 import React, { useEffect } from 'react';
 import { Grid, MenuItem } from '@mui/material';
 import Select from '@mui/material/Select';
+import { Field } from 'formik';
 import { useFormatter } from './i18n';
 import TextField from './TextField';
-import { Field } from 'formik';
 
 type BulkAddFormComponentProps = {
   bulkValueFieldValue: string
@@ -44,7 +43,7 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
     <React.Fragment>
       <Grid container spacing={1}>
         <Grid item xs={8}>
-          <h2 style={{ color: 'blue', }}>
+          <h2 style={{ color: 'blue' }}>
             {t_i18n('Add Multiple Observable Values')}
           </h2>
         </Grid>
@@ -56,23 +55,29 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
             {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
           </div>
         </Grid>
-        <Grid item xs={12}>
-          <div id="divSelectAttributes" style={{ paddingBottom: 15, width: 15 }}>
-            {t_i18n('Create Entities from multiple: ')}
-            <Select
-              name="attributes"
-              id="attributes"
-              value={selectedLocalAttribute}
-              onChange={handleSelectChange}
-            >
-              <MenuItem selected disabled>Select attribute</MenuItem>
-              <MenuItem value="NAME">name</MenuItem>
-              <MenuItem value="MD5">md5</MenuItem>
-              <MenuItem value="SHA-1">sha1</MenuItem>
-              <MenuItem value="SHA-256">sha256</MenuItem>
-              <MenuItem value="SHA-512">sha512</MenuItem>
-            </Select>
-          </div>
+        <Grid container item xs={12}>
+          <Grid item xs={4}>
+            <div>
+              {t_i18n('Create Entities from multiple: ')}
+            </div>
+          </Grid>
+          <Grid item xs={8}>
+            <div id="divSelectAttributes" style={{ paddingBottom: 15, width: 20 }}>
+              <Select
+                name="attributes"
+                id="attributes"
+                value={selectedLocalAttribute}
+                onChange={handleSelectChange}
+              >
+                <MenuItem selected disabled>Select attribute</MenuItem>
+                <MenuItem value="NAME">name</MenuItem>
+                <MenuItem value="MD5">md5</MenuItem>
+                <MenuItem value="SHA-1">sha1</MenuItem>
+                <MenuItem value="SHA-256">sha256</MenuItem>
+                <MenuItem value="SHA-512">sha512</MenuItem>
+              </Select>
+            </div>
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <Field
@@ -92,8 +97,6 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
             && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
         </Grid>
         <Grid item xs={8}>
-          {/* {warningVisible
-            && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)} */}
         </Grid>
         <Grid item xs={2}>
           <Button onClick={handleCloseBulkAddForm}>
