@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import React, { useEffect } from 'react';
 import { Field } from 'formik';
+import Alert from '@mui/material/Alert';
 import { useFormatter } from './i18n';
 import TextField from './TextField';
 
@@ -31,12 +32,8 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
   function monitorBulkValue(value: string) {
     const observable_lines = value.split('\n');
     // 50 lines have been entered based on \n newlines - warn user and remove Continue button.
-    if (observable_lines.length >= 51) {
-      if (warningVisible === false) {
-        setWarningVisible(true);
-      }
-    } else if (warningVisible === true) {
-      setWarningVisible(false);
+    if (observable_lines.length >= 51 !== warningVisible) {
+      setWarningVisible(observable_lines.length >= 51);
     }
   }
   useEffect(() => {
@@ -63,20 +60,16 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
       >
         <DialogTitle>{t_i18n('Add Multiple Observable Values')}</DialogTitle>
         <DialogContent style={{ marginTop: 0, paddingTop: 0 }}>
-          <Typography variant="subtitle1" style={{ whiteSpace: 'pre-line' }}>
-            <div style={{ fontSize: '13px', paddingBottom: '20px' }}>
-              {t_i18n('Enter one observable per line. Observables must be the same type.')}
-              <br></br>
-              {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
-            </div>
+          <Typography style={{ whiteSpace: 'pre-line', paddingBottom: '20px', fontSize: '13px' }}>
+            {t_i18n('Enter one observable per line. Observables must be the same type.')}
+            <br/>
+            {t_i18n('If you are adding more than 50 values, please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.
           </Typography>
           <Field
             component={TextField}
-            id="bulk_value_field"
             label={t_i18n('Multiple Values')}
             variant="outlined"
             value={localBulkValueField}
-            key="bulk_value_field"
             name="bulk_value_field"
             fullWidth={true}
             multiline={true}
@@ -84,13 +77,13 @@ const BulkAddComponent: React.FC<BulkAddComponentProps> = ({
             onChange={(name: string, value: string) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
           />
           {warningVisible
-                        && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
+            && (<Alert severity="warning">{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</Alert>)}
           <DialogActions>
             <Button onClick={localHandleCancelClearBulkModal}>
               {t_i18n('Cancel')}
             </Button>
             {!warningVisible && (<Button color="secondary" onClick={() => handleCloseBulkModal(localBulkValueField)}>
-                {t_i18n('Continue')}
+              {t_i18n('Continue')}
             </Button>)}
           </DialogActions>
         </DialogContent>

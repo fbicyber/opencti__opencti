@@ -83,6 +83,20 @@ const CustomFileUploader: FunctionComponent<CustomFileUploadProps> = ({
     }
   }, [formikErrors]);
 
+  useEffect(() => {
+    if (disabled) {
+      if (fileNameForDisplay !== '') {
+        setFileNameForDisplay('');
+        // Clear the actual attached file, allows for onChange to detect if user wants to re-attach same file
+        // if field becomes enabled again.
+        const currentAttachedFile = document.getElementById('customFileAttachedRef') as HTMLInputElement || null;
+        if (currentAttachedFile) {
+          currentAttachedFile.value = '';
+        }
+      }
+    }
+  }, [disabled]);
+
   const onChange = async (event: FormEvent) => {
     const inputElement = event.target as HTMLInputElement;
     const eventTargetValue = inputElement.value as string;

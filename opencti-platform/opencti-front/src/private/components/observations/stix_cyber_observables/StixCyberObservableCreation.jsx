@@ -46,6 +46,7 @@ import ProgressDialogContainer, { progressDialogStats } from '../../../../compon
 import BulkAddComponent from '../../../../components/BulkAddComponent';
 import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
 import BulkAddFormComponent from '../../../../components/BulkAddFormComponent';
+import StixCyberObservableBulkAdd from './StixCyberObservableBulkAdd';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
@@ -249,7 +250,7 @@ const StixCyberObservableCreation = ({
   const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
   const [selectedAttribute, setSelectedAttribute] = useState('');
   const [nameFieldDisabled, setNameFieldDisabled] = useState(false);
-  const bulkAddMsg = t_i18n('Multiple values entered. Edit with the TT button');
+  const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
@@ -1780,8 +1781,15 @@ const StixCyberObservableCreation = ({
                           return (
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
-                                <BulkAdd
-                                  setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                <StixCyberObservableBulkAdd
+                                  genericValueFieldValue={genericValueFieldValue}
+                                  setBulkValueFieldValue={setBulkValueFieldValue}
+                                  bulkValueFieldValue={bulkValueFieldValue}
+                                  setFieldValue={setFieldValue}
+                                  setGenericValueFieldDisabled={setGenericValueFieldDisabled}
+                                  genericValueFieldDisabled={genericValueFieldDisabled}
+                                  setGenericValueFieldValue={setGenericValueFieldValue}
+                                  bulkAddMsg={bulkAddMsg}
                                 />
                               </Tooltip>
 
@@ -1813,8 +1821,10 @@ const StixCyberObservableCreation = ({
                             label={attribute.value}
                             fullWidth={true}
                             style={{ marginTop: 20 }}
-                          />);
-                      })}
+                          />
+                          );
+                      }
+                      )}
                     </div>
                     <CreatedByField
                       name="createdBy"
