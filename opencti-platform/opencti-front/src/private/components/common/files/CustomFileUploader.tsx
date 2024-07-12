@@ -5,14 +5,15 @@ import { Theme } from '@mui/material/styles/createTheme';
 import makeStyles from '@mui/styles/makeStyles';
 import classNames from 'classnames';
 import InputLabel from '@mui/material/InputLabel';
+import { FieldProps } from 'formik';
 import VisuallyHiddenInput from '../VisuallyHiddenInput';
 import { useFormatter } from '../../../../components/i18n';
 import { truncate } from '../../../../utils/String';
 
-interface CustomFileUploadProps {
+interface CustomFileUploadProps extends Partial<FieldProps<File | null | undefined>> {
   setFieldValue: (
     field: string,
-    value: File | string | undefined,
+    value: File | string | null | undefined,
     shouldValidate?: boolean | undefined,
   ) => Promise<unknown>;
   isEmbeddedInExternalReferenceCreation?: boolean;
