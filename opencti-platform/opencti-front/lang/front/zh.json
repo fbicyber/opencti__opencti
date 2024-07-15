@@ -1656,6 +1656,7 @@
   "Multiple entities selected": "已选择多个实体",
   "Multiple value entry is required or Cancel this form": "需要多个值输入或取消此表单",
   "Multiple Values": "多个值",
+  "Multiple values entered. Edit by clicking Add Multiple Values": "输入多个值。通过单击“添加多个值”进行编辑",
   "Multiple values entered. Edit with the TT button": "输入多个值。使用 TT 按钮进行编辑",
   "Mutex": "互斥体",
   "My CSV file contains headers": "我的CSV文件包含标题",

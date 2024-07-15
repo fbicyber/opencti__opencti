@@ -43,7 +43,6 @@ import { convertMarking } from '../../../../utils/edition';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
-import BulkAddComponent from '../../../../components/BulkAddComponent';
 import BulkAddDialogComponent from '../../../../components/BulkAddDialogComponent';
 import BulkAddFormComponent from '../../../../components/BulkAddFormComponent';
 import StixCyberObservableBulkAdd from './StixCyberObservableBulkAdd';
@@ -253,7 +252,6 @@ const StixCyberObservableCreation = ({
   const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
-  const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [hashesMD5Value, setHashesMD5Value] = React.useState('');
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
   const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
@@ -574,10 +572,10 @@ const StixCyberObservableCreation = ({
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
       let hashesListInitial;
-
       if (hashesList.length >= 1) {
         hashesListInitial = hashesList.slice(0, 1)[0];
-      } else {
+      }
+      if (adaptedValues.hashes) {
         hashesListInitial = adaptedValues.hashes[0].hash;
         algorithm = adaptedValues.hashes[0].algorithm;
       }
@@ -865,57 +863,6 @@ const StixCyberObservableCreation = ({
     setValue: PropTypes.func,
   };
 
-  function BulkAdd(props) {
-    const handleOpenBulkModal = () => {
-      if (genericValueFieldValue != null && genericValueFieldValue.length > 0 && genericValueFieldValue !== bulkAddMsg) {
-        // Trim the field to avoid inserting whitespace as a default population value
-        setBulkValueFieldValue(genericValueFieldValue.trim());
-      }
-      setOpenBulkModal(true);
-    };
-    const handleCloseBulkModal = (val) => {
-      setOpenBulkModal(false);
-      if (val != null && val.length > 0) {
-        setBulkValueFieldValue(val);
-        // Clear Attached File marker used by CustomFileUploader interaction to indicate a file need processing
-        props.setValue('file', null);
-        // This will disable the file upload button in addition disabling the value box for direct input.
-        setGenericValueFieldDisabled(true);
-        setBulkValueFieldValueDisabled(true);
-        // Swap value box message to display that TT was used to input multiple values.
-        setGenericValueFieldValue(bulkAddMsg);
-      } else {
-        setBulkValueFieldValue('');
-        setGenericValueFieldValue('');
-        setGenericValueFieldDisabled(false);
-        setBulkValueFieldValueDisabled(false);
-      }
-    };
-    const localHandleCancelClearBulkModal = () => {
-      setOpenBulkModal(false);
-      if (!genericValueFieldDisabled) {
-        // If one-liner field isn't disabled, then you are it seems deciding
-        // not to use the bulk add feature, so we will clear the field, since its population
-        // is used to process the bul_value_field versus the generic_value_field
-        setBulkValueFieldValue('');
-        setGenericValueFieldValue('');
-      }
-      // else - you previously entered data and you just are canceling out of the popup window
-      // but keeping your entry in the form.
-    };
-    return (
-      <BulkAddComponent
-        openBulkModal={openBulkModal}
-        bulkValueFieldValue={bulkValueFieldValue}
-        handleOpenBulkModal={handleOpenBulkModal}
-        handleCloseBulkModal={handleCloseBulkModal}
-        localHandleCancelClearBulkModal={localHandleCancelClearBulkModal}
-      />
-    );
-  }
-  BulkAdd.propTypes = {
-    setValue: PropTypes.func,
-  };
   let stixFileBoolean = false;
   const renderForm = () => {
     if (status.type === 'StixFile') {
@@ -1792,7 +1739,6 @@ const StixCyberObservableCreation = ({
                                   bulkAddMsg={bulkAddMsg}
                                 />
                               </Tooltip>
-
                               <Field
                                 id="generic_value_field"
                                 label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
@@ -1822,9 +1768,8 @@ const StixCyberObservableCreation = ({
                             fullWidth={true}
                             style={{ marginTop: 20 }}
                           />
-                          );
-                      }
-                      )}
+                        );
+                      })}
                     </div>
                     <CreatedByField
                       name="createdBy"
