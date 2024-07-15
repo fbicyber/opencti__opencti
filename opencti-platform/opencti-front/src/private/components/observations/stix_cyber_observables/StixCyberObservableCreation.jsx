@@ -668,10 +668,10 @@ const StixCyberObservableCreation = ({
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
       let hashesListInitial;
-
       if (hashesList.length >= 1) {
         hashesListInitial = hashesList.slice(0, 1)[0];
-      } else {
+      }
+      if (adaptedValues.hashes) {
         hashesListInitial = adaptedValues.hashes[0].hash;
         algorithm = adaptedValues.hashes[0].algorithm;
       }
