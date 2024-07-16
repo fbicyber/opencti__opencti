@@ -24,6 +24,7 @@ interface CustomFileUploadProps extends Partial<FieldProps<File | null | undefin
   acceptMimeTypes?: string; // html input "accept" with MIME types only
   sizeLimit?: number; // in bytes
   disabled?: boolean;
+  noFileSelectedLabel?: string
 }
 
 // Deprecated - https://mui.com/system/styles/basics/
