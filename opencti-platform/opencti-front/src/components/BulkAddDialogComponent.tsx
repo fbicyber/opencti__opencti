@@ -4,6 +4,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import Alert from '@mui/material/Alert';
 import React, { useEffect } from 'react';
 import { Field } from 'formik';
 import { MenuItem } from '@mui/material';
@@ -104,7 +105,7 @@ const BulkAddDialogComponent: React.FC<BulkAddDialogComponentProps> = ({
             onChange={(name: string, value: string[]) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
           />
           {warningVisible
-            && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
+            && (<Alert severity="warning">{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</Alert>)}
           <DialogActions>
             <Button onClick={handleCloseBulkAddDialog}>
               {t_i18n('Cancel')}

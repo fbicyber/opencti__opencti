@@ -901,6 +901,7 @@ const StixCyberObservableCreation = ({
             let extraFieldsToValidate = null;
             let requiredOneOfFields = [];
             let disabledBoolean = false;
+            const exceededMessage = t_i18n('You have exceeded the max number of values.');
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -921,33 +922,33 @@ const StixCyberObservableCreation = ({
                 extraFieldsToValidate = {
                   hashes_MD5: Yup
                     .string()
-                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name', 'bulk_value_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(md5Regex, t_i18n('MD5 values can only include A-F and 0-9, 32 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-1': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name', 'bulk_value_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha1Regex, t_i18n('SHA-1 values can only include A-F and 0-9, 40 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-256': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name', 'bulk_value_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha256Regex, t_i18n('SHA-256 values can only include A-F and 0-9, 64 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-512': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name', 'bulk_value_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha512Regex, t_i18n('SHA-512 values can only include A-F and 0-9, 128 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
-                  name: Yup
+                  bulk_value_field: Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
-                      then: () => Yup.string().required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-256', 'name'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
+                      then: () => Yup.string().required(t_i18n('Multiple value entry is required or Cancel this form')).test('len', exceededMessage, (val) => val.split('\n').length < 51),
                     }),
                 };
 
@@ -956,23 +957,26 @@ const StixCyberObservableCreation = ({
                   ['hashes_MD5', 'hashes_SHA-256'],
                   ['hashes_MD5', 'hashes_SHA-512'],
                   ['hashes_MD5', 'name'],
+                  ['hashes_MD5', 'bulk_value_field'],
                   // ['hashes_SHA-1', 'hashes_MD5'],
                   ['hashes_SHA-1', 'hashes_SHA-256'],
                   ['hashes_SHA-1', 'hashes_SHA-512'],
                   ['hashes_SHA-1', 'name'],
+                  ['hashes_SHA-1', 'bulk_value_field'],
                   // ['hashes_SHA-256', 'hashes_MD5'],
                   // ['hashes_SHA-256', 'hashes_SHA-1'],
                   ['hashes_SHA-256', 'hashes_SHA-512'],
                   ['hashes_SHA-256', 'name'],
+                  ['hashes_SHA-256', 'bulk_value_field'],
                   // ['hashes_SHA-512', 'hashes_MD5'],
                   // ['hashes_SHA-512', 'hashes_SHA-1'],
                   // ['hashes_SHA-512', 'hashes_SHA-256']
                   ['hashes_SHA-512', 'name'],
+                  ['hashes_SHA-512', 'bulk_value_field'],
                 ];
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
                 // Dynamically include value field for Singular Observable type Object form validation
-                const exceededMessage = t_i18n('You have exceeded the max number of values.');
                 extraFieldsToValidate = {
                   [attribute.value]: Yup
                     .string()
@@ -1089,19 +1093,17 @@ const StixCyberObservableCreation = ({
                               rows="4"
                               style={{ marginTop: 20 }}
                             />
-                            <div id="hiddenDiv" style={(divRowStyle)}>
-                              <Tooltip title="Copy/paste text content">
-                                <BulkAddDialog
-                                  setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
-                                />
-                              </Tooltip>
-                            </div>
                             {attributes.map((attribute) => {
                               if (attribute.value === 'hashes') {
                                 if (selectedAttribute === 'MD5') {
                                   setNameFieldDisabled(true);
                                   return (
                                     <div key={attribute.value} >
+                                      <Tooltip title="Copy/paste text content">
+                                        <BulkAddDialog
+                                          setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                        />
+                                      </Tooltip>
                                       <Field
                                         id="hashes_MD5"
                                         disabled={keyFieldDisabled}
@@ -1123,6 +1125,11 @@ const StixCyberObservableCreation = ({
                                   setNameFieldDisabled(true);
                                   return (
                                     <div key={attribute.value} >
+                                      <Tooltip title="Copy/paste text content">
+                                        <BulkAddDialog
+                                          setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                        />
+                                      </Tooltip>
                                       <Field
                                         id="hashes_SHA-1"
                                         disabled={keyFieldDisabled}
@@ -1143,6 +1150,11 @@ const StixCyberObservableCreation = ({
                                   setNameFieldDisabled(true);
                                   return (
                                     <div key={attribute.value} >
+                                      <Tooltip title="Copy/paste text content">
+                                        <BulkAddDialog
+                                          setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                        />
+                                      </Tooltip>
                                       <Field
                                         id="hashes_SHA-256"
                                         disabled={keyFieldDisabled}
@@ -1163,6 +1175,11 @@ const StixCyberObservableCreation = ({
                                   setNameFieldDisabled(true);
                                   return (
                                     <div key={attribute.value} >
+                                      <Tooltip title="Copy/paste text content">
+                                        <BulkAddDialog
+                                          setValue={(field_name, new_value) => setFieldValue(field_name, new_value)}
+                                        />
+                                      </Tooltip>
                                       <Field
                                         id="hashes_SHA-512"
                                         disabled={keyFieldDisabled}
@@ -1254,6 +1271,7 @@ const StixCyberObservableCreation = ({
                                   <Field
                                     component={TextField}
                                     variant="standard"
+                                    disabled={keyFieldDisabled}
                                     key={attribute.value}
                                     name={attribute.value}
                                     label={attribute.value}

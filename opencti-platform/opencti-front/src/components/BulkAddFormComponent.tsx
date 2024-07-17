@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button';
 import React, { useEffect } from 'react';
 import { Grid, MenuItem } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import Select from '@mui/material/Select';
 import { Field } from 'formik';
 import { useFormatter } from './i18n';
@@ -94,7 +95,7 @@ const BulkAddFormComponent: React.FC<BulkAddFormComponentProps> = ({
             onChange={(name: string, value: string[]) => { setLocalBulkValueField(value); monitorBulkValue(value); }}
           />
           {warningVisible
-            && (<div style={{ color: 'red' }}>{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</div>)}
+            && (<Alert severity="warning">{t_i18n('Remove values or please upload them through')} <a href='/dashboard/data/import'>{t_i18n('Imports')}</a>.</Alert>)}
         </Grid>
         <Grid item xs={8}>
         </Grid>

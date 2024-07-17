@@ -1665,7 +1665,7 @@
   "Name": "Name",
   "name": "name",
   "Name must be at least 2 characters": "Name must be at least 2 characters",
-  "name, md5, sha1, sha256, sha512": "Name, md5, sha1, sha256, sha512",
+  "name, md5, sha1, sha256, sha512": "name, md5, sha1, sha256, sha512",
   "Narrative": "Narrative",
   "Narratives": "Narratives",
   "Nationality": "Nationality",
