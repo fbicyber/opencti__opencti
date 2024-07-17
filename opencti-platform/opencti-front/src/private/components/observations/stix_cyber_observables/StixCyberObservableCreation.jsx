@@ -252,6 +252,8 @@ const StixCyberObservableCreation = ({
   const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [openBulkModal, setOpenBulkModal] = React.useState(false);
+  const [multiValueButtonVisible, setMultiValueButtonVisible] = React.useState(false);
   const [hashesMD5Value, setHashesMD5Value] = React.useState('');
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
   const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
@@ -312,6 +314,13 @@ const StixCyberObservableCreation = ({
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
     progressDialogStats.setBatchingCancelled(true);
+  };
+  const handleOpenBulkModal = () => {
+    if (genericValueFieldValue != null && genericValueFieldValue.length > 0 && genericValueFieldValue !== bulkAddMsg) {
+      // Trim the field to avoid inserting whitespace as a default population value
+      setBulkValueFieldValue(genericValueFieldValue.trim());
+    }
+    setOpenBulkModal(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
@@ -944,6 +953,12 @@ const StixCyberObservableCreation = ({
                       is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha512Regex, t_i18n('SHA-512 values can only include A-F and 0-9, 128 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
+                  name: Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512'], {
+                      is: (a, b, c, d) => !a && !b && !c && !d,
+                      then: () => Yup.string().required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
                   bulk_value_field: Yup
                     .string()
                     .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-256', 'name'], {
@@ -1007,6 +1022,7 @@ const StixCyberObservableCreation = ({
               ...stixCyberObservableValidationBaseFields,
               ...extraRequiredFields,
             }, requiredOneOfFields);
+            setMultiValueButtonVisible(false);
 
             if (genericValueFieldDisabled === true || bulkValueFieldValueDisabled === true) {
               disabledBoolean = true;
@@ -1743,6 +1759,7 @@ const StixCyberObservableCreation = ({
                           );
                         }
                         if (attribute.value === 'value') {
+                          setMultiValueButtonVisible(true);
                           return (
                             <div key={attribute.value}>
                               <Tooltip title="Copy/paste text content">
@@ -1755,6 +1772,8 @@ const StixCyberObservableCreation = ({
                                   genericValueFieldDisabled={genericValueFieldDisabled}
                                   setGenericValueFieldValue={setGenericValueFieldValue}
                                   bulkAddMsg={bulkAddMsg}
+                                  openBulkModal={openBulkModal}
+                                  setOpenBulkModal={setOpenBulkModal}
                                 />
                               </Tooltip>
                               <Field
@@ -1871,6 +1890,17 @@ const StixCyberObservableCreation = ({
           onClose={localHandleClose}
         >
           <div className={classes.header}>
+            {(status.type && multiValueButtonVisible) && (
+              <Button
+                onClick={handleOpenBulkModal}
+                variant={'outlined'}
+                size={'small'}
+                aria-label={'add_multiple_values_button'}
+                aria-labelledby={'add_multiple_values_button'}
+                style={{ float: 'right', marginRight: 5, marginTop: 0 }}
+              >
+                {t_i18n('Add Multiple Values')}
+              </Button>)}
             <IconButton
               aria-label="Close"
               className={classes.closeButton}
@@ -1886,7 +1916,6 @@ const StixCyberObservableCreation = ({
             {!status.type ? renderList() : renderForm()}
           </div>
         </Drawer>
-
         <ProgressDialogContainer
           openProgressDialog={openProgressDialog}
           bulkValueFieldValue={bulkValueFieldValue}
