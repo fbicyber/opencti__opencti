@@ -244,9 +244,19 @@ const StixCyberObservableCreation = ({
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
   const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
-  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [bulkValueFieldValueDisabled, setBulkValueFieldValueDisabled] = useState(false);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [multiValueButtonVisible, setMultiValueButtonVisible] = React.useState(false);
+  const [isStixFile, setIsStixFile] = React.useState(false);
+  const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState('');
+  const [nameFieldDisabled, setNameFieldDisabled] = useState(false);
+  const [hashesMD5Value, setHashesMD5Value] = React.useState('');
+  const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
+  const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
+  const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
+  const [openBulkAddDialog, setOpenBulkAddDialog] = React.useState(false);
 
   const progressReset = () => {
     setOpenProgressDialog(false);
@@ -258,6 +268,13 @@ const StixCyberObservableCreation = ({
     progressDialogStats.setBatchingCancelled(false);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
+    totalObservables = 0;
+    setHashesMD5Value('');
+    setHashesSHA1Value('');
+    setHashesSHA256Value('');
+    setHashesSHA512Value('');
+    setKeyFieldDisabled('');
+    setNameFieldDisabled(false);
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -269,6 +286,29 @@ const StixCyberObservableCreation = ({
       setBulkValueFieldValue(genericValueFieldValue.trim());
     }
     setOpenBulkModal(true);
+  };
+  const handleOpenBulkAddDialog = () => {
+    if (hashesMD5Value != null && hashesMD5Value.length > 0 && hashesMD5Value !== bulkAddMsg) {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_MD5', hashesMD5Value.trim());
+      setBulkValueFieldValue(hashesMD5Value.trim());
+    }
+    if (hashesSHA1Value != null && hashesSHA1Value.length > 0 && hashesSHA1Value !== bulkAddMsg && selectedAttribute === 'SHA-1') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-1', hashesSHA1Value.trim());
+      setBulkValueFieldValue(hashesSHA1Value.trim());
+    }
+    if (hashesSHA256Value != null && hashesSHA256Value.length > 0 && hashesSHA256Value !== bulkAddMsg && selectedAttribute === 'SHA-256') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-256', hashesSHA256Value.trim());
+      setBulkValueFieldValue(hashesSHA256Value.trim());
+    }
+    if (hashesSHA512Value != null && hashesSHA512Value.length > 0 && hashesSHA512Value !== bulkAddMsg && selectedAttribute === 'SHA-512') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-512', hashesSHA512Value.trim());
+      setBulkValueFieldValue(hashesSHA512Value.trim());
+    }
+    setOpenBulkAddDialog(true);
   };
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
@@ -698,6 +738,9 @@ const StixCyberObservableCreation = ({
               ...extraRequiredFields,
             }, requiredOneOfFields);
             setMultiValueButtonVisible(false);
+            if (status.type === 'StixFile') {
+              setIsStixFile(true);
+            }
 
             return (
               <Formik
@@ -739,6 +782,7 @@ const StixCyberObservableCreation = ({
                       />
                       {attributes.map((attribute) => {
                         if (attribute.value === 'hashes') {
+                          setMultiValueButtonVisible(true);
                           return (
                             <div key={attribute.value}>
                               <Field
@@ -983,7 +1027,7 @@ const StixCyberObservableCreation = ({
           <div className={classes.header}>
             {(status.type && multiValueButtonVisible) && (
               <Button
-                onClick={handleOpenBulkModal}
+                onClick={isStixFile ? handleOpenBulkAddDialog : handleOpenBulkModal}
                 variant={'outlined'}
                 size={'small'}
                 aria-label={'add_multiple_values_button'}
