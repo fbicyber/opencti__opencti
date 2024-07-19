@@ -41,6 +41,7 @@ import useAttributes from '../../../../utils/hooks/useAttributes';
 import CreateEntityControlledDial from '../../../../components/CreateEntityControlledDial';
 import ProgressDialogContainer, { progressDialogStats } from '../../../../components/ProgressDialog';
 import StixCyberObservableBulkAdd from './StixCyberObservableBulkAdd';
+import StixCyberObservableBulkAddDialog from './StixCyberObservableBulkAddDialog';
 
 // Sleep Function used to:
 // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
@@ -244,9 +245,51 @@ const StixCyberObservableCreation = ({
   const [genericValueFieldDisabled, setGenericValueFieldDisabled] = useState(false);
   const bulkAddMsg = t_i18n('Multiple values entered. Edit by clicking Add Multiple Values');
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
-  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState('');
+  const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
+  const [bulkValueFieldValueDisabled, setBulkValueFieldValueDisabled] = useState(false);
+  const [bulkHashEnabled, setBulkHashEnabled] = useState(false);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
+  const [openBulkAddDialog, setOpenBulkAddDialog] = React.useState(false);
   const [multiValueButtonVisible, setMultiValueButtonVisible] = React.useState(false);
+  const [keyFieldDisabled, setKeyFieldDisabled] = useState(false);
+  const [selectedAttribute, setSelectedAttribute] = useState('');
+  const [nameFieldDisabled, setNameFieldDisabled] = useState(false);
+  const [hashesMD5Value, setHashesMD5Value] = React.useState('');
+  const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
+  const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
+  const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
+  const divRowStyle = { display: 'flex', flexWrap: 'wrap', float: 'right' };
+  let hashesList = [];
+  let valueList = [];
+  let algorithm = selectedAttribute.toLowerCase();
+  let totalObservables = 0;
+
+  const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
+    commitMutation({
+      mutation: stixCyberObservableMutation,
+      variables: finalValues,
+      updater: (store) => insertNode(
+        store,
+        paginationKey,
+        paginationOptions,
+        'stixCyberObservableAdd',
+      ),
+      onError: (error) => {
+        handleErrorInForm(error, setErrors);
+        setSubmitting(false);
+      },
+      setSubmitting,
+      onCompleted: () => {
+        // Toast Message on Add Success
+        MESSAGING$.notifySuccess(t_i18n('Observable successfully added'));
+        setSubmitting(false);
+        resetForm();
+        setGenericValueFieldDisabled(false);
+        setBulkValueFieldValueDisabled(false);
+        localHandleClose();
+      },
+    });
+  };
 
   const progressReset = () => {
     setOpenProgressDialog(false);
@@ -258,6 +301,13 @@ const StixCyberObservableCreation = ({
     progressDialogStats.setBatchingCancelled(false);
     setGenericValueFieldValue('');
     setBulkValueFieldValue('');
+    totalObservables = 0;
+    setHashesMD5Value('');
+    setHashesSHA1Value('');
+    setHashesSHA256Value('');
+    setHashesSHA512Value('');
+    setKeyFieldDisabled('');
+    setNameFieldDisabled(false);
   };
   const handleClickCloseProgress = () => {
     setOpenProgressDialog(false);
@@ -270,10 +320,39 @@ const StixCyberObservableCreation = ({
     }
     setOpenBulkModal(true);
   };
+  const handleOpenBulkAddDialog = () => {
+    if (hashesMD5Value != null && hashesMD5Value.length > 0 && hashesMD5Value !== bulkAddMsg) {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_MD5', hashesMD5Value.trim());
+      setBulkValueFieldValue(hashesMD5Value.trim());
+    }
+    if (hashesSHA1Value != null && hashesSHA1Value.length > 0 && hashesSHA1Value !== bulkAddMsg && selectedAttribute === 'SHA-1') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-1', hashesSHA1Value.trim());
+      setBulkValueFieldValue(hashesSHA1Value.trim());
+    }
+    if (hashesSHA256Value != null && hashesSHA256Value.length > 0 && hashesSHA256Value !== bulkAddMsg && selectedAttribute === 'SHA-256') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-256', hashesSHA256Value.trim());
+      setBulkValueFieldValue(hashesSHA256Value.trim());
+    }
+    if (hashesSHA512Value != null && hashesSHA512Value.length > 0 && hashesSHA512Value !== bulkAddMsg && selectedAttribute === 'SHA-512') {
+      // Trim the field to avoid inserting whitespace as a default population value
+      // props.hashes.push('hashes_SHA-512', hashesSHA512Value.trim());
+      setBulkValueFieldValue(hashesSHA512Value.trim());
+    }
+    setOpenBulkAddDialog(true);
+  };
+
   const onSubmit = (values, { setSubmitting, setErrors, resetForm }) => {
     let adaptedValues = values;
     function handlePromiseResult(valueList) {
-      const totalObservables = valueList.length;
+      if (valueList.length > 1) {
+        totalObservables = valueList.length;
+      }
+      if (hashesList.length > 1) {
+        totalObservables = hashesList.length;
+      }
       let closeFormWithAnySuccess = false;
       if (progressDialogStats.getBatchingCompleted() === true) {
         if (progressDialogStats.getErrorCount() > 0) {
@@ -307,6 +386,7 @@ const StixCyberObservableCreation = ({
       // Close the form if any observables were successfully added.
       if (closeFormWithAnySuccess === true && progressDialogStats.getBatchingCompleted() === true) {
         setGenericValueFieldDisabled(false);
+        setBulkValueFieldValueDisabled(false);
         localHandleClose();
         setOpenProgressDialog(false);
         progressReset();
@@ -315,6 +395,81 @@ const StixCyberObservableCreation = ({
     function updateProgress(position, batchSize) {
       if (position % batchSize === 0) {
         progressDialogStats.setCurrentIncrement(1);
+      }
+    }
+    async function processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, hashNamBoolean) {
+      // If batching has not been cancelled with the close button the progress widget - continue processing
+      if (!progressDialogStats.getBatchingCancelled()) {
+        let promises;
+        if (hashNamBoolean === true) {
+          promises = chunkValueList.map((hash) => commitMutationWithPromise({
+            mutation: stixCyberObservableMutation,
+            variables: {
+              ...finalValues,
+              [observableType]: {
+                name: hash,
+              },
+            },
+            updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+            ),
+            onCompleted: () => {
+              setSubmitting(false);
+              resetForm();
+              localHandleClose();
+              setSelectedAttribute('');
+            },
+            onError: () => {
+              setKeyFieldDisabled(false);
+              setSubmitting(false);
+            },
+          }));
+        } else {
+          promises = chunkValueList.map((hash) => commitMutationWithPromise({
+            mutation: stixCyberObservableMutation,
+            variables: {
+              ...finalValues,
+              [observableType]: {
+                hashes: [
+                  {
+                    hash,
+                    algorithm,
+                  }],
+              },
+            },
+            updater: (store) => insertNode(
+              store,
+              paginationKey,
+              paginationOptions,
+              'stixCyberObservableAdd',
+            ),
+            onCompleted: () => {
+              setSubmitting(false);
+              resetForm();
+              localHandleClose();
+              setSelectedAttribute('');
+            },
+            onError: () => {
+              setKeyFieldDisabled(false);
+              setSubmitting(false);
+            },
+          }));
+        }
+        await Promise.allSettled(promises).then((results) => {
+          results.forEach(({ status: promiseStatus }) => {
+            if (promiseStatus === 'fulfilled') {
+              progressDialogStats.updateSuccessCount(1);
+            } else {
+              progressDialogStats.updateErrorCount(1);
+            }
+          });
+        });
+        // Update progress based on batchSize returned
+        updateProgress(position, batchSize);
+        handlePromiseResult(0);
       }
     }
     async function processPromises(chunkValueList, observableType, finalValues, position, batchSize, valueList) {
@@ -370,6 +525,22 @@ const StixCyberObservableCreation = ({
         const cleaned_bulk_values = trimmed_bulk_values.reduce((elements, i) => (i ? [...elements, i] : elements), []);
         // De-duplicate by unique then rejoin
         adaptedValues.value = [...new Set(cleaned_bulk_values)].join('\n');
+      }
+      if (adaptedValues.bulk_hashes_field && adaptedValues.name === bulkAddMsg) {
+        const array_of_bulk_hashes = adaptedValues.bulk_hashes_field.split(/\r?\n/);
+        // Trim them just to remove any extra spacing on front or rear of string
+        const trimmed_bulk_hashes = array_of_bulk_hashes.map((s) => s.trim());
+        // Remove any "" or empty resulting elements
+        const cleaned_bulk_hashes = trimmed_bulk_hashes.reduce((elements, i) => (i ? [...elements, i] : elements), []);
+        // De-duplicate by unique then rejoin
+        hashesList = [...new Set(cleaned_bulk_hashes)];
+
+        delete adaptedValues.hashes_MD5;
+        delete adaptedValues['hashes_SHA-1'];
+        delete adaptedValues['hashes_SHA-256'];
+        delete adaptedValues['hashes_SHA-512'];
+        delete adaptedValues.name;
+        delete adaptedValues.bulk_hashes_field;
       }
 
       // Potential dicts
@@ -430,6 +601,19 @@ const StixCyberObservableCreation = ({
         fromPairs,
       )(adaptedValues);
       const observableType = status.type.replace(/(?:^|-|_)(\w)/g, (matches, letter) => letter.toUpperCase());
+      let hashesListInitial;
+
+      if (hashesList.length >= 1) {
+        hashesListInitial = hashesList.slice(0, 1)[0];
+      }
+      if (adaptedValues.hashes) {
+        hashesListInitial = adaptedValues.hashes[0].hash;
+        algorithm = adaptedValues.hashes[0].algorithm;
+      }
+      let hashesListName = '';
+      if (selectedAttribute === 'NAME') {
+        hashesListName = hashesListInitial;
+      }
       const finalValues = {
         type: status.type,
         x_opencti_description:
@@ -445,6 +629,12 @@ const StixCyberObservableCreation = ({
         [observableType]: {
           ...adaptedValues,
           obsContent: values.obsContent?.value,
+          name: hashesListName,
+          hashes: [
+            {
+              hash: hashesListInitial,
+              algorithm,
+            }],
         },
       };
       if (values.file) {
@@ -452,9 +642,48 @@ const StixCyberObservableCreation = ({
       }
 
       const commit = async () => {
-        const valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        valueList = values?.value !== '' ? values?.value?.split('\n') || values?.value : undefined;
+        const batchSize = 5;
         // Launch Progress Bar, as value data is about to be processed.
         // Only need Progress Bar, if more than 1 element being processed
+        if (hashesList !== undefined && hashesList.length > 1) {
+          setOpenProgressDialog(true);
+        }
+        if (hashesList) {
+          let currentBatch = 0;
+          let position = 0;
+          const totalBatches = Math.ceil(hashesList.length / batchSize);
+          progressDialogStats.resetCurrentMaxIncrement(totalBatches);
+          while (position < hashesList.length) {
+            const chunkValueList = hashesList.slice(position, position + batchSize);
+            currentBatch += 1;
+            if (currentBatch === totalBatches) {
+              progressDialogStats.setBatchingCompleted(true);
+            }
+            if (selectedAttribute !== 'NAME') {
+              processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, false);
+            }
+            if (selectedAttribute === 'NAME') {
+              processPromisesHash(chunkValueList, observableType, finalValues, position, batchSize, true);
+              setKeyFieldDisabled(true);
+            }
+            position += batchSize;
+            if (progressDialogStats.getBatchingCancelled()) {
+              position = valueList.length + 1; // Stop looping by moving position to end due to cancel button clicked
+              progressReset();
+            }
+            // Impacting User Perceived Performance (UPP) to see progress bar movement and encourage
+            // the use of the Bulk Import. This was discussed at one point - but is maybe no longer
+            // a requirement. This can be removed after testing, if desired, or left in with the purpose
+            // of forcing the user to see progress.
+            await sleepCustomFunction(2000); // eslint-disable-line no-await-in-loop
+          }
+        } else {
+          // No 'values' were submitted to save, but other parts of form were possibly filled out for different
+          // Observable type like File Hash or something that are not currently bulk addable.
+          // No promise required here, just send the data for saving, as it is a singular add
+          noPromiseProcess(finalValues, setErrors, setSubmitting, resetForm);
+        }
         if (valueList !== undefined && valueList.length > 1) {
           setOpenProgressDialog(true);
         }
@@ -509,6 +738,7 @@ const StixCyberObservableCreation = ({
               setSubmitting(false);
               resetForm();
               setGenericValueFieldDisabled(false);
+              setBulkValueFieldValueDisabled(false);
               localHandleClose();
             },
           });
@@ -561,7 +791,7 @@ const StixCyberObservableCreation = ({
       />
     );
   };
-
+  let stixFileBoolean = false;
   const renderForm = () => {
     return (
       <QueryRenderer
@@ -698,7 +928,10 @@ const StixCyberObservableCreation = ({
               ...extraRequiredFields,
             }, requiredOneOfFields);
             setMultiValueButtonVisible(false);
-
+            if (status.type === 'StixFile') {
+              stixFileBoolean = true;
+              setBulkHashEnabled(true);
+            }
             return (
               <Formik
                 initialValues={initialValues}
@@ -739,39 +972,79 @@ const StixCyberObservableCreation = ({
                       />
                       {attributes.map((attribute) => {
                         if (attribute.value === 'hashes') {
+                          setMultiValueButtonVisible(true);
                           return (
                             <div key={attribute.value}>
+                              <Tooltip title="Copy/paste text content">
+                                <StixCyberObservableBulkAddDialog
+                                  setBulkValueFieldValue={setBulkValueFieldValue}
+                                  bulkValueFieldValue={bulkValueFieldValue}
+                                  selectedAttribute={selectedAttribute}
+                                  setSelectedAttribute={setSelectedAttribute}
+                                  hashesMD5Value={hashesMD5Value}
+                                  setHashesMD5Value={setHashesMD5Value}
+                                  hashesSHA1Value={hashesSHA1Value}
+                                  setHashesSHA1Value={setHashesSHA1Value}
+                                  hashesSHA256Value={hashesSHA256Value}
+                                  setHashesSHA256Value={setHashesSHA256Value}
+                                  hashesSHA512Value={hashesSHA512Value}
+                                  setHashesSHA512Value={setHashesSHA512Value}
+                                  setBulkValueFieldValueDisabled={setBulkValueFieldValueDisabled}
+                                  setKeyFieldDisabled={setKeyFieldDisabled}
+                                  bulkAddMsg={bulkAddMsg}
+                                  openBulkAddDialog={openBulkAddDialog}
+                                  setOpenBulkAddDialog={setOpenBulkAddDialog}
+                                  setFieldValue={setFieldValue}
+                                  props={props}
+                                />
+                              </Tooltip>
                               <Field
+                                id="hashes_MD5"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesMD5Value}
                                 name="hashes_MD5"
                                 label={t_i18n('hash_md5')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesMD5Value(value)}
                               />
                               <Field
+                                id="hashes_SHA-1"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA1Value}
                                 name="hashes_SHA-1"
                                 label={t_i18n('hash_sha-1')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA1Value(value)}
                               />
                               <Field
+                                id="hashes_SHA-256"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA256Value}
                                 name="hashes_SHA-256"
                                 label={t_i18n('hash_sha-256')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA256Value(value)}
                               />
                               <Field
+                                id="hashes_SHA-512"
+                                disabled={keyFieldDisabled}
                                 component={TextField}
                                 variant="standard"
+                                value={hashesSHA512Value}
                                 name="hashes_SHA-512"
                                 label={t_i18n('hash_sha-512')}
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
+                                onChange={(name, value) => setHashesSHA512Value(value)}
                               />
                             </div>
                           );
@@ -845,6 +1118,33 @@ const StixCyberObservableCreation = ({
                             />
                           );
                         }
+                        if (attribute.value === 'name' && nameFieldDisabled === false) {
+                          return (
+                            <Field
+                              component={TextField}
+                              variant="standard"
+                              disabled={keyFieldDisabled}
+                              key={attribute.value}
+                              name={attribute.value}
+                              label={attribute.value}
+                              fullWidth={true}
+                              style={{ marginTop: 20 }}
+                            />
+                          );
+                        }
+                        if (attribute.value !== 'name') {
+                          return (
+                            <Field
+                              component={TextField}
+                              variant="standard"
+                              key={attribute.value}
+                              name={attribute.value}
+                              label={attribute.value}
+                              fullWidth={true}
+                              style={{ marginTop: 20 }}
+                            />
+                          );
+                        }
                         if (attribute.value === 'value') {
                           setMultiValueButtonVisible(true);
                           return (
@@ -862,7 +1162,6 @@ const StixCyberObservableCreation = ({
                                   setOpenBulkModal={setOpenBulkModal}
                                 />
                               </Tooltip>
-
                               <Field
                                 id="generic_value_field"
                                 label="value" // For unit test to locate in tests_e2e/model/containerAddObservables.pageModel.ts
@@ -955,24 +1254,24 @@ const StixCyberObservableCreation = ({
       />
     );
   };
-
   const renderClassic = () => {
     return (
       <>
         {isFABReplaced
           ? <CreateEntityControlledDial
-              entityType='Observable'
-              onOpen={handleOpen}
-            />
+            entityType='Observable'
+            onOpen={handleOpen}
+          />
           : <Fab
-              onClick={handleOpen}
-              color="primary"
-              aria-label="Add"
-              className={classes.createButton}
-            >
+            onClick={handleOpen}
+            color="primary"
+            aria-label="Add"
+            className={classes.createButton}
+          >
             <Add />
-          </Fab>}
-        <Drawer
+          </Fab>
+        }
+        {!bulkHashEnabled && <Drawer
           open={status.open}
           anchor="right"
           sx={{ zIndex: 1202 }}
@@ -982,16 +1281,18 @@ const StixCyberObservableCreation = ({
         >
           <div className={classes.header}>
             {(status.type && multiValueButtonVisible) && (
-              <Button
-                onClick={handleOpenBulkModal}
-                variant={'outlined'}
-                size={'small'}
-                aria-label={'add_multiple_values_button'}
-                aria-labelledby={'add_multiple_values_button'}
-                style={{ float: 'right', marginRight: 5, marginTop: 0 }}
-              >
-                {t_i18n('Add Multiple Values')}
-              </Button>)}
+                <Button
+                  onClick={handleOpenBulkModal}
+                  variant={'outlined'}
+                  size={'small'}
+                  aria-label={'add_multiple_values_button'}
+                  aria-labelledby={'add_multiple_values_button'}
+                  style={{ float: 'right', marginRight: 5, marginTop: 0 }}
+                >
+                  {t_i18n('Add Multiple Values')}
+                </Button>
+              )
+            }
             <IconButton
               aria-label="Close"
               className={classes.closeButton}
@@ -1006,7 +1307,44 @@ const StixCyberObservableCreation = ({
           <div className={classes.container}>
             {!status.type ? renderList() : renderForm()}
           </div>
-        </Drawer>
+        </Drawer>}
+        {bulkHashEnabled && <Drawer
+          open={status.open}
+          anchor="right"
+          sx={{ zIndex: 1202 }}
+          elevation={1}
+          classes={{ paper: classes.drawerPaper }}
+          onClose={localHandleClose}
+        >
+          <div className={classes.header}>
+            {(status.type && multiValueButtonVisible) && (
+                <Button
+                  onClick={handleOpenBulkAddDialog}
+                  variant={'outlined'}
+                  size={'small'}
+                  aria-label={'add_multiple_values_button'}
+                  aria-labelledby={'add_multiple_values_button'}
+                  style={{ float: 'right', marginRight: 5, marginTop: 0 }}
+                >
+                  {t_i18n('Add Multiple Values')}
+                </Button>
+              )
+            }
+            <IconButton
+              aria-label="Close"
+              className={classes.closeButton}
+              onClick={localHandleClose}
+              size="large"
+              color="primary"
+            >
+              <Close fontSize="small" color="primary" />
+            </IconButton>
+            <Typography variant="h6">{t_i18n('Create an observable')}</Typography>
+          </div>
+          <div className={classes.container}>
+            {!status.type ? renderList() : renderForm()}
+          </div>
+        </Drawer>}
 
         <ProgressDialogContainer
           openProgressDialog={openProgressDialog}
