@@ -1271,7 +1271,7 @@ const StixCyberObservableCreation = ({
             <Add />
           </Fab>
         }
-        {!bulkHashEnabled && <Drawer
+        <Drawer
           open={status.open}
           anchor="right"
           sx={{ zIndex: 1202 }}
@@ -1281,18 +1281,16 @@ const StixCyberObservableCreation = ({
         >
           <div className={classes.header}>
             {(status.type && multiValueButtonVisible) && (
-                <Button
-                  onClick={handleOpenBulkModal}
-                  variant={'outlined'}
-                  size={'small'}
-                  aria-label={'add_multiple_values_button'}
-                  aria-labelledby={'add_multiple_values_button'}
-                  style={{ float: 'right', marginRight: 5, marginTop: 0 }}
-                >
-                  {t_i18n('Add Multiple Values')}
-                </Button>
-              )
-            }
+              <Button
+                onClick={handleOpenBulkModal}
+                variant={'outlined'}
+                size={'small'}
+                aria-label={'add_multiple_values_button'}
+                aria-labelledby={'add_multiple_values_button'}
+                style={{ float: 'right', marginRight: 5, marginTop: 0 }}
+              >
+                {t_i18n('Add Multiple Values')}
+              </Button>)}
             <IconButton
               aria-label="Close"
               className={classes.closeButton}
@@ -1307,8 +1305,8 @@ const StixCyberObservableCreation = ({
           <div className={classes.container}>
             {!status.type ? renderList() : renderForm()}
           </div>
-        </Drawer>}
-        {bulkHashEnabled && <Drawer
+        </Drawer>
+        {/* {bulkHashEnabled && <Drawer
           open={status.open}
           anchor="right"
           sx={{ zIndex: 1202 }}
@@ -1344,14 +1342,13 @@ const StixCyberObservableCreation = ({
           <div className={classes.container}>
             {!status.type ? renderList() : renderForm()}
           </div>
-        </Drawer>}
+        </Drawer>} */}
 
         <ProgressDialogContainer
           openProgressDialog={openProgressDialog}
           bulkValueFieldValue={bulkValueFieldValue}
           handleClickCloseProgress={handleClickCloseProgress}
         />
-
       </>
     );
   };
