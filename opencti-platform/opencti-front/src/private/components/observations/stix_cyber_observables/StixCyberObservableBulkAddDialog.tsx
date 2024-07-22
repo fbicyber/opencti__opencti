@@ -15,7 +15,8 @@ interface StixCyberObservableBulkAddDialogProps {
   openBulkAddDialog: boolean;
   setOpenBulkAddDialog: (value: React.SetStateAction<boolean>) => void;
   setFieldValue: (name: string, value:null | string) => void;
-  props: any;
+  setMultiValueButtonVisible: (value: React.SetStateAction<boolean>) => void;
+  setIsVisible: (value: React.SetStateAction<boolean>) => void;
 }
 
 const StixCyberObservableBulkAddDialog: FunctionComponent<StixCyberObservableBulkAddDialogProps> = ({
@@ -32,7 +33,8 @@ const StixCyberObservableBulkAddDialog: FunctionComponent<StixCyberObservableBul
   openBulkAddDialog,
   setOpenBulkAddDialog,
   setFieldValue,
-  props,
+  setMultiValueButtonVisible,
+  setIsVisible,
 }) => {
   const handleCloseBulkAddDialog = (val: string) => {
     setOpenBulkAddDialog(false);
@@ -49,12 +51,14 @@ const StixCyberObservableBulkAddDialog: FunctionComponent<StixCyberObservableBul
       setHashesSHA256Value(bulkAddMsg);
       setHashesSHA512Value(bulkAddMsg);
       setKeyFieldDisabled(true);
+      setIsVisible(true);
     } else {
       setHashesMD5Value('');
       setHashesSHA1Value('');
       setHashesSHA256Value('');
       setHashesSHA512Value('');
       setKeyFieldDisabled(false);
+      setMultiValueButtonVisible(false);
     }
   };
   const handleParentSelectAttribute = (value: string) => {

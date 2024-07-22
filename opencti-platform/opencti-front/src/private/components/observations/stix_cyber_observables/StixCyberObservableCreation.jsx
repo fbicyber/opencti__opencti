@@ -247,7 +247,7 @@ const StixCyberObservableCreation = ({
   const [genericValueFieldValue, setGenericValueFieldValue] = React.useState('');
   const [bulkValueFieldValue, setBulkValueFieldValue] = React.useState(['']);
   const [bulkValueFieldValueDisabled, setBulkValueFieldValueDisabled] = useState(false);
-  const [bulkHashEnabled, setBulkHashEnabled] = useState(false);
+  const [isStixFile, setIsStixFile] = useState(false);
   const [openBulkModal, setOpenBulkModal] = React.useState(false);
   const [openBulkAddDialog, setOpenBulkAddDialog] = React.useState(false);
   const [multiValueButtonVisible, setMultiValueButtonVisible] = React.useState(false);
@@ -258,7 +258,7 @@ const StixCyberObservableCreation = ({
   const [hashesSHA1Value, setHashesSHA1Value] = React.useState('');
   const [hashesSHA256Value, setHashesSHA256Value] = React.useState('');
   const [hashesSHA512Value, setHashesSHA512Value] = React.useState('');
-  const divRowStyle = { display: 'flex', flexWrap: 'wrap', float: 'right' };
+  const [isVisible, setIsVisible] = React.useState(false);
   let hashesList = [];
   let valueList = [];
   let algorithm = selectedAttribute.toLowerCase();
@@ -791,7 +791,6 @@ const StixCyberObservableCreation = ({
       />
     );
   };
-  let stixFileBoolean = false;
   const renderForm = () => {
     return (
       <QueryRenderer
@@ -825,6 +824,7 @@ const StixCyberObservableCreation = ({
 
             let extraFieldsToValidate = null;
             let requiredOneOfFields = [];
+            const exceededMessage = t_i18n('You have exceeded the max number of values.');
             for (const attribute of attributes) {
               if (isVocabularyField(status.type, attribute.value)) {
                 initialValues[attribute.value] = null;
@@ -845,33 +845,43 @@ const StixCyberObservableCreation = ({
                 extraFieldsToValidate = {
                   hashes_MD5: Yup
                     .string()
-                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name', 'bulk_hashes_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(md5Regex, t_i18n('MD5 values can only include A-F and 0-9, 32 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-1': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-256', 'hashes_SHA-512', 'name', 'bulk_hashes_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha1Regex, t_i18n('SHA-1 values can only include A-F and 0-9, 40 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-256': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-512', 'name', 'bulk_hashes_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha256Regex, t_i18n('SHA-256 values can only include A-F and 0-9, 64 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   'hashes_SHA-512': Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'name', 'bulk_hashes_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().matches(sha512Regex, t_i18n('SHA-512 values can only include A-F and 0-9, 128 characters')).required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
                     }),
                   name: Yup
                     .string()
-                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512'], {
-                      is: (a, b, c, d) => !a && !b && !c && !d,
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'bulk_hashes_field'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
                       then: () => Yup.string().required(t_i18n('MD5, SHA-1, SHA-256, SHA-512, or name is required')),
+                    }),
+                  bulk_hashes_field: Yup
+                    .string()
+                    .when(['hashes_MD5', 'hashes_SHA-1', 'hashes_SHA-256', 'hashes_SHA-512', 'name'], {
+                      is: (a, b, c, d, e) => !a && !b && !c && !d && !e,
+                      then: () => Yup.string().required(t_i18n('A value is required')),
+                    })
+                    .when([attribute.value], {
+                      is: (a) => !a,
+                      then: () => Yup.string().required(t_i18n('Multiple value entry is required or Cancel this form')).test('len', exceededMessage, (val) => val.split('\n').length < 51),
                     }),
                 };
 
@@ -880,23 +890,27 @@ const StixCyberObservableCreation = ({
                   ['hashes_MD5', 'hashes_SHA-256'],
                   ['hashes_MD5', 'hashes_SHA-512'],
                   ['hashes_MD5', 'name'],
+                  ['hashes_MD5', 'bulk_hashes_field'],
                   // ['hashes_SHA-1', 'hashes_MD5'],
                   ['hashes_SHA-1', 'hashes_SHA-256'],
                   ['hashes_SHA-1', 'hashes_SHA-512'],
                   ['hashes_SHA-1', 'name'],
+                  ['hashes_SHA-1', 'bulk_hashes_field'],
                   // ['hashes_SHA-256', 'hashes_MD5'],
                   // ['hashes_SHA-256', 'hashes_SHA-1'],
                   ['hashes_SHA-256', 'hashes_SHA-512'],
                   ['hashes_SHA-256', 'name'],
+                  ['hashes_SHA-256', 'bulk_hashes_field'],
                   // ['hashes_SHA-512', 'hashes_MD5'],
                   // ['hashes_SHA-512', 'hashes_SHA-1'],
                   // ['hashes_SHA-512', 'hashes_SHA-256']
                   ['hashes_SHA-512', 'name'],
+                  ['hashes_SHA-512', 'bulk_hashes_field'],
+                  ['bulk_hashes_field', 'name'],
                 ];
               } else if (attribute.value === 'value') {
                 initialValues[attribute.value] = inputValue || '';
                 // Dynamically include value field for Singular Observable type Object form validation
-                const exceededMessage = t_i18n('You have exceeded the max number of values.');
                 extraFieldsToValidate = {
                   [attribute.value]: Yup
                     .string()
@@ -929,8 +943,7 @@ const StixCyberObservableCreation = ({
             }, requiredOneOfFields);
             setMultiValueButtonVisible(false);
             if (status.type === 'StixFile') {
-              stixFileBoolean = true;
-              setBulkHashEnabled(true);
+              setIsStixFile(true);
             }
             return (
               <Formik
@@ -995,10 +1008,11 @@ const StixCyberObservableCreation = ({
                                   openBulkAddDialog={openBulkAddDialog}
                                   setOpenBulkAddDialog={setOpenBulkAddDialog}
                                   setFieldValue={setFieldValue}
-                                  props={props}
+                                  setMultiValueButtonVisible={setMultiValueButtonVisible}
+                                  setIsVisible={setIsVisible}
                                 />
                               </Tooltip>
-                              <Field
+                              {selectedAttribute === 'MD5' && <Field
                                 id="hashes_MD5"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
@@ -1009,8 +1023,8 @@ const StixCyberObservableCreation = ({
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
                                 onChange={(name, value) => setHashesMD5Value(value)}
-                              />
-                              <Field
+                              />}
+                              {selectedAttribute === 'SHA-1' && <Field
                                 id="hashes_SHA-1"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
@@ -1021,8 +1035,8 @@ const StixCyberObservableCreation = ({
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
                                 onChange={(name, value) => setHashesSHA1Value(value)}
-                              />
-                              <Field
+                              />}
+                              {selectedAttribute === 'SHA-256' && <Field
                                 id="hashes_SHA-256"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
@@ -1033,8 +1047,8 @@ const StixCyberObservableCreation = ({
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
                                 onChange={(name, value) => setHashesSHA256Value(value)}
-                              />
-                              <Field
+                              />}
+                              {selectedAttribute === 'SHA-512' && <Field
                                 id="hashes_SHA-512"
                                 disabled={keyFieldDisabled}
                                 component={TextField}
@@ -1045,7 +1059,7 @@ const StixCyberObservableCreation = ({
                                 fullWidth={true}
                                 style={{ marginTop: 20 }}
                                 onChange={(name, value) => setHashesSHA512Value(value)}
-                              />
+                              />}
                             </div>
                           );
                         }
@@ -1118,7 +1132,7 @@ const StixCyberObservableCreation = ({
                             />
                           );
                         }
-                        if (attribute.value === 'name' && nameFieldDisabled === false) {
+                        if (attribute.value === 'name' && selectedAttribute === 'name' && nameFieldDisabled === false && isStixFile === true) {
                           return (
                             <Field
                               component={TextField}
@@ -1132,7 +1146,7 @@ const StixCyberObservableCreation = ({
                             />
                           );
                         }
-                        if (attribute.value !== 'name') {
+                        if (attribute.value !== 'name' && isStixFile === true) {
                           return (
                             <Field
                               component={TextField}
@@ -1282,7 +1296,7 @@ const StixCyberObservableCreation = ({
           <div className={classes.header}>
             {(status.type && multiValueButtonVisible) && (
               <Button
-                onClick={handleOpenBulkModal}
+                onClick={isStixFile ? handleOpenBulkAddDialog : handleOpenBulkModal}
                 variant={'outlined'}
                 size={'small'}
                 aria-label={'add_multiple_values_button'}
@@ -1306,43 +1320,6 @@ const StixCyberObservableCreation = ({
             {!status.type ? renderList() : renderForm()}
           </div>
         </Drawer>
-        {/* {bulkHashEnabled && <Drawer
-          open={status.open}
-          anchor="right"
-          sx={{ zIndex: 1202 }}
-          elevation={1}
-          classes={{ paper: classes.drawerPaper }}
-          onClose={localHandleClose}
-        >
-          <div className={classes.header}>
-            {(status.type && multiValueButtonVisible) && (
-                <Button
-                  onClick={handleOpenBulkAddDialog}
-                  variant={'outlined'}
-                  size={'small'}
-                  aria-label={'add_multiple_values_button'}
-                  aria-labelledby={'add_multiple_values_button'}
-                  style={{ float: 'right', marginRight: 5, marginTop: 0 }}
-                >
-                  {t_i18n('Add Multiple Values')}
-                </Button>
-              )
-            }
-            <IconButton
-              aria-label="Close"
-              className={classes.closeButton}
-              onClick={localHandleClose}
-              size="large"
-              color="primary"
-            >
-              <Close fontSize="small" color="primary" />
-            </IconButton>
-            <Typography variant="h6">{t_i18n('Create an observable')}</Typography>
-          </div>
-          <div className={classes.container}>
-            {!status.type ? renderList() : renderForm()}
-          </div>
-        </Drawer>} */}
 
         <ProgressDialogContainer
           openProgressDialog={openProgressDialog}
