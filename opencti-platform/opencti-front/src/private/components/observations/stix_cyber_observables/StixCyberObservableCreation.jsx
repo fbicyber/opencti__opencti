@@ -261,7 +261,7 @@ const StixCyberObservableCreation = ({
   const [isVisible, setIsVisible] = React.useState(false);
   let hashesList = [];
   let valueList = [];
-  let algorithm = selectedAttribute.toLowerCase();
+  let algorithm = selectedAttribute.toUpperCase();
   let totalObservables = 0;
 
   const noPromiseProcess = (finalValues, setErrors, setSubmitting, resetForm) => {
@@ -517,6 +517,7 @@ const StixCyberObservableCreation = ({
     }
     if (adaptedValues) { // Verify not null for DeepScan compliance
       // Bulk Add Modal was used
+      console.log('adaptedValues is ', adaptedValues);
       if (adaptedValues.bulk_value_field && (adaptedValues.value || genericValueFieldValue === bulkAddMsg)) {
         const array_of_bulk_values = adaptedValues.bulk_value_field.split(/\r?\n/);
         // Trim them just to remove any extra spacing on front or rear of string
@@ -526,7 +527,9 @@ const StixCyberObservableCreation = ({
         // De-duplicate by unique then rejoin
         adaptedValues.value = [...new Set(cleaned_bulk_values)].join('\n');
       }
-      if (adaptedValues.bulk_hashes_field && adaptedValues.name === bulkAddMsg) {
+      console.log('adaptedValues.bulk_hashes_field is ', adaptedValues.bulk_hashes_field);
+      console.log('adaptedValues.name is ', adaptedValues.name);
+      if (adaptedValues.bulk_hashes_field && (adaptedValues.name === bulkAddMsg || hashesMD5Value === bulkAddMsg || hashesSHA1Value === bulkAddMsg || hashesSHA256Value === bulkAddMsg || hashesSHA512Value === bulkAddMsg)) {
         const array_of_bulk_hashes = adaptedValues.bulk_hashes_field.split(/\r?\n/);
         // Trim them just to remove any extra spacing on front or rear of string
         const trimmed_bulk_hashes = array_of_bulk_hashes.map((s) => s.trim());
@@ -542,7 +545,7 @@ const StixCyberObservableCreation = ({
         delete adaptedValues.name;
         delete adaptedValues.bulk_hashes_field;
       }
-
+      console.log('hashesList is ', hashesList);
       // Potential dicts
       if (
         adaptedValues.hashes_MD5
@@ -606,9 +609,12 @@ const StixCyberObservableCreation = ({
       if (hashesList.length >= 1) {
         hashesListInitial = hashesList.slice(0, 1)[0];
       }
+      console.log('adaptedValues.hashes is ', adaptedValues.hashes);
       if (adaptedValues.hashes) {
         hashesListInitial = adaptedValues.hashes[0].hash;
         algorithm = adaptedValues.hashes[0].algorithm;
+        console.log('hashesListInitial is ', hashesListInitial);
+        console.log('algorithm is ', algorithm);        
       }
       let hashesListName = '';
       if (selectedAttribute === 'NAME') {
@@ -988,78 +994,154 @@ const StixCyberObservableCreation = ({
                           setMultiValueButtonVisible(true);
                           return (
                             <div key={attribute.value}>
-                              <Tooltip title="Copy/paste text content">
-                                <StixCyberObservableBulkAddDialog
-                                  setBulkValueFieldValue={setBulkValueFieldValue}
-                                  bulkValueFieldValue={bulkValueFieldValue}
-                                  selectedAttribute={selectedAttribute}
-                                  setSelectedAttribute={setSelectedAttribute}
-                                  hashesMD5Value={hashesMD5Value}
-                                  setHashesMD5Value={setHashesMD5Value}
-                                  hashesSHA1Value={hashesSHA1Value}
-                                  setHashesSHA1Value={setHashesSHA1Value}
-                                  hashesSHA256Value={hashesSHA256Value}
-                                  setHashesSHA256Value={setHashesSHA256Value}
-                                  hashesSHA512Value={hashesSHA512Value}
-                                  setHashesSHA512Value={setHashesSHA512Value}
-                                  setBulkValueFieldValueDisabled={setBulkValueFieldValueDisabled}
-                                  setKeyFieldDisabled={setKeyFieldDisabled}
-                                  bulkAddMsg={bulkAddMsg}
-                                  openBulkAddDialog={openBulkAddDialog}
-                                  setOpenBulkAddDialog={setOpenBulkAddDialog}
-                                  setFieldValue={setFieldValue}
-                                  setMultiValueButtonVisible={setMultiValueButtonVisible}
-                                  setIsVisible={setIsVisible}
-                                />
-                              </Tooltip>
-                              {selectedAttribute === 'MD5' && <Field
-                                id="hashes_MD5"
-                                disabled={keyFieldDisabled}
-                                component={TextField}
-                                variant="standard"
-                                value={hashesMD5Value}
-                                name="hashes_MD5"
-                                label={t_i18n('hash_md5')}
-                                fullWidth={true}
-                                style={{ marginTop: 20 }}
-                                onChange={(name, value) => setHashesMD5Value(value)}
-                              />}
-                              {selectedAttribute === 'SHA-1' && <Field
-                                id="hashes_SHA-1"
-                                disabled={keyFieldDisabled}
-                                component={TextField}
-                                variant="standard"
-                                value={hashesSHA1Value}
-                                name="hashes_SHA-1"
-                                label={t_i18n('hash_sha-1')}
-                                fullWidth={true}
-                                style={{ marginTop: 20 }}
-                                onChange={(name, value) => setHashesSHA1Value(value)}
-                              />}
-                              {selectedAttribute === 'SHA-256' && <Field
-                                id="hashes_SHA-256"
-                                disabled={keyFieldDisabled}
-                                component={TextField}
-                                variant="standard"
-                                value={hashesSHA256Value}
-                                name="hashes_SHA-256"
-                                label={t_i18n('hash_sha-256')}
-                                fullWidth={true}
-                                style={{ marginTop: 20 }}
-                                onChange={(name, value) => setHashesSHA256Value(value)}
-                              />}
-                              {selectedAttribute === 'SHA-512' && <Field
-                                id="hashes_SHA-512"
-                                disabled={keyFieldDisabled}
-                                component={TextField}
-                                variant="standard"
-                                value={hashesSHA512Value}
-                                name="hashes_SHA-512"
-                                label={t_i18n('hash_sha-512')}
-                                fullWidth={true}
-                                style={{ marginTop: 20 }}
-                                onChange={(name, value) => setHashesSHA512Value(value)}
-                              />}
+                              {!isVisible && <div>
+                                <Tooltip title="Copy/paste text content">
+                                  <StixCyberObservableBulkAddDialog
+                                    setBulkValueFieldValue={setBulkValueFieldValue}
+                                    bulkValueFieldValue={bulkValueFieldValue}
+                                    selectedAttribute={selectedAttribute}
+                                    setSelectedAttribute={setSelectedAttribute}
+                                    hashesMD5Value={hashesMD5Value}
+                                    setHashesMD5Value={setHashesMD5Value}
+                                    hashesSHA1Value={hashesSHA1Value}
+                                    setHashesSHA1Value={setHashesSHA1Value}
+                                    hashesSHA256Value={hashesSHA256Value}
+                                    setHashesSHA256Value={setHashesSHA256Value}
+                                    hashesSHA512Value={hashesSHA512Value}
+                                    setHashesSHA512Value={setHashesSHA512Value}
+                                    setBulkValueFieldValueDisabled={setBulkValueFieldValueDisabled}
+                                    setKeyFieldDisabled={setKeyFieldDisabled}
+                                    bulkAddMsg={bulkAddMsg}
+                                    openBulkAddDialog={openBulkAddDialog}
+                                    setOpenBulkAddDialog={setOpenBulkAddDialog}
+                                    setFieldValue={setFieldValue}
+                                    setMultiValueButtonVisible={setMultiValueButtonVisible}
+                                    setIsVisible={setIsVisible}
+                                  />
+                                </Tooltip>
+                                {<Field
+                                  id="hashes_MD5"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesMD5Value}
+                                  name="hashes_MD5"
+                                  label={t_i18n('hash_md5')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesMD5Value(value)}
+                                />}
+                                {<Field
+                                  id="hashes_SHA-1"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA1Value}
+                                  name="hashes_SHA-1"
+                                  label={t_i18n('hash_sha-1')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA1Value(value)}
+                                />}
+                                {<Field
+                                  id="hashes_SHA-256"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA256Value}
+                                  name="hashes_SHA-256"
+                                  label={t_i18n('hash_sha-256')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA256Value(value)}
+                                />}
+                                {<Field
+                                  id="hashes_SHA-512"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA512Value}
+                                  name="hashes_SHA-512"
+                                  label={t_i18n('hash_sha-512')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA512Value(value)}
+                                />}
+                              </div>}
+                              {isVisible && <div>
+                                <Tooltip title="Copy/paste text content">
+                                  <StixCyberObservableBulkAddDialog
+                                    setBulkValueFieldValue={setBulkValueFieldValue}
+                                    bulkValueFieldValue={bulkValueFieldValue}
+                                    selectedAttribute={selectedAttribute}
+                                    setSelectedAttribute={setSelectedAttribute}
+                                    hashesMD5Value={hashesMD5Value}
+                                    setHashesMD5Value={setHashesMD5Value}
+                                    hashesSHA1Value={hashesSHA1Value}
+                                    setHashesSHA1Value={setHashesSHA1Value}
+                                    hashesSHA256Value={hashesSHA256Value}
+                                    setHashesSHA256Value={setHashesSHA256Value}
+                                    hashesSHA512Value={hashesSHA512Value}
+                                    setHashesSHA512Value={setHashesSHA512Value}
+                                    setBulkValueFieldValueDisabled={setBulkValueFieldValueDisabled}
+                                    setKeyFieldDisabled={setKeyFieldDisabled}
+                                    bulkAddMsg={bulkAddMsg}
+                                    openBulkAddDialog={openBulkAddDialog}
+                                    setOpenBulkAddDialog={setOpenBulkAddDialog}
+                                    setFieldValue={setFieldValue}
+                                    setMultiValueButtonVisible={setMultiValueButtonVisible}
+                                    setIsVisible={setIsVisible}
+                                  />
+                                </Tooltip>
+                                {selectedAttribute === 'MD5' && <Field
+                                  id="hashes_MD5"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesMD5Value}
+                                  name="hashes_MD5"
+                                  label={t_i18n('hash_md5')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesMD5Value(value)}
+                                />}
+                                {selectedAttribute === 'SHA-1' && <Field
+                                  id="hashes_SHA-1"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA1Value}
+                                  name="hashes_SHA-1"
+                                  label={t_i18n('hash_sha-1')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA1Value(value)}
+                                />}
+                                {selectedAttribute === 'SHA-256' && <Field
+                                  id="hashes_SHA-256"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA256Value}
+                                  name="hashes_SHA-256"
+                                  label={t_i18n('hash_sha-256')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA256Value(value)}
+                                />}
+                                {selectedAttribute === 'SHA-512' && <Field
+                                  id="hashes_SHA-512"
+                                  disabled={keyFieldDisabled}
+                                  component={TextField}
+                                  variant="standard"
+                                  value={hashesSHA512Value}
+                                  name="hashes_SHA-512"
+                                  label={t_i18n('hash_sha-512')}
+                                  fullWidth={true}
+                                  style={{ marginTop: 20 }}
+                                  onChange={(name, value) => setHashesSHA512Value(value)}
+                                />}
+                              </div>}
                             </div>
                           );
                         }
