@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { graphql, PreloadedQuery } from 'react-relay';
 import ListLinesContent from '../../../../components/list_lines/ListLinesContent';
-import KillChainPhaseLine, { KillChainPhaseLineDummy, DataColumnsType } from './KillChainPhaseLine';
+import { KillChainPhaseLine, KillChainPhaseLineDummy, KillChainPhaseDataColumnsType } from './KillChainPhaseLine';
 import { KillChainPhasesLinesPaginationQuery, KillChainPhasesLinesPaginationQuery$variables } from './__generated__/KillChainPhasesLinesPaginationQuery.graphql';
 import { UseLocalStorageHelpers } from '../../../../utils/hooks/useLocalStorage';
 import usePreloadedPaginationFragment from '../../../../utils/hooks/usePreloadedPaginationFragment';
@@ -11,7 +11,7 @@ const nbOfRowsToLoad = 50;
 
 interface KillChainPhasesLinesProps {
   queryRef: PreloadedQuery<KillChainPhasesLinesPaginationQuery>;
-  dataColumns: DataColumnsType;
+  dataColumns: KillChainPhaseDataColumnsType;
   paginationOptions: KillChainPhasesLinesPaginationQuery$variables;
   setNumberOfElements: UseLocalStorageHelpers['handleSetNumberOfElements'];
 }

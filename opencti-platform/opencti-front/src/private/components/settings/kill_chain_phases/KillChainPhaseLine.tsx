@@ -36,7 +36,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-export type DataColumnsType = {
+export type KillChainPhaseDataColumnsType = {
   kill_chain_name: {
     label: string;
     width: string;
@@ -72,11 +72,11 @@ export const KillChainPhaseLineFragment = graphql`
 
 interface KillChainPhaseLineProps {
   node: KillChainPhaseLine_node$key;
-  dataColumns: DataColumnsType;
+  dataColumns: KillChainPhaseDataColumnsType;
   paginationOptions: { search: string; orderMode: string; orderBy: string };
 }
 
-const KillChainPhaseLine: FunctionComponent<KillChainPhaseLineProps> = ({
+export const KillChainPhaseLine: FunctionComponent<KillChainPhaseLineProps> = ({
   node,
   dataColumns,
   paginationOptions,
@@ -130,7 +130,7 @@ const KillChainPhaseLine: FunctionComponent<KillChainPhaseLineProps> = ({
 };
 
 interface KillChainPhaseLineDummyProps {
-  dataColumns: DataColumnsType;
+  dataColumns: KillChainPhaseDataColumnsType;
 }
 
 export const KillChainPhaseLineDummy: FunctionComponent<
@@ -204,5 +204,3 @@ KillChainPhaseLineDummyProps
     </ListItem>
   );
 };
-
-export default KillChainPhaseLine;

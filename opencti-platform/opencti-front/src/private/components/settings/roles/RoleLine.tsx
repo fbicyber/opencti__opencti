@@ -77,7 +77,7 @@ const RoleLineFragment = graphql`
   }
 `;
 
-const RoleLine: FunctionComponent<RoleLineProps> = ({
+export const RoleLine: FunctionComponent<RoleLineProps> = ({
   node,
   dataColumns,
 }) => {
@@ -233,5 +233,3 @@ RoleLineDummyProps
     </ListItem>
   );
 };
-
-export default RoleLine;

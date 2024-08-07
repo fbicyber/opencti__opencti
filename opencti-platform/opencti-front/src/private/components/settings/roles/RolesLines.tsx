@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { graphql, PreloadedQuery } from 'react-relay';
 import ListLinesContent from '../../../../components/list_lines/ListLinesContent';
-import RoleLine, { RoleLineDummy, RoleDataColumnsType } from './RoleLine';
+import { RoleLine, RoleLineDummy, RoleDataColumnsType } from './RoleLine';
 import { RolesLinesPaginationQuery, RolesLinesPaginationQuery$variables } from './__generated__/RolesLinesPaginationQuery.graphql';
 import { UseLocalStorageHelpers } from '../../../../utils/hooks/useLocalStorage';
 import usePreloadedPaginationFragment from '../../../../utils/hooks/usePreloadedPaginationFragment';
