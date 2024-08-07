@@ -11,7 +11,7 @@ const nbOfRowsToLoad = 50;
 
 interface KillChainPhasesLinesProps {
   queryRef: PreloadedQuery<KillChainPhasesLinesPaginationQuery>;
-  dataColumns: DataColumnsType; // TODO
+  dataColumns: DataColumnsType;
   paginationOptions: KillChainPhasesLinesPaginationQuery$variables;
   setNumberOfElements: UseLocalStorageHelpers['handleSetNumberOfElements'];
 }

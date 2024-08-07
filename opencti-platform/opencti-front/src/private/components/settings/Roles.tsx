@@ -1,7 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { QueryRenderer } from '../../../relay/environment';
-import { buildViewParamsFromUrlAndStorage, saveViewParameters } from '../../../utils/ListParameters';
+import React, { FunctionComponent } from 'react';
 import { useFormatter } from '../../../components/i18n';
 import ListLines from '../../../components/list_lines/ListLines';
 import RolesLines, { rolesLinesQuery } from './roles/RolesLines';
@@ -9,59 +6,34 @@ import AccessesMenu from './AccessesMenu';
 import RoleCreation from './roles/RoleCreation';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
+import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
+import useQueryLoading from '../../../utils/hooks/useQueryLoading';
+import { RolesLinesPaginationQuery, RolesLinesPaginationQuery$variables } from './roles/__generated__/RolesLinesPaginationQuery.graphql';
+import { RoleLineDummy } from './roles/RoleLine';
+
+const LOCAL_STORAGE_KEY = 'roles';
 
 const Roles: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
   const { setTitle } = useConnectedDocumentModifier();
   setTitle(t_i18n('Security: Roles | Settings'));
-  const navigate = useNavigate();
-  const location = useLocation();
-  const LOCAL_STORAGE_KEY = 'roles';
-  const params = buildViewParamsFromUrlAndStorage(navigate, location, LOCAL_STORAGE_KEY);
-  const [searchTerm, setSearchTerm] = useState<string>(params.searchTerm ?? '');
-  const [sortBy, sortFields] = useState<string>(params.sortBy ?? 'name');
-  const [orderAsc, setOrderAsc] = useState<boolean>(true);
-  const [view] = useState<string>(params.view ?? 'lines');
-  const [paginationOptions, setPaginationOptions] = useState<any>({
-    search: searchTerm,
-    orderBy: sortBy,
-    orderMode: orderAsc ? 'asc' : 'desc',
+
+  const {
+    viewStorage,
+    helpers,
+    paginationOptions,
+  } = usePaginationLocalStorage<RolesLinesPaginationQuery$variables>(LOCAL_STORAGE_KEY, {
+    searchTerm: '',
+    sortBy: 'name',
+    orderAsc: true,
   });
 
-  useEffect(() => {
-    setPaginationOptions({
-      search: searchTerm,
-      orderBy: sortBy,
-      orderMode: orderAsc ? 'asc' : 'desc',
-    });
-  }, [searchTerm, sortBy, orderAsc]);
-
-  const saveView = () => {
-    setTitle(t_i18n('Security: Roles | Settings'));
-    saveViewParameters(
-      navigate,
-      location,
-      LOCAL_STORAGE_KEY,
-      {
-        sortBy,
-        orderAsc,
-        searchTerm,
-        view,
-      },
+  const renderLines = () => {
+    const { sortBy, orderAsc, searchTerm } = viewStorage;
+    const queryRef = useQueryLoading<RolesLinesPaginationQuery>(
+      rolesLinesQuery,
+      paginationOptions,
     );
-  };
-
-  const handleSort = (field: string, orderAsc: boolean) => {
-    sortFields(field);
-    setOrderAsc(orderAsc);
-    saveView();
-  };
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    // saveView();
-  };
-
-  const renderLines = (paginationOptions: any) => {
     const dataColumns = {
       name: {
         label: 'Name',
@@ -86,27 +58,39 @@ const Roles: FunctionComponent = () => {
     };
     return (
       <ListLines
+        helpers={helpers}
         sortBy={sortBy}
         orderAsc={orderAsc}
         dataColumns={dataColumns}
-        handleSort={handleSort}
-        handleSearch={handleSearch}
+        handleSort={helpers.handleSort}
+        handleSearch={helpers.handleSearch}
         displayImport={false}
         secondaryAction={false}
         keyword={searchTerm}
       >
-        <QueryRenderer
-          query={rolesLinesQuery}
-          variables={{ count: 25, ...paginationOptions }}
-          render={({ props }) => (
+        {queryRef && (
+          <React.Suspense
+            fallback={
+              <>
+                {Array(20)
+                  .fill(0)
+                  .map((_, idx) => (
+                    <RoleLineDummy
+                      key={idx}
+                      dataColumns={dataColumns}
+                    />
+                  ))}
+              </>
+            }
+          >
             <RolesLines
-              data={props}
+              queryRef={queryRef}
               paginationOptions={paginationOptions}
               dataColumns={dataColumns}
-              initialLoading={props === null}
+              setNumberOfElements={helpers.handleSetNumberOfElements}
             />
-          )}
-        />
+          </React.Suspense>
+        )}
       </ListLines>
     );
   };
@@ -115,7 +99,7 @@ const Roles: FunctionComponent = () => {
     <div data-testid='roles-settings-page'>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Security') }, { label: t_i18n('Roles'), current: true }]} />
       <AccessesMenu />
-      {view === 'lines' ? renderLines(paginationOptions) : ''}
+      { renderLines() }
       <RoleCreation paginationOptions={paginationOptions} />
     </div>
   );
