@@ -15,6 +15,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs';
 import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import useHelper from '../../../utils/hooks/useHelper';
 import { DataColumns } from '../../../components/list_lines';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'retention';
 
@@ -30,6 +31,8 @@ const useStyles = makeStyles(() => ({
 const Retention = () => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Customization: Retention | Settings'));
   const { platformModuleHelpers } = useAuth();
   const { isFeatureEnable } = useHelper();
   const {
