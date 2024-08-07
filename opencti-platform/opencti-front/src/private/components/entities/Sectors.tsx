@@ -1,74 +1,122 @@
-import React, { FunctionComponent, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { QueryRenderer } from '../../../relay/environment';
-import { buildViewParamsFromUrlAndStorage/* , saveViewParameters */ } from '../../../utils/ListParameters';
-import { useFormatter } from '../../../components/i18n';
+import React from 'react';
+import { SectorLineDummy } from '@components/entities/sectors/SectorLine';
+import { SectorsLinesPaginationQuery, SectorsLinesPaginationQuery$variables } from './sectors/__generated__/SectorsLinesPaginationQuery.graphql';
+import useHelper from '../../../utils/hooks/useHelper';
+import ListLines from '../../../components/list_lines/ListLines';
 import SectorsLines, { sectorsLinesQuery } from './sectors/SectorsLines';
 import SectorCreation from './sectors/SectorCreation';
-import SearchInput from '../../../components/SearchInput';
 import Security from '../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
+import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
+import useQueryLoading from '../../../utils/hooks/useQueryLoading';
+import { emptyFilterGroup } from '../../../utils/filters/filtersUtils';
+import { useFormatter } from '../../../components/i18n';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
-const Sectors: FunctionComponent = () => {
+const LOCAL_STORAGE_KEY = 'sectors';
+
+const Sectors = () => {
   const { t_i18n } = useFormatter();
   const { setTitle } = useConnectedDocumentModifier();
   setTitle(t_i18n('Sectors | Entities'));
-  const navigate = useNavigate();
-  const location = useLocation();
-  const LOCAL_STORAGE_KEY = 'sectors';
-  const params = buildViewParamsFromUrlAndStorage(navigate, location, LOCAL_STORAGE_KEY);
-  const [searchTerm, setSearchTerm] = useState<string>(params.searchTerm ?? '');
-  // const [openExports] = useState<boolean>(false);
-
-  /* const saveView = () => {
-    setTitle(t_i18n('Sectors | Entities'));
-    saveViewParameters(
-      navigate,
-      location,
-      LOCAL_STORAGE_KEY,
-      {
-        searchTerm,
-        openExports,
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<SectorsLinesPaginationQuery$variables>(
+    LOCAL_STORAGE_KEY,
+    {
+      searchTerm: '',
+      sortBy: 'name',
+      orderAsc: true,
+      openExports: false,
+      filters: emptyFilterGroup,
+    },
+  );
+  const renderLines = () => {
+    const {
+      searchTerm,
+      sortBy,
+      orderAsc,
+      filters,
+      openExports,
+      numberOfElements,
+    } = viewStorage;
+    const dataColumns = {
+      name: {
+        label: 'Name',
+        width: '23%',
+        isSortable: true,
       },
+      description: {
+        label: 'Description',
+        width: '23%',
+        isSortable: true,
+      },
+    };
+    const queryRef = useQueryLoading<SectorsLinesPaginationQuery>(
+      sectorsLinesQuery,
+      paginationOptions,
     );
-  }; */
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    // saveView();
+    return (
+      <ListLines
+        helpers={helpers}
+        sortBy={sortBy}
+        orderAsc={orderAsc}
+        dataColumns={dataColumns}
+        handleSort={helpers.handleSort}
+        handleSearch={helpers.handleSearch}
+        handleAddFilter={helpers.handleAddFilter}
+        handleRemoveFilter={helpers.handleRemoveFilter}
+        handleSwitchGlobalMode={helpers.handleSwitchGlobalMode}
+        handleSwitchLocalMode={helpers.handleSwitchLocalMode}
+        handleToggleExports={helpers.handleToggleExports}
+        openExports={openExports}
+        exportContext={{ entity_type: 'Sectors' }}
+        keyword={searchTerm}
+        filters={filters}
+        paginationOptions={paginationOptions}
+        numberOfElements={numberOfElements}
+        createButton={isFABReplaced && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <SectorCreation paginationOptions={paginationOptions} />
+        </Security>}
+      >
+        {queryRef && (
+          <React.Suspense
+            fallback={
+              <>
+                {Array(20)
+                  .fill(0)
+                  .map((_, idx) => (
+                    <SectorLineDummy
+                      key={idx}
+                      dataColumns={dataColumns}
+                    />
+                  ))}
+              </>
+            }
+          >
+            <SectorsLines
+              queryRef={queryRef}
+              paginationOptions={paginationOptions}
+              dataColumns={dataColumns}
+              onLabelClick={helpers.handleAddFilter}
+              setNumberOfElements={helpers.handleSetNumberOfElements}
+            />
+          </React.Suspense>
+        )}
+      </ListLines>
+    );
   };
-
-  /* const handleToggleExports = () => {
-    setOpenExports(!openExports);
-  }; */
 
   return (
     <>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Entities') }, { label: t_i18n('Sectors'), current: true }]} />
-      <div style={{ float: 'left', marginRight: 20 }}>
-        <SearchInput
-          variant="small"
-          onSubmit={handleSearch.bind(this)}
-          keyword={searchTerm}
-        />
-      </div>
-      <div className="clearfix" />
-      <QueryRenderer
-        query={sectorsLinesQuery}
-        variables={{ count: 500 }}
-        render={({ props } : { props: string }) => (
-          <SectorsLines data={props} keyword={searchTerm} />
-        )}
-      />
-      <Security needs={[KNOWLEDGE_KNUPDATE]}>
-        <SectorCreation paginationOptions={{
-          count: 0,
-          cursor: undefined,
-        }}
-        />
-      </Security>
+      {renderLines()}
+      {!isFABReplaced
+        && <Security needs={[KNOWLEDGE_KNUPDATE]}>
+          <SectorCreation paginationOptions={paginationOptions} />
+        </Security>
+      }
     </>
   );
 };
