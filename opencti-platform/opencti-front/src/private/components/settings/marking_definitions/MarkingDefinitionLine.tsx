@@ -7,16 +7,15 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import makeStyles from '@mui/styles/makeStyles';
 import { MoreVert } from '@mui/icons-material';
 import { ListItemButton } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { graphql, useFragment } from 'react-relay';
-import KillChainPhasePopover from './KillChainPhasePopover';
-import { KillChainPhaseLine_node$key } from './__generated__/KillChainPhaseLine_node.graphql';
+import { MarkingDefinitionLine_node$key } from './__generated__/MarkingDefinitionLine_node.graphql';
 import ItemIcon from '../../../../components/ItemIcon';
 import { useFormatter } from '../../../../components/i18n';
 import type { Theme } from '../../../../components/Theme';
-import { KillChainPhasesLinesPaginationQuery$variables } from './__generated__/KillChainPhasesLinesPaginationQuery.graphql';
+import MarkingDefinitionPopover from './MarkingDefinitionPopover';
+import { MarkingDefinitionsLinesPaginationQuery$variables } from './__generated__/MarkingDefinitionsLinesPaginationQuery.graphql';
 
-// Deprecated - https://mui.com/system/styles/basics/
-// Do not use it for new code.
 const useStyles = makeStyles<Theme>((theme) => ({
   item: {
     paddingLeft: 10,
@@ -37,13 +36,18 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-export type KillChainPhaseDataColumnsType = {
-  kill_chain_name: {
+export type MarkingDefinitionDataColumnsType = {
+  definition_type: {
     label: string;
     width: string;
     isSortable: boolean;
   };
-  phase_name: {
+  definition: {
+    label: string;
+    width: string;
+    isSortable: boolean;
+  };
+  x_opencti_color: {
     label: string;
     width: string;
     isSortable: boolean;
@@ -60,69 +64,82 @@ export type KillChainPhaseDataColumnsType = {
   };
 };
 
-export const KillChainPhaseLineFragment = graphql`
-  fragment KillChainPhaseLine_node on KillChainPhase {
+interface MarkingDefinitionLineProps {
+  node: MarkingDefinitionLine_node$key;
+  dataColumns: MarkingDefinitionDataColumnsType;
+  paginationOptions: MarkingDefinitionsLinesPaginationQuery$variables;
+}
+
+const markingDefinitionLineFragment = graphql`
+  fragment MarkingDefinitionLine_node on MarkingDefinition {
     id
-    kill_chain_name
-    phase_name
+    definition_type
+    definition
     x_opencti_order
+    x_opencti_color
     created
     modified
   }
 `;
 
-interface KillChainPhaseLineProps {
-  node: KillChainPhaseLine_node$key;
-  dataColumns: KillChainPhaseDataColumnsType;
-  paginationOptions: KillChainPhasesLinesPaginationQuery$variables;
-}
-
-export const KillChainPhaseLine: FunctionComponent<KillChainPhaseLineProps> = ({
+export const MarkingDefinitionLine: FunctionComponent<MarkingDefinitionLineProps> = ({
   node,
   dataColumns,
   paginationOptions,
 }) => {
   const classes = useStyles();
   const { fd } = useFormatter();
-  const data = useFragment(KillChainPhaseLineFragment, node);
+  const markingDefinition = useFragment(markingDefinitionLineFragment, node);
   return (
-    <ListItemButton classes={{ root: classes.item }} divider={true}>
+    <ListItemButton
+      key={markingDefinition.id}
+      classes={{ root: classes.item }}
+      divider={true}
+      component={Link}
+      to={`/dashboard/settings/accesses/markingDefinitions/${markingDefinition.id}`}
+    >
       <ListItemIcon>
-        <ItemIcon type="Kill-Chain-Phase" />
+        <ItemIcon type="Marking-Definition" color={markingDefinition.x_opencti_color} />
       </ListItemIcon>
       <ListItemText
         primary={
           <div>
             <div
               className={classes.bodyItem}
-              style={{ width: dataColumns.kill_chain_name.width }}
+              style={{ width: dataColumns.definition_type.width }}
             >
-              {data.kill_chain_name}
+              {markingDefinition.definition_type}
             </div>
             <div
               className={classes.bodyItem}
-              style={{ width: dataColumns.phase_name.width }}
+              style={{ width: dataColumns.definition.width }}
             >
-              {data.phase_name}
+              {markingDefinition.definition}
+            </div>
+            <div
+              className={classes.bodyItem}
+              style={{ width: dataColumns.x_opencti_color.width }}
+            >
+              {markingDefinition.x_opencti_color}
             </div>
             <div
               className={classes.bodyItem}
               style={{ width: dataColumns.x_opencti_order.width }}
             >
-              {data.x_opencti_order}
+              {markingDefinition.x_opencti_order}
             </div>
             <div
               className={classes.bodyItem}
               style={{ width: dataColumns.created.width }}
             >
-              {fd(data.created)}
+              {fd(markingDefinition.created)}
             </div>
           </div>
         }
       />
       <ListItemSecondaryAction>
-        <KillChainPhasePopover
-          killChainPhaseId={data.id}
+        <MarkingDefinitionPopover
+          markingDefinitionId={markingDefinition.id}
           paginationOptions={paginationOptions}
         />
       </ListItemSecondaryAction>
@@ -130,15 +147,14 @@ export const KillChainPhaseLine: FunctionComponent<KillChainPhaseLineProps> = ({
   );
 };
 
-interface KillChainPhaseLineDummyProps {
-  dataColumns: KillChainPhaseDataColumnsType;
+interface MarkingDefinitionLineDummyProps {
+  dataColumns: MarkingDefinitionDataColumnsType;
 }
 
-export const KillChainPhaseLineDummy: FunctionComponent<
-KillChainPhaseLineDummyProps
+export const MarkingDefinitionLineDummy: FunctionComponent<
+MarkingDefinitionLineDummyProps
 > = ({ dataColumns }) => {
   const classes = useStyles();
-
   return (
     <ListItem classes={{ root: classes.item }} divider={true}>
       <ListItemIcon classes={{ root: classes.itemIconDisabled }}>
@@ -154,7 +170,7 @@ KillChainPhaseLineDummyProps
           <div>
             <div
               className={classes.bodyItem}
-              style={{ width: dataColumns.kill_chain_name.width }}
+              style={{ width: dataColumns.definition_type.width }}
             >
               <Skeleton
                 animation="wave"
@@ -165,7 +181,18 @@ KillChainPhaseLineDummyProps
             </div>
             <div
               className={classes.bodyItem}
-              style={{ width: dataColumns.phase_name.width }}
+              style={{ width: dataColumns.definition.width }}
+            >
+              <Skeleton
+                animation="wave"
+                variant="rectangular"
+                width="90%"
+                height="100%"
+              />
+            </div>
+            <div
+              className={classes.bodyItem}
+              style={{ width: dataColumns.x_opencti_color.width }}
             >
               <Skeleton
                 animation="wave"
@@ -192,7 +219,7 @@ KillChainPhaseLineDummyProps
               <Skeleton
                 animation="wave"
                 variant="rectangular"
-                width={140}
+                width="90%"
                 height="100%"
               />
             </div>
