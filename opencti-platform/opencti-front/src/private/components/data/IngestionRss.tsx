@@ -1,7 +1,6 @@
 import React from 'react';
 import Alert from '@mui/material/Alert';
 import makeStyles from '@mui/styles/makeStyles';
-import { QueryRenderer } from '../../../relay/environment';
 import ListLines from '../../../components/list_lines/ListLines';
 import IngestionRssLines, { ingestionRssLinesQuery } from './ingestionRss/IngestionRssLines';
 import IngestionRssCreation from './ingestionRss/IngestionRssCreation';
@@ -14,6 +13,9 @@ import Breadcrumbs from '../../../components/Breadcrumbs';
 import Security from '../../../utils/Security';
 import { INGESTION_SETINGESTIONS } from '../../../utils/hooks/useGranted';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
+import { IngestionRssLinesPaginationQuery, IngestionRssLinesPaginationQuery$variables } from './ingestionRss/__generated__/IngestionRssLinesPaginationQuery.graphql';
+import useQueryLoading from '../../../utils/hooks/useQueryLoading';
+import { IngestionRssLineDummy } from './ingestionRss/IngestionRssLine';
 
 const LOCAL_STORAGE_KEY = 'ingestionRss';
 
@@ -35,33 +37,81 @@ const IngestionRss = () => {
   const {
     viewStorage,
     paginationOptions,
-    helpers: storageHelpers,
-  } = usePaginationLocalStorage(LOCAL_STORAGE_KEY, {
+    helpers,
+  } = usePaginationLocalStorage<IngestionRssLinesPaginationQuery$variables>(LOCAL_STORAGE_KEY, {
     sortBy: 'name',
     orderAsc: false,
     searchTerm: '',
+    numberOfElements: {
+      number: 0,
+      symbol: '',
+    },
   });
-  const dataColumns = {
-    name: {
-      label: 'Name',
-      width: '20%',
-      isSortable: true,
-    },
-    uri: {
-      label: 'URL',
-      width: '30%',
-      isSortable: true,
-    },
-    ingestion_running: {
-      label: 'Running',
-      width: '20%',
-      isSortable: false,
-    },
-    current_state_date: {
-      label: 'Current state',
-      isSortable: false,
-      width: '15%',
-    },
+
+  const renderLines = () => {
+    const { searchTerm, sortBy, orderAsc, numberOfElements } = viewStorage;
+    const dataColumns = {
+      name: {
+        label: 'Name',
+        width: '20%',
+        isSortable: true,
+      },
+      uri: {
+        label: 'URL',
+        width: '30%',
+        isSortable: true,
+      },
+      ingestion_running: {
+        label: 'Running',
+        width: '20%',
+        isSortable: false,
+      },
+      current_state_date: {
+        label: 'Current state',
+        isSortable: false,
+        width: '15%',
+      },
+    };
+    const queryRef = useQueryLoading<IngestionRssLinesPaginationQuery>(
+      ingestionRssLinesQuery,
+      paginationOptions,
+    );
+    return (
+      <ListLines
+        helpers={helpers}
+        sortBy={sortBy}
+        orderAsc={orderAsc}
+        dataColumns={dataColumns}
+        handleSort={helpers.handleSort}
+        handleSearch={helpers.handleSearch}
+        displayImport={false}
+        secondaryAction={true}
+        paginationOptions={paginationOptions}
+        numberOfElements={numberOfElements}
+        keyword={searchTerm}
+      >
+        {queryRef && (
+        <React.Suspense
+          fallback={
+            <>
+              {Array(20)
+                .fill(0)
+                .map((_, idx) => (
+                  <IngestionRssLineDummy key={idx} dataColumns={dataColumns} />
+                ))}
+            </>
+          }
+        >
+          <IngestionRssLines
+            queryRef={queryRef}
+            paginationOptions={paginationOptions}
+            dataColumns={dataColumns}
+            setNumberOfElements={helpers.handleSetNumberOfElements}
+          />
+          </React.Suspense>
+        )}
+      </ListLines>
+    );
   };
   if (!platformModuleHelpers.isIngestionManagerEnable()) {
     return (
@@ -73,37 +123,16 @@ const IngestionRss = () => {
       </div>
     );
   }
+
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Ingestion') }, { label: t_i18n('RSS feeds'), current: true }]} />
       <IngestionMenu/>
-      <ListLines
-        helpers={storageHelpers}
-        sortBy={viewStorage.sortBy}
-        orderAsc={viewStorage.orderAsc}
-        dataColumns={dataColumns}
-        handleSort={storageHelpers.handleSort}
-        handleSearch={storageHelpers.handleSearch}
-        displayImport={false}
-        secondaryAction={true}
-        keyword={viewStorage.searchTerm}
-      >
-        <QueryRenderer
-          query={ingestionRssLinesQuery}
-          variables={{ count: 200, ...paginationOptions as object }}
-          render={({ props } : { props: string }) => (
-            <IngestionRssLines
-              data={props}
-              paginationOptions={paginationOptions}
-              refetchPaginationOptions={{ count: 200, ...paginationOptions as object }}
-              dataColumns={dataColumns}
-              initialLoading={props === null}
-            />
-          )}
-        />
-      </ListLines>
+      {renderLines()}
       <Security needs={[INGESTION_SETINGESTIONS]}>
-        <IngestionRssCreation paginationOptions={paginationOptions} />
+        <IngestionRssCreation
+          paginationOptions={paginationOptions}
+        />
       </Security>
     </div>
   );
