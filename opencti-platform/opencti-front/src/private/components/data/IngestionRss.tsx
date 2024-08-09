@@ -3,7 +3,7 @@ import Alert from '@mui/material/Alert';
 import makeStyles from '@mui/styles/makeStyles';
 import { QueryRenderer } from '../../../relay/environment';
 import ListLines from '../../../components/list_lines/ListLines';
-import IngestionRssLines, { IngestionRssLinesQuery } from './ingestionRss/IngestionRssLines';
+import IngestionRssLines, { ingestionRssLinesQuery } from './ingestionRss/IngestionRssLines';
 import IngestionRssCreation from './ingestionRss/IngestionRssCreation';
 import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
 import useAuth from '../../../utils/hooks/useAuth';
@@ -13,6 +13,7 @@ import IngestionMenu from './IngestionMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import Security from '../../../utils/Security';
 import { INGESTION_SETINGESTIONS } from '../../../utils/hooks/useGranted';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'ingestionRss';
 
@@ -28,6 +29,8 @@ const useStyles = makeStyles(() => ({
 const IngestionRss = () => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Ingestion: RSS Feeds | Data'));
   const { platformModuleHelpers } = useAuth();
   const {
     viewStorage,
@@ -86,13 +89,13 @@ const IngestionRss = () => {
         keyword={viewStorage.searchTerm}
       >
         <QueryRenderer
-          query={IngestionRssLinesQuery}
-          variables={{ count: 200, ...paginationOptions }}
-          render={({ props }) => (
+          query={ingestionRssLinesQuery}
+          variables={{ count: 200, ...paginationOptions as object }}
+          render={({ props } : { props: string }) => (
             <IngestionRssLines
               data={props}
               paginationOptions={paginationOptions}
-              refetchPaginationOptions={{ count: 200, ...paginationOptions }}
+              refetchPaginationOptions={{ count: 200, ...paginationOptions as object }}
               dataColumns={dataColumns}
               initialLoading={props === null}
             />

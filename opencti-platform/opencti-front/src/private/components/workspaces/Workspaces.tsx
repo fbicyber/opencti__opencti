@@ -12,6 +12,7 @@ import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { GqlFilterGroup } from '../../../utils/filters/filtersUtils';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 interface WorkspacesProps {
   type: string;
@@ -23,6 +24,8 @@ const Workspaces: FunctionComponent<WorkspacesProps> = ({
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Dashboards and Investigations | Workspaces'));
   const {
     viewStorage,
     paginationOptions,
