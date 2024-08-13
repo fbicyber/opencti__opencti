@@ -1,64 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { TaxiiLinesPaginationQuery$data } from '@components/data/taxii/__generated__/TaxiiLinesPaginationQuery.graphql';
+import React, { FunctionComponent } from 'react';
+import { TaxiiLinesPaginationQuery, TaxiiLinesPaginationQuery$variables } from '@components/data/taxii/__generated__/TaxiiLinesPaginationQuery.graphql';
 import Box from '@mui/material/Box';
-import { QueryRenderer } from '../../../relay/environment';
-import { buildViewParamsFromUrlAndStorage, saveViewParameters } from '../../../utils/ListParameters';
+import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import ListLines from '../../../components/list_lines/ListLines';
 import TaxiiLines, { TaxiiLinesQuery } from './taxii/TaxiiLines';
 import TaxiiCollectionCreation from './taxii/TaxiiCollectionCreation';
 import SharingMenu from './SharingMenu';
-import { OrderMode, PaginationOptions } from '../../../components/list_lines';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import { useFormatter } from '../../../components/i18n';
 import { TAXIIAPI_SETCOLLECTIONS } from '../../../utils/hooks/useGranted';
 import Security from '../../../utils/Security';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
+import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
+import useHelper from '../../../utils/hooks/useHelper';
+import { TaxiiLineDummy } from './taxii/TaxiiLine';
+import { useBuildEntityTypeBasedFilterContext } from '../../../utils/filters/filtersUtils';
 
-const Taxii = () => {
+const LOCAL_STORAGE_KEY = 'taxii';
+
+const Taxii: FunctionComponent = () => {
   const { t_i18n } = useFormatter();
-  const LOCAL_STORAGE_KEY = 'taxii';
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = buildViewParamsFromUrlAndStorage(
-    navigate,
-    location,
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Data Sharing: TAXII Collections | Data'));
+  const { viewStorage, helpers, paginationOptions } = usePaginationLocalStorage<TaxiiLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
+    {
+      searchTerm: '',
+      sortBy: 'name',
+      view: 'lines',
+      orderAsc: false,
+      numberOfElements: {
+        number: 0,
+        symbol: '',
+      },
+    },
   );
-  const [taxiiState, setTaxiiState] = useState<{ orderAsc: boolean, searchTerm: string, view: string, sortBy: string }>({
-    orderAsc: params.orderAsc !== false,
-    searchTerm: params.searchTerm ?? '',
-    view: params.view ?? 'lines',
-    sortBy: params.sortBy ?? 'name',
-  });
-
-  const saveView = () => {
-    saveViewParameters(
-      navigate,
-      location,
-      LOCAL_STORAGE_KEY,
-      taxiiState,
-    );
-  };
-
-  const handleSearch = (value: string) => {
-    setTaxiiState({ ...taxiiState,
-      searchTerm: value,
-    });
-  };
-
-  const handleSort = (field: string, orderAsc: boolean) => {
-    setTaxiiState({
-      ...taxiiState,
-      sortBy: field,
-      orderAsc });
-  };
-
-  useEffect(() => {
-    saveView();
-  }, [taxiiState]);
-
-  function renderLines(paginationOptions: PaginationOptions) {
-    const { sortBy, orderAsc, searchTerm } = taxiiState;
+  const renderLines = () => {
+    const { searchTerm, sortBy, orderAsc, numberOfElements, filters } = viewStorage;
     const dataColumns = {
       name: {
         label: 'Name',
@@ -80,37 +60,53 @@ const Taxii = () => {
         width: '45%',
       },
     };
+    const contextFilters = useBuildEntityTypeBasedFilterContext('Taxii', filters);
+    const queryPaginationOptions = {
+      ...paginationOptions,
+      filters: contextFilters,
+    } as unknown as TaxiiLinesPaginationQuery$variables;
+
+    const queryRef = useQueryLoading<TaxiiLinesPaginationQuery>(
+      TaxiiLinesQuery,
+      queryPaginationOptions,
+    );
     return (
       <ListLines
         sortBy={sortBy}
         orderAsc={orderAsc}
         dataColumns={dataColumns}
-        handleSort={handleSort}
-        handleSearch={handleSearch}
+        handleSort={helpers.handleSort}
+        handleSearch={helpers.handleSearch}
         displayImport={false}
+        paginationOptions={queryPaginationOptions}
         secondaryAction={true}
+        numberOfElements={numberOfElements}
         keyword={searchTerm}
       >
-        <QueryRenderer
-          query={TaxiiLinesQuery}
-          variables={{ count: 25, ...paginationOptions }}
-          render={({ props }: { props: TaxiiLinesPaginationQuery$data }) => (
-            <TaxiiLines
-              data={props}
-              paginationOptions={paginationOptions}
-              dataColumns={dataColumns}
-              initialLoading={props === null}
-            />)}
-        />
+        {queryRef && (
+        <React.Suspense
+          fallback={
+            <>
+              {Array(20)
+                .fill(0)
+                .map((_, idx) => (
+                  <TaxiiLineDummy key={idx} dataColumns={dataColumns} />
+                ))}
+            </>
+          }
+        >
+          <TaxiiLines
+            queryRef={queryRef}
+            paginationOptions={queryPaginationOptions}
+            dataColumns={dataColumns}
+            setNumberOfElements={helpers.handleSetNumberOfElements}
+          />
+        </React.Suspense>
+        )}
       </ListLines>
     );
-  }
-
-  const paginationOptions: PaginationOptions = {
-    search: taxiiState.searchTerm,
-    orderBy: taxiiState.sortBy ? taxiiState.sortBy : null,
-    orderMode: taxiiState.orderAsc ? OrderMode.asc : OrderMode.desc,
   };
+
   return (
     <Box sx={{
       margin: 0,
@@ -120,10 +116,12 @@ const Taxii = () => {
     >
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Data sharing') }, { label: t_i18n('TAXII collections'), current: true }]} />
       <SharingMenu/>
-      {taxiiState.view === 'lines' ? renderLines(paginationOptions) : null}
+      {renderLines()}
+      {!isFABReplaced && (
       <Security needs={[TAXIIAPI_SETCOLLECTIONS]}>
         <TaxiiCollectionCreation paginationOptions={paginationOptions} />
       </Security>
+      )}
     </Box>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import Alert from '@mui/material/Alert';
 import makeStyles from '@mui/styles/makeStyles';
 import { useTheme } from '@mui/styles';
-import { QueryRenderer } from '../../../relay/environment';
+import { Theme } from '@mui/material';
 import ListLines from '../../../components/list_lines/ListLines';
 import SyncLines, { SyncLinesQuery } from './sync/SyncLines';
 import SyncCreation from './sync/SyncCreation';
@@ -14,6 +14,10 @@ import IngestionMenu from './IngestionMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import Security from '../../../utils/Security';
 import { INGESTION_SETINGESTIONS } from '../../../utils/hooks/useGranted';
+import { SyncLinesPaginationQuery, SyncLinesPaginationQuery$variables } from './sync/__generated__/SyncLinesPaginationQuery.graphql';
+import { SyncLineDummy } from './sync/SyncLine';
+import useQueryLoading from '../../../utils/hooks/useQueryLoading';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const LOCAL_STORAGE_KEY = 'sync';
 
@@ -27,44 +31,93 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Sync = () => {
-  const theme = useTheme();
+  const theme = useTheme<Theme>();
   const classes = useStyles();
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Ingestion: Remote OCTI Streams | Data'));
   const { platformModuleHelpers } = useAuth();
   const {
     viewStorage,
     paginationOptions,
-    helpers: storageHelpers,
-  } = usePaginationLocalStorage(LOCAL_STORAGE_KEY, {
+    helpers,
+  } = usePaginationLocalStorage<SyncLinesPaginationQuery$variables>(LOCAL_STORAGE_KEY, {
     sortBy: 'name',
     orderAsc: false,
     searchTerm: '',
+    numberOfElements: {
+      number: 0,
+      symbol: '',
+    },
   });
-  const dataColumns = {
-    name: {
-      label: 'Name',
-      width: '15%',
-      isSortable: true,
-    },
-    uri: {
-      label: 'URL',
-      width: '20%',
-      isSortable: true,
-    },
-    stream_id: {
-      label: 'Stream ID',
-      width: '20%',
-      isSortable: true,
-    },
-    running: {
-      label: 'Running',
-      width: '20%',
-      isSortable: false,
-    },
-    current_state_date: {
-      label: 'Current state',
-      isSortable: true,
-    },
+  const renderLines = () => {
+    const { searchTerm, sortBy, orderAsc, numberOfElements } = viewStorage;
+    const dataColumns = {
+      name: {
+        label: 'Name',
+        width: '15%',
+        isSortable: true,
+      },
+      uri: {
+        label: 'URL',
+        width: '20%',
+        isSortable: true,
+      },
+      stream_id: {
+        label: 'Stream ID',
+        width: '20%',
+        isSortable: true,
+      },
+      running: {
+        label: 'Running',
+        width: '20%',
+        isSortable: false,
+      },
+      current_state_date: {
+        label: 'Current state',
+        isSortable: true,
+      },
+    };
+    const queryRef = useQueryLoading<SyncLinesPaginationQuery>(
+      SyncLinesQuery,
+      paginationOptions,
+    );
+    return (
+      <ListLines
+        helpers={helpers}
+        sortBy={sortBy}
+        orderAsc={orderAsc}
+        dataColumns={dataColumns}
+        handleSort={helpers.handleSort}
+        handleSearch={helpers.handleSearch}
+        displayImport={false}
+        secondaryAction={true}
+        paginationOptions={paginationOptions}
+        numberOfElements={numberOfElements}
+        keyword={searchTerm}
+      >
+        {queryRef && (
+        <React.Suspense
+          fallback={
+            <>
+              {Array(20)
+                .fill(0)
+                .map((_, idx) => (
+                  <SyncLineDummy key={idx} dataColumns={dataColumns} />
+                ))}
+            </>
+          }
+        >
+          <SyncLines
+            queryRef={queryRef}
+            paginationOptions={paginationOptions}
+            dataColumns={dataColumns}
+            setNumberofElements={helpers.handleSetNumberOfElements}
+          />
+          </React.Suspense>
+        )}
+      </ListLines>
+    );
   };
   if (!platformModuleHelpers.isSyncManagerEnable()) {
     return (
@@ -80,49 +133,24 @@ const Sync = () => {
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Ingestion') }, { label: t_i18n('Remote OCTI streams'), current: true }]} />
       <IngestionMenu/>
-      <ListLines
-        sortBy={viewStorage.sortBy}
-        orderAsc={viewStorage.orderAsc}
-        dataColumns={dataColumns}
-        handleSort={storageHelpers.handleSort}
-        handleSearch={storageHelpers.handleSearch}
-        displayImport={false}
-        secondaryAction={true}
-        keyword={viewStorage.searchTerm}
-        message={
-          <>
-            {t_i18n(
-              'You can configure your platform to consume remote OCTI streams. A list of public and commercial native feeds is available in the',
-            )}{' '}
-            <a
-              href="https://filigran.notion.site/63392969969c4941905520d37dc7ad4a?v=0a5716cac77b4406825ba3db0acfaeb2"
-              target="_blank"
-              style={{ color: theme.palette.secondary.main }}
-              rel="noreferrer"
-            >
-              OpenCTI ecosystem space
-            </a>
-            .
-          </>
-                }
-      >
-        <QueryRenderer
-          query={SyncLinesQuery}
-          variables={{ count: 200, ...paginationOptions }}
-          render={({ props }) => (
-            <SyncLines
-              data={props}
-              paginationOptions={paginationOptions}
-              refetchPaginationOptions={{ count: 200, ...paginationOptions }}
-              dataColumns={dataColumns}
-              initialLoading={props === null}
-            />
-          )}
-        />
-      </ListLines>
+      {renderLines()}
       <Security needs={[INGESTION_SETINGESTIONS]}>
         <SyncCreation paginationOptions={paginationOptions} />
       </Security>
+      <>
+        {t_i18n(
+          'You can configure your platform to consume remote OCTI streams. A list of public and commercial native feeds is available in the',
+        )}{' '}
+        <a
+          href="https://filigran.notion.site/63392969969c4941905520d37dc7ad4a?v=0a5716cac77b4406825ba3db0acfaeb2"
+          target="_blank"
+          style={{ color: theme.palette.secondary.main }}
+          rel="noreferrer"
+        >
+          OpenCTI ecosystem space
+        </a>
+        .
+      </>
     </div>
   );
 };
