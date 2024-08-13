@@ -100,21 +100,19 @@ const TaxiiLines: FunctionComponent<TaxiiLinesProps> = ({
   }, [refetch]);
 
   return (
-    <>
-      <ListLinesContent
-        initialLoading={!data}
-        isLoading={isLoadingMore}
-        loadMore={loadMore}
-        hasMore={hasMore}
-        dataList={data?.taxiiCollections?.edges ?? []}
-        globalCount={data?.taxiiCollections?.pageInfo?.globalCount ?? nbOfRowsToLoad}
-        LineComponent={TaxiiLineComponent}
-        DummyLineComponent={TaxiiLineDummy}
-        dataColumns={dataColumns}
-        nbOfRowsToLoad={nbOfRowsToLoad}
-        paginationOptions={paginationOptions}
-      />
-    </>
+    <ListLinesContent
+      initialLoading={!data}
+      isLoading={isLoadingMore}
+      loadMore={loadMore}
+      hasMore={hasMore}
+      dataList={data?.taxiiCollections?.edges ?? []}
+      globalCount={data?.taxiiCollections?.pageInfo?.globalCount ?? nbOfRowsToLoad}
+      LineComponent={TaxiiLineComponent}
+      DummyLineComponent={TaxiiLineDummy}
+      dataColumns={dataColumns}
+      nbOfRowsToLoad={nbOfRowsToLoad}
+      paginationOptions={paginationOptions}
+    />
   );
 };
 
