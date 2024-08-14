@@ -9,6 +9,7 @@ import WorkersStatus, { workersStatusQuery } from './connectors/WorkersStatus';
 import ConnectorsStatus, { connectorsStatusQuery } from './connectors/ConnectorsStatus';
 import Loader from '../../../components/Loader';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 
 const styles = () => ({
   container: {
@@ -16,8 +17,11 @@ const styles = () => ({
   },
 });
 
-class Connectors extends Component {
-  render() {
+const Connectors = () => {
+  const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Ingestion: Connectors | Data'));
+  const renderLines = () => {
     const { t, classes } = this.props;
     return (
       <div className={classes.container}>
@@ -43,8 +47,8 @@ class Connectors extends Component {
         />
       </div>
     );
-  }
-}
+  };
+};
 
 Connectors.propTypes = {
   classes: PropTypes.object,

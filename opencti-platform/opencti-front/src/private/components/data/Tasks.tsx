@@ -5,11 +5,13 @@ import Alert from '@mui/material/Alert';
 import { useFormatter } from '../../../components/i18n';
 import { QueryRenderer } from '../../../relay/environment';
 import TasksList, { tasksListQuery } from './tasks/TasksList';
-import Loader from '../../../components/Loader';
+import Loader, { LoaderVariant } from '../../../components/Loader';
 import useAuth from '../../../utils/hooks/useAuth';
 import { TASK_MANAGER } from '../../../utils/platformModulesHelper';
 import ProcessingMenu from './ProcessingMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
+import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
+import { TasksLine_node$data } from '@components/cases/tasks/__generated__/TasksLine_node.graphql';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -24,6 +26,8 @@ const Tasks = () => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const { platformModuleHelpers } = useAuth();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Processing: Tasks | Data'));
   const optionsInProgress = {
     count: 50,
     orderBy: 'created_at',
@@ -68,11 +72,11 @@ const Tasks = () => {
       <QueryRenderer
         query={tasksListQuery}
         variables={optionsInProgress}
-        render={({ props }) => {
+        render={({ props }: { props: TasksLine_node$data }) => {
           if (props) {
             return <TasksList data={props} options={optionsInProgress} />;
           }
-          return <Loader variant="inElement" />;
+          return <Loader variant={LoaderVariant.inElement}/>;
         }}
       />
       <Typography variant="h4" gutterBottom={true} style={{ marginTop: 35 }}>
@@ -81,11 +85,11 @@ const Tasks = () => {
       <QueryRenderer
         query={tasksListQuery}
         variables={optionsFinished}
-        render={({ props }) => {
+        render={({ props }: { props: TasksLine_node$data }) => {
           if (props) {
             return <TasksList data={props} options={optionsFinished} />;
           }
-          return <Loader variant="inElement" />;
+          return <Loader variant={LoaderVariant.inElement}/>;
         }}
       />
     </div>

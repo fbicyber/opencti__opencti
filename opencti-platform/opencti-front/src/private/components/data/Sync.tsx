@@ -95,6 +95,22 @@ const Sync = () => {
         paginationOptions={paginationOptions}
         numberOfElements={numberOfElements}
         keyword={searchTerm}
+        message={
+          <>
+            {t_i18n(
+              'You can configure your platform to consume remote OCTI streams. A list of public and commercial native feeds is available in the',
+            )}{' '}
+            <a
+              href="https://filigran.notion.site/63392969969c4941905520d37dc7ad4a?v=0a5716cac77b4406825ba3db0acfaeb2"
+              target="_blank"
+              style={{ color: theme.palette.secondary.main }}
+              rel="noreferrer"
+            >
+              OpenCTI ecosystem space
+            </a>
+            .
+          </>
+        }
       >
         {queryRef && (
         <React.Suspense
@@ -137,20 +153,6 @@ const Sync = () => {
       <Security needs={[INGESTION_SETINGESTIONS]}>
         <SyncCreation paginationOptions={paginationOptions} />
       </Security>
-      <>
-        {t_i18n(
-          'You can configure your platform to consume remote OCTI streams. A list of public and commercial native feeds is available in the',
-        )}{' '}
-        <a
-          href="https://filigran.notion.site/63392969969c4941905520d37dc7ad4a?v=0a5716cac77b4406825ba3db0acfaeb2"
-          target="_blank"
-          style={{ color: theme.palette.secondary.main }}
-          rel="noreferrer"
-        >
-          OpenCTI ecosystem space
-        </a>
-        .
-      </>
     </div>
   );
 };
