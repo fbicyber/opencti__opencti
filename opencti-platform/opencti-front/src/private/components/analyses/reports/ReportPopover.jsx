@@ -21,7 +21,7 @@ const ReportPopover = ({ id }) => {
   const [displayEnrichment, setDisplayEnrichment] = useState(false);
 
   const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACED');
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   const handleOpen = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
