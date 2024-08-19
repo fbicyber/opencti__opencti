@@ -2,6 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import Alert from '@mui/material/Alert';
+import { TasksLine_node$data } from '@components/cases/tasks/__generated__/TasksLine_node.graphql';
 import { useFormatter } from '../../../components/i18n';
 import { QueryRenderer } from '../../../relay/environment';
 import TasksList, { tasksListQuery } from './tasks/TasksList';
@@ -11,7 +12,6 @@ import { TASK_MANAGER } from '../../../utils/platformModulesHelper';
 import ProcessingMenu from './ProcessingMenu';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
-import { TasksLine_node$data } from '@components/cases/tasks/__generated__/TasksLine_node.graphql';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -74,7 +74,7 @@ const Tasks = () => {
         variables={optionsInProgress}
         render={({ props }: { props: TasksLine_node$data }) => {
           if (props) {
-            return <TasksList data={props} options={optionsInProgress} />;
+            return <TasksList data={props} />;
           }
           return <Loader variant={LoaderVariant.inElement}/>;
         }}
@@ -87,7 +87,7 @@ const Tasks = () => {
         variables={optionsFinished}
         render={({ props }: { props: TasksLine_node$data }) => {
           if (props) {
-            return <TasksList data={props} options={optionsFinished} />;
+            return <TasksList data={props} />;
           }
           return <Loader variant={LoaderVariant.inElement}/>;
         }}

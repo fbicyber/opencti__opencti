@@ -177,7 +177,7 @@ const PublicStreamLines = () => {
           dataColumns={dataColumns}
           dataList={streamCollections.edges}
           LineComponent={PublicStreamLine}
-          DummyLineComponent={<StreamLineDummy />}
+          DummyLineComponent={StreamLineDummy}
         />
       </ListLines>
     </>

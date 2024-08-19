@@ -58,6 +58,7 @@ const Taxii: FunctionComponent = () => {
       filters: {
         label: 'Filters',
         width: '45%',
+        isSortable: false,
       },
     };
     const contextFilters = useBuildEntityTypeBasedFilterContext('Taxii', filters);
