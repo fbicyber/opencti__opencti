@@ -23,6 +23,7 @@ import useApiMutation from '../../../../utils/hooks/useApiMutation';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { UsePreloadedPaginationFragment } from '../../../../utils/hooks/usePreloadedPaginationFragment';
 import { deleteNode } from '../../../../utils/store';
+import useConnectedDocumentModifier from '../../../../utils/hooks/useConnectedDocumentModifier';
 
 export const WorkbenchFileLineDeleteMutation = graphql`
   mutation ImportFilesContentFileLineDeleteMutation($fileName: String) {
@@ -122,6 +123,8 @@ const LOCAL_STORAGE_KEY = 'importFiles';
 
 const ImportFilesContent = () => {
   const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Import: Upload Files | Data'));
   const [displayDelete, setDisplayDelete] = useState<string>('');
 
   const initialFilters = {
