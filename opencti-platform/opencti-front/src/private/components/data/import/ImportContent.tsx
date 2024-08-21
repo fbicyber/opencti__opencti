@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { createRefetchContainer, graphql } from 'react-relay';
 import { interval } from 'rxjs';
-import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Paper from '@mui/material/Paper';
@@ -25,13 +24,14 @@ import { ListItemButton } from '@mui/material';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import Fab from '@mui/material/Fab';
+import makeStyles from '@mui/styles/makeStyles';
 import ImportMenu from '../ImportMenu';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
 import SelectField from '../../../../components/fields/SelectField';
 import { TEN_SECONDS } from '../../../../utils/Time';
 import { fileManagerAskJobImportMutation, scopesConn } from '../../common/files/FileManager';
 import FileLine from '../../common/files/FileLine';
-import inject18n from '../../../../components/i18n';
+import { useFormatter } from '../../../../components/i18n';
 import FileUploader from '../../common/files/FileUploader';
 import { commitMutation, MESSAGING$ } from '../../../../relay/environment';
 import WorkbenchFileLine from '../../common/files/workbench/WorkbenchFileLine';
@@ -40,20 +40,11 @@ import WorkbenchFileCreator from '../../common/files/workbench/WorkbenchFileCrea
 import ManageImportConnectorMessage from './ManageImportConnectorMessage';
 import { truncate } from '../../../../utils/String';
 import { fieldSpacingContainerStyle } from '../../../../utils/field';
-import withRouter from '../../../../utils/compat_router/withRouter';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { resolveHasUserChoiceParsedCsvMapper } from '../../../../utils/csvMapperUtils';
+import useConnectedDocumentModifier from '../../../../utils/hooks/useConnectedDocumentModifier';
 
-const interval$ = interval(TEN_SECONDS);
-
-const styles = (theme) => ({
-  container: {
-    margin: 0,
-  },
-  title: {
-    float: 'left',
-    textTransform: 'uppercase',
-  },
+const useStyles = makeStyles(() => ({
   gridContainer: {
     marginBottom: 20,
   },
@@ -66,33 +57,16 @@ const styles = (theme) => ({
     paddingLeft: 10,
     height: 50,
   },
-  buttons: {
-    marginTop: 20,
-    textAlign: 'right',
-  },
-  button: {
-    marginLeft: theme.spacing(2),
-  },
-  linesContainer: {
-    marginTop: 10,
-  },
   itemHead: {
     paddingLeft: 10,
     textTransform: 'uppercase',
-  },
-  bodyItem: {
-    height: '100%',
-    fontSize: 13,
-  },
-  itemIcon: {
-    color: theme.palette.primary.main,
   },
   createButton: {
     position: 'fixed',
     bottom: 30,
     right: 230,
   },
-});
+}));
 
 const inlineStylesHeaders = {
   iconSort: {
@@ -127,126 +101,77 @@ const inlineStylesHeaders = {
   },
 };
 
-const importConnectorsFragment = graphql`
-  fragment ImportContentContainer_connectorsImport on Connector
-  @relay(plural: true) {
-    id
-    name
-    active
-    only_contextual
-    connector_scope
-    updated_at
-    configurations {
-      id
-      name,
-      configuration
-    }
-  }
-`;
+const ImportContentComponent = () => {
+  const interval$ = interval(TEN_SECONDS);
+  const { t_i18n } = useFormatter();
+  const { setTitle } = useConnectedDocumentModifier();
+  setTitle(t_i18n('Import | Data'));
+  const classes = useStyles();
+  const [sortBy, setSortBy] = useState(null);
+  const [filetoImport, setFiletoImport] = useState(null);
+  const [filetoValidate, setFiletoValidate] = useState(null);
+  const [displayCreate, setDisplayCreate] = useState(false);
+  const [orderAsc, setOrderAsc] = useState(false);
+  const selectedConnecter = useState(null);
+  const hasUserChoiceCsvMapper = useState(false);
 
-export const importContentQuery = graphql`
-  query ImportContentQuery {
-    connectorsForImport {
-      ...ImportContentContainer_connectorsImport
-    }
-    importFiles(first: 100) @connection(key: "Pagination_global_importFiles") {
-      edges {
-        node {
-          id
-          ...FileLine_file
-          metaData {
-            mimetype
-          }
-        }
-      }
-    }
-    pendingFiles(first: 100)
-    @connection(key: "Pagination_global_pendingFiles") {
-      edges {
-        node {
-          id
-          ...ImportWorkbenchesContentFileLine_file
-          metaData {
-            mimetype
-          }
-        }
-      }
-    }
+  const handleOpenImport = (filetoImport: any) => {
+    setFiletoImport(filetoImport);
   }
-`;
 
-const importValidation = (t, configurations) => {
-  const shape = {
-    connector_id: Yup.string().required(t('This field is required')),
-  };
-  if (configurations) {
-    return Yup.object().shape({
-      ...shape,
-      configuration: Yup.string().required(t('This field is required')),
-    });
+ const handleCloseImport = () => {
+    setFiletoImport(null);
   }
-  return Yup.object().shape(shape);
-};
 
-class ImportContentComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileToImport: null,
-      fileToValidate: null,
-      displayCreate: false,
-      sortBy: 'name',
-      orderAsc: true,
-      selectedConnector: null,
-      hasUserChoiceCsvMapper: false,
+  const handleOpenValidate = (filetoValidate: any) => {
+    setFiletoValidate(filetoValidate);
+  }
+
+  const handleCloseValidate = () => {
+    setFiletoValidate(null);
+  }
+
+  const handleOpenCreate = () => {
+    setDisplayCreate(true);
+  }
+
+  const handleCloseCreate = () => {
+    setDisplayCreate(false);
+  }
+
+  const importValidation = (configurations: unknown) => {
+    const shape = {
+      connector_id: Yup.string().required(t_i18n('This field is required')),
     };
-  }
-
-  componentDidMount() {
-    this.subscription = interval$.subscribe(() => {
-      this.props.relay.refetch();
+    if (configurations) {
+      return Yup.object().shape({
+        ...shape,
+        configuration: Yup.string().required(t_i18n('This field is required')),
+      });
+    }
+    return Yup.object().shape(shape);
+  };
+  const componentDidMount = () => {
+    const subscription = interval$.subscribe(() => {
+      relay.refetch();
     });
-  }
+  };
 
   componentWillUnmount() {
-    this.subscription.unsubscribe();
+    subscription.unsubscribe();
   }
 
-  handleSetCsvMapper(_, csvMapper) {
+  const handleSetCsvMapper = (_: any, csvMapper: string) => {
     const parsedCsvMapper = JSON.parse(csvMapper);
     const parsedRepresentations = JSON.parse(parsedCsvMapper.representations);
     const selectedCsvMapper = {
       ...parsedCsvMapper,
       representations: [...parsedRepresentations],
     };
-    this.setState({ hasUserChoiceCsvMapper: resolveHasUserChoiceParsedCsvMapper(selectedCsvMapper) });
+    { resolveHasUserChoiceParsedCsvMapper(selectedCsvMapper); }
   }
 
-  handleOpenImport(file) {
-    this.setState({ fileToImport: file });
-  }
 
-  handleCloseImport() {
-    this.setState({
-      fileToImport: null,
-    });
-  }
-
-  handleOpenValidate(file) {
-    this.setState({ fileToValidate: file });
-  }
-
-  handleCloseValidate() {
-    this.setState({ fileToValidate: null });
-  }
-
-  handleOpenCreate() {
-    this.setState({ displayCreate: true });
-  }
-
-  handleCloseCreate() {
-    this.setState({ displayCreate: false });
-  }
 
   onSubmitImport(values, { setSubmitting, resetForm }) {
     const { connector_id, configuration, objectMarking } = values;
@@ -325,6 +250,56 @@ class ImportContentComponent extends Component {
       </div>
     );
   }
+
+};
+
+const importConnectorsFragment = graphql`
+  fragment ImportContentContainer_connectorsImport on Connector
+  @relay(plural: true) {
+    id
+    name
+    active
+    only_contextual
+    connector_scope
+    updated_at
+    configurations {
+      id
+      name,
+      configuration
+    }
+  }
+`;
+
+export const importContentQuery = graphql`
+  query ImportContentQuery {
+    connectorsForImport {
+      ...ImportContentContainer_connectorsImport
+    }
+    importFiles(first: 100) @connection(key: "Pagination_global_importFiles") {
+      edges {
+        node {
+          id
+          ...FileLine_file
+          metaData {
+            mimetype
+          }
+        }
+      }
+    }
+    pendingFiles(first: 100)
+    @connection(key: "Pagination_global_pendingFiles") {
+      edges {
+        node {
+          id
+          ...ImportWorkbenchesContentFileLine_file
+          metaData {
+            mimetype
+          }
+        }
+      }
+    }
+  }
+`;
 
   render() {
     const {
@@ -730,4 +705,4 @@ const ImportContent = createRefetchContainer(
   importContentQuery,
 );
 
-export default R.compose(inject18n, withStyles(styles), withRouter)(ImportContent);
+export default ImportContent;

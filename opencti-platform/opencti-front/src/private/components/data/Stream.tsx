@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import useQueryLoading from '../../../utils/hooks/useQueryLoading';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { buildViewParamsFromUrlAndStorage } from '../../../utils/ListParameters';
+import { QueryRenderer } from '../../../relay/environment';
 import { useFormatter } from '../../../components/i18n';
 import ListLines from '../../../components/list_lines/ListLines';
 import StreamLines, { StreamLinesQuery } from './stream/StreamLines';
@@ -10,9 +12,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs';
 import { TAXIIAPI_SETCOLLECTIONS } from '../../../utils/hooks/useGranted';
 import Security from '../../../utils/Security';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
-import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
-import { StreamLinesPaginationQuery, StreamLinesPaginationQuery$variables } from './stream/__generated__/StreamLinesPaginationQuery.graphql';
-import { StreamLineDummy } from './stream/StreamLine';
+import { OrderMode, PaginationOptions } from '../../../components/list_lines';
 
 const LOCAL_STORAGE_KEY = 'stream';
 
@@ -28,34 +28,28 @@ const Stream = () => {
   const classes = useStyles();
   const { setTitle } = useConnectedDocumentModifier();
   setTitle(t_i18n('Data Sharing: Live Streams | Data'));
-  const {
-    viewStorage,
-    paginationOptions,
-    helpers,
-  } = usePaginationLocalStorage<StreamLinesPaginationQuery$variables>(LOCAL_STORAGE_KEY, {
-    sortBy: 'Name',
-    orderAsc: true,
-    searchTerm: '',
-    view: 'lines',
-    numberOfElements: {
-      number: 0,
-      symbol: '',
-    },
-  });
-  const {
-    searchTerm,
-    sortBy,
-    orderAsc,
-    numberOfElements,
-    view,
-  } = viewStorage;
-
-  const queryRef = useQueryLoading<StreamLinesPaginationQuery>(
-    StreamLinesQuery,
-    paginationOptions,
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = buildViewParamsFromUrlAndStorage(
+    navigate,
+    location,
+    LOCAL_STORAGE_KEY,
   );
+  const [streamState, setStreamState] = useState<{ orderAsc: boolean, searchTerm: string, view: string, sortBy: string }>({
+    orderAsc: params.orderAsc !== false,
+    searchTerm: params.searchTerm ?? '',
+    view: params.view ?? 'lines',
+    sortBy: params.sortBy ?? 'name',
+  });
 
-  const renderLines = () => {
+  function handleSearch(value: string) {
+    setStreamState({ ...streamState, searchTerm: value });
+  }
+  function handleSort(field: string, orderAsc: boolean) {
+    setStreamState({ ...streamState, sortBy: field, orderAsc });
+  }
+  function renderLines(paginationOptions: PaginationOptions) {
+    const { searchTerm, sortBy, orderAsc, view } = streamState;
     const dataColumns = {
       name: {
         label: 'Name',
@@ -85,46 +79,41 @@ const Stream = () => {
     };
     return (
       <ListLines
-        helpers={helpers}
         sortBy={sortBy}
         orderAsc={orderAsc}
         dataColumns={dataColumns}
-        handleSort={helpers.handleSort}
-        handleSearch={helpers.handleSearch}
+        handleSort={handleSort}
+        handleSearch={handleSearch}
         currentView={view}
+        displayImport={false}
+        secondaryAction={true}
         keyword={searchTerm}
-        paginationOptions={paginationOptions}
-        numberOfElements={numberOfElements}
       >
-        {queryRef && (
-        <React.Suspense
-          fallback={
-            <>
-              {Array(20)
-                .fill(0)
-                .map((_, idx) => (
-                  <StreamLineDummy key={idx} dataColumns={dataColumns} />
-                ))}
-            </>
-              }
-        >
-          <StreamLines
-            queryRef={queryRef}
-            paginationOptions={paginationOptions}
-            dataColumns={dataColumns}
-            setNumberOfElements={helpers.handleSetNumberOfElements}
-          />
-        </React.Suspense>
-        )}
+        <QueryRenderer
+          query={StreamLinesQuery}
+          variables={{ count: 25, ...paginationOptions }}
+          render={({ props }: any) => (
+            <StreamLines
+              data={props}
+              paginationOptions={paginationOptions}
+              dataColumns={dataColumns}
+              initialLoading={props === null}
+            />
+          )}
+        />
       </ListLines>
     );
+  }
+  const paginationOptions: PaginationOptions = {
+    search: streamState.searchTerm,
+    orderBy: streamState.sortBy,
+    orderMode: streamState.orderAsc ? OrderMode.asc : OrderMode.desc,
   };
   return (
     <div className={classes.container}>
       <Breadcrumbs variant="list" elements={[{ label: t_i18n('Data') }, { label: t_i18n('Data sharing') }, { label: t_i18n('Live streams'), current: true }]} />
       <SharingMenu/>
-      {renderLines()}
-      {view === 'lines' ? renderLines() : ''}
+      {streamState.view === 'lines' ? renderLines(paginationOptions) : ''}
       <Security needs={[TAXIIAPI_SETCOLLECTIONS]}>
         <StreamCollectionCreation paginationOptions={paginationOptions} />
       </Security>
