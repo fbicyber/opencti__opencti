@@ -8,8 +8,6 @@ import ConnectorsStatus, { connectorsStatusQuery } from './connectors/Connectors
 import Loader, { LoaderVariant } from '../../../components/Loader';
 import Breadcrumbs from '../../../components/Breadcrumbs';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
-import { ConnectorsStatusQuery$data } from './connectors/__generated__/ConnectorsStatusQuery.graphql';
-import { ConnectorWorksQuery$data } from './connectors/__generated__/ConnectorWorksQuery.graphql';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -29,7 +27,7 @@ const Connectors = () => {
       <IngestionMenu/>
       <QueryRenderer
         query={workersStatusQuery}
-        render={({ props }: { props: ConnectorWorksQuery$data }) => {
+        render={({ props }) => {
           if (props) {
             return <WorkersStatus data={props} />;
           }
@@ -38,7 +36,7 @@ const Connectors = () => {
       />
       <QueryRenderer
         query={connectorsStatusQuery}
-        render={({ props }: { props: ConnectorsStatusQuery$data }) => {
+        render={({ props }) => {
           if (props) {
             return <ConnectorsStatus data={props} />;
           }
