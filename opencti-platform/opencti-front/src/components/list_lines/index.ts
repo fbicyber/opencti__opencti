@@ -3,6 +3,12 @@ import { Option } from '@components/common/form/ReferenceField';
 import { FilterGroup } from '../../utils/filters/filtersHelpers-types';
 
 export interface DataColumn {
+  name: any;
+  description: any;
+  id: any;
+  stream_public: any;
+  stream_live: any;
+  filters: any;
   isSortable: boolean;
   label: string;
   width?: string | number;
