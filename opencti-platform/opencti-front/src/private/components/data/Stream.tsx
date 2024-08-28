@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { buildViewParamsFromUrlAndStorage } from '../../../utils/ListParameters';
+import { buildViewParamsFromUrlAndStorage, saveViewParameters } from '../../../utils/ListParameters';
 import { QueryRenderer } from '../../../relay/environment';
 import { useFormatter } from '../../../components/i18n';
 import ListLines from '../../../components/list_lines/ListLines';
@@ -13,6 +13,7 @@ import { TAXIIAPI_SETCOLLECTIONS } from '../../../utils/hooks/useGranted';
 import Security from '../../../utils/Security';
 import useConnectedDocumentModifier from '../../../utils/hooks/useConnectedDocumentModifier';
 import { OrderMode, PaginationOptions } from '../../../components/list_lines';
+import { StreamLinesPaginationQuery$data } from './stream/__generated__/StreamLinesPaginationQuery.graphql';
 
 const LOCAL_STORAGE_KEY = 'stream';
 
@@ -42,39 +43,57 @@ const Stream = () => {
     sortBy: params.sortBy ?? 'name',
   });
 
+  function saveView() {
+    saveViewParameters(
+      navigate,
+      location,
+      LOCAL_STORAGE_KEY,
+      streamState,
+    );
+  }
+
   function handleSearch(value: string) {
     setStreamState({ ...streamState, searchTerm: value });
   }
   function handleSort(field: string, orderAsc: boolean) {
     setStreamState({ ...streamState, sortBy: field, orderAsc });
   }
+
+  useEffect(() => {
+    saveView();
+  }, [streamState]);
+
   function renderLines(paginationOptions: PaginationOptions) {
     const { searchTerm, sortBy, orderAsc, view } = streamState;
     const dataColumns = {
       name: {
         label: 'Name',
-        width: '25%',
+        width: '10%',
         isSortable: true,
       },
       description: {
         label: 'Description',
-        width: '25%',
-        isSortable: false,
-      },
-      objectLabel: {
-        label: 'Labels',
         width: '20%',
         isSortable: false,
       },
-      created: {
-        label: 'Original creation date',
+      id: {
+        label: 'Stream ID',
         width: '15%',
         isSortable: true,
       },
-      modified: {
-        label: 'Modification date',
-        width: '15%',
+      stream_public: {
+        label: 'Public',
+        width: '8%',
         isSortable: true,
+      },
+      stream_live: {
+        label: 'Status',
+        width: '10%',
+        isSortable: true,
+      },
+      filters: {
+        label: 'Filters',
+        width: '35%',
       },
     };
     return (
@@ -92,7 +111,7 @@ const Stream = () => {
         <QueryRenderer
           query={StreamLinesQuery}
           variables={{ count: 25, ...paginationOptions }}
-          render={({ props }: any) => (
+          render={({ props }: { props: StreamLinesPaginationQuery$data }) => (
             <StreamLines
               data={props}
               paginationOptions={paginationOptions}
