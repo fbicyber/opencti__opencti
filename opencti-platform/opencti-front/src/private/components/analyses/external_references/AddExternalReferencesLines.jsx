@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { createPaginationContainer, graphql } from 'react-relay';
 import { compose, filter, head, map } from 'ramda';
 import withStyles from '@mui/styles/withStyles';
+import useHelper from 'src/utils/hooks/useHelper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -13,6 +14,7 @@ import { truncate } from '../../../../utils/String';
 import inject18n from '../../../../components/i18n';
 import { commitMutation } from '../../../../relay/environment';
 import ExternalReferenceCreation from './ExternalReferenceCreation';
+import ExternalReferenceCreationFBI from './ExternalReferenceCreationFBI';
 import { isNotEmptyField } from '../../../../utils/utils';
 import ItemIcon from '../../../../components/ItemIcon';
 
@@ -109,6 +111,11 @@ const sharedUpdater = (store, stixCoreObjectId, newEdge) => {
 };
 
 class AddExternalReferencesLinesContainer extends Component {
+  constructor(props) {
+    const { isFeatureEnable } = useHelper();
+    this.externalRefCases = isFeatureEnable('EXTERNAL_REF_CASES');
+  }
+
   toggleExternalReference(externalReference, onlyCreate = false) {
     const {
       stixCoreObjectOrStixCoreRelationshipId,
@@ -257,15 +264,28 @@ class AddExternalReferencesLinesContainer extends Component {
             );
           })}
         </List>
-        <ExternalReferenceCreation
-          display={open}
-          contextual={true}
-          openContextual={openContextual}
-          handleCloseContextual={handleCloseContextual}
-          inputValue={search}
-          paginationOptions={paginationOptions}
-          onCreate={this.toggleExternalReference.bind(this)}
-        />
+        {this.externalRefCases
+          && <ExternalReferenceCreationFBI
+            display={open}
+            contextual={true}
+            openContextual={openContextual}
+            handleCloseContextual={handleCloseContextual}
+            inputValue={search}
+            paginationOptions={paginationOptions}
+            onCreate={this.toggleExternalReference.bind(this)}
+             />
+        }
+        {!this.externalRefCases
+          && <ExternalReferenceCreation
+            display={open}
+            contextual={true}
+            openContextual={openContextual}
+            handleCloseContextual={handleCloseContextual}
+            inputValue={search}
+            paginationOptions={paginationOptions}
+            onCreate={this.toggleExternalReference.bind(this)}
+             />
+        }
       </div>
     );
   }

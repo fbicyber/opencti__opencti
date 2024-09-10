@@ -7,6 +7,7 @@ import {
 } from '@components/analyses/__generated__/ExternalReferencesLinesPaginationQuery.graphql';
 import { ExternalReferencesLines_data$data } from '@components/analyses/__generated__/ExternalReferencesLines_data.graphql';
 import ExternalReferenceCreation from './external_references/ExternalReferenceCreation';
+import ExternalReferenceCreationFBI from './external_references/ExternalReferenceCreationFBI';
 import Security from '../../../utils/Security';
 import { usePaginationLocalStorage } from '../../../utils/hooks/useLocalStorage';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
@@ -103,6 +104,7 @@ const ExternalReferences: FunctionComponent<ExternalReferencesProps> = () => {
   setTitle(t_i18n('External references | Analyses'));
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const externalRefCases = isFeatureEnable('EXTERNAL_REF_CASES');
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
   } = useAuth();
@@ -148,6 +150,21 @@ const ExternalReferences: FunctionComponent<ExternalReferencesProps> = () => {
     nodePath: ['externalReferences', 'pageInfo', 'globalCount'],
     setNumberOfElements: storageHelpers.handleSetNumberOfElements,
   } as UsePreloadedPaginationFragment<ExternalReferencesLinesPaginationQuery>;
+  const createButton = isFABReplaced ? (externalRefCases
+    ? <Security needs={[KNOWLEDGE_KNUPDATE]}>
+      <ExternalReferenceCreationFBI
+        paginationOptions={queryPaginationOptions}
+        openContextual={false}
+      />
+    </Security>
+    : <Security needs={[KNOWLEDGE_KNUPDATE]}>
+      <ExternalReferenceCreation
+        paginationOptions={queryPaginationOptions}
+        openContextual={false}
+      />
+    </Security>)
+    : undefined;
+
   return (
     <>
       <Breadcrumbs elements={[{ label: t_i18n('Analyses') }, { label: t_i18n('External references'), current: true }]} />
@@ -161,14 +178,7 @@ const ExternalReferences: FunctionComponent<ExternalReferencesProps> = () => {
           preloadedPaginationProps={preloadedPaginationProps}
           lineFragment={externalReferencesLineFragment}
           entityTypes={['External-Reference']}
-          createButton={isFABReplaced && (
-            <Security needs={[KNOWLEDGE_KNUPDATE]}>
-              <ExternalReferenceCreation
-                paginationOptions={queryPaginationOptions}
-                openContextual={false}
-              />
-            </Security>
-          )}
+          createButton={createButton}
         />
       )}
       {!isFABReplaced && (
