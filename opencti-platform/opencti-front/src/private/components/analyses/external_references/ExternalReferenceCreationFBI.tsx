@@ -71,7 +71,12 @@ export const externalReferenceCreationFBIMutation = graphql`
 
 const externalReferenceValidation = (t: (value: string) => string) => Yup.object().shape({
   source_selection_is_sentinel: Yup.boolean(),
-  source_name: Yup.string().required(t('This field is required')),
+  source_name: Yup.string().when(
+    'source_selection_is_sentinel',
+    ([source_selection_is_sentinel], schema) => (!source_selection_is_sentinel
+      ? schema.required(t('This field is required'))
+      : schema),
+  ),
   case_file: Yup.string().when(
     'source_selection_is_sentinel',
     ([source_selection_is_sentinel], schema) => (source_selection_is_sentinel
@@ -160,11 +165,11 @@ ExternalReferenceCreationProps
     values,
     { setSubmitting, setErrors, resetForm },
   ) => {
-    const finalValues = values.file.length === 0 ? R.dissoc('file', values) : values;
-    // TODO: figure out what to do here!
-    // if (finalValues.case_file && finalValues.serial_number) {
-    //     finalValues.source_name = finalValues.case_file + finalValues.serialNumber;
-    // }
+    const intermediateValues = values.file.length === 0 ? R.dissoc('file', values) : values;
+    if (intermediateValues.case_file && intermediateValues.serial_number) {
+      intermediateValues.source_name = intermediateValues.case_file.trim() + " " + intermediateValues.serial_number.trim();
+    }
+    const finalValues = R.omit(['source_selection_is_sentinel', 'case_file', 'serial_number'], intermediateValues)
     if (dryrun && onCreate) {
       onCreate(values, true);
       handleClose();
