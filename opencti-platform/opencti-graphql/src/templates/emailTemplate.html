@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .email-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div style="text-align: center; padding: 20px 0; background-color: #007bff; color: white;">
+            <h2>{{emailIntro}}</h1>
+        </div>
+        <div class="email-content">
+            <ul style="padding-left: 20px; color:#333;">
+                <li>
+                    <strong>PLATFORM_URL:</strong> {{platformUrl}}
+                </li>
+                <li>
+                    <strong>PLATFORM_VERSION:</strong> {{platformVersion}}
+                </li>
+                <li>
+                    <strong>EVENT_TIMESTAMP:</strong> {{eventTimestamp}}
+                </li>
+                <li>
+                    <strong>OPENCTI_USER:</strong> {{openctiUser}}
+                </li>
+                <li>
+                    <strong>ERROR_EVENT:</strong> {{errorEvent}}
+                </li>
+            </ul>
+        </div>
+        <div style="text-align: center; padding: 10px 0; background-color: #007bff; color: white;">
+            <p style="margin: 0;">&copy; OpenCTI</p>
+        </div>
+    </div>
+</body>
+
+</html>
