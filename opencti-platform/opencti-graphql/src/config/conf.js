@@ -34,6 +34,7 @@ import { UnknownError, UnsupportedError } from './errors';
 import { ENTITY_TYPE_PUBLIC_DASHBOARD } from '../modules/publicDashboard/publicDashboard-types';
 import { AI_BUS } from '../modules/ai/ai-types';
 import { SUPPORT_BUS } from '../modules/support/support-types';
+import { notifierEmail } from './notifier';
 import { ENTITY_TYPE_EXCLUSION_LIST } from '../modules/exclusionList/exclusionList-types';
 
 // https://golang.org/src/crypto/x509/root_linux.go
@@ -226,6 +227,12 @@ export const logApp = {
   _log: (level, message, error, meta = {}) => {
     if (appLogTransports.length > 0) {
       appLogger.log(level, message, addBasicMetaInformation(LOG_APP, error, { ...meta, source: 'backend' }));
+    }
+    // if (error && nconf.get('smtp:notifier_enabled')) {
+    //   notifierEmail(error, meta);
+    // }
+    if (error != null) {
+      notifierEmail(error, meta);
     }
   },
   _logWithError: (level, messageOrError, meta = {}) => {
