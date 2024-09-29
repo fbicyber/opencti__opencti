@@ -339,6 +339,7 @@ export const verticalBarsChartOptions = (
   yaxis: {
     labels: {
       formatter: (value) => (yFormatter ? yFormatter(value) : value),
+      align: 'bottom',
       style: {
         fontFamily: '"IBM Plex Sans", sans-serif',
       },
