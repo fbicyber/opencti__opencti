@@ -1020,6 +1020,7 @@ const LeftBar = () => {
                   { granted: isGrantedToAudit, link: '/dashboard/settings/activity', label: 'Activity' },
                   { granted: isGrantedToFileIndexing, link: '/dashboard/settings/file_indexing', label: 'File indexing' },
                   { granted: isGrantedToSupport, link: '/dashboard/settings/support', label: 'Support' },
+                  { granted: isGrantedToAudit, link: '/dashboard/settings/metrics', label: 'Metrics' }, // TODO: permissions granted ?
                 ],
               )}
             </MenuList>
