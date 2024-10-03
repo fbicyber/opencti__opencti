@@ -4629,7 +4629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nodemailer@npm:^6.4.16":
+"@types/nodemailer@npm:6.4.16":
   version: 6.4.16
   resolution: "@types/nodemailer@npm:6.4.16"
   dependencies:
@@ -10532,7 +10532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^6.9.15":
+"nodemailer@npm:6.9.15":
   version: 6.9.15
   resolution: "nodemailer@npm:6.9.15"
   checksum: 10/16079406fe603f6e4debb8ac34bdb919688ad169ddf61e7b10e56abef85b537762eb3a19a15ce32bb9446d68e2f93a1ba4e24836ba86c7363fc42145aa36a291
@@ -10841,7 +10841,7 @@ __metadata:
     "@types/graphql-upload": "npm:16.0.7"
     "@types/mime-types": "npm:2.1.4"
     "@types/nconf": "npm:0.10.6"
-    "@types/nodemailer": "npm:^6.4.16"
+    "@types/nodemailer": "npm:6.4.16"
     "@types/ramda": "npm:0.30.2"
     "@types/tough-cookie": "npm:4.0.5"
     "@types/turndown": "npm:5.0.4"
@@ -10920,7 +10920,7 @@ __metadata:
     nconf: "npm:0.12.1"
     node-calls-python: "npm:1.9.1"
     node-fetch: "npm:3.3.2"
-    nodemailer: "npm:^6.9.15"
+    nodemailer: "npm:6.9.15"
     openai: "npm:4.61.1"
     openid-client: "npm:5.6.5"
     opentelemetry-node-metrics: "npm:3.0.0"

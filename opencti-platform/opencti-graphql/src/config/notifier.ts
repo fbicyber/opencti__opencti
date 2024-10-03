@@ -10,9 +10,9 @@ import pjson from '../../package.json';
 const LOG_APP = 'APP';
 export const PLATFORM_VERSION = pjson.version;
 
-// #################################################################################
-// THIS IS CURRENTLY DUPLICATED - WILL CAUSE A DEP LOOP IF conf.js IS IMPORTED
-// #################################################################################
+// #########################################################################################
+// THIS IS CURRENTLY DUPLICATED - WILL CAUSE A DEP LOOP IF src/config/conf.js IS IMPORTED
+// #########################################################################################
 const buildMetaErrors = (error: any): any[] => {
   const errors = [];
   interface ExtensionsData {
@@ -47,13 +47,13 @@ const booleanConf = (key: string | undefined, defaultValue = true) => {
   }
   return configValue === true || configValue === 'true';
 };
-// #################################################################################
-// #################################################################################
-// #################################################################################
+// #########################################################################################
+// # END DUPLICATION OF REQUIRED src/config/conf.js FUNCTIONS
+// #########################################################################################
 
-// #################################################################################
-// THIS IS CURRENTLY DUPLICATED - WILL CAUSE A DEP LOOP IF smtp.js IS IMPORTED
-// #################################################################################
+// #########################################################################################
+// THIS IS CURRENTLY DUPLICATED - WILL CAUSE A DEP LOOP IF src/database/smtp.js IS IMPORTED
+// #########################################################################################
 
 const USE_SSL = booleanConf('smtp:use_ssl', false);
 const REJECT_UNAUTHORIZED = booleanConf('smtp:reject_unauthorized', false);
@@ -77,9 +77,9 @@ const sendMail = async (args: { to: any; from: any; subject: any; html: any; }) 
   await transporter.sendMail({ from, to, subject, html });
 };
 
-// #################################################################################
-// #################################################################################
-// #################################################################################
+// #########################################################################################
+// # END DUPLICATION OF REQUIRED src/database/smtp.js FUNCTIONS
+// #########################################################################################
 
 function loadEmailTemplate(
   filePath: fs.PathOrFileDescriptor,
@@ -106,6 +106,7 @@ function loadEmailTemplate(
 
 // Lookup user details for the specific error that was encountered
 // async function getUserById(user) {
+//   // Will cause cyclical dep loop if the user.js is required for findById()
 //   return await findById({}, SYSTEM_USER, user);
 // }
 
@@ -118,14 +119,13 @@ async function processUserEmail(user: string, errorEvent: any) {
     //   const { firstname, lastname, user_email } = userInfo;
     //   openctiUserName = `${firstname} ${lastname} &lt;${user_email}&gt;`;
     // }
-    // console.log('openctiUserName: ', openctiUserName);
 
     const platformVersion = PLATFORM_VERSION; // defined above
     const platformUrl = nconf.get('app:base_url'); // defined above
-    const emailSubject = nconf.get('smtp:admin_email_subject');
-    const emailIntro = nconf.get('smtp:admin_email_intro');
-    const emailFrom = nconf.get('smtp:admin_from_email');
-    const emailList = nconf.get('smtp:admin_email_list');
+    const emailSubject = nconf.get('smtp:notifier_email_subject');
+    const emailIntro = nconf.get('smtp:notifier_email_intro');
+    const emailFrom = nconf.get('smtp:notifier_from_email');
+    const emailList = nconf.get('smtp:notifier_email_list');
     const emailArray = emailList.split(',');
     const date = new Date().toISOString();
 
@@ -146,10 +146,15 @@ async function processUserEmail(user: string, errorEvent: any) {
     emailArray.forEach((email: string) => {
       const updatedMailArgs = { ...mailArgs, to: email.trim() };
       sendMail(updatedMailArgs)
+        // Cannot require config/conf.js to use logApp will cause a circular dep.
+        // eslint-disable-next-line no-console
         .then(() => console.log('Notification Email sent successfully!'))
+        // eslint-disable-next-line no-console
         .catch((error) => console.error('Error sending email via smtp:notifier:', error));
     });
   } catch (error) {
+    // Cannot require config/conf.js to use logApp will cause a circular dep.
+    // eslint-disable-next-line no-console
     console.error('Error sending email via smtp:notifier:', error);
   }
 }
@@ -173,6 +178,8 @@ export const notifierEmail = (error: any, meta: any) => {
 
       processUserEmail(openctiUser, errorEvent);
     } catch (localError) {
+      // Cannot require config/conf.js to use logApp will cause a circular dep.
+      // eslint-disable-next-line no-console
       console.error('Invalid JSON string for smtp:notifier: ', localError);
     }
   }

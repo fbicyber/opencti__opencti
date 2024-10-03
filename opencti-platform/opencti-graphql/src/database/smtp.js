@@ -38,5 +38,3 @@ export const sendMail = async (args) => {
   const { from, to, subject, html } = args;
   await transporter.sendMail({ from, to, subject, html });
 };
-
-export default { sendMail };
