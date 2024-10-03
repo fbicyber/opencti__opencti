@@ -328,10 +328,11 @@
     "username": "",
     "password": "",
     "from_email": "notifications@opencti.io",
-    "admin_notification": true,
-    "admin_email_list": "admins_platform_x@domain.com, admins_2_platform_x@domain.com",
-    "admin_email_subject": "An error has occurred in the OpenCTI Platform",
-    "admin_email_intro": "The following error has occurred in the OpenCTI Platform:"
+    "notifier_enabled": false,
+    "notifier_from_email": "error_notifications@yourdomain.com",
+    "notifier_email_list": "admins_platform_x@yourdomain.com, admins_2_platform_x@yourdomain.com",
+    "notifier_email_subject": "An error has occurred in the OpenCTI Platform",
+    "notifier_email_intro": "The following error has occurred in the OpenCTI Platform:"
   },
   "providers": {
     "local": {

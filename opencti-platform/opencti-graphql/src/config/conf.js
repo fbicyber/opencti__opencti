@@ -228,10 +228,7 @@ export const logApp = {
     if (appLogTransports.length > 0) {
       appLogger.log(level, message, addBasicMetaInformation(LOG_APP, error, { ...meta, source: 'backend' }));
     }
-    // if (error && nconf.get('smtp:notifier_enabled')) {
-    //   notifierEmail(error, meta);
-    // }
-    if (error != null) {
+    if (error != null && nconf.get('smtp:notifier_enabled')) {
       notifierEmail(error, meta);
     }
   },
