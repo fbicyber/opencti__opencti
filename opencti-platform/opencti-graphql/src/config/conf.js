@@ -226,6 +226,7 @@ export const logS3Debug = {
 export const logApp = {
   _log: (level, message, error, meta = {}) => {
     if (appLogTransports.length > 0) {
+      // logs to console and opencti.log
       appLogger.log(level, message, addBasicMetaInformation(LOG_APP, error, { ...meta, source: 'backend' }));
     }
     if (error != null && nconf.get('smtp:notifier_enabled')) {

@@ -160,8 +160,7 @@ async function processUserEmail(user: string, errorEvent: any) {
 }
 
 export const notifierEmail = (error: any, meta: any) => {
-  // if (error != null && nconf.get('smtp:notifier_enabled')) {
-  if (error != null) {
+  if (error != null && nconf.get('smtp:notifier_enabled')) {
     // If enabled - send email to defined admins from nconf.get('smtp:notifier_email_list')
     const informationJSONString = JSON.stringify(addBasicMetaInformation(LOG_APP, error, { ...meta, source: 'backend' }));
     try {
