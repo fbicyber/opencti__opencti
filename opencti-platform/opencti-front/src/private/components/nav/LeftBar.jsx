@@ -27,6 +27,7 @@ import {
   ExpandMoreOutlined,
   ExploreOutlined,
   FlagOutlined,
+  HelpOutline,
   InsertChartOutlinedOutlined,
   LayersOutlined,
   LocalOfferOutlined,
@@ -952,6 +953,26 @@ const LeftBar = () => {
             )}
           </MenuList>
         </Security>
+        <Divider />
+        <MenuList component="nav">
+          <MenuItem
+            component={Link}
+            to="/dashboard/help"
+            selected={!navOpen && location.pathname.includes('/dashboard/help')}
+            dense={true}
+            classes={{ root: classes.menuItem }}
+          >
+            <ListItemIcon classes={{ root: classes.menuItemIcon }} style={{ minWidth: 20 }}>
+              <HelpOutline />
+            </ListItemIcon>
+            {navOpen && (
+              <ListItemText
+                classes={{ primary: classes.menuItemText }}
+                primary={t_i18n('Help')}
+              />
+            )}
+          </MenuItem>
+        </MenuList>
       </div>
       <div style={{ marginTop: 'auto' }}>
         <MenuList component="nav">
