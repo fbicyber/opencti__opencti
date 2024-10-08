@@ -35,6 +35,7 @@ const RootTrash = lazy(() => import('./components/trash/Root'));
 const RootWorkspaces = lazy(() => import('./components/workspaces/Root'));
 const RootSettings = lazy(() => import('./components/settings/Root'));
 const RootAudit = lazy(() => import('./components/settings/activity/audit/Root'));
+const RootHelp = lazy(() => import('./components/help/Root'));
 
 interface IndexProps {
   settings: RootSettings$data
@@ -127,6 +128,10 @@ const Index = ({ settings }: IndexProps) => {
               <Route
                 path="/settings/*"
                 Component={boundaryWrapper(RootSettings)}
+              />
+              <Route
+                path="/help/*"
+                Component={boundaryWrapper(RootHelp)}
               />
               <Route
                 path="/audits/*"
