@@ -43,7 +43,7 @@ const Vocabularies = lazy(() => import('./Vocabularies'));
 const VocabularyCategories = lazy(() => import('./VocabularyCategories'));
 const Audit = lazy(() => import('./activity/audit/Root'));
 const Configuration = lazy(() => import('./activity/configuration/Configuration'));
-const Metrics = lazy(() => import ('./metrics/Metrics'))
+const Metrics = lazy(() => import ('./metrics/Metrics'));
 const Alerting = lazy(() => import('./activity/alerting/Alerting'));
 const DecayRules = lazy(() => import('./decay/DecayRules'));
 const DecayRule = lazy(() => import('./decay/DecayRule'));
@@ -251,7 +251,7 @@ const Root = () => {
             path="/metrics"
             element={
               // <Security needs={[SETTINGS_SECURITYACTIVITY]} placeholder={<Navigate to={urlWithCapabilities()} />}>
-                <Metrics />
+              <Metrics />
               // </Security>
             }
           />
