@@ -13,6 +13,7 @@
     "@fontsource/geologica": "5.1.0",
     "@fontsource/ibm-plex-sans": "5.1.0",
     "@hello-pangea/dnd": "16.6.0",
+    "@mistralai/mistralai": "0.5.0",
     "@mui/icons-material": "5.16.7",
     "@mui/lab": "5.0.0-alpha.173",
     "@mui/material": "5.16.7",

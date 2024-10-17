@@ -5,6 +5,7 @@ import Loader from '../../../../components/Loader';
 import { ImportContentQuery } from './__generated__/ImportContentQuery.graphql';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import useHelper from '../../../../utils/hooks/useHelper';
+import AITextBox from './AITextBox';
 
 interface ImportContentContainerProps {
   queryRef: PreloadedQuery<ImportContentQuery>;
@@ -33,6 +34,7 @@ const Import = () => {
           <ImportContentContainer
             queryRef={queryRef}
           />
+          <AITextBox />
         </React.Suspense>
       )}
     </>

@@ -127,9 +127,9 @@
   "ai": {
     "enabled": true,
     "type": "mistralai",
-    "endpoint": "",
-    "token": "",
-    "model": "",
+    "endpoint": "http://127.0.0.1:8000",
+    "token": "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",
+    "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "model_images": ""
   },
   "xtm": {
