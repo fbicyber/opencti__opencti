@@ -20,6 +20,7 @@ import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import useDeletion from '../../../../utils/hooks/useDeletion';
 import { IncidentEditionContainerQuery } from './__generated__/IncidentEditionContainerQuery.graphql';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
+import useHelper from '../../../../utils/hooks/useHelper';
 
 const IncidentPopoverDeletionMutation = graphql`
   mutation IncidentPopoverDeletionMutation($id: ID!) {
@@ -72,8 +73,13 @@ const IncidentPopover = ({ id }: { id: string }) => {
       },
     });
   };
-  return (
-    <>
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+
+  return isFABReplaced
+    ? (<></>)
+    : (
+      <>
       <ToggleButton
         value="popover"
         size="small"
