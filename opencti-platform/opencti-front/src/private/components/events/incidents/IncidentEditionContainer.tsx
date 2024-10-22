@@ -7,12 +7,14 @@ import Drawer, { DrawerControlledDialType, DrawerVariant } from '@components/com
 import { IncidentEditionOverview_incident$key } from '@components/events/incidents/__generated__/IncidentEditionOverview_incident.graphql';
 import { IncidentEditionDetails_incident$key } from '@components/events/incidents/__generated__/IncidentEditionDetails_incident.graphql';
 import useHelper from 'src/utils/hooks/useHelper';
+import { useParams } from 'react-router-dom';
 import { useFormatter } from '../../../../components/i18n';
 import IncidentEditionOverview from './IncidentEditionOverview';
 import IncidentEditionDetails from './IncidentEditionDetails';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
 import { IncidentEditionContainerQuery } from './__generated__/IncidentEditionContainerQuery.graphql';
+import IncidentDeletion from './IncidentDeletion';
 
 interface IncidentEditionContainerProps {
   queryRef: PreloadedQuery<IncidentEditionContainerQuery>
@@ -44,6 +46,7 @@ const IncidentEditionContainer: FunctionComponent<IncidentEditionContainerProps>
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const { incidentId } = useParams() as { incidentId: string };
   const { incident } = usePreloadedQuery(IncidentEditionQuery, queryRef);
   const [currentTab, setCurrentTab] = useState(0);
   const handleChangeTab = (event: React.SyntheticEvent, value: number) => setCurrentTab(value);
@@ -83,6 +86,9 @@ const IncidentEditionContainer: FunctionComponent<IncidentEditionContainerProps>
               context={incident?.editContext}
               handleClose={onClose}
             />
+          )}
+          {isFABReplaced && (
+            <IncidentDeletion id={incidentId} />
           )}
         </>
       )}

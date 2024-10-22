@@ -5,6 +5,7 @@ import ObservedDataEditionOverview from './ObservedDataEditionOverview';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
 import useHelper from '../../../../utils/hooks/useHelper';
+import ObservedDataDeletion from './ObservedDataDeletion';
 
 const ObservedDataEditionContainer = (props) => {
   const { t_i18n } = useFormatter();
@@ -22,12 +23,19 @@ const ObservedDataEditionContainer = (props) => {
       context={editContext}
       controlledDial={isFABReplaced ? controlledDial : undefined}
     >
-      <ObservedDataEditionOverview
-        observedData={observedData}
-        enableReferences={useIsEnforceReference('Observed-Data')}
-        context={editContext}
-        handleClose={handleClose}
-      />
+      <>
+        <ObservedDataEditionOverview
+          observedData={observedData}
+          enableReferences={useIsEnforceReference('Observed-Data')}
+          context={editContext}
+          handleClose={handleClose}
+        />
+        {isFABReplaced && (
+          <ObservedDataDeletion
+            id={observedData.id}
+          />
+        )}
+      </>
     </Drawer>
   );
 };
