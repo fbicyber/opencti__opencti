@@ -16,6 +16,7 @@ import {
 import {
   ThreatActorIndividualEditionBiographics_ThreatActorIndividual$key,
 } from '@components/threats/threat_actors_individual/__generated__/ThreatActorIndividualEditionBiographics_ThreatActorIndividual.graphql';
+import { useParams } from 'react-router-dom';
 import { useFormatter } from '../../../../components/i18n';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import ErrorNotFound from '../../../../components/ErrorNotFound';
@@ -25,6 +26,7 @@ import ThreatActorIndividualEditionBiographics from './ThreatActorIndividualEdit
 import { ThreatActorIndividualEditionContainerQuery } from './__generated__/ThreatActorIndividualEditionContainerQuery.graphql';
 import ThreatActorIndividualEditionDetails from './ThreatActorIndividualEditionDetails';
 import useHelper from '../../../../utils/hooks/useHelper';
+import ThreatActorIndividualDeletion from './ThreatActorIndividualDeletion';
 
 interface ThreatActorIndividualEditionContainerProps {
   queryRef: PreloadedQuery<ThreatActorIndividualEditionContainerQuery>;
@@ -56,6 +58,7 @@ ThreatActorIndividualEditionContainerProps
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const { threatActorIndividualId } = useParams() as { threatActorIndividualId: string };
   const { threatActorIndividual } = usePreloadedQuery<ThreatActorIndividualEditionContainerQuery>(
     ThreatActorIndividualEditionQuery,
     queryRef,
@@ -112,6 +115,11 @@ ThreatActorIndividualEditionContainerProps
                 threatActorIndividualRef={threatActorIndividual as ThreatActorIndividualEditionBiographics_ThreatActorIndividual$key}
                 enableReferences={useIsEnforceReference(THREAT_ACTOR_TYPE)}
                 context={threatActorIndividual?.editContext}
+              />
+            )}
+            {isFABReplaced && (
+              <ThreatActorIndividualDeletion
+                id={threatActorIndividualId}
               />
             )}
           </>

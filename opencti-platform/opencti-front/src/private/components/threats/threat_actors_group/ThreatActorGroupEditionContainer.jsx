@@ -9,6 +9,7 @@ import ThreatActorGroupEditionDetails from './ThreatActorGroupEditionDetails';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
 import useHelper from '../../../../utils/hooks/useHelper';
+import ThreatActorGroupDeletion from './ThreatActorGroupDeletion';
 
 const ThreatActorGroupEditionContainer = ({
   handleClose,
@@ -52,6 +53,11 @@ const ThreatActorGroupEditionContainer = ({
             enableReferences={useIsEnforceReference('Threat-Actor-Group')}
             context={editContext}
             handleClose={handleClose}
+          />
+        )}
+        {isFABReplaced && (
+          <ThreatActorGroupDeletion
+            id={threatActorGroup.id}
           />
         )}
       </>

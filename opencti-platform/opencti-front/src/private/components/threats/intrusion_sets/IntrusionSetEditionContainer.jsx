@@ -9,6 +9,7 @@ import IntrusionSetEditionDetails from './IntrusionSetEditionDetails';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
 import useHelper from '../../../../utils/hooks/useHelper';
+import IntrusionSetDeletion from './intrusionSetDeletion';
 
 const IntrusionSetEditionContainer = (props) => {
   const { t_i18n } = useFormatter();
@@ -52,6 +53,11 @@ const IntrusionSetEditionContainer = (props) => {
             enableReferences={useIsEnforceReference('Intrusion-Set')}
             context={editContext}
             handleClose={handleClose}
+          />
+        )}
+        {isFABReplaced && (
+          <IntrusionSetDeletion
+            id={intrusionSet.id}
           />
         )}
       </>

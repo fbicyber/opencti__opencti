@@ -9,6 +9,7 @@ import CampaignEditionDetails from './CampaignEditionDetails';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
 import useHelper from '../../../../utils/hooks/useHelper';
+import CampaignDeletion from './CampaignDeletion';
 
 const CampaignEditionContainer = (props) => {
   const { t_i18n } = useFormatter();
@@ -50,6 +51,11 @@ const CampaignEditionContainer = (props) => {
             enableReferences={useIsEnforceReference('Campaign')}
             context={editContext}
             handleClose={handleClose}
+          />
+        )}
+        {isFABReplaced && (
+          <CampaignDeletion
+            id={campaign.id}
           />
         )}
       </>
