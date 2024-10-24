@@ -8,6 +8,8 @@ import { useFormatter } from '../../../../components/i18n';
 import { SubscriptionAvatars } from '../../../../components/Subscription';
 import StixCyberObservableEditionOverview from './StixCyberObservableEditionOverview';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
+import StixCyberObservableDeletion from './StixCyberObservableDeletion';
+import useHelper from 'src/utils/hooks/useHelper';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -33,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
 const StixCyberObservableEditionContainer = (props) => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
-
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { handleClose, stixCyberObservable } = props;
   const { editContext } = stixCyberObservable;
 
@@ -56,12 +59,19 @@ const StixCyberObservableEditionContainer = (props) => {
         <div className="clearfix" />
       </div>
       <div className={classes.container}>
-        <StixCyberObservableEditionOverview
-          stixCyberObservable={stixCyberObservable}
-          enableReferences={useIsEnforceReference('Stix-Cyber-Observable')}
-          context={editContext}
-          handleClose={handleClose}
-        />
+        <>
+          <StixCyberObservableEditionOverview
+            stixCyberObservable={stixCyberObservable}
+            enableReferences={useIsEnforceReference('Stix-Cyber-Observable')}
+            context={editContext}
+            handleClose={handleClose}
+          />
+          {isFABReplaced && (
+            <StixCyberObservableDeletion
+              id={stixCyberObservable.id}
+            />
+          )}
+        </>
       </div>
     </div>
   );

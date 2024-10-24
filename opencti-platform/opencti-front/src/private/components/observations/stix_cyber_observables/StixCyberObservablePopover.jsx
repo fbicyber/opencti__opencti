@@ -1,11 +1,7 @@
-import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
-import { compose } from 'ramda';
-import withStyles from '@mui/styles/withStyles';
+import React, { useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import Drawer from '@mui/material/Drawer';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -13,28 +9,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import MoreVert from '@mui/icons-material/MoreVert';
 import { graphql } from 'react-relay';
 import ToggleButton from '@mui/material/ToggleButton';
-import withRouter from '../../../../utils/compat_router/withRouter';
-import inject18n from '../../../../components/i18n';
 import { QueryRenderer, commitMutation } from '../../../../relay/environment';
 import { stixCyberObservableEditionQuery } from './StixCyberObservableEdition';
 import StixCyberObservableEditionContainer from './StixCyberObservableEditionContainer';
 import Security from '../../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE_KNDELETE } from '../../../../utils/hooks/useGranted';
 import Transition from '../../../../components/Transition';
-
-const styles = (theme) => ({
-  drawerPaper: {
-    minHeight: '100vh',
-    width: '50%',
-    position: 'fixed',
-    overflow: 'auto',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    padding: 0,
-  },
-});
+import useHelper from '../../../../utils/hooks/useHelper';
+import { useNavigate } from 'react-router-dom';
+import { useFormatter } from '../../../../components/i18n';
 
 const StixCyberObservablePopoverDeletionMutation = graphql`
   mutation StixCyberObservablePopoverDeletionMutation($id: ID!) {
@@ -44,155 +27,94 @@ const StixCyberObservablePopoverDeletionMutation = graphql`
   }
 `;
 
-class StixCyberObservablePopover extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      anchorEl: null,
-      displayDelete: false,
-      displayEdit: false,
-      deleting: false,
-    };
-  }
-
-  handleOpen(event) {
-    this.setState({ anchorEl: event.currentTarget });
-  }
-
-  handleClose() {
-    this.setState({ anchorEl: null });
-  }
-
-  handleOpenDelete() {
-    this.setState({ displayDelete: true });
-    this.handleClose();
-  }
-
-  handleCloseDelete() {
-    this.setState({ displayDelete: false });
-  }
-
-  submitDelete() {
-    this.setState({ deleting: true });
+const StixCyberObservablePopover = ({ id }) => {
+  const navigate = useNavigate();
+  const { t_i18n } = useFormatter();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [displayDelete, setDisplayDelete] = useState(false);
+  const [displayEdit, setDisplayEdit] = useState(false);
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const [deleting, setDeleting] = useState(false);
+  const handleOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  const handleOpenDelete = () => {
+    setDisplayDelete(true);
+    handleClose();
+  };
+  const handleCloseDelete = () => setDisplayDelete(false);
+  const submitDelete = () => {
+    setDeleting(true);
     commitMutation({
       mutation: StixCyberObservablePopoverDeletionMutation,
-      variables: {
-        id: this.props.stixCyberObservableId,
-      },
+      variables: { id },
       onCompleted: () => {
-        this.setState({ deleting: false });
-        this.handleClose();
-        this.props.navigate(
-          `/dashboard/observations/${
-            this.props.isArtifact ? 'artifacts' : 'observables'
-          }`,
-        );
+        setDeleting(false);
+        handleClose();
+        navigate('/dashboard/observations/observables');
       },
     });
-  }
-
-  handleOpenEdit() {
-    this.setState({ displayEdit: true });
-    this.handleClose();
-  }
-
-  handleCloseEdit() {
-    this.setState({ displayEdit: false });
-  }
-
-  render() {
-    const { classes, t, stixCyberObservableId } = this.props;
-    return (
+  };
+  const handleOpenEdit = () => {
+    setDisplayEdit(true);
+    handleClose();
+  };
+  const handleCloseEdit = () => setDisplayEdit(false);
+  return isFABReplaced
+    ? (<></>)
+    : (
       <>
         <ToggleButton
           value="popover"
           size="small"
-
-          onClick={this.handleOpen.bind(this)}
+          onClick={handleOpen}
         >
           <MoreVert fontSize="small" color="primary" />
         </ToggleButton>
-        <Menu
-          anchorEl={this.state.anchorEl}
-          open={Boolean(this.state.anchorEl)}
-          onClose={this.handleClose.bind(this)}
-        >
-          <MenuItem onClick={this.handleOpenEdit.bind(this)}>
-            {t('Update')}
-          </MenuItem>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+          <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
           <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
-            <MenuItem onClick={this.handleOpenDelete.bind(this)}>
-              {t('Delete')}
-            </MenuItem>
+            <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
           </Security>
         </Menu>
         <Dialog
-          open={this.state.displayDelete}
+          open={displayDelete}
           PaperProps={{ elevation: 1 }}
-          keepMounted={true}
           TransitionComponent={Transition}
-          onClose={this.handleCloseDelete.bind(this)}
+          onClose={handleCloseDelete}
         >
           <DialogContent>
             <DialogContentText>
-              {t('Do you want to delete this observable?')}
+              {t_i18n('Do you want to delete this observable?')}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={this.handleCloseDelete.bind(this)}
-              disabled={this.state.deleting}
-            >
-              {t('Cancel')}
+            <Button onClick={handleCloseDelete} disabled={deleting}>
+              {t_i18n('Cancel')}
             </Button>
-            <Button
-              color="secondary"
-              onClick={this.submitDelete.bind(this)}
-              disabled={this.state.deleting}
-            >
-              {t('Delete')}
+            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+              {t_i18n('Delete')}
             </Button>
           </DialogActions>
         </Dialog>
-        <Drawer
-          open={this.state.displayEdit}
-          anchor="right"
-          sx={{ zIndex: 1202 }}
-          elevation={1}
-          classes={{ paper: classes.drawerPaper }}
-          onClose={this.handleCloseEdit.bind(this)}
-        >
-          <QueryRenderer
-            query={stixCyberObservableEditionQuery}
-            variables={{ id: stixCyberObservableId }}
-            render={({ props }) => {
-              if (props) {
-                return (
-                  <StixCyberObservableEditionContainer
-                    stixCyberObservable={props.stixCyberObservable}
-                    handleClose={this.handleCloseEdit.bind(this)}
-                  />
-                );
-              }
-              return <div />;
-            }}
-          />
-        </Drawer>
+        <QueryRenderer
+          query={stixCyberObservableEditionQuery}
+          variables={{ id }}
+          render={({ props }) => {
+            if (props) {
+              return (
+                <StixCyberObservableEditionContainer
+                  stixCyberObservable={props.stixCyberObservable}
+                  handleClose={handleCloseEdit}
+                  open={displayEdit}
+                />
+              );
+            }
+            return <div />;
+          }}
+        />
       </>
     );
-  }
-}
-
-StixCyberObservablePopover.propTypes = {
-  stixCyberObservableId: PropTypes.string,
-  classes: PropTypes.object,
-  t: PropTypes.func,
-  navigate: PropTypes.func,
-  isArtifact: PropTypes.bool,
 };
 
-export default compose(
-  inject18n,
-  withRouter,
-  withStyles(styles),
-)(StixCyberObservablePopover);
+export default StixCyberObservablePopover;

@@ -4,13 +4,13 @@ import { useFormatter } from '../../../../components/i18n';
 import IndicatorEditionOverview from './IndicatorEditionOverview';
 import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings';
 import Drawer, { DrawerVariant } from '../../common/drawer/Drawer';
-import useHelper from '../../../../utils/hooks/useHelper';
+import IndicatorDeletion from './IndicatorDeletion';
+import useHelper from 'src/utils/hooks/useHelper';
 
 const IndicatorEditionContainer = (props) => {
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
-
   const { handleClose, indicator, open, controlledDial } = props;
   const { editContext } = indicator;
 
@@ -23,12 +23,19 @@ const IndicatorEditionContainer = (props) => {
       context={editContext}
       controlledDial={isFABReplaced ? controlledDial : undefined}
     >
-      <IndicatorEditionOverview
-        indicator={indicator}
-        enableReferences={useIsEnforceReference('Indicator')}
-        context={editContext}
-        handleClose={handleClose}
-      />
+      <>
+        <IndicatorEditionOverview
+          indicator={indicator}
+          enableReferences={useIsEnforceReference('Indicator')}
+          context={editContext}
+          handleClose={handleClose}
+        />
+        {isFABReplaced && (
+          <IndicatorDeletion
+            id={indicator.id}
+          />
+        )}
+      </>
     </Drawer>
   );
 };

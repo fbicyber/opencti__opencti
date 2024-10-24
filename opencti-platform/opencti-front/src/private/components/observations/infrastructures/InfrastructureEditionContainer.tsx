@@ -7,6 +7,8 @@ import { useIsEnforceReference } from '../../../../utils/hooks/useEntitySettings
 import { InfrastructureEditionContainerQuery } from './__generated__/InfrastructureEditionContainerQuery.graphql';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import useHelper from '../../../../utils/hooks/useHelper';
+import InfrastructureDeletion from './InfrastructureDeletion';
+import { useParams } from 'react-router-dom';
 
 export const infrastructureEditionContainerQuery = graphql`
   query InfrastructureEditionContainerQuery($id: String!) {
@@ -36,7 +38,7 @@ const InfrastructureEditionContainer: FunctionComponent<InfrastructureEditionCon
   const { t_i18n } = useFormatter();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
-
+  const { infrastructureId } = useParams() as { infrastructureId: string };
   const { infrastructure } = usePreloadedQuery(infrastructureEditionContainerQuery, queryRef);
 
   if (infrastructure) {
@@ -50,12 +52,19 @@ const InfrastructureEditionContainer: FunctionComponent<InfrastructureEditionCon
         controlledDial={isFABReplaced ? controlledDial : undefined}
       >
         {({ onClose }) => (
-          <InfrastructureEditionOverview
-            infrastructureData={infrastructure}
-            enableReferences={useIsEnforceReference('Infrastructure')}
-            context={infrastructure.editContext}
-            handleClose={onClose}
-          />
+          <>
+            <InfrastructureEditionOverview
+              infrastructureData={infrastructure}
+              enableReferences={useIsEnforceReference('Infrastructure')}
+              context={infrastructure.editContext}
+              handleClose={onClose}
+            />
+            {isFABReplaced && (
+              <InfrastructureDeletion
+                id={infrastructureId}
+              />
+            )}
+          </>
         )}
       </Drawer>
     );

@@ -150,8 +150,10 @@ const ArtifactCreation = ({
     handleClose();
   };
 
-  return (
-    <>
+  return isFABReplaced
+    ? (<></>)
+    : (
+      <>
       {isFABReplaced
         ? <CreateEntityControlledDial
             entityType='Artifact'
