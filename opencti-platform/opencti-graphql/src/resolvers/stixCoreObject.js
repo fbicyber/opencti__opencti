@@ -35,7 +35,8 @@ import {
   stixCoreObjectsNumber,
   stixCoreObjectsTimeSeries,
   stixCoreObjectsTimeSeriesByAuthor,
-  stixCoreRelationships
+  stixCoreRelationships,
+  logSearch
 } from '../domain/stixCoreObject';
 import { fetchEditContext } from '../database/redis';
 import { batchLoader, distributionRelations, stixLoadByIdStringify } from '../database/middleware';
@@ -144,6 +145,7 @@ const stixCoreObjectResolvers = {
     },
   },
   Mutation: {
+    logSearch: (_, args, context) => logSearch(context, context.user, args),
     stixCoreObjectEdit: (_, { id }, context) => ({
       delete: () => stixCoreObjectDelete(context, context.user, id),
       relationAdd: ({ input }) => stixCoreObjectAddRelation(context, context.user, id, input),

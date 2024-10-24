@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { Link, useLocation } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import Tooltip from '@mui/material/Tooltip';
+import { graphql, useMutation } from 'react-relay';
 import { useFormatter } from './i18n';
 
 // Deprecated - https://mui.com/system/styles/basics/
@@ -95,6 +96,32 @@ const SearchInput = (props) => {
     }
   }, [keyword]);
 
+  const [logSearch] = useMutation(
+    graphql`
+      mutation SearchInputLogSearchMutation(
+        $types: [String]
+        $search: String
+        $first: Int!
+        $after: ID
+        $orderBy: StixCoreObjectsOrdering
+        $orderMode: OrderingMode
+        $filters: FilterGroup
+        $globalSearch: Boolean
+      ) {
+        logSearch(
+          types: $types
+          search: $search
+          first: $first
+          after: $after
+          orderBy: $orderBy
+          orderMode: $orderMode
+          filters: $filters
+          globalSearch: $globalSearch
+        )
+      }
+    `,
+  );
+
   return (
     <TextField
       name="keyword"
@@ -109,6 +136,14 @@ const SearchInput = (props) => {
       onKeyDown={(event) => {
         const { value } = event.target;
         if (typeof onSubmit === 'function' && event.key === 'Enter') {
+          const isGlobalSearch = variant === 'topBar';
+          logSearch({
+            variables: {
+              first: 25,
+              search: value,
+              globalSearch: isGlobalSearch,
+            },
+          });
           onSubmit(value);
         }
       }}

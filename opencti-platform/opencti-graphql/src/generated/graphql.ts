@@ -13228,6 +13228,7 @@ export type Mutation = {
   listTaskAdd: BackgroundTask;
   locationAdd?: Maybe<Location>;
   locationEdit?: Maybe<LocationEditMutations>;
+  logSearch?: Maybe<Scalars['Boolean']['output']>;
   logout?: Maybe<Scalars['ID']['output']>;
   malwareAdd?: Maybe<Malware>;
   malwareAnalysisAdd?: Maybe<MalwareAnalysis>;
@@ -14277,6 +14278,18 @@ export type MutationLocationAddArgs = {
 
 export type MutationLocationEditArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationLogSearchArgs = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  filters?: InputMaybe<FilterGroup>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  globalSearch?: InputMaybe<Scalars['Boolean']['input']>;
+  orderBy?: InputMaybe<StixCoreObjectsOrdering>;
+  orderMode?: InputMaybe<OrderingMode>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -35962,6 +35975,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   listTaskAdd?: Resolver<ResolversTypes['BackgroundTask'], ParentType, ContextType, RequireFields<MutationListTaskAddArgs, 'input'>>;
   locationAdd?: Resolver<Maybe<ResolversTypes['Location']>, ParentType, ContextType, RequireFields<MutationLocationAddArgs, 'input'>>;
   locationEdit?: Resolver<Maybe<ResolversTypes['LocationEditMutations']>, ParentType, ContextType, RequireFields<MutationLocationEditArgs, 'id'>>;
+  logSearch?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, Partial<MutationLogSearchArgs>>;
   logout?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   malwareAdd?: Resolver<Maybe<ResolversTypes['Malware']>, ParentType, ContextType, RequireFields<MutationMalwareAddArgs, 'input'>>;
   malwareAnalysisAdd?: Resolver<Maybe<ResolversTypes['MalwareAnalysis']>, ParentType, ContextType, RequireFields<MutationMalwareAnalysisAddArgs, 'input'>>;

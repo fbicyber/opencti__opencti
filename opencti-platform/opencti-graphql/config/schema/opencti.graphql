@@ -14210,4 +14210,16 @@ type Mutation {
   stixSightingRelationshipAdd(input: StixSightingRelationshipAddInput!): StixSightingRelationship
   @auth(for: [KNOWLEDGE_KNUPDATE])
   stixSightingRelationshipEdit(id: ID!): StixSightingRelationshipEditMutations @auth(for: [KNOWLEDGE_KNUPDATE])
+
+  ######## LOG SEARCHES
+  logSearch(
+    first: Int
+    after: ID
+    types: [String]
+    orderBy: StixCoreObjectsOrdering
+    orderMode: OrderingMode
+    filters: FilterGroup
+    search: String
+    globalSearch: Boolean
+  ): Boolean @auth(for: [KNOWLEDGE])
 }

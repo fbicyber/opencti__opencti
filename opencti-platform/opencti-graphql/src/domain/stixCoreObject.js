@@ -49,6 +49,33 @@ import { isUserCanAccessStoreElement, SYSTEM_USER, validateUserAccessOperation }
 import { uploadToStorage } from '../database/file-storage-helper';
 import { connectorsForAnalysis } from '../database/repository';
 
+/**
+ * Publishes a user's search action with context
+ *
+ * @param {*} context 
+ * @param {*} user 
+ * @param {*} args 
+ * @returns true if logged, false otherwise
+ */
+export const logSearch = async (context, user, args) => {
+  const contextData = {
+    input: R.omit(['search'], args)
+  };
+  if (args.search && args.search.length > 0) {
+    contextData.search = args.search;
+  }
+  return await publishUserAction({
+    user,
+    event_type: 'command',
+    event_scope: 'search',
+    event_access: 'extended',
+    context_data: contextData,
+  }).then(
+    () => true,
+    () => false
+  ).catch(() => false);
+};
+
 export const findAll = async (context, user, args) => {
   let types = [];
   if (isNotEmptyField(args.types)) {

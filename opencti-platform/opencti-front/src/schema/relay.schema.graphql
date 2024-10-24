@@ -8471,6 +8471,7 @@ type Mutation {
   stixRefRelationshipEdit(id: ID!): StixRefRelationshipEditMutations
   stixSightingRelationshipAdd(input: StixSightingRelationshipAddInput!): StixSightingRelationship
   stixSightingRelationshipEdit(id: ID!): StixSightingRelationshipEditMutations
+  logSearch(first: Int, after: ID, types: [String], orderBy: StixCoreObjectsOrdering, orderMode: OrderingMode, filters: FilterGroup, search: String, globalSearch: Boolean): Boolean
   channelAdd(input: ChannelAddInput!): Channel
   channelDelete(id: ID!): ID
   channelFieldPatch(id: ID!, input: [EditInput]!, commitMessage: String, references: [String]): Channel
