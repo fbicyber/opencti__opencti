@@ -12842,6 +12842,15 @@ type Query {
     filters: FilterGroup
     search: String
   ): StixCoreObjectConnection @auth(for: [KNOWLEDGE])
+  localSearch(
+    first: Int
+    after: ID
+    search: String
+    types: [String]
+    orderBy: StixCoreObjectsOrdering
+    orderMode: OrderingMode
+    filters: FilterGroup
+  ): StixCoreObjectConnection @auth(for: [KNOWLEDGE])
   globalSearch(
     first: Int
     after: ID

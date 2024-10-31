@@ -6,6 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import { Link, useLocation } from 'react-router-dom';
 import makeStyles from '@mui/styles/makeStyles';
 import Tooltip from '@mui/material/Tooltip';
+import { useQueryLoader } from 'react-relay';
+import { graphql } from 'graphql';
 import { useFormatter } from './i18n';
 
 // Deprecated - https://mui.com/system/styles/basics/
@@ -70,6 +72,7 @@ const SearchInput = (props) => {
     placeholder = `${t_i18n('Search these results')}...`,
     ...otherProps
   } = props;
+  let isLocalSearch = true;
   let classRoot = classes.searchRoot;
   if (variant === 'inDrawer') {
     classRoot = classes.searchRootInDrawer;
@@ -85,6 +88,7 @@ const SearchInput = (props) => {
     classInput = classes.searchInputSmall;
   } else if (variant === 'topBar') {
     classInput = classes.searchInputTopBar;
+    isLocalSearch = false;
   } else if (variant === 'noAnimation') {
     classInput = classes.searchInputNoAnimation;
   }
@@ -94,6 +98,22 @@ const SearchInput = (props) => {
       setSearchValue(keyword);
     }
   }, [keyword]);
+  const [, logSearchQuery] = useQueryLoader(
+    graphql`
+      query SearchInputLogSearchQuery(
+        $search: String,
+      ) {
+        localSearch(search: $search) {
+          edges {
+            node {
+              entity_type
+              id
+            }
+          }
+        }
+      }
+    `,
+  );
 
   return (
     <TextField
@@ -109,6 +129,9 @@ const SearchInput = (props) => {
       onKeyDown={(event) => {
         const { value } = event.target;
         if (typeof onSubmit === 'function' && event.key === 'Enter') {
+          if (isLocalSearch) {
+            logSearchQuery({ search: value });
+          }
           onSubmit(value);
         }
       }}

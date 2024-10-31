@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { v4 as uuid } from 'uuid';
 import { buildRestrictedEntity, createEntity, createRelationRaw, deleteElementById, distributionEntities, storeLoadByIdWithRefs, timeSeriesEntities } from '../database/middleware';
 import { internalFindByIds, internalLoadById, listEntitiesPaginated, listEntitiesThroughRelationsPaginated, storeLoadById } from '../database/middleware-loader';
 import { findAll as relationFindAll } from './stixCoreRelationship';
@@ -10,6 +11,7 @@ import {
   ABSTRACT_STIX_CORE_OBJECT,
   ABSTRACT_STIX_CORE_RELATIONSHIP,
   ABSTRACT_STIX_DOMAIN_OBJECT,
+  BASE_TYPE_ENTITY,
   buildRefRelationKey,
   CONNECTOR_INTERNAL_ANALYSIS,
   CONNECTOR_INTERNAL_ENRICHMENT,
@@ -29,13 +31,13 @@ import { ENTITY_TYPE_EXTERNAL_REFERENCE, ENTITY_TYPE_MARKING_DEFINITION } from '
 import { createWork, worksForSource, workToExportFile } from './work';
 import { pushToConnector } from '../database/rabbitmq';
 import { now } from '../utils/format';
-import { ENTITY_TYPE_CONNECTOR } from '../schema/internalObject';
+import { ENTITY_TYPE_CONNECTOR, ENTITY_TYPE_SEARCH } from '../schema/internalObject';
 import { deleteFile, getFileContent, loadFile, storeFileConverter } from '../database/file-storage';
 import { findById as documentFindById, paginatedForPathWithEnrichment } from '../modules/internal/document/document-domain';
-import { elCount, elFindByIds, elUpdateElement } from '../database/engine';
+import { elCount, elFindByIds, elIndexElements, elUpdateElement } from '../database/engine';
 import { generateStandardId, getInstanceIds } from '../schema/identifier';
 import { askEntityExport, askListExport, exportTransformFilters } from './stix';
-import { isEmptyField, isNotEmptyField, READ_ENTITIES_INDICES, READ_INDEX_INFERRED_ENTITIES } from '../database/utils';
+import { INDEX_SEARCH, isEmptyField, isNotEmptyField, READ_ENTITIES_INDICES, READ_INDEX_INFERRED_ENTITIES } from '../database/utils';
 import { ENTITY_TYPE_CONTAINER_CASE } from '../modules/case/case-types';
 import { getEntitySettingFromCache } from '../modules/entitySetting/entitySetting-utils';
 import { stixObjectOrRelationshipAddRefRelation, stixObjectOrRelationshipAddRefRelations, stixObjectOrRelationshipDeleteRefRelation } from './stixObjectOrStixRelationship';
@@ -50,6 +52,57 @@ import { uploadToStorage } from '../database/file-storage-helper';
 import { connectorsForAnalysis } from '../database/repository';
 import { getDraftContext } from '../utils/draftContext';
 
+const logSearch = async (context, user, results, contextData) => {
+  const internal_id = uuid();
+  const standard_id = generateStandardId(ENTITY_TYPE_SEARCH, { internal_id });
+  const timestamp = new Date();
+
+  const searchElement = {
+    _index: INDEX_SEARCH,
+    internal_id,
+    standard_id,
+    entity_type: ENTITY_TYPE_SEARCH,
+    base_type: BASE_TYPE_ENTITY,
+    created_at: timestamp,
+    updated_at: timestamp,
+    timestamp,
+    context_data: contextData,
+    result_count: results?.edges?.length,
+  };
+
+  await elIndexElements(context, user, ENTITY_TYPE_SEARCH, [searchElement]);
+};
+
+export const localSearch = async (context, user, args) => {
+  let types = [];
+  if (isNotEmptyField(args.types)) {
+    types = args.types.filter((type) => isStixCoreObject(type));
+  }
+  if (types.length === 0) {
+    types.push(ABSTRACT_STIX_CORE_OBJECT);
+  }
+  const promise = listEntitiesPaginated(context, user, types, args);
+  const contextData = {
+    input: R.omit(['search'], { ...args, globalSearch: false }),
+  };
+  if (args.search && args.search.length > 0) {
+    contextData.search = args.search;
+  }
+  promise.then(async (results) => await publishUserAction({
+    user,
+    event_type: 'command',
+    event_scope: 'search',
+    event_access: 'extended',
+    context_data: contextData,
+  }).then(() => logSearch(
+    context,
+    user,
+    results,
+    contextData,
+  )));
+  return promise;
+};
+
 export const findAll = async (context, user, args) => {
   let types = [];
   if (isNotEmptyField(args.types)) {
@@ -58,6 +111,7 @@ export const findAll = async (context, user, args) => {
   if (types.length === 0) {
     types.push(ABSTRACT_STIX_CORE_OBJECT);
   }
+  const promise = listEntitiesPaginated(context, user, types, args);
   if (args.globalSearch) {
     const contextData = {
       input: R.omit(['search'], args)
@@ -65,15 +119,20 @@ export const findAll = async (context, user, args) => {
     if (args.search && args.search.length > 0) {
       contextData.search = args.search;
     }
-    await publishUserAction({
+    promise.then(async (results) => await publishUserAction({
       user,
       event_type: 'command',
       event_scope: 'search',
       event_access: 'extended',
       context_data: contextData,
-    });
+    }).then(() => logSearch(
+      context,
+      user,
+      results,
+      contextData,
+    )));
   }
-  return listEntitiesPaginated(context, user, types, args);
+  return promise;
 };
 
 export const findById = async (context, user, stixCoreObjectId) => {

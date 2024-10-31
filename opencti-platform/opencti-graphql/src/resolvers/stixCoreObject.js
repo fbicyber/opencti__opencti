@@ -35,7 +35,8 @@ import {
   stixCoreObjectsNumber,
   stixCoreObjectsTimeSeries,
   stixCoreObjectsTimeSeriesByAuthor,
-  stixCoreRelationships
+  stixCoreRelationships,
+  localSearch
 } from '../domain/stixCoreObject';
 import { fetchEditContext } from '../database/redis';
 import { batchLoader, distributionRelations, stixLoadByIdStringify } from '../database/middleware';
@@ -57,6 +58,7 @@ const stixCoreObjectResolvers = {
   Query: {
     stixCoreObject: (_, { id }, context) => findById(context, context.user, id),
     stixCoreObjectRaw: (_, { id }, context) => stixLoadByIdStringify(context, context.user, id),
+    localSearch: (_, args, context) => localSearch(context, context.user, args),
     globalSearch: (_, args, context) => findAll(context, context.user, { ...args, globalSearch: true }),
     stixCoreObjects: (_, args, context) => findAll(context, context.user, args),
     stixCoreObjectsTimeSeries: (_, args, context) => {

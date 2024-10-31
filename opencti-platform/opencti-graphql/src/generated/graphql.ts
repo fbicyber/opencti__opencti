@@ -19223,6 +19223,7 @@ export type Query = {
   labels?: Maybe<LabelConnection>;
   language?: Maybe<Language>;
   languages?: Maybe<LanguageConnection>;
+  localSearch?: Maybe<StixCoreObjectConnection>;
   location?: Maybe<Location>;
   locations?: Maybe<LocationConnection>;
   logs?: Maybe<LogConnection>;
@@ -20311,6 +20312,17 @@ export type QueryLanguagesArgs = {
   orderBy?: InputMaybe<LanguagesOrdering>;
   orderMode?: InputMaybe<OrderingMode>;
   search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryLocalSearchArgs = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  filters?: InputMaybe<FilterGroup>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<StixCoreObjectsOrdering>;
+  orderMode?: InputMaybe<OrderingMode>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -38107,6 +38119,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Maybe<ResolversTypes['LabelConnection']>, ParentType, ContextType, Partial<QueryLabelsArgs>>;
   language?: Resolver<Maybe<ResolversTypes['Language']>, ParentType, ContextType, RequireFields<QueryLanguageArgs, 'id'>>;
   languages?: Resolver<Maybe<ResolversTypes['LanguageConnection']>, ParentType, ContextType, Partial<QueryLanguagesArgs>>;
+  localSearch?: Resolver<Maybe<ResolversTypes['StixCoreObjectConnection']>, ParentType, ContextType, Partial<QueryLocalSearchArgs>>;
   location?: Resolver<Maybe<ResolversTypes['Location']>, ParentType, ContextType, RequireFields<QueryLocationArgs, 'id'>>;
   locations?: Resolver<Maybe<ResolversTypes['LocationConnection']>, ParentType, ContextType, Partial<QueryLocationsArgs>>;
   logs?: Resolver<Maybe<ResolversTypes['LogConnection']>, ParentType, ContextType, Partial<QueryLogsArgs>>;
