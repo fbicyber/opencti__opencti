@@ -1720,6 +1720,7 @@ const BASE_SEARCH_ATTRIBUTES = [
   'definition',
   'definition_type',
   'user_email',
+  'external_id',
   'main_entity_name', // deletedOperation
 ];
 
