@@ -155,4 +155,3 @@ schemaRelationsRefDefinition.registerRelationsRef(ENTITY_USER_ACCOUNT, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_WINDOWS_REGISTRY_VALUE_TYPE, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_EXTERNAL_REFERENCE, []);
-
