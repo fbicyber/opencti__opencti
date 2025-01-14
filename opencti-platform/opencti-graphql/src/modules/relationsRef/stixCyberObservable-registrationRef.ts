@@ -69,6 +69,7 @@ import {
   ENTITY_WINDOWS_REGISTRY_VALUE_TYPE
 } from '../../schema/stixCyberObservable';
 import { getParentTypes } from '../../schema/schemaUtils';
+import { ENTITY_TYPE_EXTERNAL_REFERENCE } from '../../schema/stixMetaObject';
 
 // TODO: re-check with the stix documentation because some ref are reverse
 
@@ -153,3 +154,4 @@ schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TRACKING_NUMBER, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_USER_ACCOUNT, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_WINDOWS_REGISTRY_VALUE_TYPE, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE, []);
+schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_EXTERNAL_REFERENCE, []);

@@ -1729,6 +1729,7 @@ const BASE_SEARCH_ATTRIBUTES = [
   'definition_type',
   'user_email',
   'main_entity_name', // deletedOperation
+  'external_id',
 ];
 
 function processSearch(search, args) {
