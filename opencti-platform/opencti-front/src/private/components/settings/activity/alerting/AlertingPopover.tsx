@@ -23,6 +23,7 @@ import { AlertEditionQuery } from './__generated__/AlertEditionQuery.graphql';
 import { alertEditionQuery } from './AlertEditionQuery';
 import AlertDigestEdition from './AlertDigestEdition';
 import useApiMutation from '../../../../../utils/hooks/useApiMutation';
+import useHelper from '../../../../../utils/hooks/useHelper';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -56,6 +57,8 @@ const AlertingPopover = ({ data, paginationOptions }: { data: AlertingLine_node$
   const [displayDelete, setDisplayDelete] = useState<boolean>(false);
   const [displayEdit, setDisplayEdit] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const [commit] = useApiMutation(alertingPopoverDeletionMutation);
   //  popover
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -90,57 +93,59 @@ const AlertingPopover = ({ data, paginationOptions }: { data: AlertingLine_node$
     handleClose();
   };
   // Loader
-  return (
-    <div className={classes.container}>
-      <IconButton
-        onClick={handleOpen}
-        aria-haspopup="true"
-        style={{ marginTop: 3 }}
-        size="large"
-        color="primary"
-      >
-        <MoreVert />
-      </IconButton>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={handleDisplayEdit}>{t_i18n('Update')}</MenuItem>
-        <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
-      </Menu>
-      <Dialog open={displayDelete}
-        keepMounted={true}
-        TransitionComponent={Transition}
-        PaperProps={{ elevation: 1 }}
-        onClose={handleCloseDelete}
-      >
-        <DialogContent>
-          <DialogContentText>
-            {t_i18n('Do you want to delete this trigger?')}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDelete} disabled={deleting}>
-            {t_i18n('Cancel')}
-          </Button>
-          <Button color="secondary" onClick={submitDelete} disabled={deleting}>
-            {t_i18n('Delete')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {displayEdit && <Drawer open={true}
-        anchor="right"
-        elevation={1}
-        sx={{ zIndex: 1202 }}
-        classes={{ paper: classes.drawerPaper }}
-        onClose={() => setDisplayEdit(false)}
-                      >
-        {queryRef && (
-        <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
-          {isLiveEdition && <AlertLiveEdition queryRef={queryRef} paginationOptions={paginationOptions} handleClose={() => setDisplayEdit(false)} />}
-          {isDigestEdition && <AlertDigestEdition queryRef={queryRef} paginationOptions={paginationOptions} handleClose={() => setDisplayEdit(false)} />}
-        </React.Suspense>
-        )}
-      </Drawer>}
-    </div>
-  );
+  return isFABReplaced
+    ? (<></>)
+    : (
+      <div className={classes.container}>
+        <IconButton
+          onClick={handleOpen}
+          aria-haspopup="true"
+          style={{ marginTop: 3 }}
+          size="large"
+          color="primary"
+        >
+          <MoreVert />
+        </IconButton>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+          <MenuItem onClick={handleDisplayEdit}>{t_i18n('Update')}</MenuItem>
+          <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
+        </Menu>
+        <Dialog open={displayDelete}
+          keepMounted={true}
+          TransitionComponent={Transition}
+          PaperProps={{ elevation: 1 }}
+          onClose={handleCloseDelete}
+        >
+          <DialogContent>
+            <DialogContentText>
+              {t_i18n('Do you want to delete this trigger?')}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDelete} disabled={deleting}>
+              {t_i18n('Cancel')}
+            </Button>
+            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+              {t_i18n('Delete')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {displayEdit && <Drawer open={true}
+          anchor="right"
+          elevation={1}
+          sx={{ zIndex: 1202 }}
+          classes={{ paper: classes.drawerPaper }}
+          onClose={() => setDisplayEdit(false)}
+        >
+          {queryRef && (
+            <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
+              {isLiveEdition && <AlertLiveEdition queryRef={queryRef} paginationOptions={paginationOptions} handleClose={() => setDisplayEdit(false)} />}
+              {isDigestEdition && <AlertDigestEdition queryRef={queryRef} paginationOptions={paginationOptions} handleClose={() => setDisplayEdit(false)} />}
+            </React.Suspense>
+          )}
+        </Drawer>}
+      </div>
+    );
 };
 
 export default AlertingPopover;
