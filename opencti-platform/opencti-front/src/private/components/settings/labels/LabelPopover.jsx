@@ -1,6 +1,4 @@
-import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
-import { compose } from 'ramda';
+import React, { useState } from 'react';
 import { graphql } from 'react-relay';
 import withStyles from '@mui/styles/withStyles';
 import Menu from '@mui/material/Menu';
@@ -12,11 +10,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import MoreVert from '@mui/icons-material/MoreVert';
-import inject18n from '../../../../components/i18n';
 import { commitMutation } from '../../../../relay/environment';
 import LabelEdition from './LabelEdition';
 import Transition from '../../../../components/Transition';
 import { deleteNode } from '../../../../utils/store';
+import useHelper from '../../../../utils/hooks/useHelper';
+import { useFormatter } from '../../../../components/i18n';
+import { useNavigate } from 'react-router-dom';
 
 const styles = () => ({
   container: {
@@ -32,130 +32,88 @@ const labelPopoverDeletionMutation = graphql`
   }
 `;
 
-class LabelPopover extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      anchorEl: null,
-      displayUpdate: false,
-      displayDelete: false,
-      deleting: false,
-    };
-  }
-
-  handleOpen(event) {
-    this.setState({ anchorEl: event.currentTarget });
-  }
-
-  handleClose() {
-    this.setState({ anchorEl: null });
-  }
-
-  handleOpenUpdate() {
-    this.setState({ displayUpdate: true });
-    this.handleClose();
-  }
-
-  handleCloseUpdate() {
-    this.setState({ displayUpdate: false });
-  }
-
-  handleOpenDelete() {
-    this.setState({ displayDelete: true });
-    this.handleClose();
-  }
-
-  handleCloseDelete() {
-    this.setState({ displayDelete: false });
-  }
-
-  submitDelete() {
-    this.setState({ deleting: true });
+const LabelPopover = ({ id }) => {
+  const navigate = useNavigate();
+  const { t_i18n } = useFormatter();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [displayDelete, setDisplayDelete] = useState(false);
+  const [displayEdit, setDisplayEdit] = useState(false);
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+  const [deleting, setDeleting] = useState(false);
+  const handleOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  const handleOpenDelete = () => {
+    setDisplayDelete(true);
+    handleClose();
+  };
+  const handleCloseDelete = () => setDisplayDelete(false);
+  const submitDelete = () => {
+    setDeleting(true);
     commitMutation({
       mutation: labelPopoverDeletionMutation,
-      variables: {
-        id: this.props.label.id,
-      },
+      variables: { id },
       updater: (store) => deleteNode(
         store,
         'Pagination_labels',
-        this.props.paginationOptions,
-        this.props.label.id,
+        paginationOptions,
+        label.id,
       ),
       onCompleted: () => {
-        this.setState({ deleting: false });
-        this.handleCloseDelete();
+        setDeleting(false);
+        handleClose();
+        navigate('/dashboard/settings/vocabularies/labels');
       },
     });
-  }
-
-  render() {
-    const { classes, t } = this.props;
-    return (
+  };
+  const handleOpenEdit = () => {
+    setDisplayEdit(true);
+    handleClose();
+  };
+  const handleCloseEdit = () => setDisplayEdit(false);
+  return isFABReplaced
+    ? (<></>)
+    : (
       <div className={classes.container}>
         <IconButton
-          onClick={this.handleOpen.bind(this)}
+          onClick={handleOpen}          
           aria-haspopup="true"
           size="large"
           color="primary"
         >
           <MoreVert />
         </IconButton>
-        <Menu
-          anchorEl={this.state.anchorEl}
-          open={Boolean(this.state.anchorEl)}
-          onClose={this.handleClose.bind(this)}
-        >
-          <MenuItem onClick={this.handleOpenUpdate.bind(this)}>
-            {t('Update')}
-          </MenuItem>
-          <MenuItem onClick={this.handleOpenDelete.bind(this)}>
-            {t('Delete')}
-          </MenuItem>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+          <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
+          <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
         </Menu>
         <LabelEdition
-          label={this.props.label}
-          handleClose={this.handleCloseUpdate.bind(this)}
-          open={this.state.displayUpdate}
+          label={label}
+          handleClose={handleCloseEdit}
+          open={displayEdit}
         />
         <Dialog
-          open={this.state.displayDelete}
+          open={displayDelete}
           PaperProps={{ elevation: 1 }}
-          keepMounted={true}
           TransitionComponent={Transition}
-          onClose={this.handleCloseDelete.bind(this)}
+          onClose={handleCloseDelete}
         >
           <DialogContent>
             <DialogContentText>
-              {t('Do you want to delete this label?')}
-            </DialogContentText>
+              {t_i18n('Do you want to delete this label?')}
+              </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={this.handleCloseDelete.bind(this)}
-              disabled={this.state.deleting}
-            >
-              {t('Cancel')}
+            <Button onClick={handleCloseDelete} disabled={deleting}>
+              {t_i18n('Cancel')}
             </Button>
-            <Button
-              color="secondary"
-              onClick={this.submitDelete.bind(this)}
-              disabled={this.state.deleting}
-            >
-              {t('Delete')}
+            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+              {t_i18n('Delete')}
             </Button>
           </DialogActions>
         </Dialog>
       </div>
     );
   }
-}
 
-LabelPopover.propTypes = {
-  label: PropTypes.object,
-  paginationOptions: PropTypes.object,
-  classes: PropTypes.object,
-  t: PropTypes.func,
-};
-
-export default compose(inject18n, withStyles(styles))(LabelPopover);
+export default LabelPopover;
