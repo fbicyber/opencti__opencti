@@ -27,6 +27,8 @@
   "Access data sharing": "데이터 공유에 액세스",
   "Access ingestion": "수집에 액세스",
   "Access investigations": "조사 액세스",
+  "entity_Live-Trigger": "라이브 트리거",
+  "entity_Regular-Digest": "레귤러 다이제스트",
   "Access knowledge": "지식에 액세스",
   "Access right": "접근 권한",
   "Access security activity": "보안 활동 액세스",

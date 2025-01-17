@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import makeStyles from '@mui/styles/makeStyles';
 import { Field, Form, Formik } from 'formik';
 import { FormikConfig, FormikHelpers } from 'formik/dist/types';
+import DrawerComponent, { DrawerControlledDialProps, DrawerVariant } from '@components/common/drawer/Drawer';
 import React, { FunctionComponent } from 'react';
 import { graphql } from 'react-relay';
 import * as Yup from 'yup';
@@ -32,6 +33,8 @@ import { TriggersLinesPaginationQuery$variables } from '../../../profile/trigger
 import { AlertLiveCreationActivityMutation, AlertLiveCreationActivityMutation$data } from './__generated__/AlertLiveCreationActivityMutation.graphql';
 import useFiltersState from '../../../../../utils/filters/useFiltersState';
 import useApiMutation from '../../../../../utils/hooks/useApiMutation';
+import useHelper from 'src/utils/hooks/useHelper';
+import CreateEntityControlledDial from '../../../../../components/CreateEntityControlledDial';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -88,6 +91,16 @@ export const liveActivityTriggerValidation = (t: (message: string) => string) =>
   recipients: Yup.array().min(1, t('Minimum one recipient')).required(t('This field is required')),
 });
 
+const CreateAlertLiveControlledDial = (
+  props: DrawerControlledDialProps,
+) => (
+  <CreateEntityControlledDial
+    entityType="Live-Trigger"
+    size="medium"
+    {...props}
+  />
+);
+
 interface TriggerActivityLiveAddInput {
   name: string;
   description: string;
@@ -115,6 +128,8 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [filters, helpers] = useFiltersState();
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const onReset = () => {
     handleClose?.();
     helpers.handleClearAllFilters();
@@ -188,7 +203,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
             searchContext={{ entityTypes: ['History'] }}
           />
         </Box>
-        <div className="clearfix"/>
+        <div className="clearfix" />
       </span>
     </>;
   };
@@ -222,9 +237,48 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
     </React.Fragment>
   );
 
-  const renderClassic = () => (
-    <div>
-      <Drawer
+  const renderClassic = () => {
+    return isFABReplaced
+      ? <DrawerComponent
+        title={t_i18n('Create a live activity trigger')}
+        variant={isFABReplaced ? undefined : DrawerVariant.createWithPanel}
+        controlledDial={isFABReplaced ? CreateAlertLiveControlledDial : undefined}
+      >
+        {({ onClose }) => (
+          <Formik<TriggerActivityLiveAddInput>
+            initialValues={liveInitialValues}
+            validationSchema={liveActivityTriggerValidation(t_i18n)}
+            onSubmit={onLiveSubmit}
+            onReset={onClose}
+          >
+            {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
+              <Form>
+                {liveFields(setFieldValue, values)}
+                <div className={classes.buttons}>
+                  <Button
+                    variant="contained"
+                    onClick={handleReset}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Cancel')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={submitForm}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Create')}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </DrawerComponent>
+      : <Drawer
         disableRestoreFocus={true}
         open={open}
         anchor="right"
@@ -241,7 +295,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
             size="large"
             color="primary"
           >
-            <Close fontSize="small" color="primary"/>
+            <Close fontSize="small" color="primary" />
           </IconButton>
           <Typography variant="h6">{t_i18n('Create a live activity trigger')}</Typography>
         </div>
@@ -284,9 +338,8 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
             )}
           </Formik>
         </div>
-      </Drawer>
-    </div>
-  );
+      </Drawer>;
+  };
 
   const renderContextual = () => (
     <Dialog disableRestoreFocus={true}

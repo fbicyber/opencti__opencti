@@ -1010,6 +1010,8 @@
   "Emails (1 / line)": "Emails (1 / line)",
   "Empty": "Empty",
   "Enable": "Enable",
+  "entity_Live-Trigger": "Live Trigger",
+  "entity_Regular-Digest": "Regular Digest",
   "Enable 3D mode": "Enable 3D mode",
   "Enable AI powered platform": "Enable AI powered platform",
   "Enable commit messages": "Enable commit messages",

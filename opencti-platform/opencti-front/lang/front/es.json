@@ -1010,6 +1010,8 @@
   "Emails (1 / line)": "Correos electrónicos (1 / línea)",
   "Empty": "Vacío",
   "Enable": "Activar",
+  "entity_Regular-Digest": "Resumen regular",
+  "entity_Live-Trigger": "Disparador en vivo",
   "Enable 3D mode": "Activar el modo 3D",
   "Enable AI powered platform": "Habilitar plataforma con IA",
   "Enable commit messages": "Habilitar los mensajes de confirmación",

@@ -11,6 +11,7 @@ import AlertLiveCreation from './AlertLiveCreation';
 import { AlertingPaginationQuery$variables } from './__generated__/AlertingPaginationQuery.graphql';
 import { AlertLiveCreationActivityMutation$data } from './__generated__/AlertLiveCreationActivityMutation.graphql';
 import AlertDigestCreation from './AlertDigestCreation';
+import useHelper from 'src/utils/hooks/useHelper';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -49,6 +50,8 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
   handleClose,
   open,
 }) => {
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
@@ -66,7 +69,7 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
   };
   return (
     <>
-      {hideSpeedDial !== true && (
+      {!isFABReplaced && hideSpeedDial !== true && (
         <SpeedDial
           className={classes.createButton}
           ariaLabel="Create"

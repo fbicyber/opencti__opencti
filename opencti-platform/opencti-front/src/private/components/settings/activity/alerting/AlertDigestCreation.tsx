@@ -12,8 +12,10 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DrawerComponent, { DrawerControlledDialProps, DrawerVariant } from '@components/common/drawer/Drawer';
 import * as Yup from 'yup';
 import makeStyles from '@mui/styles/makeStyles';
+import useHelper from 'src/utils/hooks/useHelper';
 import MarkdownField from '../../../../../components/fields/MarkdownField';
 import { handleErrorInForm } from '../../../../../relay/environment';
 import { insertNode } from '../../../../../utils/store';
@@ -29,6 +31,7 @@ import AlertsField from './AlertsField';
 import { AlertingPaginationQuery$variables } from './__generated__/AlertingPaginationQuery.graphql';
 import ObjectMembersField from '../../../common/form/ObjectMembersField';
 import useApiMutation from '../../../../../utils/hooks/useApiMutation';
+import CreateEntityControlledDial from '../../../../../components/CreateEntityControlledDial';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -98,6 +101,16 @@ export const digestTriggerValidation = (t: (message: string) => string) => Yup.o
   time: Yup.string().nullable(),
 });
 
+const CreateAlertDigestControlledDial = (
+  props: DrawerControlledDialProps,
+) => (
+  <CreateEntityControlledDial
+    entityType="Regular-Digest"
+    size="medium"
+    {...props}
+  />
+);
+
 interface TriggerDigestCreationProps {
   contextual?: boolean;
   open?: boolean;
@@ -116,6 +129,8 @@ const AlertDigestCreation: FunctionComponent<TriggerDigestCreationProps> = ({
 }) => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const onReset = () => handleClose && handleClose();
   const [commitDigest] = useApiMutation(triggerDigestCreationMutation);
   const digestInitialValues: TriggerDigestActivityAddInput = {
@@ -273,69 +288,109 @@ const AlertDigestCreation: FunctionComponent<TriggerDigestCreationProps> = ({
       />
     </React.Fragment>
   );
-  const renderClassic = () => (
-    <Drawer
-      disableRestoreFocus={true}
-      open={open}
-      anchor="right"
-      elevation={1}
-      sx={{ zIndex: 1202 }}
-      classes={{ paper: classes.drawerPaper }}
-      onClose={handleClose}
-    >
-      <div className={classes.header}>
-        <IconButton
-          aria-label="Close"
-          className={classes.closeButton}
-          onClick={handleClose}
-          size="large"
-          color="primary"
+  const renderClassic = () => {
+    return isFABReplaced
+      ? <DrawerComponent
+          title={t_i18n('Create a regular activity digest')}
+          variant={isFABReplaced ? undefined : DrawerVariant.createWithPanel}
+          controlledDial={isFABReplaced ? CreateAlertDigestControlledDial : undefined}
         >
-          <Close fontSize="small" color="primary" />
-        </IconButton>
-        <Typography variant="h6">{t_i18n('Create a regular activity digest')}</Typography>
-      </div>
-      <div className={classes.container}>
-        <Formik<TriggerDigestActivityAddInput>
-          initialValues={digestInitialValues}
-          validationSchema={digestTriggerValidation(t_i18n)}
-          onSubmit={onDigestSubmit}
-          onReset={onReset}
+        {({ onClose }) => (
+          <Formik<TriggerDigestActivityAddInput>
+            initialValues={digestInitialValues}
+            validationSchema={digestTriggerValidation(t_i18n)}
+            onSubmit={onDigestSubmit}
+            onReset={onClose}
+          >
+            {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
+              <Form>
+                {digestFields(setFieldValue, values)}
+                <div className={classes.buttons}>
+                  <Button
+                    variant="contained"
+                    onClick={handleReset}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Cancel')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={submitForm}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Create')}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </DrawerComponent>
+      : <Drawer
+          disableRestoreFocus={true}
+          open={open}
+          anchor="right"
+          elevation={1}
+          sx={{ zIndex: 1202 }}
+          classes={{ paper: classes.drawerPaper }}
+          onClose={handleClose}
         >
-          {({
-            submitForm,
-            handleReset,
-            isSubmitting,
-            setFieldValue,
-            values,
-          }) => (
-            <Form>
-              {digestFields(setFieldValue, values)}
-              <div className={classes.buttons}>
-                <Button
-                  variant="contained"
-                  onClick={handleReset}
-                  disabled={isSubmitting}
-                  classes={{ root: classes.button }}
-                >
-                  {t_i18n('Cancel')}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={submitForm}
-                  disabled={isSubmitting}
-                  classes={{ root: classes.button }}
-                >
-                  {t_i18n('Create')}
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    </Drawer>
-  );
+        <div className={classes.header}>
+          <IconButton
+            aria-label="Close"
+            className={classes.closeButton}
+            onClick={handleClose}
+            size="large"
+            color="primary"
+          >
+            <Close fontSize="small" color="primary" />
+          </IconButton>
+          <Typography variant="h6">{t_i18n('Create a regular activity digest')}</Typography>
+        </div>
+        <div className={classes.container}>
+          <Formik<TriggerDigestActivityAddInput>
+            initialValues={digestInitialValues}
+            validationSchema={digestTriggerValidation(t_i18n)}
+            onSubmit={onDigestSubmit}
+            onReset={onReset}
+          >
+            {({
+              submitForm,
+              handleReset,
+              isSubmitting,
+              setFieldValue,
+              values,
+            }) => (
+              <Form>
+                {digestFields(setFieldValue, values)}
+                <div className={classes.buttons}>
+                  <Button
+                    variant="contained"
+                    onClick={handleReset}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Cancel')}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={submitForm}
+                    disabled={isSubmitting}
+                    classes={{ root: classes.button }}
+                  >
+                    {t_i18n('Create')}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </Drawer>;
+  };
   const renderContextual = () => (
     <Dialog
       disableRestoreFocus={true}
