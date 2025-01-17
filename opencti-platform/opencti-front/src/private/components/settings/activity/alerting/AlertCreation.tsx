@@ -5,6 +5,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import SpeedDial from '@mui/material/SpeedDial';
 import makeStyles from '@mui/styles/makeStyles';
+import useHelper from 'src/utils/hooks/useHelper';
 import { useFormatter } from '../../../../../components/i18n';
 import type { Theme } from '../../../../../components/Theme';
 import AlertLiveCreation from './AlertLiveCreation';
@@ -49,6 +50,8 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
   handleClose,
   open,
 }) => {
+  const { isFeatureEnable } = useHelper();
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
@@ -66,7 +69,7 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
   };
   return (
     <>
-      {hideSpeedDial !== true && (
+      {!isFABReplaced && hideSpeedDial !== true && (
         <SpeedDial
           className={classes.createButton}
           ariaLabel="Create"
