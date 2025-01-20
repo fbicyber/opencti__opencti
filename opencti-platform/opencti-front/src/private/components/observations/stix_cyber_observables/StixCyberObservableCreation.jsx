@@ -834,7 +834,7 @@ const StixCyberObservableCreation = ({
                       <ObjectMarkingField
                         name="objectMarking"
                         style={fieldSpacingContainerStyle}
-                      />
+                      />                      
                       <ExternalReferencesField
                         name="externalReferences"
                         style={fieldSpacingContainerStyle}
