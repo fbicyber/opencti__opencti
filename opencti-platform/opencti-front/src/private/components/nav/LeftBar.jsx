@@ -1020,6 +1020,7 @@ const LeftBar = () => {
               ],
             )}
           </MenuList>
+          )}
         </Security>
       </div>
       <div style={{ marginTop: 'auto' }}>
