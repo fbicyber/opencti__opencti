@@ -75,11 +75,11 @@ interface ExternalReferencesFieldProps {
   noStoreUpdate?: boolean;
   id?: string;
   dryrun?: boolean;
-  required?:boolean;
+  required?: boolean;
 }
 
 export const ExternalReferencesField: FunctionComponent<
-ExternalReferencesFieldProps
+  ExternalReferencesFieldProps
 > = ({
   name,
   style,
@@ -92,172 +92,207 @@ ExternalReferencesFieldProps
   dryrun,
   required = false,
 }) => {
-  const classes = useStyles();
-  const { t_i18n } = useFormatter();
+    const classes = useStyles();
+    const { t_i18n } = useFormatter();
 
-  const [externalReferenceCreation, setExternalReferenceCreation] = useState(false);
-  const [externalReferences, setExternalReferences] = useState<
-  {
-    label?: string;
-    value: string;
-    entity?: {
-      created?: string;
-      description: string | null;
-      external_id: string | null;
-      id: string;
-      source_name: string;
-      url: string | null;
+    const [externalReferenceCreation, setExternalReferenceCreation] = useState(false);
+    const [externalReferences, setExternalReferences] = useState<
+      {
+        label?: string;
+        value: string;
+        entity?: {
+          created?: string;
+          description: string | null;
+          external_id: string | null;
+          id: string;
+          source_name: string;
+          url: string | null;
+        };
+      }[]
+    >([]);
+
+    const handleOpenExternalReferenceCreation = () => {
+      setExternalReferenceCreation(true);
     };
-  }[]
-  >([]);
 
-  const handleOpenExternalReferenceCreation = () => {
-    setExternalReferenceCreation(true);
-  };
+    const handleCloseExternalReferenceCreation = () => {
+      setExternalReferenceCreation(false);
+    };
 
-  const handleCloseExternalReferenceCreation = () => {
-    setExternalReferenceCreation(false);
-  };
-
-  const searchExternalReferences = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    let filters: ExternalReferencesQueriesSearchQuery$variables['filters'];
-    if (id) {
-      filters = {
-        mode: 'and',
-        filters: [{ key: ['externalReferences'], values: [id] }],
-        filterGroups: [],
-      };
-    }
-    fetchQuery(externalReferencesQueriesSearchQuery, {
-      search: event && event.target.value,
-      filters,
-    })
-      .toPromise()
-      .then((data) => {
-        const newExternalReferencesEdges = ((
-          data as ExternalReferencesQueriesSearchQuery$data
-        )?.externalReferences?.edges ?? []) as unknown as {
-          node: {
-            description: string | null;
-            external_id: string | null;
-            fileId: string | null;
-            id: string;
-            source_name: string;
-            url: string | null;
-          };
-        }[];
-        const newExternalReferences = newExternalReferencesEdges
-          .slice()
-          .sort((a, b) => a.node.source_name.localeCompare(b.node.source_name))
-          .map((n) => ({
-            label: `[${n.node.source_name}] ${truncate(
-              n.node.description || n.node.url || n.node.external_id,
-              150,
-            )}`,
-            value: n.node.id,
-            entity: n.node,
-          }));
-        setExternalReferences((o) => union(take(50, o), newExternalReferences));
-      });
-  };
-
-  return (
-    <>
-      <Field
-        component={AutocompleteField}
-        style={style}
-        name={name}
-        required={required}
-        multiple={true}
-        textfieldprops={{
-          variant: 'standard',
-          label: t_i18n('External references'),
-          helperText: helpertext,
-          onFocus: searchExternalReferences,
-          required,
-        }}
-        noOptionsText={t_i18n('No available options')}
-        options={externalReferences}
-        onInputChange={searchExternalReferences}
-        openCreate={handleOpenExternalReferenceCreation}
-        onChange={typeof onChange === 'function' ? onChange : null}
-        renderOption={(
-          props: React.HTMLAttributes<HTMLLIElement>,
-          option: Option,
-        ) => (
-          <li {...props}>
-            <div className={classes.icon}>
-              <ItemIcon type="External-Reference" />
-            </div>
-            <div className={classes.text}>{option.label}</div>
-          </li>
-        )}
-        classes={{ clearIndicator: classes.autoCompleteIndicator }}
-      />
-      <ExternalReferenceCreation
-        paginationOptions={undefined}
-        contextual={true}
-        display={true}
-        openContextual={externalReferenceCreation}
-        handleCloseContextual={handleCloseExternalReferenceCreation}
-        dryrun={dryrun}
-        creationCallback={(data: ExternalReferenceCreationMutation$data) => {
-          const newExternalReference = data.externalReferenceAdd;
-          if (id) {
-            const input = {
-              fromId: id,
-              relationship_type: 'external-reference',
+    const searchExternalReferences = (
+      event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+      let filters: ExternalReferencesQueriesSearchQuery$variables['filters'];
+      const searchValue = event?.target.value?.trim() || '';
+      if (id) {
+        filters = {
+          mode: 'and',
+          filters: [{ key: ['externalReferences'], values: [id] }],
+          filterGroups: [],
+        };
+      } else {
+        filters = {
+          mode: 'or',
+          filters: [
+            {
+              key: ["source_name"],
+              values: [
+                [searchValue]
+              ],
+              operator: "contains"
+            },
+            {
+              key: ["external_id"],
+              values: [
+                [searchValue]
+              ],
+              operator: "contains"
+            },
+            {
+              key: ["description"],
+              values: [
+                [searchValue]
+              ],
+              operator: "contains"
+            },
+            {
+              key: ["url"],
+              values: [
+                [searchValue]
+              ],
+              operator: "contains"
+            }
+          ],
+          filterGroups: [],
+        };
+      }
+      fetchQuery(externalReferencesQueriesSearchQuery, {
+        search: event && event.target.value,
+        filters,
+      })
+        .toPromise()
+        .then((data) => {
+          const newExternalReferencesEdges = ((
+            data as ExternalReferencesQueriesSearchQuery$data
+          )?.externalReferences?.edges ?? []) as unknown as {
+            node: {
+              description: string | null;
+              external_id: string | null;
+              fileId: string | null;
+              id: string;
+              source_name: string;
+              url: string | null;
             };
-            commitMutation({
-              mutation: externalReferenceLinesMutationRelationAdd,
-              variables: {
-                id: newExternalReference?.id,
-                input,
-              },
-              updater: (store: RecordSourceSelectorProxy) => {
-                if (!noStoreUpdate) {
-                  insertNode(
-                    store,
-                    'Pagination_externalReferences',
-                    undefined,
-                    'externalReferenceEdit',
-                    id,
-                    'relationAdd',
-                    { input },
-                    'to',
-                  );
-                }
-              },
-              optimisticUpdater: undefined,
-              optimisticResponse: undefined,
-              onCompleted: undefined,
-              onError: undefined,
-              setSubmitting: undefined,
-            });
-          }
-          if (newExternalReference) {
-            const externalReferenceLabel = `[${
-              newExternalReference.source_name
-            }] ${truncate(
-              newExternalReference.description
-                || newExternalReference.url
-                || newExternalReference.external_id,
-              150,
-            )}`;
-            const newExternalReferences = append(
-              {
-                label: externalReferenceLabel,
-                value: newExternalReference.id,
-                entity: newExternalReference,
-              },
-              values || [],
-            );
-            setFieldValue(name, newExternalReferences ?? []);
-          }
-        }}
-      />
-    </>
-  );
-};
+          }[];
+          const newExternalReferences = newExternalReferencesEdges
+            .slice()
+            .sort((a, b) => a.node.source_name.localeCompare(b.node.source_name))
+            .map((n) => ({
+              label: `[${n.node.source_name}] ${truncate(
+                n.node.description || n.node.url || n.node.external_id,
+                150,
+              )}`,
+              value: n.node.id,
+              entity: n.node,
+            }));
+          setExternalReferences((o) => union(take(50, o), newExternalReferences));
+        });
+    };
+
+    return (
+      <>
+        <Field
+          component={AutocompleteField}
+          style={style}
+          name={name}
+          required={required}
+          multiple={true}
+          textfieldprops={{
+            variant: 'standard',
+            label: t_i18n('External references'),
+            helperText: helpertext,
+            onFocus: searchExternalReferences,
+            required,
+          }}
+          noOptionsText={t_i18n('No available options')}
+          options={externalReferences}
+          onInputChange={searchExternalReferences}
+          openCreate={handleOpenExternalReferenceCreation}
+          onChange={typeof onChange === 'function' ? onChange : null}
+          renderOption={(
+            props: React.HTMLAttributes<HTMLLIElement>,
+            option: Option,
+          ) => (
+            <li {...props}>
+              <div className={classes.icon}>
+                <ItemIcon type="External-Reference" />
+              </div>
+              <div className={classes.text}>{option.label}</div>
+            </li>
+          )}
+          classes={{ clearIndicator: classes.autoCompleteIndicator }}
+        />
+        <ExternalReferenceCreation
+          paginationOptions={undefined}
+          contextual={true}
+          display={true}
+          openContextual={externalReferenceCreation}
+          handleCloseContextual={handleCloseExternalReferenceCreation}
+          dryrun={dryrun}
+          creationCallback={(data: ExternalReferenceCreationMutation$data) => {
+            const newExternalReference = data.externalReferenceAdd;
+            if (id) {
+              const input = {
+                fromId: id,
+                relationship_type: 'external-reference',
+              };
+              commitMutation({
+                mutation: externalReferenceLinesMutationRelationAdd,
+                variables: {
+                  id: newExternalReference?.id,
+                  input,
+                },
+                updater: (store: RecordSourceSelectorProxy) => {
+                  if (!noStoreUpdate) {
+                    insertNode(
+                      store,
+                      'Pagination_externalReferences',
+                      undefined,
+                      'externalReferenceEdit',
+                      id,
+                      'relationAdd',
+                      { input },
+                      'to',
+                    );
+                  }
+                },
+                optimisticUpdater: undefined,
+                optimisticResponse: undefined,
+                onCompleted: undefined,
+                onError: undefined,
+                setSubmitting: undefined,
+              });
+            }
+            if (newExternalReference) {
+              const externalReferenceLabel = `[${newExternalReference.source_name
+                }] ${truncate(
+                  newExternalReference.description
+                  || newExternalReference.url
+                  || newExternalReference.external_id,
+                  150,
+                )}`;
+              const newExternalReferences = append(
+                {
+                  label: externalReferenceLabel,
+                  value: newExternalReference.id,
+                  entity: newExternalReference,
+                },
+                values || [],
+              );
+              setFieldValue(name, newExternalReferences ?? []);
+            }
+          }}
+        />
+      </>
+    );
+  };
