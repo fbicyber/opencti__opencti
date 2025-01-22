@@ -1,6 +1,6 @@
 import makeStyles from '@mui/styles/makeStyles';
 import { Field } from 'formik';
-import { append } from 'ramda';
+import { append, take, union } from 'ramda';
 import React, { FunctionComponent, useState } from 'react';
 import { RecordSourceSelectorProxy } from 'relay-runtime';
 import AutocompleteField from '../../../../components/AutocompleteField';
@@ -132,10 +132,7 @@ export const ExternalReferencesField: FunctionComponent<
           filters: [{ key: ['externalReferences'], values: [id] }],
           filterGroups: [],
         };
-      } else {
-        filters = { mode: 'and', filters: [], filterGroups: [] };
-      }
-
+      } 
       fetchQuery(externalReferencesQueriesSearchQuery, {
         search: searchValue,
         filters,
@@ -158,13 +155,13 @@ export const ExternalReferencesField: FunctionComponent<
           console.log('Fetched references: ', newExternalReferencesEdges);
 
           const matchingReferences = searchValue
-            ? newExternalReferencesEdges.filter((edge) =>
+            ? newExternalReferencesEdges
+            .filter((edge) =>
               edge.node.external_id &&
               edge.node.external_id?.toLowerCase().includes(searchValue.toLowerCase()),
             )
-            : newExternalReferencesEdges;
-
-          console.log('Matching references: ', matchingReferences);
+            .sort((a, b) => a.node.source_name.localeCompare(b.node.source_name))
+            : newExternalReferencesEdges
 
           const newExternalReferences = matchingReferences
             .slice()
@@ -178,9 +175,13 @@ export const ExternalReferencesField: FunctionComponent<
               entity: n.node,
             }));
 
+          console.log('Matching references: ', matchingReferences);
+
           console.log('dropdown options: ', newExternalReferences);
 
           setExternalReferences(newExternalReferences);
+
+          console.log('externalReferences is: ', externalReferences);
         })
         .catch((error) => {
           console.error('Error fetching external references: ', error);
