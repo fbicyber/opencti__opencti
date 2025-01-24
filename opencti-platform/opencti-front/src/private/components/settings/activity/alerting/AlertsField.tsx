@@ -135,6 +135,8 @@ const AlertsField: FunctionComponent<TriggersFieldProps> = ({
       });
   };
 
+  const insideDrawer = true;
+
   return (
     <div>
       <Field
@@ -170,6 +172,7 @@ const AlertsField: FunctionComponent<TriggersFieldProps> = ({
         open={triggerCreation}
         handleClose={handleCloseTriggerCreation}
         paginationOptions={paginationOptions}
+        hideButton={insideDrawer}
         creationCallback={(data: AlertLiveCreationActivityMutation$data) => {
           const newTrigger = data.triggerActivityLiveAdd;
           if (newTrigger) {

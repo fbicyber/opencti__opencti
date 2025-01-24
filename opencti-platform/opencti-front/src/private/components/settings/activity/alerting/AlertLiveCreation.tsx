@@ -115,6 +115,7 @@ interface TriggerLiveCreationProps {
   inputValue?: string;
   paginationOptions?: TriggersLinesPaginationQuery$variables;
   creationCallback?: (data: AlertLiveCreationActivityMutation$data) => void;
+  hideButton?: boolean;
 }
 
 const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> = ({
@@ -124,6 +125,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
   open,
   handleClose,
   creationCallback,
+  hideButton,
 }) => {
   const { t_i18n } = useFormatter();
   const classes = useStyles();
@@ -242,7 +244,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
       ? <DrawerComponent
         title={t_i18n('Create a live activity trigger')}
         variant={isFABReplaced ? undefined : DrawerVariant.createWithPanel}
-        controlledDial={isFABReplaced ? CreateAlertLiveControlledDial : undefined}
+        controlledDial={isFABReplaced && !hideButton ? CreateAlertLiveControlledDial : undefined}
       >
         {({ onClose }) => (
           <Formik<TriggerActivityLiveAddInput>
