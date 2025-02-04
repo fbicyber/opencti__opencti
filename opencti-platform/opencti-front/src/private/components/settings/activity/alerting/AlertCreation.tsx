@@ -5,6 +5,8 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import SpeedDial from '@mui/material/SpeedDial';
 import makeStyles from '@mui/styles/makeStyles';
+import { Button } from '@mui/material';
+import { useTheme } from '@mui/styles';
 import { useFormatter } from '../../../../../components/i18n';
 import type { Theme } from '../../../../../components/Theme';
 import AlertLiveCreation from './AlertLiveCreation';
@@ -50,9 +52,10 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
   handleClose,
   open,
 }) => {
+  const { t_i18n } = useFormatter();
+  const theme = useTheme<Theme>();
   const { isFeatureEnable } = useHelper();
   const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
-  const { t_i18n } = useFormatter();
   const classes = useStyles();
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
   // Live
@@ -67,9 +70,57 @@ const AlertCreation: FunctionComponent<TriggerCreationProps> = ({
     setOpenSpeedDial(false);
     setOpenDigest(true);
   };
+  if (isFABReplaced) {
+    return (
+      <div>
+        <Button
+          variant='contained'
+          size='small'
+          sx={{ marginRight: theme.spacing(1) }}
+          onClick={handleOpenCreateDigest}
+        >
+          {t_i18n('', {
+            id: 'Create ...',
+            values: { entity_type: t_i18n('Regular digest') },
+          })}
+        </Button>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleOpenCreateLive}
+        >
+          {t_i18n('', {
+            id: 'Create ...',
+            values: { entity_type: t_i18n('Live trigger') },
+          })}
+        </Button>
+        <AlertLiveCreation
+          contextual={contextual}
+          inputValue={inputValue}
+          paginationOptions={paginationOptions}
+          open={open ?? openLive}
+          handleClose={() => {
+            if (handleClose) {
+              handleClose();
+            } else {
+              setOpenLive(false);
+            }
+          }}
+          creationCallback={creationCallback}
+        />
+        <AlertDigestCreation
+          contextual={contextual}
+          inputValue={inputValue}
+          paginationOptions={paginationOptions}
+          open={openDigest}
+          handleClose={() => setOpenDigest(false)}
+        />
+      </div>
+    );
+  }
   return (
     <>
-      {!isFABReplaced && hideSpeedDial !== true && (
+      {hideSpeedDial !== true && (
         <SpeedDial
           className={classes.createButton}
           ariaLabel="Create"
