@@ -38,6 +38,7 @@ import {
   ContentCopyOutlined,
   DeleteOutlined,
   DeleteSweepOutlined,
+  GetAppOutlined,
   LanguageOutlined,
   LinkOffOutlined,
   LockOpenOutlined,
@@ -67,6 +68,7 @@ import { objectAssigneeFieldMembersSearchQuery } from '../common/form/ObjectAssi
 import { vocabularyQuery } from '../common/form/OpenVocabField';
 import { usersLinesSearchQuery } from '../settings/users/UsersLines';
 import PromoteDrawer from './drawers/PromoteDrawer';
+import ExportYaraDrawer from './drawers/ExportYaraDrawer';
 import TasksFilterValueContainer from '../../../components/TasksFilterValueContainer';
 import inject18n from '../../../components/i18n';
 import { truncate } from '../../../utils/String';
@@ -299,7 +301,9 @@ class DataTableToolBar extends Component {
       displayShare: false,
       displayUnshare: false,
       displayPromote: false,
+      displayExportYara: false,
       containerCreation: false,
+      exportYara: false,
       organizationCreation: false,
       actions: [],
       scope: undefined,
@@ -404,6 +408,14 @@ class DataTableToolBar extends Component {
 
   handleClosePromote() {
     this.setState({ displayPromote: false });
+  }
+
+  handleOpenExportYara() {
+    this.setState({ displayExportYara: true });
+  }
+
+  handleCloseExportYara() {
+    this.setState({ displayExportYara: false });
   }
 
   handleOpenEnrichment(stixCyberObservableSubTypes, stixDomainObjectSubTypes) {
@@ -627,6 +639,14 @@ class DataTableToolBar extends Component {
     const actions = [{ type: 'PROMOTE' }];
     this.setState({ actions }, () => {
       this.handleClosePromote();
+      this.handleOpenTask();
+    });
+  }
+
+  handleLaunchExportYara() {
+    const actions = [{ type: 'EXPORT_YARA' }];
+    this.setState({ actions }, () => {
+      this.handleCloseExportYara();
       this.handleOpenTask();
     });
   }
@@ -1589,7 +1609,9 @@ class DataTableToolBar extends Component {
     const selectedElementsList = Object.values(this.props.selectedElements || {});
     const selectedTypes = R.uniq([...selectedElementsList.map((o) => o.entity_type), ...entityTypeFilterValues]
       .filter((entity_type) => entity_type !== undefined));
-    return { entityTypeFilterValues, selectedElementsList, selectedTypes };
+    const selectedPatternTypes = R.uniq([...selectedElementsList.map((o) => o.pattern_type)]
+      .filter((pattern_type) => pattern_type !== undefined));
+    return { entityTypeFilterValues, selectedElementsList, selectedTypes, selectedPatternTypes };
   }
 
   render() {
@@ -1617,7 +1639,7 @@ class DataTableToolBar extends Component {
       warningMessage,
       taskScope,
     } = this.props;
-    const { actions, keptEntityId, mergingElement, actionsInputs, promoteToContainer } = this.state;
+    const { actions, keptEntityId, mergingElement, actionsInputs, promoteToContainer, exportYara } = this.state;
 
     let deleteCapability = KNOWLEDGE_KNUPDATE_KNDELETE;
     if (taskScope === 'DASHBOARD') deleteCapability = EXPLORE_EXUPDATE_EXDELETE;
@@ -1630,7 +1652,9 @@ class DataTableToolBar extends Component {
           const isAdmin = me.capabilities.map((o) => o.name).filter((o) => [SETTINGS_SETACCESSES, BYPASS].includes(o)).length > 0;
           const stixCyberObservableSubTypes = schema.scos.map((sco) => sco.id);
           const stixDomainObjectSubTypes = schema.sdos.map((sdo) => sdo.id);
-          const { entityTypeFilterValues, selectedElementsList, selectedTypes } = this.getSelectedTypes(stixCyberObservableSubTypes, stixDomainObjectSubTypes);
+          // eslint-disable-next-line max-len
+          const { entityTypeFilterValues, selectedElementsList, selectedTypes, selectedPatternTypes } = this.getSelectedTypes(stixCyberObservableSubTypes, stixDomainObjectSubTypes);
+
           // Some filter types are high level, we do not want to check them as "Different"
           // We might need to add some other types here before refactoring the toolbar
           const typesAreDifferent = (selectedTypes.filter((type) => !['Stix-Domain-Object', 'stix-core-relationship', 'Stix-Cyber-Observable'].includes(type))).length > 1;
@@ -1694,6 +1718,16 @@ class DataTableToolBar extends Component {
           // region EE
           const isEnterpriseEdition = settings.platform_enterprise_edition.license_validated;
           // endregion
+
+          // Yara Export Options - enable/disable showing of feature button
+          if (selectedPatternTypes.length === 1 && selectedPatternTypes[0] === 'yara' && !exportYara) {
+            this.setState({ exportYara: true });
+          }
+          if ((selectedPatternTypes.length > 1 && exportYara)
+            || (selectedPatternTypes.length === 1 && selectedPatternTypes[0] !== 'yara' && exportYara)) {
+            this.setState({ exportYara: false });
+          }
+
           // region promote filters
           const stixCyberObservableTypes = schema.scos.map((sco) => sco.id).concat('Stix-Cyber-Observable');
           const promotionTypes = stixCyberObservableTypes.concat(['Indicator']);
@@ -1954,6 +1988,21 @@ class DataTableToolBar extends Component {
                         </EETooltip>
                       </Security>
                     </>
+                  )}
+                  {exportYara && (
+                    <Tooltip title={t('Export to YARA File')}>
+                      <span>
+                        <IconButton
+                          aria-label="export yara"
+                          disabled={this.state.processing}
+                          onClick={this.handleOpenExportYara.bind(this)}
+                          color="primary"
+                          size="small"
+                        >
+                          <GetAppOutlined fontSize="small" />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
                   )}
                   {deleteDisable !== true && !removeAuthMembersEnabled && !removeFromDraftEnabled && (
                     <Security needs={[deleteCapability]}>
@@ -2530,6 +2579,11 @@ class DataTableToolBar extends Component {
                 isContainer={isContainer}
                 promoteToContainer={promoteToContainer}
                 togglePromoteToContainer={this.togglePromoteToContainer.bind(this)}
+              />
+              <ExportYaraDrawer
+                isOpen={this.state.displayExportYara}
+                onClose={this.handleCloseExportYara.bind(this)}
+                onSubmit={this.handleLaunchExportYara.bind(this)}
               />
               <Drawer
                 open={this.state.displayRescan}
