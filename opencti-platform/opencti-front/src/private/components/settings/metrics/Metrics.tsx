@@ -3,15 +3,27 @@ import Grid from '@mui/material/Grid';
 import EnterpriseEdition from '@components/common/entreprise_edition/EnterpriseEdition';
 import AuditsMultiLineChart from '@components/common/audits/AuditsMultiLineChart';
 import AuditsHorizontalBars from '@components/common/audits/AuditsHorizontalBars';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
-import { monthsAgo } from '../../../../utils/Time';
+import { dayStartDate, monthsAgo } from '../../../../utils/Time';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+import AuditsNumber from '../../common/audits/AuditsNumber';
+import AuditsDonut from '../../common/audits/AuditsDonut';
+import AuditsRadar from '../../common/audits/AuditsRadar';
+import AuditsList from '../../common/audits/AuditsList';
+import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 
-const MetricsComponent: FunctionComponent = () => {
+interface MetricsComponentProps {
+  userIds: string[],
+}
+
+const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
+  userIds,
+}) => {
   const { t_i18n } = useFormatter();
   const isEnterpriseEdition = useEnterpriseEdition();
 
@@ -28,7 +40,7 @@ const MetricsComponent: FunctionComponent = () => {
       }}
       >
         <Breadcrumbs elements={[{ label: t_i18n('Settings') }, { label: t_i18n('Metrics'), current: true }]} />
-        <Grid container={true} spacing={3}>
+        <Grid container={true} spacing={3} marginBottom={5}>
           <Grid item xs={6}>
             <AuditsMultiLineChart
               height={300}
@@ -46,7 +58,7 @@ const MetricsComponent: FunctionComponent = () => {
                     filters: [
                       {
                         key: 'members_user',
-                        values: ['88ec0c6a-13ce-5e39-b486-354fe4a7084f', '2be77d63-0137-4e6e-9664-5281463e226b'], // hard-coded admin & test-user ids for my local instance
+                        values: userIds,
                       },
                       {
                         key: 'event_scope',
@@ -75,11 +87,268 @@ const MetricsComponent: FunctionComponent = () => {
                     filters: [
                       {
                         key: 'members_user',
-                        values: ['88ec0c6a-13ce-5e39-b486-354fe4a7084f', '2c821418-98f1-4194-bd63-592a0d9a3500'], // hard-coded
+                        values: userIds,
                       },
                       {
                         key: 'event_scope',
                         values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                  number: 20,
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={2} marginTop={4}>
+            <AuditsNumber
+              height={300}
+              parameters={{
+                title: t_i18n('Monthly Active Users'),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+              variant="inLine"
+              startDate={monthsAgo(3)}
+              endDate={dayStartDate(null, false)}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsMultiLineChart
+              height={300}
+              parameters={{
+                title: '',
+                startDate: monthsAgo(3),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={2} marginTop={4}>
+            <AuditsNumber
+              height={300}
+              parameters={{
+                title: t_i18n('Weekly Active Users'),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+              variant="inLine"
+              startDate={monthsAgo(3)}
+              endDate={dayStartDate(null, false)}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsMultiLineChart
+              height={300}
+              parameters={{
+                title: '',
+                startDate: monthsAgo(3),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsHorizontalBars
+              height={350}
+              parameters={{
+                title: t_i18n('Top global search keywords'),
+              }}
+              dataSelection={[
+                {
+                  attribute: 'context_data.search',
+                  date_attribute: 'created_at',
+                  number: 20,
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsDonut
+              height={350}
+              parameters={{
+                title: t_i18n('Top events'),
+              }}
+              dataSelection={[
+                {
+                  attribute: 'event_scope',
+                  date_attribute: 'created_at',
+                  number: 10,
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'entity_type',
+                        values: ['History'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsRadar
+              height={350}
+              parameters={{
+                title: t_i18n('Top authors of read and exported entities'),
+              }}
+              dataSelection={[
+                {
+                  attribute: 'context_data.created_by_ref_id',
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['export', 'read'],
+                        operator: 'eq',
+                        mode: 'or',
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={8} marginTop={4}>
+            <AuditsList
+              height={350}
+              parameters={{
+                title: t_i18n('Latest exports'),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['export'],
+                      },
+                    ],
+                    filterGroups: [],
+                  },
+                },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsHorizontalBars
+              height={350}
+              parameters={{
+                title: t_i18n('Top read or exported entities'),
+              }}
+              dataSelection={[
+                {
+                  attribute: 'context_data.id',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['export', 'read'],
+                        operator: 'eq',
+                        mode: 'or',
                       },
                     ],
                     filterGroups: [],
@@ -95,10 +364,24 @@ const MetricsComponent: FunctionComponent = () => {
   );
 };
 
+const getUserIdsQuery = graphql`
+  query MetricsGetUserIdsQuery {
+    users {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+`;
+
 const Metrics = () => {
+  const data = useLazyLoadQuery<MetricsGetUserIdsQuery>(getUserIdsQuery, {});
+  const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
   return (
     <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
-      <MetricsComponent />
+      <MetricsComponent userIds={userIds} />
     </React.Suspense>
   );
 };
