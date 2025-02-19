@@ -8,9 +8,10 @@ import { useFormatter } from '../../../../components/i18n';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import useAuth from '../../../../utils/hooks/useAuth';
 import ListLines from '../../../../components/list_lines/ListLines';
-import { emptyFilterGroup } from '../../../../utils/filters/filtersUtils';
+import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
 import Drawer from '../../common/drawer/Drawer';
 import { usePaginationLocalStorage } from '../../../../utils/hooks/useLocalStorage';
+import { removeEmptyFields } from '../../../../utils/utils';
 
 const InvestigationAddStixCoreObjects = (props) => {
   const {
@@ -27,6 +28,9 @@ const InvestigationAddStixCoreObjects = (props) => {
   const { t_i18n } = useFormatter();
   const { stixDomainObjectTypes, stixCyberObservableTypes } = useAttributes();
   const [open, setOpen] = useState(false);
+  const [openSpeedDial, setOpenSpeedDial] = useState(false);
+  const [openCreateEntity, setOpenCreateEntity] = useState(false);
+  const [openCreateObservable, setOpenCreateObservable] = useState(false);
 
   const isTypeDomainObject = (types) => {
     return !types
@@ -100,8 +104,146 @@ const InvestigationAddStixCoreObjects = (props) => {
     filters,
     numberOfElements,
   } = viewStorage;
+  const contextFilters = useBuildEntityTypeBasedFilterContext(targetStixCoreObjectTypes, filters);
 
   const containerRef = useRef(null);
+
+  const handleOpenCreateEntity = () => {
+    setOpenCreateEntity(true);
+    setOpenSpeedDial(false);
+  };
+  const handleCloseCreateEntity = () => {
+    setOpenCreateEntity(false);
+    setOpenSpeedDial(false);
+  };
+  const handleOpenCreateObservable = () => {
+    setOpenCreateObservable(true);
+    setOpenSpeedDial(false);
+  };
+  const handleCloseCreateObservable = () => {
+    setOpenCreateObservable(false);
+    setOpenSpeedDial(false);
+  };
+  const renderDomainObjectCreation = (searchPaginationOptions) => {
+    return (
+      <StixDomainObjectCreation
+        display={open}
+        inputValue={keyword}
+        paginationKey="Pagination_stixCoreObjects"
+        paginationOptions={searchPaginationOptions}
+        confidence={confidence}
+        defaultCreatedBy={defaultCreatedBy}
+        defaultMarkingDefinitions={defaultMarkingDefinitions}
+        stixDomainObjectTypes={
+            targetStixCoreObjectTypes && targetStixCoreObjectTypes.length > 0
+              ? targetStixCoreObjectTypes
+              : []
+        }
+      />
+    );
+  };
+  const renderObservableCreation = (searchPaginationOptions) => {
+    return (
+      <StixCyberObservableCreation
+        display={open}
+        contextual={true}
+        inputValue={keyword}
+        paginationKey="Pagination_stixCoreObjects"
+        paginationOptions={searchPaginationOptions}
+        defaultCreatedBy={defaultCreatedBy}
+        defaultMarkingDefinitions={defaultMarkingDefinitions}
+      />
+    );
+  };
+  const renderStixCoreObjectCreation = (searchPaginationOptions) => {
+    return (
+      <>
+        <SpeedDial
+          className={classes.createButton}
+          ariaLabel="Create"
+          icon={<SpeedDialIcon/>}
+          onClose={() => setOpenSpeedDial(false)}
+          onOpen={() => setOpenSpeedDial(true)}
+          open={openSpeedDial}
+          FabProps={{
+            color: 'secondary',
+          }}
+        >
+          <SpeedDialAction
+            title={t_i18n('Create an observable')}
+            icon={<HexagonOutline/>}
+            tooltipTitle={t_i18n('Create an observable')}
+            onClick={() => handleOpenCreateObservable()}
+            FabProps={{
+              classes: { root: classes.speedDialButton },
+            }}
+          />
+          <SpeedDialAction
+            title={t_i18n('Create an entity')}
+            icon={<GlobeModel/>}
+            tooltipTitle={t_i18n('Create an entity')}
+            onClick={() => handleOpenCreateEntity()}
+            FabProps={{
+              classes: { root: classes.speedDialButton },
+            }}
+          />
+        </SpeedDial>
+        <StixDomainObjectCreation
+          display={open}
+          inputValue={keyword}
+          paginationKey="Pagination_stixCoreObjects"
+          paginationOptions={searchPaginationOptions}
+          confidence={confidence}
+          defaultCreatedBy={defaultCreatedBy}
+          defaultMarkingDefinitions={defaultMarkingDefinitions}
+          stixCoreObjectTypes={
+              targetStixCoreObjectTypes && targetStixCoreObjectTypes.length > 0
+                ? targetStixCoreObjectTypes
+                : []
+          }
+          speeddial={true}
+          open={openCreateEntity}
+          handleClose={() => handleCloseCreateEntity()}
+        />
+        <StixCyberObservableCreation
+          display={open}
+          contextual={true}
+          inputValue={keyword}
+          paginationKey="Pagination_stixCoreObjects"
+          paginationOptions={searchPaginationOptions}
+          defaultCreatedBy={defaultCreatedBy}
+          defaultMarkingDefinitions={defaultMarkingDefinitions}
+          speeddial={true}
+          open={openCreateObservable}
+          handleClose={() => handleCloseCreateObservable()}
+        />
+      </>
+    );
+  };
+  const renderEntityCreation = (searchPaginationOptions) => {
+    if (
+      targetStixCoreObjectTypes
+            && isTypeDomainObject(targetStixCoreObjectTypes)
+            && !isTypeObservable(targetStixCoreObjectTypes)
+    ) {
+      return renderDomainObjectCreation(searchPaginationOptions);
+    }
+    if (
+      targetStixCoreObjectTypes
+            && isTypeObservable(targetStixCoreObjectTypes)
+            && !isTypeDomainObject(targetStixCoreObjectTypes)
+    ) {
+      return renderObservableCreation(searchPaginationOptions);
+    }
+    if (
+      !targetStixCoreObjectTypes
+            || (isTypeObservable(targetStixCoreObjectTypes)
+                && isTypeDomainObject(targetStixCoreObjectTypes))
+    ) {
+      return renderStixCoreObjectCreation(searchPaginationOptions);
+    }
+    return null;
+  };
 
   const {
     platformModuleHelpers: { isRuntimeFieldEnable },
@@ -137,10 +279,11 @@ const InvestigationAddStixCoreObjects = (props) => {
   };
 
   const keyword = mapping && (searchTerm ?? '').length === 0 ? selectedText : searchTerm;
-  const searchPaginationOptions = {
+  const searchPaginationOptions = removeEmptyFields({
     ...addObjectsPaginationOptions,
     search: keyword,
-  };
+    filters: contextFilters,
+  });
 
   return (
     <>
@@ -210,6 +353,7 @@ const InvestigationAddStixCoreObjects = (props) => {
             )}
           />
         </ListLines>
+        {renderEntityCreation(searchPaginationOptions)}
       </Drawer>
     </>
   );
