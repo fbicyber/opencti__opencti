@@ -2,16 +2,25 @@ import React, { useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import { Add } from '@mui/icons-material';
 import Tooltip from '@mui/material/Tooltip';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import { GlobeModel, HexagonOutline } from 'mdi-material-ui';
+import { Button } from '@mui/material';
 import InvestigationAddStixCoreObjectsLines, { investigationAddStixCoreObjectsLinesQuery } from './InvestigationAddStixCoreObjectsLines';
+import StixDomainObjectCreation from '../../common/stix_domain_objects/StixDomainObjectCreation';
+import StixCyberObservableCreation from '../../observations/stix_cyber_observables/StixCyberObservableCreation';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
 import useAttributes from '../../../../utils/hooks/useAttributes';
 import useAuth from '../../../../utils/hooks/useAuth';
+import useHelper from '../../../../utils/hooks/useHelper';
 import ListLines from '../../../../components/list_lines/ListLines';
 import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
 import Drawer from '../../common/drawer/Drawer';
 import { usePaginationLocalStorage } from '../../../../utils/hooks/useLocalStorage';
 import { removeEmptyFields } from '../../../../utils/utils';
+import { useTheme } from '@mui/styles';
 
 const InvestigationAddStixCoreObjects = (props) => {
   const {
@@ -27,20 +36,24 @@ const InvestigationAddStixCoreObjects = (props) => {
   } = props;
   const { t_i18n } = useFormatter();
   const { stixDomainObjectTypes, stixCyberObservableTypes } = useAttributes();
+  const { isFeatureEnable } = useHelper();
   const [open, setOpen] = useState(false);
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
   const [openCreateEntity, setOpenCreateEntity] = useState(false);
   const [openCreateObservable, setOpenCreateObservable] = useState(false);
+  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
+
+  const theme = useTheme();
 
   const isTypeDomainObject = (types) => {
     return !types
-        || types.some((r) => stixDomainObjectTypes.indexOf(r) >= 0)
-        || (types.length === 1 && types[0] === 'Stix-Domain-Object');
+      || types.some((r) => stixDomainObjectTypes.indexOf(r) >= 0)
+      || types.includes('Stix-Domain-Object');
   };
   const isTypeObservable = (types) => {
     return !types
-        || types.some((r) => stixCyberObservableTypes.indexOf(r) >= 0)
-        || (types.length === 1 && types[0] === 'Stix-Cyber-Observable');
+      || types.some((r) => stixCyberObservableTypes.indexOf(r) >= 0)
+      || types.includes('Stix-Cyber-Observable');
   };
   const resolveAvailableTypes = () => {
     if (
@@ -131,9 +144,9 @@ const InvestigationAddStixCoreObjects = (props) => {
         inputValue={keyword}
         paginationKey="Pagination_stixCoreObjects"
         paginationOptions={searchPaginationOptions}
-        confidence={confidence}
-        defaultCreatedBy={defaultCreatedBy}
-        defaultMarkingDefinitions={defaultMarkingDefinitions}
+        // confidence={confidence}
+        // defaultCreatedBy={defaultCreatedBy}
+        // defaultMarkingDefinitions={defaultMarkingDefinitions}
         stixDomainObjectTypes={
             targetStixCoreObjectTypes && targetStixCoreObjectTypes.length > 0
               ? targetStixCoreObjectTypes
@@ -150,8 +163,8 @@ const InvestigationAddStixCoreObjects = (props) => {
         inputValue={keyword}
         paginationKey="Pagination_stixCoreObjects"
         paginationOptions={searchPaginationOptions}
-        defaultCreatedBy={defaultCreatedBy}
-        defaultMarkingDefinitions={defaultMarkingDefinitions}
+        // defaultCreatedBy={defaultCreatedBy}
+        // defaultMarkingDefinitions={defaultMarkingDefinitions}
       />
     );
   };
@@ -159,7 +172,7 @@ const InvestigationAddStixCoreObjects = (props) => {
     return (
       <>
         <SpeedDial
-          className={classes.createButton}
+          style={{position: 'fixed', bottom: 30, right: 30, zIndex: 1100,}}
           ariaLabel="Create"
           icon={<SpeedDialIcon/>}
           onClose={() => setOpenSpeedDial(false)}
@@ -175,7 +188,11 @@ const InvestigationAddStixCoreObjects = (props) => {
             tooltipTitle={t_i18n('Create an observable')}
             onClick={() => handleOpenCreateObservable()}
             FabProps={{
-              classes: { root: classes.speedDialButton },
+              style: {
+                backgroundColor: theme.palette.primary.main, 
+                color: theme.palette.primary.contrastText, 
+                '&:hover': {backgroundColor: theme.palette.primary.main,}
+              }
             }}
           />
           <SpeedDialAction
@@ -184,7 +201,11 @@ const InvestigationAddStixCoreObjects = (props) => {
             tooltipTitle={t_i18n('Create an entity')}
             onClick={() => handleOpenCreateEntity()}
             FabProps={{
-              classes: { root: classes.speedDialButton },
+              style: {
+                backgroundColor: theme.palette.primary.main, 
+                color: theme.palette.primary.contrastText, 
+                '&:hover': { backgroundColor: theme.palette.primary.main,}
+              }
             }}
           />
         </SpeedDial>
@@ -193,9 +214,9 @@ const InvestigationAddStixCoreObjects = (props) => {
           inputValue={keyword}
           paginationKey="Pagination_stixCoreObjects"
           paginationOptions={searchPaginationOptions}
-          confidence={confidence}
-          defaultCreatedBy={defaultCreatedBy}
-          defaultMarkingDefinitions={defaultMarkingDefinitions}
+          // confidence={confidence}
+          // defaultCreatedBy={defaultCreatedBy}
+          // defaultMarkingDefinitions={defaultMarkingDefinitions}
           stixCoreObjectTypes={
               targetStixCoreObjectTypes && targetStixCoreObjectTypes.length > 0
                 ? targetStixCoreObjectTypes
@@ -211,8 +232,8 @@ const InvestigationAddStixCoreObjects = (props) => {
           inputValue={keyword}
           paginationKey="Pagination_stixCoreObjects"
           paginationOptions={searchPaginationOptions}
-          defaultCreatedBy={defaultCreatedBy}
-          defaultMarkingDefinitions={defaultMarkingDefinitions}
+          // defaultCreatedBy={defaultCreatedBy}
+          // defaultMarkingDefinitions={defaultMarkingDefinitions}
           speeddial={true}
           open={openCreateObservable}
           handleClose={() => handleCloseCreateObservable()}
@@ -311,49 +332,51 @@ const InvestigationAddStixCoreObjects = (props) => {
         title={t_i18n('Add entities')}
         containerRef={containerRef}
       >
-        <ListLines
-          helpers={helpers}
-          sortBy={sortBy}
-          orderAsc={orderAsc}
-          dataColumns={buildColumns()}
-          handleSearch={helpers.handleSearch}
-          keyword={keyword}
-          handleSort={helpers.handleSort}
-          handleAddFilter={helpers.handleAddFilter}
-          handleRemoveFilter={helpers.handleRemoveFilter}
-          handleSwitchLocalMode={helpers.handleSwitchLocalMode}
-          handleSwitchGlobalMode={helpers.handleSwitchGlobalMode}
-          disableCards={true}
-          filters={filters}
-          paginationOptions={searchPaginationOptions}
-          numberOfElements={numberOfElements}
-          iconExtension={true}
-          parametersWithPadding={true}
-          disableExport={true}
-          availableEntityTypes={targetStixCoreObjectTypes}
-          entityTypes={targetStixCoreObjectTypes}
-        >
-          <QueryRenderer
-            query={investigationAddStixCoreObjectsLinesQuery}
-            variables={{ count: 100, ...searchPaginationOptions }}
-            render={({ props: renderProps }) => (
-              <InvestigationAddStixCoreObjectsLines
-                data={renderProps}
-                workspaceId={workspaceId}
-                paginationOptions={searchPaginationOptions}
-                dataColumns={buildColumns()}
-                initialLoading={renderProps === null}
-                workspaceStixCoreObjects={workspaceStixCoreObjects}
-                onAdd={onAdd}
-                onDelete={onDelete}
-                setNumberOfElements={helpers.handleSetNumberOfElements}
-                mapping={mapping}
-                containerRef={containerRef}
-              />
-            )}
-          />
-        </ListLines>
-        {renderEntityCreation(searchPaginationOptions)}
+        <>
+          <ListLines
+            helpers={helpers}
+            sortBy={sortBy}
+            orderAsc={orderAsc}
+            dataColumns={buildColumns()}
+            handleSearch={helpers.handleSearch}
+            keyword={keyword}
+            handleSort={helpers.handleSort}
+            handleAddFilter={helpers.handleAddFilter}
+            handleRemoveFilter={helpers.handleRemoveFilter}
+            handleSwitchLocalMode={helpers.handleSwitchLocalMode}
+            handleSwitchGlobalMode={helpers.handleSwitchGlobalMode}
+            disableCards={true}
+            filters={filters}
+            paginationOptions={searchPaginationOptions}
+            numberOfElements={numberOfElements}
+            iconExtension={true}
+            parametersWithPadding={true}
+            disableExport={true}
+            availableEntityTypes={targetStixCoreObjectTypes}
+            entityTypes={targetStixCoreObjectTypes}
+          >
+            <QueryRenderer
+              query={investigationAddStixCoreObjectsLinesQuery}
+              variables={{ count: 100, ...searchPaginationOptions }}
+              render={({ props: renderProps }) => (
+                <InvestigationAddStixCoreObjectsLines
+                  data={renderProps}
+                  workspaceId={workspaceId}
+                  paginationOptions={searchPaginationOptions}
+                  dataColumns={buildColumns()}
+                  initialLoading={renderProps === null}
+                  workspaceStixCoreObjects={workspaceStixCoreObjects}
+                  onAdd={onAdd}
+                  onDelete={onDelete}
+                  setNumberOfElements={helpers.handleSetNumberOfElements}
+                  mapping={mapping}
+                  containerRef={containerRef}
+                />
+              )}
+            />
+          </ListLines>
+          {renderEntityCreation(searchPaginationOptions)}
+        </>
       </Drawer>
     </>
   );
