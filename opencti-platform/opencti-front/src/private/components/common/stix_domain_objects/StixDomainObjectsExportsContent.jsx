@@ -33,8 +33,13 @@ class StixDomainObjectsExportsContentComponent extends Component {
   }
 
   render() {
-    const { t, data, exportContext, paginationOptions } = this.props;
+    const { t, data, exportContext, paginationOptions, selectedIds } = this.props;
     const stixDomainObjectsExportFiles = data?.stixDomainObjectsExportFiles?.edges ?? [];
+
+    //Extract pattern types from indicators
+    const indicators = data?.indicators?.edges ?? [];
+    const patternTypes = indicators.map((indicator) => indicator.node.pattern_type);
+
     return (
       <>
         <List>
@@ -69,6 +74,8 @@ class StixDomainObjectsExportsContentComponent extends Component {
             data={data}
             exportContext={exportContext}
             paginationOptions={paginationOptions}
+            selectedIds={selectedIds}
+            patternTypes={patternTypes}
             onExportAsk={() => this.props.relay.refetch({ count: 25, exportContext: this.props.exportContext })}
           />
         </Security>
@@ -95,6 +102,7 @@ const StixDomainObjectsExportsContent = createRefetchContainer(
       @argumentDefinitions(
         count: { type: "Int", defaultValue: 25 }
         exportContext: { type: "ExportContext!" }
+        filters: { type: "FilterGroup" }
       ) {
         stixDomainObjectsExportFiles(first: $count, exportContext: $exportContext)
           @connection(key: "Pagination_stixDomainObjectsExportFiles") {
@@ -102,6 +110,14 @@ const StixDomainObjectsExportsContent = createRefetchContainer(
             node {
               id
               ...FileLine_file
+            }
+          }
+        }
+        indicators(filters: $filters) {
+          edges {
+            node {
+              id
+              pattern_type
             }
           }
         }
