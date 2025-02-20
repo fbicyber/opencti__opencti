@@ -7,6 +7,7 @@ import {
   StixDomainObjectsExportsContentRefetchQuery$variables,
 } from './__generated__/StixDomainObjectsExportsContentRefetchQuery.graphql';
 import { useFormatter } from '../../../../components/i18n';
+import { ExportContext } from '../../../../utils/ExportContextProvider';
 
 interface StixDomainObjectsExportsProps {
   exportContext: { entity_id?: string; entity_type: string };
@@ -20,29 +21,44 @@ StixDomainObjectsExportsProps
 > = ({ exportContext, paginationOptions, open, handleToggle }) => {
   const { t_i18n } = useFormatter();
   return (
-    <Drawer
-      open={open}
-      onClose={handleToggle}
-      title={t_i18n('Exports list')}
-    >
-      <QueryRenderer
-        query={stixDomainObjectsExportsContentQuery}
-        variables={{ count: 25, exportContext }}
-        render={({
-          props,
-        }: {
-          props: StixDomainObjectsExportsContentRefetchQuery$data;
-        }) => (
-          <StixDomainObjectsExportsContent
-            handleToggle={handleToggle}
-            data={props}
-            paginationOptions={paginationOptions}
-            exportContext={exportContext}
-            isOpen={open}
+    <ExportContext.Consumer>
+      {({ selectedIds }) => (
+        <Drawer
+          open={open}
+          onClose={handleToggle}
+          title={t_i18n('Exports list')}
+        >
+          <QueryRenderer
+            query={stixDomainObjectsExportsContentQuery}
+            variables={{ 
+              count: 25, 
+              exportContext,
+              filters: {
+                "mode": 'OR',
+                "filters": [{
+                  "key": "id",
+                  "values": selectedIds,
+                }],
+                "filterGroups": []
+              }
+            }}
+            render={({
+              props,
+            }: {
+              props: StixDomainObjectsExportsContentRefetchQuery$data;
+            }) => (
+              <StixDomainObjectsExportsContent
+                handleToggle={handleToggle}
+                data={props}
+                paginationOptions={paginationOptions}
+                exportContext={exportContext}
+                isOpen={open}
+              />
+            )}
           />
-        )}
-      />
-    </Drawer>
+        </Drawer>
+      )}
+    </ExportContext.Consumer>
   );
 };
 
