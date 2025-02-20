@@ -186,7 +186,7 @@ const InvestigationAddStixCoreObjects = (props) => {
             {t_i18n('Add entities')}
           </Typography>
           <StixDomainObjectCreation
-            display={false}
+            display={!isFABReplaced}
             inputValue={searchTerm}
             paginationKey="Pagination_stixCoreObjects"
             paginationOptions={searchPaginationOptions}
