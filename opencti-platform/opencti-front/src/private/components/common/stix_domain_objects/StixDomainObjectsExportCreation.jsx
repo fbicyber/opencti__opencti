@@ -236,6 +236,9 @@ class StixDomainObjectsExportCreationComponent extends Component {
                           <MenuItem value="simple">
                             {t('Simple export (just the entity)')}
                           </MenuItem>
+                          <MenuItem value="pattern">
+                            {t('Pattern export (just the entity pattern field)')}
+                          </MenuItem>
                           <MenuItem value="full">
                             {t(
                               'Full export (entity and first neighbours)',
