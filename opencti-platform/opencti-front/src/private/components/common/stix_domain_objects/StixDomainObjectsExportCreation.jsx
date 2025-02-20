@@ -102,7 +102,10 @@ export const scopesConn = (exportConnectors) => {
 class StixDomainObjectsExportCreationComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { open: false, selectedContentMaxMarkingsIds: [] };
+    this.state = {
+      open: false, 
+      selectedContentMaxMarkingsIds: [],
+    };
   }
 
   handleSelectedContentMaxMarkingsChange(values) {
@@ -119,7 +122,6 @@ class StixDomainObjectsExportCreationComponent extends Component {
 
   onSubmit(selectedIds, values, { setSubmitting, resetForm }) {
     const { paginationOptions, exportContext } = this.props;
-
     const contentMaxMarkings = values.contentMaxMarkings.map(({ value }) => value);
     const fileMarkings = values.fileMarkings.map(({ value }) => value);
 
@@ -145,7 +147,8 @@ class StixDomainObjectsExportCreationComponent extends Component {
   }
 
   render() {
-    const { classes, t, data } = this.props;
+    const { classes, t, data, patternTypes } = this.props;
+    console.log('data is: ', data);
     const connectorsExport = propOr([], 'connectorsForExport', data);
     const exportScopes = uniq(
       flatten(map((c) => c.connector_scope, connectorsExport)),
@@ -154,9 +157,29 @@ class StixDomainObjectsExportCreationComponent extends Component {
     const isExportActive = (format) => filter((x) => x.data.active, exportConnsPerFormat[format]).length > 0;
     const isExportPossible = filter((x) => isExportActive(x), exportScopes).length > 0;
     const availableFormat = exportScopes;
+
+    const uniquePatternTypes = [...new Set(patternTypes)];
+
     return (
       <ExportContext.Consumer>
         {({ selectedIds }) => {
+          // console.log('selectedIds is ', selectedIds);
+          // // NEED pattern_type of selected ids
+          // // console.log('edges is: ', data.indicators.edges);
+          // const patternTypes = data?.indicators?.edges
+          //   ? uniq(data.indicators.edges.map(({ node }) => node.pattern_type))
+          //   : [];
+          // console.log('patternTypes is ', patternTypes);
+          // /// indicators => Set([pattern_types])
+          // // && the following line with patternTypes.length == 1
+          // // const hasSinglePatternType = patternTypes.length === 1;
+          const hasSinglePatternType = uniquePatternTypes;
+          console.log('hasSinglePatternType is ', hasSinglePatternType);
+          const hasMultipleSelectedIds = selectedIds.length > 1;
+          console.log('hasMultipleSelectedIds is ', hasMultipleSelectedIds);
+          const showPatternExport = hasMultipleSelectedIds && hasSinglePatternType;
+          console.log('showPatternExport is ', showPatternExport);
+
           return (
             <>
               <Tooltip
@@ -236,6 +259,9 @@ class StixDomainObjectsExportCreationComponent extends Component {
                           <MenuItem value="simple">
                             {t('Simple export (just the entity)')}
                           </MenuItem>
+                          {showPatternExport && <MenuItem value="pattern">
+                            {t('Pattern export (just the entity pattern field)')}
+                          </MenuItem>}
                           <MenuItem value="full">
                             {t(
                               'Full export (entity and first neighbours)',
@@ -307,6 +333,7 @@ StixDomainObjectsExportCreations.propTypes = {
   exportContext: PropTypes.object,
   paginationOptions: PropTypes.object,
   onExportAsk: PropTypes.func,
+  patternTypes: PropTypes.array.isRequired,
 };
 
 export default compose(
