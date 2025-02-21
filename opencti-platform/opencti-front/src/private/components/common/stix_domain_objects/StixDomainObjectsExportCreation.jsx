@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { compose, filter, flatten, fromPairs, includes, map, propOr, uniq, zip } from 'ramda';
 import withStyles from '@mui/styles/withStyles';
@@ -125,6 +125,8 @@ class StixDomainObjectsExportCreationComponent extends Component {
     const contentMaxMarkings = values.contentMaxMarkings.map(({ value }) => value);
     const fileMarkings = values.fileMarkings.map(({ value }) => value);
 
+    console.log("values is: ", values)
+
     commitMutation({
       mutation: StixDomainObjectsExportCreationMutation,
       variables: {
@@ -157,11 +159,9 @@ class StixDomainObjectsExportCreationComponent extends Component {
     const isExportPossible = filter((x) => isExportActive(x), exportScopes).length > 0;
     const availableFormat = exportScopes;
 
-
     return (
       <ExportContext.Consumer>
         {({ selectedIds }) => {
-          console.log("selectedIds is: ", selectedIds);
 
           return (
             <>
