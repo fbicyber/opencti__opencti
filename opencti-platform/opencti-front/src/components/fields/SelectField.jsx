@@ -45,7 +45,6 @@ const SelectField = (props) => {
   const internalOnChange = React.useCallback(
     (event) => {
       const { value } = event.target;
-      console.log('internalOnChange: value is ', value);
       setFieldValue(name, value);
       if (typeof onChange === 'function') {
         onChange(name, value);
@@ -61,7 +60,6 @@ const SelectField = (props) => {
   const internalOnBlur = React.useCallback(
     (event) => {
       const { value } = event.target;
-      console.log('internalOnBlur: value is ', value);
       setFieldTouched(name, true);
       if (typeof onSubmit === 'function') {
         onSubmit(name, value || '');
@@ -69,7 +67,6 @@ const SelectField = (props) => {
     },
     [setFieldTouched, onSubmit, name],
   );
-  console.log("useField: name is ", name);
   const [, meta] = useField(name);
   const { value, ...otherProps } = fieldToSelect(props);
 
