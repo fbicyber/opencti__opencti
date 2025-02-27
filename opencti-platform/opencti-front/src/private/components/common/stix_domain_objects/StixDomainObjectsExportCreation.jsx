@@ -164,12 +164,13 @@ class StixDomainObjectsExportCreationComponent extends Component {
             selectedIds?.includes(indicator.id)
           );
           const selectedPatternTypes = selectedIndicators.map((indicator) => indicator.pattern_type);
+          console.log('selectedPatternTypes is ', selectedPatternTypes);
           const uniquePatternTypes = [...new Set(selectedPatternTypes)];
           // const hasSinglePatternType = uniquePatternTypes.length === 1;
           // const hasMultipleSelectedIds = selectedIds.length > 1;
           // const showPatternExport = hasMultipleSelectedIds && hasSinglePatternType;
-
-          const hasSinglePatternType = uniquePatternTypes;
+          console.log('uniquePatternTypes is ', uniquePatternTypes);
+          const hasSinglePatternType = uniquePatternTypes.length === 1;
           console.log('hasSinglePatternType is ', hasSinglePatternType);
           const hasMultipleSelectedIds = selectedIds.length > 1;
           console.log('hasMultipleSelectedIds is ', hasMultipleSelectedIds);
