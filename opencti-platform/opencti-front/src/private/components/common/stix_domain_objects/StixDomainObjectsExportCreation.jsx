@@ -147,8 +147,7 @@ class StixDomainObjectsExportCreationComponent extends Component {
   }
 
   render() {
-    const { classes, t, data, patternTypes } = this.props;
-    console.log('data is: ', data);
+    const { classes, t, data, idAndPatternTypes } = this.props;
     const connectorsExport = propOr([], 'connectorsForExport', data);
     const exportScopes = uniq(
       flatten(map((c) => c.connector_scope, connectorsExport)),
@@ -158,27 +157,17 @@ class StixDomainObjectsExportCreationComponent extends Component {
     const isExportPossible = filter((x) => isExportActive(x), exportScopes).length > 0;
     const availableFormat = exportScopes;
 
-    const uniquePatternTypes = [...new Set(patternTypes)];
-
     return (
       <ExportContext.Consumer>
         {({ selectedIds }) => {
-          // console.log('selectedIds is ', selectedIds);
-          // // NEED pattern_type of selected ids
-          // // console.log('edges is: ', data.indicators.edges);
-          // const patternTypes = data?.indicators?.edges
-          //   ? uniq(data.indicators.edges.map(({ node }) => node.pattern_type))
-          //   : [];
-          // console.log('patternTypes is ', patternTypes);
-          // /// indicators => Set([pattern_types])
-          // // && the following line with patternTypes.length == 1
-          // // const hasSinglePatternType = patternTypes.length === 1;
-          const hasSinglePatternType = uniquePatternTypes;
-          console.log('hasSinglePatternType is ', hasSinglePatternType);
+          const selectedIndicators = idAndPatternTypes.filter((indicator) =>
+            selectedIds?.includes(indicator.id)
+          );
+          const selectedPatternTypes = selectedIndicators.map((indicator) => indicator.pattern_type);
+          const uniquePatternTypes = [...new Set(selectedPatternTypes)];
+          const hasSinglePatternType = uniquePatternTypes.length === 1;
           const hasMultipleSelectedIds = selectedIds.length > 1;
-          console.log('hasMultipleSelectedIds is ', hasMultipleSelectedIds);
           const showPatternExport = hasMultipleSelectedIds && hasSinglePatternType;
-          console.log('showPatternExport is ', showPatternExport);
 
           return (
             <>

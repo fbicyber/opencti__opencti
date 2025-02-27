@@ -33,12 +33,15 @@ class StixDomainObjectsExportsContentComponent extends Component {
   }
 
   render() {
-    const { t, data, exportContext, paginationOptions, selectedIds } = this.props;
+    const { t, data, exportContext, paginationOptions } = this.props;
     const stixDomainObjectsExportFiles = data?.stixDomainObjectsExportFiles?.edges ?? [];
 
     //Extract pattern types from indicators
     const indicators = data?.indicators?.edges ?? [];
-    const patternTypes = indicators.map((indicator) => indicator.node.pattern_type);
+    const idAndPatternTypes = indicators.map((indicator) => ({
+      id: indicator.node.id,
+      pattern_type: indicator.node.pattern_type
+    }));
 
     return (
       <>
@@ -74,8 +77,7 @@ class StixDomainObjectsExportsContentComponent extends Component {
             data={data}
             exportContext={exportContext}
             paginationOptions={paginationOptions}
-            selectedIds={selectedIds}
-            patternTypes={patternTypes}
+            idAndPatternTypes={idAndPatternTypes}
             onExportAsk={() => this.props.relay.refetch({ count: 25, exportContext: this.props.exportContext })}
           />
         </Security>
