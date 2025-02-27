@@ -17,49 +17,53 @@ interface StixDomainObjectsExportsProps {
 }
 
 const StixDomainObjectsExports: FunctionComponent<
-StixDomainObjectsExportsProps
+  StixDomainObjectsExportsProps
 > = ({ exportContext, paginationOptions, open, handleToggle }) => {
   const { t_i18n } = useFormatter();
   return (
     <ExportContext.Consumer>
-      {({ selectedIds }) => (
-        <Drawer
-          open={open}
-          onClose={handleToggle}
-          title={t_i18n('Exports list')}
-        >
-          <QueryRenderer
-            query={stixDomainObjectsExportsContentQuery}
-            variables={{ 
-              count: 25, 
-              exportContext,
-              filters: {
-                "mode": 'OR',
-                "filters": [{
-                  "key": "id",
-                  "values": selectedIds,
-                }],
-                "filterGroups": []
-              }
-            }}
-            render={({
-              props,
-            }: {
-              props: StixDomainObjectsExportsContentRefetchQuery$data;
-            }) => (
-              <StixDomainObjectsExportsContent
-                handleToggle={handleToggle}
-                data={props}
-                paginationOptions={paginationOptions}
-                exportContext={exportContext}
-                isOpen={open}
-              />
-            )}
-          />
-        </Drawer>
-      )}
+      {({ selectedIds }) => {
+        
+        return (
+          <Drawer
+            open={open}
+            onClose={handleToggle}
+            title={t_i18n('Exports list')}
+          >
+            <QueryRenderer
+              query={stixDomainObjectsExportsContentQuery}
+              variables={{
+                count: 25,
+                exportContext,
+                filters: {
+                  mode: 'or',
+                  filterGroups: [{
+                    filters: [{
+                      key: "id",
+                      values: selectedIds,
+                    }]
+                  }]
+                },
+              }}
+              render={({
+                props,
+              }: {
+                props: StixDomainObjectsExportsContentRefetchQuery$data;
+              }) => (
+                <StixDomainObjectsExportsContent
+                  handleToggle={handleToggle}
+                  data={props}
+                  paginationOptions={paginationOptions}
+                  exportContext={exportContext}
+                  isOpen={open}
+                />
+              )}
+            />
+          </Drawer>
+        );
+      }}
     </ExportContext.Consumer>
   );
-};
+}
 
 export default StixDomainObjectsExports;
