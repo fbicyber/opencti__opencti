@@ -160,9 +160,14 @@ class StixDomainObjectsExportCreationComponent extends Component {
     return (
       <ExportContext.Consumer>
         {({ selectedIds }) => {
+          
+          console.log('selectedIds is: ', selectedIds);
+          console.log('idAndPatternTypes is: ', idAndPatternTypes);
+
           const selectedIndicators = idAndPatternTypes.filter((indicator) =>
             selectedIds?.includes(indicator.id)
           );
+          console.log('selectedIndicators is ', selectedIndicators);
           const selectedPatternTypes = selectedIndicators.map((indicator) => indicator.pattern_type);
           console.log('selectedPatternTypes is ', selectedPatternTypes);
           const uniquePatternTypes = [...new Set(selectedPatternTypes)];
