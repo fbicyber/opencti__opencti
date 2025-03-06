@@ -46,7 +46,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
             <AuditsMultiLineChart
               height={300}
               // startDate={monthsAgo(1)} // need to convert AuditsMultiLineChart from .jsx to .tsx component in order to pass prop..?
-                                          // currently getting "cannot assign string to type 'null | undefined'"
+              // currently getting "cannot assign string to type 'null | undefined'"
               parameters={{
                 title: t_i18n('Logins to the platform'),
                 startDate: monthsAgo(1),
@@ -228,7 +228,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 {
                   attribute: 'context_data.search',
                   date_attribute: 'created_at',
-                  number: 20,
+                  number: 30,
                   filters: {
                     mode: 'and',
                     filters: [

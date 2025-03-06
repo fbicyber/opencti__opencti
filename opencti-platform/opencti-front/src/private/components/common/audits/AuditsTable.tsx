@@ -42,8 +42,8 @@ interface AuditsTableProps {
 }
 
 const AuditsTable: React.FC<AuditsTableProps> = ({ height = 400, parameters, dataSelection }) => {
+  
   const { t_i18n } = useFormatter();
-
   const selection = dataSelection[0];
 
   return (
