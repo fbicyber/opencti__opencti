@@ -16,6 +16,7 @@ import AuditsDonut from '../../common/audits/AuditsDonut';
 import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
+import AuditsTable from '../../common/audits/AuditsTable';
 
 interface MetricsComponentProps {
   userIds: string[],
@@ -45,7 +46,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
             <AuditsMultiLineChart
               height={300}
               // startDate={monthsAgo(1)} // need to convert AuditsMultiLineChart from .jsx to .tsx component in order to pass prop..?
-                                          // currently getting "cannot assign string to type 'null | undefined'"
+              // currently getting "cannot assign string to type 'null | undefined'"
               parameters={{
                 title: t_i18n('Logins to the platform'),
                 startDate: monthsAgo(1),
@@ -218,7 +219,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
-            <AuditsHorizontalBars
+            <AuditsTable
               height={350}
               parameters={{
                 title: t_i18n('Top global search keywords'),
@@ -227,7 +228,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 {
                   attribute: 'context_data.search',
                   date_attribute: 'created_at',
-                  number: 20,
+                  number: 30,
                   filters: {
                     mode: 'and',
                     filters: [
