@@ -16,6 +16,7 @@ import AuditsDonut from '../../common/audits/AuditsDonut';
 import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
+import AuditsTable from '../../common/audits/AuditsTable';
 
 interface MetricsComponentProps {
   userIds: string[],
@@ -218,7 +219,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
-            <AuditsHorizontalBars
+            <AuditsTable
               height={350}
               parameters={{
                 title: t_i18n('Top global search keywords'),
