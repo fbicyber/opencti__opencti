@@ -4,12 +4,14 @@ import EnterpriseEdition from '@components/common/entreprise_edition/EnterpriseE
 import AuditsMultiLineChart from '@components/common/audits/AuditsMultiLineChart';
 import AuditsHorizontalBars from '@components/common/audits/AuditsHorizontalBars';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import AuditsMonthly from '@components/common/audits/AuditsMonthly';
+import AuditsMonthlyGraph from '@components/common/audits/AuditsMonthlyGraph';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
-import { dayStartDate, monthsAgo } from '../../../../utils/Time';
+import { dayStartDate, monthsAgo, now } from '../../../../utils/Time';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import AuditsNumber from '../../common/audits/AuditsNumber';
 import AuditsDonut from '../../common/audits/AuditsDonut';
@@ -17,6 +19,7 @@ import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 import AuditsTable from '../../common/audits/AuditsTable';
+import { AduitsMonthlyProvider } from '../../common/audits/AuditsMonthlyContext';
 
 interface MetricsComponentProps {
   userIds: string[],
@@ -102,64 +105,65 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               ]}
             />
           </Grid>
-          <Grid item xs={2} marginTop={4}>
-            <AuditsNumber
-              height={300}
-              parameters={{
-                title: t_i18n('Monthly Active Users'),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
+          <AduitsMonthlyProvider>
+            <Grid item xs={2} marginTop={4}>
+              <AuditsMonthly
+                height={300}
+                parameters={{
+                  title: t_i18n('Monthly Active Users'),
+                }}
+                dataSelection={[
+                  {
+                    date_attribute: 'created_at',
+                    filters: {
+                      mode: 'and',
+                      filters: [
+                        {
+                          key: 'members_user',
+                          values: userIds,
+                        },
+                        {
+                          key: 'event_scope',
+                          values: ['login'],
+                        },
+                      ],
+                      filterGroups: [],
+                    },
                   },
-                },
-              ]}
-              variant="inLine"
-              startDate={monthsAgo(3)}
-              endDate={dayStartDate(null, false)}
-            />
-          </Grid>
-          <Grid item xs={4} marginTop={4}>
-            <AuditsMultiLineChart
-              height={300}
-              parameters={{
-                title: '',
-                startDate: monthsAgo(3),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
+                ]}
+                variant="inLine"
+              />
+            </Grid>
+            <Grid item xs={4} marginTop={4}>
+              <AuditsMonthlyGraph
+                height={300}
+                parameters={{
+                  startDate: monthsAgo(5),
+                  endDate: now(),
+                  interval: 'month',
+                }}
+                dataSelection={[
+                  {
+                    date_attribute: 'created_at',
+                    filters: {
+                      mode: 'and',
+                      filters: [
+                        {
+                          key: 'members_user',
+                          values: userIds,
+                        },
+                        {
+                          key: 'event_scope',
+                          values: ['login'],
+                        },
+                      ],
+                      filterGroups: [],
+                    },
                   },
-                },
-              ]}
-            />
-          </Grid>
+                ]}
+              />
+            </Grid>
+          </AduitsMonthlyProvider>
           <Grid item xs={2} marginTop={4}>
             <AuditsNumber
               height={300}
