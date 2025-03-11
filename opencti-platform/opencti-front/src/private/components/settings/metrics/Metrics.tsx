@@ -9,7 +9,7 @@ import { useFormatter } from '../../../../components/i18n';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
-import { dayStartDate, monthsAgo } from '../../../../utils/Time';
+import { dayStartDate, monthsAgo, now } from '../../../../utils/Time';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import AuditsNumber from '../../common/audits/AuditsNumber';
 import AuditsDonut from '../../common/audits/AuditsDonut';
@@ -17,6 +17,8 @@ import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 import AuditsTable from '../../common/audits/AuditsTable';
+import AuditsMonthly from '@components/common/audits/AuditsMonthly';
+import AuditsMonthlyGraph from '@components/common/audits/AuditsMonthlyGraph';
 
 interface MetricsComponentProps {
   userIds: string[],
@@ -103,7 +105,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
             />
           </Grid>
           <Grid item xs={2} marginTop={4}>
-            <AuditsNumber
+            <AuditsMonthly
               height={300}
               parameters={{
                 title: t_i18n('Monthly Active Users'),
@@ -128,16 +130,15 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 },
               ]}
               variant="inLine"
-              startDate={monthsAgo(3)}
-              endDate={dayStartDate(null, false)}
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
-            <AuditsMultiLineChart
+            <AuditsMonthlyGraph
               height={300}
               parameters={{
-                title: '',
-                startDate: monthsAgo(3),
+                startDate: monthsAgo(5),
+                endDate: now(),
+                interval: 'month',
               }}
               dataSelection={[
                 {
