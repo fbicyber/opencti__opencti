@@ -8,10 +8,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { graphql } from 'react-relay';
 import { useFormatter } from '../../../../components/i18n';
 import { QueryRenderer } from '../../../../relay/environment';
 import { NO_DATA_WIDGET_MESSAGE } from '../../../../components/dashboard/WidgetNoData';
-import { graphql } from 'react-relay';
 
 const auditsTableTopKeywordsQuery = graphql`
   query AuditsTableTopKeywordsQuery($field: String!, $limit: Int, $filters: FilterGroup) {
@@ -23,12 +23,12 @@ const auditsTableTopKeywordsQuery = graphql`
 `;
 
 interface AuditData {
-  auditsDistribution?: { label: string; value: number}[];
+  auditsDistribution?: { label: string; value: number }[];
 }
 
 interface AuditsTableProps {
   height?: number;
-  parameters: { title: string};
+  parameters: { title: string };
   dataSelection: {
     attribute: string;
     date_attribute?: string;
@@ -42,7 +42,6 @@ interface AuditsTableProps {
 }
 
 const AuditsTable: React.FC<AuditsTableProps> = ({ height = 400, parameters, dataSelection }) => {
-  
   const { t_i18n } = useFormatter();
   const selection = dataSelection[0];
 
