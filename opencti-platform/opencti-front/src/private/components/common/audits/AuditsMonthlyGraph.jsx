@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -10,6 +10,7 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetMultiLines from '../../../../components/dashboard/WidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+import { AuditsMonthlyContext } from './AuditsMonthlyContext';
 
 const auditsMonthlyGraphQuery = graphql`
   query AuditsMonthlyGraphQuery(
@@ -46,6 +47,8 @@ const AuditsMonthlyGraph = ({
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
 
+  const { loginCount } = useContext(AuditsMonthlyContext);
+  console.log('LoginCount - AuditsMonthlyGraph is: ', loginCount);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (
@@ -86,14 +89,43 @@ const AuditsMonthlyGraph = ({
         render={({ props }) => {
           if (props && props.auditsMultiTimeSeries) {
             return (
+              // <WidgetMultiLines
+              //   series={dataSelection.map((selection, i) => ({
+              //     name: selection.label || t_i18n('Monthly activity count'),
+              //     data: props.auditsMultiTimeSeries[i].data.map((entry) => ({
+              //       x: new Date(entry.date).toLocaleString('en-US', {month: 'short', year: 'numeric'}),
+              //       y: entry.value,
+              //     })),
+              //   }))}
+              //   interval={'month'}
+              //   hasLegend={parameters.legend}
+              //   withExport={withExportPopover}
+              //   readonly={isReadOnly}
+              // />
               <WidgetMultiLines
-                series={dataSelection.map((selection, i) => ({
-                  name: selection.label || t_i18n('Monthly activity count'),
-                  data: props.auditsMultiTimeSeries[i].data.map((entry) => ({
-                    x: new Date(entry.date).toLocaleString('en-US', {month: 'short', year: 'numeric'}),
+                series={dataSelection.map((selection, i) => {
+                  const seriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
+                    x: new Date(entry.date).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
                     y: entry.value,
-                  })),
-                }))}
+                  })) || [];
+
+                  const currentMonth = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' });
+
+                  const existingCurrentMonthData = seriesData.find((point) => point.x === currentMonth);
+
+                  if (!existingCurrentMonthData) {
+                    const currentMonthLoginCount = props.auditsMultiTimeSeries[i]?.data
+                      .filter((entry) => new Date(entry.date).getMonth() === new Date().getMonth())
+                      .reduce((sum, entry) => sum + entry.value, loginCount);
+
+                    seriesData.push({ x: currentMonth, y: currentMonthLoginCount });
+                  }
+
+                  return {
+                    name: selection.label || t_i18n('Monthly activity count'),
+                    data: seriesData,
+                  };
+                })}
                 interval={'month'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
