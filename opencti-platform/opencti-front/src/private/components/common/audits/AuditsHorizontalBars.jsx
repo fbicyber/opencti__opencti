@@ -151,15 +151,10 @@ const AuditsHorizontalBars = ({
           types: ['History', 'Activity'],
           field: selection.attribute,
           operation: 'count',
-          // startDate,
-          // endDate,
           startDate: startDate ?? monthsAgo(12), // added for metrics page work
           endDate: endDate ?? now(), // added for metrics page work
           dateAttribute:
-            // selection.date_attribute && selection.date_attribute.length > 0
-            //   ? selection.date_attribute
             'created_at' ?? 'timestamp', // added for metrics page work
-          // : 'timestamp',
           filters: selection.filters,
           limit: selection.number ?? 10,
         }}
