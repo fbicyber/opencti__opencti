@@ -14,7 +14,7 @@ interface AuditsMonthlyProviderProps {
   children: ReactNode;
 }
 
-export const AduitsMonthlyProvider: React.FC<AuditsMonthlyProviderProps> = ({ children }) => {
+export const AuditsMonthlyProvider: React.FC<AuditsMonthlyProviderProps> = ({ children }) => {
   const [loginCount, setLoginCount] = useState<number>(0);
 
   return (

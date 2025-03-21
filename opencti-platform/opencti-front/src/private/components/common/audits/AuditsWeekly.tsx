@@ -10,7 +10,7 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetAccessDenied from '../../../../components/dashboard/WidgetAccessDenied';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
-import { AuditsMonthlyContext } from './AuditsMonthlyContext';
+import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
 interface LoginResult {
   label: string;
@@ -21,17 +21,31 @@ interface QueryProps {
   loginResults?: LoginResult[];
 }
 
-const getMonthStartEnd = (offset = 0) => {
+const getWeekStartEnd = (offset = 0) => {
   const now = new Date();
-  now.setMonth(now.getMonth() + offset);
-  now.setDate(1);
-  const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
-  return { startDate, endDate };
-};
+  now.setDate(now.getDate() + (offset * 7));
+  const startDateDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - now.getDay()) + 1); // get the Monday
+  const endDateDate = new Date(startDateDate);
+  endDateDate.setDate(endDateDate.getDate() + 6);
+  endDateDate.setHours(23);
+  endDateDate.setMinutes(59);
+  endDateDate.setSeconds(59);
+  const startDate =  startDateDate.toISOString();
+  const endDate = endDateDate.toISOString();
+  return {startDate, endDate};
+}
 
-const auditsMonthlyLoginDistributionQuery = graphql`
-  query AuditsMonthlyLoginDistributionQuery (
+// const getMonthStartEnd = (offset = 0) => {
+//   const now = new Date();
+//   now.setMonth(now.getMonth() + offset);
+//   now.setDate(1);
+//   const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+//   const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+//   return { startDate, endDate };
+// };
+
+const auditsWeeklyLoginDistributionQuery = graphql`
+  query AuditsWeeklyLoginDistributionQuery (
     $startDate: DateTime
     $endDate: DateTime
     $dateAttribute: String
@@ -53,20 +67,20 @@ const auditsMonthlyLoginDistributionQuery = graphql`
   }
 `;
 
-interface AuditsMonthlyProps {
+interface AuditsWeeklyProps {
   variant: string;
   height: number;
   dataSelection: any[];
   parameters?: { title?: string };
 }
 
-const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
+const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
   variant,
   height,
   dataSelection,
   parameters = {},
 }) => {
-  const { loginCount, setLoginCount } = useContext(AuditsMonthlyContext);
+  const { loginCount, setLoginCount } = useContext(AuditsWeeklyContext);
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
@@ -82,16 +96,16 @@ const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
       : 'timestamp';
     const { filters } = buildFiltersAndOptionsForWidgets(selection.filters, { removeTypeAll: true, dateAttribute });
 
-    const { startDate, endDate } = getMonthStartEnd();
-    const { startDate: previousStartDate, endDate: previousEndDate } = getMonthStartEnd(-1);
+    const { startDate, endDate } = getWeekStartEnd();
+    const { startDate: previousStartDate, endDate: previousEndDate } = getWeekStartEnd(-1);
 
     return (
       <QueryRenderer
-        query={auditsMonthlyLoginDistributionQuery}
+        query={auditsWeeklyLoginDistributionQuery}
         variables={{ startDate, endDate, dateAttribute, filters }}
         render={({ props: currentProps }: { props?: QueryProps }) => (
           <QueryRenderer
-            query={auditsMonthlyLoginDistributionQuery}
+            query={auditsWeeklyLoginDistributionQuery}
             variables={{ startDate: previousStartDate, endDate: previousEndDate, dateAttribute, filters }}
             render={({ props: previousProps }: { props?: QueryProps }) => {
               if (currentProps && previousProps) {
@@ -108,11 +122,11 @@ const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
 
                 setLoginCount(currentCount);
                 console.log('currentCount is: ', currentCount);
-                console.log('LoginCount - AuditsMonthly is: ', loginCount);
+                console.log('LoginCount - AuditsWeekly is: ', loginCount);
                 console.log('previousCount is: ', previousCount);
                 console.log('difference is: ', difference);
 
-                return <WidgetDifference count={loginCount} change={difference} interval={"month"} />;
+                return <WidgetDifference count={loginCount} change={difference} interval={"week"} />;
               }
               if (currentProps || previousProps) {
                 return <WidgetNoData />;
@@ -136,4 +150,4 @@ const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
   );
 };
 
-export default AuditsMonthly;
+export default AuditsWeekly;

@@ -250,9 +250,7 @@ const Root = () => {
           <Route
             path="/metrics"
             element={
-              // <Security needs={[SETTINGS_SECURITYACTIVITY]} placeholder={<Navigate to={urlWithCapabilities()} />}>
               <Metrics />
-              // </Security>
             }
           />
           <Route

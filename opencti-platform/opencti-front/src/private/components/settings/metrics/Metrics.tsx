@@ -19,7 +19,11 @@ import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 import AuditsTable from '../../common/audits/AuditsTable';
-import { AduitsMonthlyProvider } from '../../common/audits/AuditsMonthlyContext';
+import { AuditsMonthlyProvider } from '../../common/audits/AuditsMonthlyContext';
+import AuditsWeekly from '@components/common/audits/AuditsWeekly';
+import { AuditsWeeklyProvider } from '../../common/audits/AuditsWeeklyContext';
+import AuditsWeeklyGraph from '@components/common/audits/AuditsWeeklyGraph';
+
 
 interface MetricsComponentProps {
   userIds: string[],
@@ -48,8 +52,6 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
           <Grid item xs={6}>
             <AuditsMultiLineChart
               height={300}
-              // startDate={monthsAgo(1)} // need to convert AuditsMultiLineChart from .jsx to .tsx component in order to pass prop..?
-              // currently getting "cannot assign string to type 'null | undefined'"
               parameters={{
                 title: t_i18n('Logins to the platform'),
                 startDate: monthsAgo(1),
@@ -105,7 +107,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               ]}
             />
           </Grid>
-          <AduitsMonthlyProvider>
+          <AuditsMonthlyProvider>
             <Grid item xs={2} marginTop={4}>
               <AuditsMonthly
                 height={300}
@@ -163,65 +165,66 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 ]}
               />
             </Grid>
-          </AduitsMonthlyProvider>
-          <Grid item xs={2} marginTop={4}>
-            <AuditsNumber
-              height={300}
-              parameters={{
-                title: t_i18n('Weekly Active Users'),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
+          </AuditsMonthlyProvider>
+          <AuditsWeeklyProvider>
+            <Grid item xs={2} marginTop={4}>
+              <AuditsWeekly
+                height={300}
+                parameters={{
+                  title: t_i18n('Weekly Active Users'),
+                }}
+                dataSelection={[
+                  {
+                    date_attribute: 'created_at',
+                    filters: {
+                      mode: 'and',
+                      filters: [
+                        {
+                          key: 'members_user',
+                          values: userIds,
+                        },
+                        {
+                          key: 'event_scope',
+                          values: ['login'],
+                        },
+                      ],
+                      filterGroups: [],
+                    },
                   },
-                },
-              ]}
-              variant="inLine"
-              startDate={monthsAgo(3)}
-              endDate={dayStartDate(null, false)}
-            />
-          </Grid>
-          <Grid item xs={4} marginTop={4}>
-            <AuditsMultiLineChart
-              height={300}
-              parameters={{
-                title: '',
-                startDate: monthsAgo(3),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
+                ]}
+                variant="inLine"
+              />
+            </Grid>
+            <Grid item xs={4} marginTop={4}>
+              <AuditsWeeklyGraph
+                height={300}
+                parameters={{
+                  startDate: monthsAgo(1),
+                  endDate: now(),
+                  interval: "week"
+                }}
+                dataSelection={[
+                  {
+                    date_attribute: 'created_at',
+                    filters: {
+                      mode: 'and',
+                      filters: [
+                        {
+                          key: 'members_user',
+                          values: userIds,
+                        },
+                        {
+                          key: 'event_scope',
+                          values: ['login'],
+                        },
+                      ],
+                      filterGroups: [],
+                    },
                   },
-                },
-              ]}
-            />
-          </Grid>
+                ]}
+              />
+            </Grid>
+          </AuditsWeeklyProvider>
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
               height={350}

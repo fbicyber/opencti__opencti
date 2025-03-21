@@ -8,12 +8,12 @@ import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { removeEntityTypeAllFromFilterGroup } from '../../../../utils/filters/filtersUtils';
 import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
-import WidgetMultiLines from '../../../../components/dashboard/WidgetMultiLines';
+import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import { AuditsMonthlyContext } from './AuditsMonthlyContext';
+import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
-const auditsMonthlyGraphQuery = graphql`
-  query AuditsMonthlyGraphQuery(
+const auditsWeeklyGraphQuery = graphql`
+  query AuditsWeeklyGraphQuery(
     $operation: StatsOperation!
     $startDate: DateTime!
     $endDate: DateTime!
@@ -35,7 +35,7 @@ const auditsMonthlyGraphQuery = graphql`
   }
 `;
 
-const AuditsMonthlyGraph = ({
+const AuditsWeeklyGraph = ({
   variant,
   height,
   dataSelection,
@@ -47,8 +47,8 @@ const AuditsMonthlyGraph = ({
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
 
-  const { loginCount } = useContext(AuditsMonthlyContext);
-  console.log('LoginCount - AuditsMonthlyGraph is: ', loginCount);
+  const { loginCount } = useContext(AuditsWeeklyContext);
+  console.log('LoginCount - AuditsWeeklyGraph is: ', loginCount);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (
@@ -78,42 +78,47 @@ const AuditsMonthlyGraph = ({
 
     return (
       <QueryRenderer
-        query={auditsMonthlyGraphQuery}
+        query={auditsWeeklyGraphQuery}
         variables={{
           operation: 'count',
-          startDate: monthsAgo(6),
+          startDate: monthsAgo(12),
           endDate: now(),
-          interval: 'month',
+          interval: 'week',
           timeSeriesParameters,
         }}
         render={({ props }) => {
           if (props && props.auditsMultiTimeSeries) {
             return (
-              <WidgetMultiLines
+              <AuditsWidgetMultiLines
                 series={dataSelection.map((selection, i) => {
                   const seriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
-                    x: new Date(entry.date).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+                    x: new Date(entry.date).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
                     y: entry.value,
                   })) || [];
 
-                  const currentMonth = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' });
+                  const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });
 
-                  const existingCurrentMonthData = seriesData.find((point) => point.x === currentMonth);
+                  const existingCurrentWeekData = seriesData.find((point) => point.x === currentDate);
 
-                  if (!existingCurrentMonthData) {
-                    const currentMonthLoginCount = props.auditsMultiTimeSeries[i]?.data
-                      .filter((entry) => new Date(entry.date).getMonth() === new Date().getMonth())
+                  if (!existingCurrentWeekData) {
+                    const currentWeekLoginCount = props.auditsMultiTimeSeries[i]?.data
+                      .filter((entry) => {
+                        const entryDate = new Date(entry.date);
+                        const today = new Date();
+                        const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+                        return (entryDate <= today && entryDate > today - millisecondsPerWeek);                      
+                      })
                       .reduce((sum, entry) => sum + entry.value, loginCount);
 
-                    seriesData.push({ x: currentMonth, y: currentMonthLoginCount });
+                    seriesData.push({ x: currentDate, y: currentWeekLoginCount });
                   }
 
                   return {
-                    name: selection.label || t_i18n('Monthly activity count'),
+                    name: selection.label || t_i18n('Weekly activity count'),
                     data: seriesData,
                   };
                 })}
-                interval={'month'}
+                interval={'week'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
                 readonly={isReadOnly}
@@ -131,7 +136,7 @@ const AuditsMonthlyGraph = ({
   return (
     <WidgetContainer
       height={height}
-      title={parameters.title ?? t_i18n('Monthly Activity')}
+      title={parameters.title ?? t_i18n('Weekly Activity')}
       variant={variant}
     >
       {renderContent()}
@@ -139,4 +144,4 @@ const AuditsMonthlyGraph = ({
   );
 };
 
-export default AuditsMonthlyGraph;
+export default AuditsWeeklyGraph;

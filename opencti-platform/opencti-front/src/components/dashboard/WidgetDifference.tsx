@@ -4,10 +4,11 @@ import { useFormatter } from '../i18n';
 
 interface WidgetNumberProps {
   count: number
-  change: number
+  change: number,
+  interval: string
 }
 
-const WidgetNumber = ({ count, change }: WidgetNumberProps) => {
+const WidgetNumber = ({ count, change, interval }: WidgetNumberProps) => {
   const { t_i18n, n } = useFormatter();
 
   return (
@@ -17,7 +18,7 @@ const WidgetNumber = ({ count, change }: WidgetNumberProps) => {
       </div>
       <ItemNumberDifference
         difference={change}
-        description={t_i18n('From previous Month')}
+        description={t_i18n(`From previous ${interval}`)}
       />
     </>
   );
