@@ -36,11 +36,11 @@ class StixDomainObjectsExportsContentComponent extends Component {
     const { t, data, exportContext, paginationOptions } = this.props;
     const stixDomainObjectsExportFiles = data?.stixDomainObjectsExportFiles?.edges ?? [];
 
-    //Extract pattern types from indicators
+    // Extract pattern types from indicators
     const indicators = data?.indicators?.edges ?? [];
     const idAndPatternTypes = indicators.map((indicator) => ({
       id: indicator.node.id,
-      pattern_type: indicator.node.pattern_type
+      pattern_type: indicator.node.pattern_type,
     }));
 
     return (
@@ -90,9 +90,10 @@ export const stixDomainObjectsExportsContentQuery = graphql`
   query StixDomainObjectsExportsContentRefetchQuery(
     $count: Int!
     $exportContext: ExportContext!
+    $filters: FilterGroup!
   ) {
     ...StixDomainObjectsExportsContent_data
-      @arguments(count: $count, exportContext: $exportContext)
+      @arguments(count: $count, exportContext: $exportContext, filters: $filters )
   }
 `;
 
