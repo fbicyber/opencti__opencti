@@ -48,7 +48,6 @@ const AuditsMonthlyGraph = ({
   const isEnterpriseEdition = useEnterpriseEdition();
 
   const { loginCount } = useContext(AuditsMonthlyContext);
-  console.log('LoginCount - AuditsMonthlyGraph is: ', loginCount);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (

@@ -201,7 +201,6 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 parameters={{
                   startDate: monthsAgo(1),
                   endDate: now(),
-                  interval: "week"
                 }}
                 dataSelection={[
                   {
