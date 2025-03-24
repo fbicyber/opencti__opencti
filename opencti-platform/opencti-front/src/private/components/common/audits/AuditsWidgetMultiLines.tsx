@@ -36,6 +36,9 @@ const AuditsWidgetMultiLines = ({
     if (interval === 'week') {
       formatter = ywiy;
     }
+    if (interval === 'day') {
+        formatter = ywiy;
+    }
 
     return lineChartOptions(
       theme,

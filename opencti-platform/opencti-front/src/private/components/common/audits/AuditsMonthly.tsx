@@ -98,19 +98,12 @@ const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
                 const currentUsers = new Set(currentProps.loginResults?.map((user) => user.label));
                 const previousUsers = new Set(previousProps.loginResults?.map((user) => user.label));
 
-                console.log('currentUsers is: ', currentUsers);
-                console.log('previousUsers is: ', previousUsers);
-
                 const currentCount = currentUsers.size;
                 const previousCount = previousUsers.size;
 
                 const difference = currentCount - previousCount;
 
                 setLoginCount(currentCount);
-                console.log('currentCount is: ', currentCount);
-                console.log('LoginCount - AuditsMonthly is: ', loginCount);
-                console.log('previousCount is: ', previousCount);
-                console.log('difference is: ', difference);
 
                 return <WidgetDifference count={loginCount} change={difference} interval={"month"} />;
               }

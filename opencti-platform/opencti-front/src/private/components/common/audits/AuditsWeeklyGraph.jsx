@@ -13,7 +13,7 @@ import Loader, { LoaderVariant } from '../../../../components/Loader';
 import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
 const auditsWeeklyGraphQuery = graphql`
-  query AuditsWeeklyGraphQuery(
+  query AuditsWeeklyGraphQuery (
     $operation: StatsOperation!
     $startDate: DateTime!
     $endDate: DateTime!
@@ -48,7 +48,6 @@ const AuditsWeeklyGraph = ({
   const isEnterpriseEdition = useEnterpriseEdition();
 
   const { loginCount } = useContext(AuditsWeeklyContext);
-  console.log('LoginCount - AuditsWeeklyGraph is: ', loginCount);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (
@@ -76,6 +75,8 @@ const AuditsWeeklyGraph = ({
       filters: removeEntityTypeAllFromFilterGroup(selection.filters),
     }));
 
+    console.log(removeEntityTypeAllFromFilterGroup(dataSelection[0].filters));
+
     return (
       <QueryRenderer
         query={auditsWeeklyGraphQuery}
@@ -83,18 +84,22 @@ const AuditsWeeklyGraph = ({
           operation: 'count',
           startDate: monthsAgo(12),
           endDate: now(),
-          interval: 'week',
+          interval: 'day',
           timeSeriesParameters,
         }}
         render={({ props }) => {
+          console.log(props);
           if (props && props.auditsMultiTimeSeries) {
             return (
               <AuditsWidgetMultiLines
                 series={dataSelection.map((selection, i) => {
-                  const seriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
+                  const intermediateSeriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
                     x: new Date(entry.date).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
                     y: entry.value,
                   })) || [];
+                  console.log(intermediateSeriesData);
+                  console.log(props.auditsMultiTimeSeries)
+                  const seriesData = intermediateSeriesData;
 
                   const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });
 
@@ -118,7 +123,7 @@ const AuditsWeeklyGraph = ({
                     data: seriesData,
                   };
                 })}
-                interval={'week'}
+                interval={'day'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
                 readonly={isReadOnly}

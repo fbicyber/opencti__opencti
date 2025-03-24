@@ -35,15 +35,6 @@ const getWeekStartEnd = (offset = 0) => {
   return {startDate, endDate};
 }
 
-// const getMonthStartEnd = (offset = 0) => {
-//   const now = new Date();
-//   now.setMonth(now.getMonth() + offset);
-//   now.setDate(1);
-//   const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-//   const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
-//   return { startDate, endDate };
-// };
-
 const auditsWeeklyLoginDistributionQuery = graphql`
   query AuditsWeeklyLoginDistributionQuery (
     $startDate: DateTime
@@ -112,19 +103,12 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
                 const currentUsers = new Set(currentProps.loginResults?.map((user) => user.label));
                 const previousUsers = new Set(previousProps.loginResults?.map((user) => user.label));
 
-                console.log('currentUsers is: ', currentUsers);
-                console.log('previousUsers is: ', previousUsers);
-
                 const currentCount = currentUsers.size;
                 const previousCount = previousUsers.size;
 
                 const difference = currentCount - previousCount;
 
                 setLoginCount(currentCount);
-                console.log('currentCount is: ', currentCount);
-                console.log('LoginCount - AuditsWeekly is: ', loginCount);
-                console.log('previousCount is: ', previousCount);
-                console.log('difference is: ', difference);
 
                 return <WidgetDifference count={loginCount} change={difference} interval={"week"} />;
               }
