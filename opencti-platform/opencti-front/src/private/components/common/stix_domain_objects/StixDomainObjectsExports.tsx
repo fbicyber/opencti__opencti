@@ -17,6 +17,7 @@ interface StixDomainObjectsExportsProps {
   handleToggle: () => void;
 }
 
+// This should not be hard coded, should an existing filtersUtils
 const StixDomainObjectsExports: FunctionComponent<
 StixDomainObjectsExportsProps
 > = ({ exportContext, paginationOptions, open, handleToggle }) => {
@@ -24,6 +25,9 @@ StixDomainObjectsExportsProps
   return (
     <ExportContext.Consumer>
       {({ selectedIds }) => {
+        if (selectedIds == undefined || selectedIds == null || selectedIds.length == 0) {
+          selectedIds = [""];
+        }
         return (
           <Drawer
             open={open}
@@ -37,7 +41,6 @@ StixDomainObjectsExportsProps
                 exportContext,
                 filters: {
                   ...emptyFilterGroup,
-                  // This should not be hard coded, should an existing filtersUtils
                   filters: [
                     {
                       key: 'id',
