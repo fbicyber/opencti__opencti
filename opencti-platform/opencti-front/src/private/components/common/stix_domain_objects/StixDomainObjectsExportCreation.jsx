@@ -213,7 +213,7 @@ class StixDomainObjectsExportCreationComponent extends Component {
                 onSubmit={this.onSubmit.bind(this, selectedIds)}
                 onReset={this.handleClose.bind(this)}
               >
-                {({ submitForm, handleReset, isSubmitting, resetForm, setFieldValue }) => (
+                {({ values, submitForm, handleReset, isSubmitting, resetForm, setFieldValue }) => (
                   <Form>
                     <Dialog
                       slotProps={{ paper: { elevation: 1 } }}
@@ -258,7 +258,7 @@ class StixDomainObjectsExportCreationComponent extends Component {
                           <MenuItem value="simple">
                             {t('Simple export (just the entity)')}
                           </MenuItem>
-                          {showPatternExport && <MenuItem value="pattern">
+                          {showPatternExport && values.format === 'text/plain' && <MenuItem value="pattern">
                             {t('Pattern export (just the entity pattern field)')}
                           </MenuItem>}
                           <MenuItem value="full">
