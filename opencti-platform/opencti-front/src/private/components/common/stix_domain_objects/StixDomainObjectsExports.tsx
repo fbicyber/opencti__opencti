@@ -8,7 +8,7 @@ import {
 } from './__generated__/StixDomainObjectsExportsContentRefetchQuery.graphql';
 import { useFormatter } from '../../../../components/i18n';
 import { ExportContext } from '../../../../utils/ExportContextProvider';
-import { emptyFilterGroup } from '../../../../utils/filters/filtersUtils';
+import { addFilter, emptyFilterGroup } from '../../../../utils/filters/filtersUtils';
 
 interface StixDomainObjectsExportsProps {
   exportContext: { entity_id?: string; entity_type: string };
@@ -28,6 +28,9 @@ StixDomainObjectsExportsProps
         if (selectedIds == undefined || selectedIds == null || selectedIds.length == 0) {
           selectedIds = [""];
         }
+
+        const filters = addFilter(emptyFilterGroup, 'id', selectedIds);
+
         return (
           <Drawer
             open={open}
@@ -39,15 +42,7 @@ StixDomainObjectsExportsProps
               variables={{
                 count: 25,
                 exportContext,
-                filters: {
-                  ...emptyFilterGroup,
-                  filters: [
-                    {
-                      key: 'id',
-                      values: selectedIds,
-                    },
-                  ],
-                },
+                filters: filters,
               }}
               render={({
                 props,
