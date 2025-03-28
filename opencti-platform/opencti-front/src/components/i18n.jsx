@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { injectIntl, useIntl } from 'react-intl';
 import moment from 'moment-timezone';
 import { bytesFormat, numberFormat } from '../utils/Number';
+import { startOfWeek, format } from 'date-fns';
 
 const FROM_START = 0;
 const UNTIL_END = 100000000000000;
@@ -374,15 +375,20 @@ export const useFormatter = () => {
       return '-';
     }
     // the following few lines get the date to display as the number of weeks into the year with weeks starting on Mondays
-    const entryDate = new Date(date)
-    const startOfYear = new Date(entryDate.getFullYear(), 0, 1);
-    const startDayOfWeek = startOfYear.getDay();
-    const offset = (startDayOfWeek === 0 ? 6 : (startDayOfWeek - 1)) //Adjust for Monday as start of week
-    startOfYear.setDate(startOfYear.getDate() - offset)
-    const diffInMilliseconds = entryDate - startOfYear;
-    const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
-    const weeksIntoYear = Math.floor(diffInMilliseconds / millisecondsPerWeek)
-    return ("" + startOfYear.getFullYear() + "Week" + weeksIntoYear + ", " + entryDate.toLocaleString('en-US', {year: "2-digit", month: "long", day: "numeric"}))
+    // const entryDate = new Date(date)
+    // const startOfYear = new Date(entryDate.getFullYear(), 0, 1);
+    // const startDayOfWeek = startOfYear.getDay();
+    // const offset = (startDayOfWeek === 0 ? 6 : (startDayOfWeek - 1)) //Adjust for Monday as start of week
+    // startOfYear.setDate(startOfYear.getDate() - offset)
+    // const diffInMilliseconds = entryDate - startOfYear;
+    // const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+    // const weeksIntoYear = Math.floor(diffInMilliseconds / millisecondsPerWeek)
+    // return ("" + startOfYear.getFullYear() + "Week" + weeksIntoYear + ", " + entryDate.toLocaleString('en-US', {year: "2-digit", month: "long", day: "numeric"}))
+    const value = new Date(date);
+    const weekStart = startOfWeek(value, { weekStartsOn: 1 });
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    return `${format(weekStart, 'MMM dd')} - ${format(weekEnd, 'MMM dd')}`;
   }
   return {
     t_i18n: translate,

@@ -70,7 +70,7 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
   dataSelection,
   parameters = {},
 }) => {
-  const { loginCount, setLoginCount } = useContext(AuditsWeeklyContext);
+  const { loginCount, setLoginCount, weeklyActiveUsersHistory, setWeeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
@@ -86,35 +86,69 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
       : 'timestamp';
     const { filters } = buildFiltersAndOptionsForWidgets(selection.filters, { removeTypeAll: true, dateAttribute });
 
-    const { startDate, endDate } = getWeekStartEnd();
-    const { startDate: previousStartDate, endDate: previousEndDate } = getWeekStartEnd(-1);
+    const weeks = new Array(6);
+    for (let i = 0; i < 6; i++){
+      const { startDate, endDate } = getWeekStartEnd(-i);
+      weeks.push({startDate, endDate});
+    }
 
     return (
       <QueryRenderer
         query={auditsWeeklyLoginDistributionQuery}
-        variables={{ startDate, endDate, dateAttribute, filters }}
-        render={({ props: currentProps }: { props?: QueryProps }) => (
+        variables={{ startDate: weeks[0].startDate, endDate: weeks[0].endDate, dateAttribute, filters }}
+        render={({ props: week0Props }: { props?: QueryProps }) => (
           <QueryRenderer
             query={auditsWeeklyLoginDistributionQuery}
-            variables={{ startDate: previousStartDate, endDate: previousEndDate, dateAttribute, filters }}
-            render={({ props: previousProps }: { props?: QueryProps }) => {
-              if (currentProps && previousProps) {
-                const currentUsers = new Set(currentProps.loginResults?.map((user) => user.label));
-                const previousUsers = new Set(previousProps.loginResults?.map((user) => user.label));
+            variables={{ startDate: weeks[1].startDate, endDate: weeks[1].endDate, dateAttribute, filters }}
+            render={({ props: week1Props }: { props?: QueryProps }) => {
+              // <QueryRenderer
+              //   query={auditsWeeklyLoginDistributionQuery}
+              //   variables={{ startDate: weeks[2].startDate, endDate: weeks[2].endDate, dateAttribute, filters }}
+              //   render={({ props: week2Props }: { props?: QueryProps }) => (
+              //     <QueryRenderer
+              //       query={auditsWeeklyLoginDistributionQuery}
+              //       variables={{ startDate: weeks[3].startDate, endDate: weeks[3].endDate, dateAttribute, filters }}
+              //       render={({ props: week3Props }: { props?: QueryProps }) => (
+              //         <QueryRenderer
+              //           query={auditsWeeklyLoginDistributionQuery}
+              //           variables={{ startDate: weeks[4].startDate, endDate: weeks[4].endDate, dateAttribute, filters }}
+              //           render={({ props: week4Props }: { props?: QueryProps }) => (
+              //             <QueryRenderer
+              //               query={auditsWeeklyLoginDistributionQuery}
+              //               variables={{ startDate: weeks[5].startDate, endDate: weeks[5].endDate, dateAttribute, filters }}
+              //               render={({ props: week5Props }: { props?: QueryProps }) => (
+                              if (week0Props && week1Props) {
+                                const week0Users = new Set(week0Props.loginResults?.map((user) => user.label));
+                                const week1Users = new Set(week1Props.loginResults?.map((user) => user.label));
+                                
+                                // const week2Users = new Set(week2Props.loginResults?.map((user) => user.label));
+                                // const week3Users = new Set(week3Props.loginResults?.map((user) => user.label));
+                                // const week4Users = new Set(week4Props.loginResults?.map((user) => user.label));
+                                // const week5Users = new Set(week5Props.loginResults?.map((user) => user.label));
 
-                const currentCount = currentUsers.size;
-                const previousCount = previousUsers.size;
+                                const weeklyActiveUsersHistory = new Array(6);
 
-                const difference = currentCount - previousCount;
-
-                setLoginCount(currentCount);
-
-                return <WidgetDifference count={loginCount} change={difference} interval={"week"} />;
-              }
-              if (currentProps || previousProps) {
-                return <WidgetNoData />;
-              }
-              return <Loader variant={LoaderVariant.inElement} />;
+                                const currentCount = week0Users.size;
+                                const previousCount = week1Users.size;
+                
+                                const difference = currentCount - previousCount;
+                
+                                setLoginCount(currentCount);
+                
+                                return <WidgetDifference count={loginCount} change={difference} interval={"week"} />;
+                              }
+                              if (week0Props || week1Props) {
+                                return <WidgetNoData />;
+                              }
+                              return <Loader variant={LoaderVariant.inElement} />;
+              //             )}
+              //            />
+              //          )}
+              //         />
+              //       )}
+              //     />
+              //   )}
+              // />
             }}
           />
         )}

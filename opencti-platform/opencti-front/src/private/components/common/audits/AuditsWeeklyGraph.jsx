@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
-import { monthsAgo, now } from '../../../../utils/Time';
+import { daysAgo, now } from '../../../../utils/Time';
 import useGranted, { SETTINGS_SECURITYACTIVITY, SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '../../../../utils/hooks/useGranted';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { removeEntityTypeAllFromFilterGroup } from '../../../../utils/filters/filtersUtils';
@@ -73,20 +73,20 @@ const AuditsWeeklyGraph = ({
       filters: removeEntityTypeAllFromFilterGroup(selection.filters),
     }));
 
-    console.log(removeEntityTypeAllFromFilterGroup(dataSelection[0].filters));
+    const today = new Date();
+    const beginningOfRelevantWeek = new Date(today.getFullYear(), today.getMonth(), (today.getDate() - today.getDay()) + 1); // get the Monday
 
     return (
       <QueryRenderer
         query={auditsWeeklyGraphQuery}
         variables={{
           operation: 'count',
-          startDate: monthsAgo(12),
+          startDate: daysAgo(42),
           endDate: now(),
           interval: 'day',
           timeSeriesParameters,
         }}
         render={({ props }) => {
-          console.log(props);
           if (props && props.auditsMultiTimeSeries) {
             return (
               <AuditsWidgetMultiLines
@@ -95,16 +95,13 @@ const AuditsWeeklyGraph = ({
                     x: new Date(entry.date).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
                     y: entry.value,
                   })) || [];
-                  console.log(intermediateSeriesData);
-                  console.log(props.auditsMultiTimeSeries)
                   const seriesData = intermediateSeriesData;
 
                   const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });
 
                   const existingCurrentWeekData = seriesData.find((point) => point.x === currentDate);
 
-
-                  let loginCount
+                  let loginCount;
                   if (!existingCurrentWeekData) {
                     const currentWeekLoginCount = props.auditsMultiTimeSeries[i]?.data
                       .filter((entry) => {
@@ -123,7 +120,7 @@ const AuditsWeeklyGraph = ({
                     data: seriesData,
                   };
                 })}
-                interval={'day'}
+                interval={'week'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
                 readonly={isReadOnly}
