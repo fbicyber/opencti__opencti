@@ -199,8 +199,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               <AuditsWeeklyGraph
                 height={300}
                 parameters={{
-                  startDate: monthsAgo(1),
-                  endDate: now(),
+                  title: "Weekly Active Users"
                 }}
                 dataSelection={[
                   {

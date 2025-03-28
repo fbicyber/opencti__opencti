@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -10,7 +10,6 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
 const auditsWeeklyGraphQuery = graphql`
   query AuditsWeeklyGraphQuery (
@@ -47,7 +46,6 @@ const AuditsWeeklyGraph = ({
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
 
-  const { loginCount } = useContext(AuditsWeeklyContext);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (
@@ -105,6 +103,8 @@ const AuditsWeeklyGraph = ({
 
                   const existingCurrentWeekData = seriesData.find((point) => point.x === currentDate);
 
+
+                  let loginCount
                   if (!existingCurrentWeekData) {
                     const currentWeekLoginCount = props.auditsMultiTimeSeries[i]?.data
                       .filter((entry) => {
