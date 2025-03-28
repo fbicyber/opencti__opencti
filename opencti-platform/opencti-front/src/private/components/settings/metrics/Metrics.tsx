@@ -140,7 +140,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               <AuditsMonthlyGraph
                 height={300}
                 parameters={{
-                  startDate: monthsAgo(5),
+                  startDate: monthsAgo(6),
                   endDate: now(),
                   interval: 'month',
                 }}
