@@ -48,7 +48,6 @@ const auditsWeeklyLoginDistributionQuery = graphql`
         endDate: $endDate
         dateAttribute: $dateAttribute
         operation: count
-        limit: 30
         types: ["History", "Activity"]
         filters: $filters
     ) {

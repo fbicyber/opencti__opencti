@@ -104,6 +104,9 @@ const AuditsMonthlyGraph = ({
                       .filter((entry) => new Date(entry.date).getMonth() === new Date().getMonth())
                       .reduce((sum, entry) => sum + entry.value, loginCount);
 
+                    console.log("currentMonthLoginCount: " + currentMonthLoginCount);
+                    console.log("loginCount: " + loginCount);
+
                     seriesData.push({ x: currentMonth, y: currentMonthLoginCount });
                   }
 
