@@ -258,7 +258,7 @@ class StixDomainObjectsExportCreationComponent extends Component {
                         <ObjectMarkingField
                           name="contentMaxMarkings"
                           label={t(CONTENT_MAX_MARKINGS_TITLE)}
-                          onChange={(_, values) => this.handleSelectedContentMaxMarkingsChange(values)}
+                          onChange={(_, valuesTemp) => this.handleSelectedContentMaxMarkingsChange(valuesTemp)}
                           style={fieldSpacingContainerStyle}
                           setFieldValue={setFieldValue}
                           limitToMaxSharing

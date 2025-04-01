@@ -25,11 +25,12 @@ StixDomainObjectsExportsProps
   return (
     <ExportContext.Consumer>
       {({ selectedIds }) => {
-        if (selectedIds == undefined || selectedIds == null || selectedIds.length == 0) {
-          selectedIds = [""];
+        let tempSelectedIds = selectedIds;
+        if (tempSelectedIds === undefined || tempSelectedIds === null || tempSelectedIds.length === 0) {
+          tempSelectedIds = [''];
         }
 
-        const filters = addFilter(emptyFilterGroup, 'id', selectedIds);
+        const filters = addFilter(emptyFilterGroup, 'id', tempSelectedIds);
 
         return (
           <Drawer
@@ -42,7 +43,7 @@ StixDomainObjectsExportsProps
               variables={{
                 count: 25,
                 exportContext,
-                filters: filters,
+                filters,
               }}
               render={({
                 props,
