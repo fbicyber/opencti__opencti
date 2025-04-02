@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; //, { useContext } 
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -10,24 +10,74 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
 const auditsWeeklyGraphQuery = graphql`
+  # query AuditsWeeklyGraphQuery (
+  #   $operation: StatsOperation!
+  #   $startDate: DateTime!
+  #   $endDate: DateTime!
+  #   $interval: String!
+  #   $timeSeriesParameters: [AuditsTimeSeriesParameters]
+  # ) {
+  #   auditsMultiTimeSeries(
+  #     operation: $operation
+  #     startDate: $startDate
+  #     endDate: $endDate
+  #     interval: $interval
+  #     timeSeriesParameters: $timeSeriesParameters
+  #   ) {
+  #     data {
+  #       date
+  #       value
+  #     }
+  #   }
+  # }
+  # query AuditsWeeklyLoginMultiDistributionQuery (
   query AuditsWeeklyGraphQuery (
-    $operation: StatsOperation!
-    $startDate: DateTime!
-    $endDate: DateTime!
-    $interval: String!
-    $timeSeriesParameters: [AuditsTimeSeriesParameters]
-  ) {
-    auditsMultiTimeSeries(
-      operation: $operation
-      startDate: $startDate
-      endDate: $endDate
-      interval: $interval
-      timeSeriesParameters: $timeSeriesParameters
+      $dateAttribute: String
+      $filters: FilterGroup
+    ) {
+    userLoginResults: auditsMultiDistribution(
+  			dateAttribute: $dateAttribute
+        operation: count
+        # limit: 30
+        types: ["History", "Activity"]
+        distributionParameters:[
+        {
+          field: "user_id",
+          startDate: "2024-01-08T00:00:00-05:00"
+          endDate: "2024-01-14T23:59:59-05:00"
+          filters: $filters
+          # {
+          #     mode: and,
+          #     filters: [
+          #         {
+          #             key: "event_scope",
+          #           	values: [
+          #                 "login"
+          #             ]
+          #         }
+          #     ],
+          #     filterGroups: []
+          # }
+        },
+        {
+          field: "user_id",
+          startDate: "2024-01-15T00:00:00-05:00"
+          endDate: "2024-01-21T23:59:59-05:00"
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: "2024-01-22T00:00:00-05:00"
+          endDate: "2024-01-28T23:59:59-05:00"
+          filters: $filters
+        }
+      ]
     ) {
       data {
-        date
+        label
         value
       }
     }
@@ -45,6 +95,8 @@ const AuditsWeeklyGraph = ({
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
+
+  // const { weeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
 
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
@@ -80,13 +132,14 @@ const AuditsWeeklyGraph = ({
       <QueryRenderer
         query={auditsWeeklyGraphQuery}
         variables={{
-          operation: 'count',
-          startDate: daysAgo(42),
-          endDate: now(),
-          interval: 'day',
-          timeSeriesParameters,
+          // operation: 'count',
+          // startDate: daysAgo(42),
+          // endDate: now(),
+          // interval: 'day',
+          // timeSeriesParameters,
         }}
         render={({ props }) => {
+          console.log(props)
           if (props && props.auditsMultiTimeSeries) {
             return (
               <AuditsWidgetMultiLines
