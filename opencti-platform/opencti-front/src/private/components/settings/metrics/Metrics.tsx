@@ -166,7 +166,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               />
             </Grid>
           </AuditsMonthlyProvider>
-          <AuditsWeeklyProvider>
+          {/* <AuditsWeeklyProvider> */}
             <Grid item xs={2} marginTop={4}>
               <AuditsWeekly
                 height={300}
@@ -222,7 +222,7 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 ]}
               />
             </Grid>
-          </AuditsWeeklyProvider>
+          {/* </AuditsWeeklyProvider> */}
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
               height={350}

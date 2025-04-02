@@ -10,6 +10,8 @@ import { addFilter } from '../utils/filtering/filtering-utils';
 import { isUserHasCapability, KNOWLEDGE, SETTINGS_SECURITYACTIVITY } from '../utils/access';
 import { ForbiddenAccess } from '../config/errors';
 
+import { logApp } from '../..//src/config/conf';
+
 export const findHistory = (context: AuthContext, user: AuthUser, args: QueryLogsArgs) => {
   const finalArgs = { ...args, orderBy: args.orderBy ?? 'timestamp', orderMode: args.orderMode ?? 'desc', types: [ENTITY_TYPE_HISTORY] };
   return elPaginate(context, user, READ_INDEX_HISTORY, finalArgs);
@@ -54,6 +56,15 @@ export const auditsMultiTimeSeries = (context: AuthContext, user: AuthUser, args
 export const auditsDistribution = async (context: AuthContext, user: AuthUser, args: any) => {
   const { types } = args;
   return distributionHistory(context, user, types ?? [ENTITY_TYPE_HISTORY], args);
+};
+
+export const auditsMultiDistribution = async (context: AuthContext, user: AuthUser, args: any) => {
+  // logApp.error('[OPENCTI - auditsMultiDistribution]' + args);
+  return Promise.all(args.distributionParameters.map((distributionParameterSet: any) => {
+    const { types } = distributionParameterSet;
+    // logApp.error('[OPENCTI - auditsMultiDistribution]' + distributionParameterSet);
+    return { data: distributionHistory(context, user, types ?? [ENTITY_TYPE_HISTORY], { ...args, ...distributionParameterSet }) };// { dateAttribute, operation, types, limit, ...distributionParameterSet });
+  }));
 };
 
 export const logsWorkerConfig = () => {

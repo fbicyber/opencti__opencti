@@ -10,7 +10,7 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetAccessDenied from '../../../../components/dashboard/WidgetAccessDenied';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
-import { AuditsWeeklyContext } from './AuditsWeeklyContext';
+// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
 
 interface LoginResult {
   label: string;
@@ -70,7 +70,7 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
   dataSelection,
   parameters = {},
 }) => {
-  const { loginCount, setLoginCount, weeklyActiveUsersHistory, setWeeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
+  // const { loginCount, setLoginCount, setWeeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
@@ -89,7 +89,7 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
     const weeks = new Array(6);
     for (let i = 0; i < 6; i++){
       const { startDate, endDate } = getWeekStartEnd(-i);
-      weeks.push({startDate, endDate});
+      weeks[i] = ({startDate, endDate});
     }
 
     return (
@@ -127,15 +127,20 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
                                 // const week5Users = new Set(week5Props.loginResults?.map((user) => user.label));
 
                                 const weeklyActiveUsersHistory = new Array(6);
+                                const currentCount = weeklyActiveUsersHistory[0] = week0Users.size;
+                                const previousCount = weeklyActiveUsersHistory[1] = week1Users.size;
+                                // weeklyActiveUsersHistory[2] = week2Users.size;
+                                // weeklyActiveUsersHistory[3] = week3Users.size;
+                                // weeklyActiveUsersHistory[4] = week4Users.size;
+                                // weeklyActiveUsersHistory[5] = week5Users.size;
 
-                                const currentCount = week0Users.size;
-                                const previousCount = week1Users.size;
+                                // setWeeklyActiveUsersHistory(weeklyActiveUsersHistory);
                 
                                 const difference = currentCount - previousCount;
                 
-                                setLoginCount(currentCount);
+                                // setLoginCount(currentCount);
                 
-                                return <WidgetDifference count={loginCount} change={difference} interval={"week"} />;
+                                return <WidgetDifference count={currentCount} change={difference} interval={"week"} />;
                               }
                               if (week0Props || week1Props) {
                                 return <WidgetNoData />;
