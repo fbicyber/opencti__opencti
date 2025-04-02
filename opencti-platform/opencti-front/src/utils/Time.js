@@ -43,6 +43,21 @@ export const dayEndDate = (date = null) => {
   return end;
 };
 
+// gets the dates for start/end of week (where starto of week is the Monday)
+export const getWeekStartEnd = (offset = 0) => {
+  const now = new Date();
+  now.setDate(now.getDate() + (offset * 7));
+  const startDateDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - now.getDay()) + 1); // get the Monday
+  const endDateDate = new Date(startDateDate);
+  endDateDate.setDate(endDateDate.getDate() + 6);
+  endDateDate.setHours(23);
+  endDateDate.setMinutes(59);
+  endDateDate.setSeconds(59);
+  const startDate =  startDateDate.toISOString();
+  const endDate = endDateDate.toISOString();
+  return {startDate, endDate};
+}
+
 export const now = () => moment().format();
 
 export const nowUTC = () => moment().utc().format();

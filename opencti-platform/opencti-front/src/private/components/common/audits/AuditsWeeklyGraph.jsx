@@ -1,4 +1,4 @@
-import React from 'react'; //, { useContext } 
+import React from 'react'; 
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -10,71 +10,18 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
+import { getWeekStartEnd } from '../../../../utils/Time';
 
 const auditsWeeklyGraphQuery = graphql`
-  # query AuditsWeeklyGraphQuery (
-  #   $operation: StatsOperation!
-  #   $startDate: DateTime!
-  #   $endDate: DateTime!
-  #   $interval: String!
-  #   $timeSeriesParameters: [AuditsTimeSeriesParameters]
-  # ) {
-  #   auditsMultiTimeSeries(
-  #     operation: $operation
-  #     startDate: $startDate
-  #     endDate: $endDate
-  #     interval: $interval
-  #     timeSeriesParameters: $timeSeriesParameters
-  #   ) {
-  #     data {
-  #       date
-  #       value
-  #     }
-  #   }
-  # }
-  # query AuditsWeeklyLoginMultiDistributionQuery (
   query AuditsWeeklyGraphQuery (
       $dateAttribute: String
-      $filters: FilterGroup
+      $distributionParameters: [AuditsDistributionParameters]
     ) {
     userLoginResults: auditsMultiDistribution(
   			dateAttribute: $dateAttribute
         operation: count
-        # limit: 30
         types: ["History", "Activity"]
-        distributionParameters:[
-        {
-          field: "user_id",
-          startDate: "2024-01-08T00:00:00-05:00"
-          endDate: "2024-01-14T23:59:59-05:00"
-          filters: $filters
-          # {
-          #     mode: and,
-          #     filters: [
-          #         {
-          #             key: "event_scope",
-          #           	values: [
-          #                 "login"
-          #             ]
-          #         }
-          #     ],
-          #     filterGroups: []
-          # }
-        },
-        {
-          field: "user_id",
-          startDate: "2024-01-15T00:00:00-05:00"
-          endDate: "2024-01-21T23:59:59-05:00"
-          filters: $filters
-        },
-        {
-          field: "user_id",
-          startDate: "2024-01-22T00:00:00-05:00"
-          endDate: "2024-01-28T23:59:59-05:00"
-          filters: $filters
-        }
-      ]
+        distributionParameters: $distributionParameters 
     ) {
       data {
         label
@@ -87,7 +34,6 @@ const auditsWeeklyGraphQuery = graphql`
 const AuditsWeeklyGraph = ({
   variant,
   height,
-  dataSelection,
   parameters = {},
   withExportPopover = false,
   isReadOnly = false,
@@ -95,8 +41,6 @@ const AuditsWeeklyGraph = ({
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
-
-  // const { weeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
 
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
@@ -119,35 +63,54 @@ const AuditsWeeklyGraph = ({
       );
     }
 
-    const timeSeriesParameters = dataSelection.map((selection) => ({
-      field: selection.date_attribute?.length > 0 ? selection.date_attribute : 'timestamp',
+    const weeks = new Array(6);
+    for (let i = 0; i < 6; i++){
+      const { startDate, endDate } = getWeekStartEnd(-i);
+      weeks[i] = ({startDate, endDate});
+    }
+    weeks[0].endDate = new Date().toISOString();
+
+    const filters = {
+      mode: "and",
+      filters: [
+          {
+              key: "event_scope",
+              values: [
+                  "login"
+              ]
+          }
+      ],
+      filterGroups: []
+    }
+
+    const auditsDistributionParameters = weeks.map(({startDate, endDate}) => ({
+      field: 'timestamp',
+      startDate,
+      endDate,
       types: ['History', 'Activity'],
-      filters: removeEntityTypeAllFromFilterGroup(selection.filters),
+      filters: removeEntityTypeAllFromFilterGroup(filters),
     }));
 
-    const today = new Date();
-    const beginningOfRelevantWeek = new Date(today.getFullYear(), today.getMonth(), (today.getDate() - today.getDay()) + 1); // get the Monday
+    console.log(auditsDistributionParameters);
 
     return (
       <QueryRenderer
         query={auditsWeeklyGraphQuery}
         variables={{
-          // operation: 'count',
-          // startDate: daysAgo(42),
-          // endDate: now(),
-          // interval: 'day',
-          // timeSeriesParameters,
+          dateAttribute: "timestamp",
+          auditsDistributionParameters,
         }}
         render={({ props }) => {
-          console.log(props)
-          if (props && props.auditsMultiTimeSeries) {
+          if (props) {
             return (
               <AuditsWidgetMultiLines
-                series={dataSelection.map((selection, i) => {
-                  const intermediateSeriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
-                    x: new Date(entry.date).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
-                    y: entry.value,
-                  })) || [];
+                series={weeks.map(({ startDate },  i) => {
+                  const intermediateSeriesData = props.userLoginResults.data.map((entry) => {
+                    console.log(entry);
+                    return {
+                    x: new Date(startDate).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
+                    y: entry.length,
+                  }}) || [];
                   const seriesData = intermediateSeriesData;
 
                   const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });

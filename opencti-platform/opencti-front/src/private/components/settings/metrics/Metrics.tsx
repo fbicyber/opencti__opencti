@@ -166,63 +166,61 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               />
             </Grid>
           </AuditsMonthlyProvider>
-          {/* <AuditsWeeklyProvider> */}
-            <Grid item xs={2} marginTop={4}>
-              <AuditsWeekly
-                height={300}
-                parameters={{
-                  title: t_i18n('Weekly Active Users'),
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
+          <Grid item xs={2} marginTop={4}>
+            <AuditsWeekly
+              height={300}
+              parameters={{
+                title: t_i18n('Weekly Active Users'),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
                   },
-                ]}
-                variant="inLine"
-              />
-            </Grid>
-            <Grid item xs={4} marginTop={4}>
-              <AuditsWeeklyGraph
-                height={300}
-                parameters={{
-                  title: "Weekly Active Users"
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
-              />
-            </Grid>
-          {/* </AuditsWeeklyProvider> */}
+                },
+              ]}
+              variant="inLine"
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsWeeklyGraph
+              height={300}
+              parameters={{
+                title: "Weekly Active Users"
+              }}
+              // dataSelection={[
+              //   {
+              //     date_attribute: 'created_at',
+              //     filters: {
+              //       mode: 'and',
+              //       filters: [
+              //         {
+              //           key: 'members_user',
+              //           values: userIds,
+              //         },
+              //         {
+              //           key: 'event_scope',
+              //           values: ['login'],
+              //         },
+              //       ],
+              //       filterGroups: [],
+              //     },
+              //   },
+              // ]}
+            />
+          </Grid>
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
               height={350}

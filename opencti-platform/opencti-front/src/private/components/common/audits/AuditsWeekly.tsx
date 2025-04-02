@@ -10,7 +10,7 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetAccessDenied from '../../../../components/dashboard/WidgetAccessDenied';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
-// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
+import { getWeekStartEnd } from '../../../../utils/Time';
 
 interface LoginResult {
   label: string;
@@ -19,20 +19,6 @@ interface LoginResult {
 
 interface QueryProps {
   loginResults?: LoginResult[];
-}
-
-const getWeekStartEnd = (offset = 0) => {
-  const now = new Date();
-  now.setDate(now.getDate() + (offset * 7));
-  const startDateDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - now.getDay()) + 1); // get the Monday
-  const endDateDate = new Date(startDateDate);
-  endDateDate.setDate(endDateDate.getDate() + 6);
-  endDateDate.setHours(23);
-  endDateDate.setMinutes(59);
-  endDateDate.setSeconds(59);
-  const startDate =  startDateDate.toISOString();
-  const endDate = endDateDate.toISOString();
-  return {startDate, endDate};
 }
 
 const auditsWeeklyLoginDistributionQuery = graphql`
@@ -70,7 +56,6 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
   dataSelection,
   parameters = {},
 }) => {
-  // const { loginCount, setLoginCount, setWeeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
@@ -81,79 +66,34 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
     }
 
     const selection = dataSelection[0];
-    const dateAttribute = selection.date_attribute && selection.date_attribute.length > 0
-      ? selection.date_attribute
-      : 'timestamp';
+    const dateAttribute = 'timestamp';
     const { filters } = buildFiltersAndOptionsForWidgets(selection.filters, { removeTypeAll: true, dateAttribute });
 
-    const weeks = new Array(6);
-    for (let i = 0; i < 6; i++){
-      const { startDate, endDate } = getWeekStartEnd(-i);
-      weeks[i] = ({startDate, endDate});
-    }
+    const { startDate, endDate } = getWeekStartEnd();
+    const { startDate: previousStartDate, endDate: previousEndDate } = getWeekStartEnd(-1);
 
     return (
       <QueryRenderer
         query={auditsWeeklyLoginDistributionQuery}
-        variables={{ startDate: weeks[0].startDate, endDate: weeks[0].endDate, dateAttribute, filters }}
+        variables={{ startDate, endDate, dateAttribute, filters }}
         render={({ props: week0Props }: { props?: QueryProps }) => (
           <QueryRenderer
             query={auditsWeeklyLoginDistributionQuery}
-            variables={{ startDate: weeks[1].startDate, endDate: weeks[1].endDate, dateAttribute, filters }}
+            variables={{ startDate: previousStartDate, endDate: previousEndDate, dateAttribute, filters }}
             render={({ props: week1Props }: { props?: QueryProps }) => {
-              // <QueryRenderer
-              //   query={auditsWeeklyLoginDistributionQuery}
-              //   variables={{ startDate: weeks[2].startDate, endDate: weeks[2].endDate, dateAttribute, filters }}
-              //   render={({ props: week2Props }: { props?: QueryProps }) => (
-              //     <QueryRenderer
-              //       query={auditsWeeklyLoginDistributionQuery}
-              //       variables={{ startDate: weeks[3].startDate, endDate: weeks[3].endDate, dateAttribute, filters }}
-              //       render={({ props: week3Props }: { props?: QueryProps }) => (
-              //         <QueryRenderer
-              //           query={auditsWeeklyLoginDistributionQuery}
-              //           variables={{ startDate: weeks[4].startDate, endDate: weeks[4].endDate, dateAttribute, filters }}
-              //           render={({ props: week4Props }: { props?: QueryProps }) => (
-              //             <QueryRenderer
-              //               query={auditsWeeklyLoginDistributionQuery}
-              //               variables={{ startDate: weeks[5].startDate, endDate: weeks[5].endDate, dateAttribute, filters }}
-              //               render={({ props: week5Props }: { props?: QueryProps }) => (
-                              if (week0Props && week1Props) {
-                                const week0Users = new Set(week0Props.loginResults?.map((user) => user.label));
-                                const week1Users = new Set(week1Props.loginResults?.map((user) => user.label));
-                                
-                                // const week2Users = new Set(week2Props.loginResults?.map((user) => user.label));
-                                // const week3Users = new Set(week3Props.loginResults?.map((user) => user.label));
-                                // const week4Users = new Set(week4Props.loginResults?.map((user) => user.label));
-                                // const week5Users = new Set(week5Props.loginResults?.map((user) => user.label));
+              if (week0Props && week1Props) {
+                const week0Users = new Set(week0Props.loginResults?.map((user) => user.label));
+                const week1Users = new Set(week1Props.loginResults?.map((user) => user.label));
+                const currentCount = week0Users.size;
+                const previousCount = week1Users.size;
+                const difference = currentCount - previousCount;
 
-                                const weeklyActiveUsersHistory = new Array(6);
-                                const currentCount = weeklyActiveUsersHistory[0] = week0Users.size;
-                                const previousCount = weeklyActiveUsersHistory[1] = week1Users.size;
-                                // weeklyActiveUsersHistory[2] = week2Users.size;
-                                // weeklyActiveUsersHistory[3] = week3Users.size;
-                                // weeklyActiveUsersHistory[4] = week4Users.size;
-                                // weeklyActiveUsersHistory[5] = week5Users.size;
-
-                                // setWeeklyActiveUsersHistory(weeklyActiveUsersHistory);
-                
-                                const difference = currentCount - previousCount;
-                
-                                // setLoginCount(currentCount);
-                
-                                return <WidgetDifference count={currentCount} change={difference} interval={"week"} />;
-                              }
-                              if (week0Props || week1Props) {
-                                return <WidgetNoData />;
-                              }
-                              return <Loader variant={LoaderVariant.inElement} />;
-              //             )}
-              //            />
-              //          )}
-              //         />
-              //       )}
-              //     />
-              //   )}
-              // />
+                return <WidgetDifference count={currentCount} change={difference} interval={"week"} />;
+              }
+              if (week0Props || week1Props) {
+                return <WidgetNoData />;
+              }
+              return <Loader variant={LoaderVariant.inElement} />;
             }}
           />
         )}
