@@ -4,7 +4,6 @@ import React, { FunctionComponent } from 'react';
 import { graphql, useFragment } from 'react-relay';
 import * as Yup from 'yup';
 import { GenericContext } from '@components/common/model/GenericContextModel';
-import useHelper from 'src/utils/hooks/useHelper';
 import DateTimePickerField from '../../../../components/DateTimePickerField';
 import { useFormatter } from '../../../../components/i18n';
 import MarkdownField from '../../../../components/fields/MarkdownField';
@@ -264,8 +263,6 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
     x_opencti_workflow_id: convertStatus(t_i18n, caseData) as Option,
     references: [],
   };
-  const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
   return (
     <Formik
@@ -426,10 +423,7 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
             onChange={editor.changeMarking}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
-            {isFABReplaced
-              ? <CaseRftDeletion id={caseData.id}/>
-              : <div/>
-              }
+            <CaseRftDeletion id={caseData.id}/>
             {enableReferences && (
               <CommitMessage
                 submitForm={submitForm}

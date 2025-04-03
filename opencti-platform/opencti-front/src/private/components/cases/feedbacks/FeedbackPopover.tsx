@@ -22,7 +22,6 @@ import useDeletion from '../../../../utils/hooks/useDeletion';
 import FeedbackEditionContainer, { feedbackEditionQuery } from './FeedbackEditionContainer';
 import { FeedbackEditionContainerQuery } from './__generated__/FeedbackEditionContainerQuery.graphql';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
-import useHelper from '../../../../utils/hooks/useHelper';
 
 // Deprecated - https://mui.com/system/styles/basics/
 // Do not use it for new code.
@@ -87,60 +86,56 @@ const FeedbackPopover = ({ id }: { id: string }) => {
       },
     });
   };
-  const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
 
-  return isFABReplaced
-    ? (<></>)
-    : (
-      <div className={classes.container}>
-        <ToggleButton
-          value="popover"
-          size="small"
-          onClick={handleOpen}
-        >
-          <MoreVert fontSize="small" color="primary" />
-        </ToggleButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
-          <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
-            <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
-          </Security>
-        </Menu>
-        <Dialog
-          slotProps={{ paper: { elevation: 1 } }}
-          open={displayDelete}
-          keepMounted={true}
-          slots={{ transition: Transition }}
-          onClose={handleCloseDelete}
-        >
-          <DialogContent>
-            <DialogContentText>
-              {t_i18n('Do you want to delete this feedback ?')}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDelete} disabled={deleting}>
-              {t_i18n('Cancel')}
-            </Button>
-            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
-              {t_i18n('Delete')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-        {queryRef && (
-        <React.Suspense
-          fallback={<Loader variant={LoaderVariant.inElement} />}
-        >
-          <FeedbackEditionContainer
-            queryRef={queryRef}
-            handleClose={handleClose}
-            open={displayEdit}
-          />
-        </React.Suspense>
-        )}
-      </div>
-    );
+  return (
+    <div className={classes.container}>
+      <ToggleButton
+        value="popover"
+        size="small"
+        onClick={handleOpen}
+      >
+        <MoreVert fontSize="small" color="primary" />
+      </ToggleButton>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
+        <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
+          <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
+        </Security>
+      </Menu>
+      <Dialog
+        slotProps={{ paper: { elevation: 1 } }}
+        open={displayDelete}
+        keepMounted={true}
+        slots={{ transition: Transition }}
+        onClose={handleCloseDelete}
+      >
+        <DialogContent>
+          <DialogContentText>
+            {t_i18n('Do you want to delete this feedback ?')}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDelete} disabled={deleting}>
+            {t_i18n('Cancel')}
+          </Button>
+          <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+            {t_i18n('Delete')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {queryRef && (
+      <React.Suspense
+        fallback={<Loader variant={LoaderVariant.inElement} />}
+      >
+        <FeedbackEditionContainer
+          queryRef={queryRef}
+          handleClose={handleClose}
+          open={displayEdit}
+        />
+      </React.Suspense>
+      )}
+    </div>
+  );
 };
 
 export default FeedbackPopover;
