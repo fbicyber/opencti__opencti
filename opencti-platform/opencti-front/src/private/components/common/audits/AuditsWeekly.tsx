@@ -10,7 +10,7 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetAccessDenied from '../../../../components/dashboard/WidgetAccessDenied';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
-// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
+import { getWeekStartEnd } from '../../../../utils/Time';
 
 interface LoginResult {
   label: string;
@@ -19,20 +19,6 @@ interface LoginResult {
 
 interface QueryProps {
   loginResults?: LoginResult[];
-}
-
-const getWeekStartEnd = (offset = 0) => {
-  const now = new Date();
-  now.setDate(now.getDate() + (offset * 7));
-  const startDateDate = new Date(now.getFullYear(), now.getMonth(), (now.getDate() - now.getDay()) + 1); // get the Monday
-  const endDateDate = new Date(startDateDate);
-  endDateDate.setDate(endDateDate.getDate() + 6);
-  endDateDate.setHours(23);
-  endDateDate.setMinutes(59);
-  endDateDate.setSeconds(59);
-  const startDate =  startDateDate.toISOString();
-  const endDate = endDateDate.toISOString();
-  return {startDate, endDate};
 }
 
 const auditsWeeklyLoginDistributionQuery = graphql`
