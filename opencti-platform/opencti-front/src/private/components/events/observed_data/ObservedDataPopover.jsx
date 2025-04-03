@@ -17,7 +17,6 @@ import ObservedDataEditionContainer from './ObservedDataEditionContainer';
 import Security from '../../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE_KNDELETE } from '../../../../utils/hooks/useGranted';
 import Transition from '../../../../components/Transition';
-import useHelper from '../../../../utils/hooks/useHelper';
 
 const ObservedDataPopoverDeletionMutation = graphql`
   mutation ObservedDataPopoverDeletionMutation($id: ID!) {
@@ -33,8 +32,6 @@ const ObservedDataPopover = ({ id }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [displayDelete, setDisplayDelete] = useState(false);
   const [displayEdit, setDisplayEdit] = useState(false);
-  const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const [deleting, setDeleting] = useState(false);
   const handleOpen = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -60,61 +57,59 @@ const ObservedDataPopover = ({ id }) => {
     handleClose();
   };
   const handleCloseEdit = () => setDisplayEdit(false);
-  return isFABReplaced
-    ? (<></>)
-    : (
-      <>
-        <ToggleButton
-          value="popover"
-          size="small"
-          onClick={handleOpen}
-        >
-          <MoreVert fontSize="small" color="primary" />
-        </ToggleButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
-          <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
-            <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
-          </Security>
-        </Menu>
-        <Dialog
-          open={displayDelete}
-          slotProps={{ paper: { elevation: 1 } }}
-          slots={{ transition: Transition }}
-          onClose={handleCloseDelete}
-        >
-          <DialogContent>
-            <DialogContentText>
-              {t_i18n('Do you want to delete this observed data?')}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDelete} disabled={deleting}>
-              {t_i18n('Cancel')}
-            </Button>
-            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
-              {t_i18n('Delete')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <QueryRenderer
-          query={observedDataEditionQuery}
-          variables={{ id }}
-          render={({ props }) => {
-            if (props) {
-              return (
-                <ObservedDataEditionContainer
-                  observedData={props.observedData}
-                  handleClose={handleCloseEdit}
-                  open={displayEdit}
-                />
-              );
-            }
-            return <div />;
-          }}
-        />
-      </>
-    );
+  return (
+    <>
+      <ToggleButton
+        value="popover"
+        size="small"
+        onClick={handleOpen}
+      >
+        <MoreVert fontSize="small" color="primary" />
+      </ToggleButton>
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
+        <Security needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}>
+          <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
+        </Security>
+      </Menu>
+      <Dialog
+        open={displayDelete}
+        slotProps={{ paper: { elevation: 1 } }}
+        slots={{ transition: Transition }}
+        onClose={handleCloseDelete}
+      >
+        <DialogContent>
+          <DialogContentText>
+            {t_i18n('Do you want to delete this observed data?')}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDelete} disabled={deleting}>
+            {t_i18n('Cancel')}
+          </Button>
+          <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+            {t_i18n('Delete')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <QueryRenderer
+        query={observedDataEditionQuery}
+        variables={{ id }}
+        render={({ props }) => {
+          if (props) {
+            return (
+              <ObservedDataEditionContainer
+                observedData={props.observedData}
+                handleClose={handleCloseEdit}
+                open={displayEdit}
+              />
+            );
+          }
+          return <div />;
+        }}
+      />
+    </>
+  );
 };
 
 export default ObservedDataPopover;
