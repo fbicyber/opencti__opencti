@@ -25,7 +25,6 @@ import { NoteEditionContainerQuery$data } from './__generated__/NoteEditionConta
 import { deleteNode } from '../../../../utils/store';
 import { StixCoreObjectOrStixCoreRelationshipNotesCardsQuery$variables } from './__generated__/StixCoreObjectOrStixCoreRelationshipNotesCardsQuery.graphql';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
-import useHelper from '../../../../utils/hooks/useHelper';
 
 const NotePopoverDeletionMutation = graphql`
   mutation NotePopoverDeletionMutation($id: ID!) {
@@ -60,8 +59,6 @@ const NotePopover: FunctionComponent<NotePopoverProps> = ({
   const [displayEnrichment, setDisplayEnrichment] = useState<boolean>(false);
   const [displayEnroll, setDisplayEnroll] = useState(false);
   const [deleting, setDeleting] = useState<boolean>(false);
-  const { isFeatureEnable } = useHelper();
-  const isFABReplaced = isFeatureEnable('FAB_REPLACEMENT');
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const handleOpenDelete = () => {
@@ -118,89 +115,87 @@ const NotePopover: FunctionComponent<NotePopoverProps> = ({
     setDisplayEnroll(false);
   };
 
-  return isFABReplaced
-    ? (<></>)
-    : (
-      <>
-        {variant === 'inLine' ? (
-          <IconButton
-            onClick={handleOpen}
-            aria-haspopup="true"
-            size={size || 'large'}
-            style={{ marginTop: size === 'small' ? -3 : 3 }}
-            color="primary"
-          >
-            <MoreVert />
-          </IconButton>
-        ) : (
-          <ToggleButton
-            value="popover"
-            size="small"
-            onClick={handleOpen}
-          >
-            <MoreVert fontSize="small" color="primary" />
-          </ToggleButton>
-        )}
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
-          {handleOpenRemoveExternal && (
-            <MenuItem onClick={handleOpenRemove}>
-              {t_i18n('Remove from this entity')}
-            </MenuItem>
-          )}
-          <Security needs={[KNOWLEDGE_KNENRICHMENT]}>
-            <MenuItem onClick={handleOpenEnrichment}>
-              {t_i18n('Enrich')}
-            </MenuItem>
-          </Security>
-          <MenuItem onClick={handleOpenEnroll}>{t_i18n('Enroll in playbook')}</MenuItem>
-          <CollaborativeSecurity
-            data={note}
-            needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}
-          >
-            <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
-          </CollaborativeSecurity>
-        </Menu>
-        <StixCoreObjectEnrichment stixCoreObjectId={id} open={displayEnrichment} handleClose={handleCloseEnrichment} />
-        <StixCoreObjectEnrollPlaybook stixCoreObjectId={id} open={displayEnroll} handleClose={handleCloseEnroll} />
-        <Dialog
-          open={displayDelete}
-          slotProps={{ paper: { elevation: 1 } }}
-          slots={{ transition: Transition }}
-          onClose={handleCloseDelete}
+  return (
+    <>
+      {variant === 'inLine' ? (
+        <IconButton
+          onClick={handleOpen}
+          aria-haspopup="true"
+          size={size || 'large'}
+          style={{ marginTop: size === 'small' ? -3 : 3 }}
+          color="primary"
         >
-          <DialogContent>
-            <DialogContentText>
-              {t_i18n('Do you want to delete this note?')}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDelete} disabled={deleting}>
-              {t_i18n('Cancel')}
-            </Button>
-            <Button color="secondary" onClick={submitDelete} disabled={deleting}>
-              {t_i18n('Delete')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <QueryRenderer
-          query={noteEditionQuery}
-          variables={{ id }}
-          render={({ props }: { props: NoteEditionContainerQuery$data }) => {
-            if (props && props.note) {
-              return (
-                <NoteEditionContainer
-                  note={props.note}
-                  handleClose={handleCloseEdit}
-                  open={displayEdit}
-                />
-              );
-            }
-            return <div />;
-          }}
-        />
-      </>
-    );
+          <MoreVert />
+        </IconButton>
+      ) : (
+        <ToggleButton
+          value="popover"
+          size="small"
+          onClick={handleOpen}
+        >
+          <MoreVert fontSize="small" color="primary" />
+        </ToggleButton>
+      )}
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+        <MenuItem onClick={handleOpenEdit}>{t_i18n('Update')}</MenuItem>
+        {handleOpenRemoveExternal && (
+          <MenuItem onClick={handleOpenRemove}>
+            {t_i18n('Remove from this entity')}
+          </MenuItem>
+        )}
+        <Security needs={[KNOWLEDGE_KNENRICHMENT]}>
+          <MenuItem onClick={handleOpenEnrichment}>
+            {t_i18n('Enrich')}
+          </MenuItem>
+        </Security>
+        <MenuItem onClick={handleOpenEnroll}>{t_i18n('Enroll in playbook')}</MenuItem>
+        <CollaborativeSecurity
+          data={note}
+          needs={[KNOWLEDGE_KNUPDATE_KNDELETE]}
+        >
+          <MenuItem onClick={handleOpenDelete}>{t_i18n('Delete')}</MenuItem>
+        </CollaborativeSecurity>
+      </Menu>
+      <StixCoreObjectEnrichment stixCoreObjectId={id} open={displayEnrichment} handleClose={handleCloseEnrichment} />
+      <StixCoreObjectEnrollPlaybook stixCoreObjectId={id} open={displayEnroll} handleClose={handleCloseEnroll} />
+      <Dialog
+        open={displayDelete}
+        slotProps={{ paper: { elevation: 1 } }}
+        slots={{ transition: Transition }}
+        onClose={handleCloseDelete}
+      >
+        <DialogContent>
+          <DialogContentText>
+            {t_i18n('Do you want to delete this note?')}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDelete} disabled={deleting}>
+            {t_i18n('Cancel')}
+          </Button>
+          <Button color="secondary" onClick={submitDelete} disabled={deleting}>
+            {t_i18n('Delete')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <QueryRenderer
+        query={noteEditionQuery}
+        variables={{ id }}
+        render={({ props }: { props: NoteEditionContainerQuery$data }) => {
+          if (props && props.note) {
+            return (
+              <NoteEditionContainer
+                note={props.note}
+                handleClose={handleCloseEdit}
+                open={displayEdit}
+              />
+            );
+          }
+          return <div />;
+        }}
+      />
+    </>
+  );
 };
 
 export default NotePopover;
