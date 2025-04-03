@@ -1,4 +1,4 @@
-import React from 'react'; //, { useContext } 
+import React from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -10,30 +10,9 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-// import { AuditsWeeklyContext } from './AuditsWeeklyContext';
+import { getWeekStartEnd } from '../../../../utils/Time';
 
 const auditsWeeklyGraphQuery = graphql`
-  # query AuditsWeeklyGraphQuery (
-  #   $operation: StatsOperation!
-  #   $startDate: DateTime!
-  #   $endDate: DateTime!
-  #   $interval: String!
-  #   $timeSeriesParameters: [AuditsTimeSeriesParameters]
-  # ) {
-  #   auditsMultiTimeSeries(
-  #     operation: $operation
-  #     startDate: $startDate
-  #     endDate: $endDate
-  #     interval: $interval
-  #     timeSeriesParameters: $timeSeriesParameters
-  #   ) {
-  #     data {
-  #       date
-  #       value
-  #     }
-  #   }
-  # }
-  # query AuditsWeeklyLoginMultiDistributionQuery (
   query AuditsWeeklyGraphQuery (
       $dateAttribute: String
       $filters: FilterGroup
@@ -41,7 +20,6 @@ const auditsWeeklyGraphQuery = graphql`
     userLoginResults: auditsMultiDistribution(
   			dateAttribute: $dateAttribute
         operation: count
-        # limit: 30
         types: ["History", "Activity"]
         distributionParameters:[
         {
@@ -49,18 +27,6 @@ const auditsWeeklyGraphQuery = graphql`
           startDate: "2024-01-08T00:00:00-05:00"
           endDate: "2024-01-14T23:59:59-05:00"
           filters: $filters
-          # {
-          #     mode: and,
-          #     filters: [
-          #         {
-          #             key: "event_scope",
-          #           	values: [
-          #                 "login"
-          #             ]
-          #         }
-          #     ],
-          #     filterGroups: []
-          # }
         },
         {
           field: "user_id",
@@ -139,40 +105,37 @@ const AuditsWeeklyGraph = ({
           // timeSeriesParameters,
         }}
         render={({ props }) => {
-          console.log(props)
-          if (props && props.auditsMultiTimeSeries) {
+          if (props && props.userLoginResults) {
             return (
               <AuditsWidgetMultiLines
-                series={dataSelection.map((selection, i) => {
-                  const intermediateSeriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
-                    x: new Date(entry.date).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
-                    y: entry.value,
-                  })) || [];
-                  const seriesData = intermediateSeriesData;
+                series={[{
+                  name: t_i18n('Weekly activity count'),
+                  data: props.userLoginResults.map((selection, i) => {
+                    const { startDate, _ } = getWeekStartEnd(-i);  
+                    return {
+                        x: new Date(startDate).toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" }),
+                        y: selection.data.length,
+                      };
+                  })
+                }]}
+                  // const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });
 
-                  const currentDate = new Date().toLocaleString('en-US', { year: "numeric", month: "short", day: "numeric" });
+                  // const existingCurrentWeekData = seriesData.find((point) => point.x === currentDate);
 
-                  const existingCurrentWeekData = seriesData.find((point) => point.x === currentDate);
+                  // let loginCount;
+                  // if (!existingCurrentWeekData) {
+                  //   const currentWeekLoginCount = props.auditsMultiTimeSeries[i]?.data
+                  //     .filter((entry) => {
+                  //       const entryDate = new Date(entry.date);
+                  //       const today = new Date();
+                  //       const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+                  //       return (entryDate <= today && entryDate > today - millisecondsPerWeek);                      
+                  //     })
+                  //     .reduce((sum, entry) => sum + entry.value, loginCount);
 
-                  let loginCount;
-                  if (!existingCurrentWeekData) {
-                    const currentWeekLoginCount = props.auditsMultiTimeSeries[i]?.data
-                      .filter((entry) => {
-                        const entryDate = new Date(entry.date);
-                        const today = new Date();
-                        const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
-                        return (entryDate <= today && entryDate > today - millisecondsPerWeek);                      
-                      })
-                      .reduce((sum, entry) => sum + entry.value, loginCount);
-
-                    seriesData.push({ x: currentDate, y: currentWeekLoginCount });
-                  }
-
-                  return {
-                    name: selection.label || t_i18n('Weekly activity count'),
-                    data: seriesData,
-                  };
-                })}
+                  //   seriesData.push({ x: currentDate, y: currentWeekLoginCount });
+                  // }
+                // }}
                 interval={'week'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
