@@ -1,44 +1,137 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
-import { monthsAgo, now } from '../../../../utils/Time';
 import useGranted, { SETTINGS_SECURITYACTIVITY, SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '../../../../utils/hooks/useGranted';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
-import { removeEntityTypeAllFromFilterGroup } from '../../../../utils/filters/filtersUtils';
 import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
-import WidgetMultiLines from '../../../../components/dashboard/WidgetMultiLines';
+import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import { AuditsMonthlyContext } from './AuditsMonthlyContext';
+
+const getMonthRangesVariables = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const referenceDate = new Date(today);
+  referenceDate.setDate(1);
+
+  const variables = {};
+
+  for (let i = 0; i <= 5; i++) {
+    const monthStart = new Date(referenceDate);
+    monthStart.setMonth(referenceDate.getMonth() - i);
+    monthStart.setDate(1);
+    monthStart.setHours(0,0,0,0);
+
+    const monthEnd = new Date(monthStart);
+    monthEnd.setMonth(monthStart.getMonth()+1);
+    monthEnd.setDate(monthEnd.getDate()-1);
+    monthEnd.setHours(23, 59, 59, 999);
+
+    variables[`startDate${i}`] = monthStart;
+    variables[`endDate${i}`] = monthEnd;
+  }
+
+  console.log('variables: ', variables);
+
+  return variables;
+};
 
 const auditsMonthlyGraphQuery = graphql`
-  query AuditsMonthlyGraphQuery(
-    $operation: StatsOperation!
-    $startDate: DateTime!
-    $endDate: DateTime!
-    $interval: String!
-    $timeSeriesParameters: [AuditsTimeSeriesParameters]
-  ) {
-    auditsMultiTimeSeries(
-      operation: $operation
-      startDate: $startDate
-      endDate: $endDate
-      interval: $interval
-      timeSeriesParameters: $timeSeriesParameters
+  query AuditsMonthlyGraphQuery (
+      $dateAttribute: String
+      $filters: FilterGroup
+      $startDate0: DateTime!
+      $endDate0: DateTime!
+      $startDate1: DateTime!
+      $endDate1: DateTime!
+      $startDate2: DateTime!
+      $endDate2: DateTime!
+      $startDate3: DateTime!
+      $endDate3: DateTime!
+      $startDate4: DateTime!
+      $endDate4: DateTime!
+      $startDate5: DateTime!
+      $endDate5: DateTime!
+    ) {
+    userLoginResults: auditsMultiDistribution(
+  			dateAttribute: $dateAttribute
+        operation: count
+        types: ["History", "Activity"]
+        distributionParameters:[
+        {
+          field: "user_id",
+          startDate: $startDate0
+          endDate: $endDate0
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: $startDate1
+          endDate: $endDate1
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: $startDate2
+          endDate: $endDate2
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: $startDate3
+          endDate: $endDate3
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: $startDate4
+          endDate: $endDate4
+          filters: $filters
+        },
+        {
+          field: "user_id",
+          startDate: $startDate5
+          endDate: $endDate5
+          filters: $filters
+        }
+      ]
     ) {
       data {
-        date
+        label
         value
       }
     }
   }
 `;
 
+console.log("auditsMonthlyGraphQuery: ", auditsMonthlyGraphQuery);
+
+// const getMonthStartEnd = (offset) => {
+//   const today = new Date();
+//   let targetMonth = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+//   let startDate = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
+//   let endDate = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0, 23, 59, 59);
+
+//   return {
+//     startDate: startDate.toISOString(),
+//     endDate: endDate.toISOString(),
+//   };
+// };
+
+const getMonthStartEnd = (offset = 0) => {
+  const now = new Date();
+  now.setMonth(now.getMonth() + offset);
+  now.setDate(1);
+  const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+  return { startDate, endDate };
+};
+
 const AuditsMonthlyGraph = ({
   variant,
   height,
-  dataSelection,
   parameters = {},
   withExportPopover = false,
   isReadOnly = false,
@@ -47,7 +140,6 @@ const AuditsMonthlyGraph = ({
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
 
-  const { loginCount } = useContext(AuditsMonthlyContext);
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
       return (
@@ -68,53 +160,30 @@ const AuditsMonthlyGraph = ({
         </div>
       );
     }
-
-    const timeSeriesParameters = dataSelection.map((selection) => ({
-      field: selection.date_attribute?.length > 0 ? selection.date_attribute : 'timestamp',
-      types: ['History', 'Activity'],
-      filters: removeEntityTypeAllFromFilterGroup(selection.filters),
-    }));
-
     return (
       <QueryRenderer
         query={auditsMonthlyGraphQuery}
         variables={{
-          operation: 'count',
-          startDate: monthsAgo(6),
-          endDate: now(),
-          interval: 'month',
-          timeSeriesParameters,
+          ...getMonthRangesVariables(),
         }}
         render={({ props }) => {
-          if (props && props.auditsMultiTimeSeries) {
+          console.log("props: ", props);
+
+          if (props && props.userLoginResults) {
+            console.log("props.userLoginResults: ", props.userLoginResults);
+
             return (
-              <WidgetMultiLines
-                series={dataSelection.map((selection, i) => {
-                  const seriesData = props.auditsMultiTimeSeries[i]?.data.map((entry) => ({
-                    x: new Date(entry.date).toLocaleString('en-US', { month: 'short', year: 'numeric' }),
-                    y: entry.value,
-                  })) || [];
-
-                  const currentMonth = new Date().toLocaleString('en-US', { month: 'short', year: 'numeric' });
-
-                  const existingCurrentMonthData = seriesData.find((point) => point.x === currentMonth);
-
-                  if (!existingCurrentMonthData) {
-                    const currentMonthLoginCount = props.auditsMultiTimeSeries[i]?.data
-                      .filter((entry) => new Date(entry.date).getMonth() === new Date().getMonth())
-                      .reduce((sum, entry) => sum + entry.value, loginCount);
-
-                    console.log("currentMonthLoginCount: " + currentMonthLoginCount);
-                    console.log("loginCount: " + loginCount);
-
-                    seriesData.push({ x: currentMonth, y: currentMonthLoginCount });
-                  }
-
-                  return {
-                    name: selection.label || t_i18n('Monthly activity count'),
-                    data: seriesData,
-                  };
-                })}
+              <AuditsWidgetMultiLines
+                series={[{
+                  name: t_i18n('Monthly activity count'),
+                  data: props.userLoginResults.map((selection, i) => {
+                    const { startDate, _ } = getMonthStartEnd(-i);
+                    return {
+                      x: new Date(startDate).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                      y: selection.data.length,
+                    };
+                  }),
+                }]}
                 interval={'month'}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
