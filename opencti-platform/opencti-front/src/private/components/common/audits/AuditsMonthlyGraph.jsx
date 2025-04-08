@@ -1,5 +1,5 @@
-import React from 'react';
-import { graphql } from 'react-relay';
+import React, { useEffect } from 'react';
+import { graphql, useRelayEnvironment } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
 import useGranted, { SETTINGS_SECURITYACTIVITY, SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '../../../../utils/hooks/useGranted';
@@ -8,6 +8,7 @@ import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+import { RecordSource } from 'relay-runtime';
 
 const getMonthRangesVariables = () => {
   const today = new Date();
@@ -33,7 +34,7 @@ const getMonthRangesVariables = () => {
     variables[`endDate${i}`] = monthEnd;
   }
 
-  console.log('variables: ', variables);
+  console.log('Monthly - variables: ', variables);
 
   return variables;
 };
@@ -55,7 +56,7 @@ const auditsMonthlyGraphQuery = graphql`
       $startDate5: DateTime!
       $endDate5: DateTime!
     ) {
-    userLoginResults: auditsMultiDistribution(
+    userMonthlyLoginResults: auditsMultiDistribution(
   			dateAttribute: $dateAttribute
         operation: count
         types: ["History", "Activity"]
@@ -139,6 +140,13 @@ const AuditsMonthlyGraph = ({
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
+  const environment = useRelayEnvironment();
+
+  useEffect(() => {
+    const store = environment.getStore();
+    store.publish(new RecordSource());
+    store.notify();
+  }, [environment]);
 
   const renderContent = () => {
     if (!isGrantedToSettings || !isEnterpriseEdition) {
@@ -162,27 +170,29 @@ const AuditsMonthlyGraph = ({
     }
     return (
       <QueryRenderer
+        environment={environment}
         query={auditsMonthlyGraphQuery}
         variables={{
           ...getMonthRangesVariables(),
         }}
+        fetchPolicy="network-only"
         render={({ props }) => {
           console.log("props: ", props);
 
-          if (props && props.userLoginResults) {
-            console.log("props.userLoginResults: ", props.userLoginResults);
+          if (props && props.userMonthlyLoginResults) {
+            console.log("props.userMonthlyLoginResults: ", props.userMonthlyLoginResults);
 
             return (
               <AuditsWidgetMultiLines
                 series={[{
                   name: t_i18n('Monthly activity count'),
-                  data: props.userLoginResults.map((selection, i) => {
+                  data: props.userMonthlyLoginResults.map((selection, i) => {
                     const { startDate, _ } = getMonthStartEnd(-i);
                     return {
                       x: new Date(startDate).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
                       y: selection.data.length,
                     };
-                  }),
+                  }).reverse(),
                 }]}
                 interval={'month'}
                 hasLegend={parameters.legend}

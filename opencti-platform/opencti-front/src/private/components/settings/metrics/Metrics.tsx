@@ -75,6 +75,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={6}>
@@ -105,6 +108,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   number: 20,
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <AuditsMonthlyProvider>
@@ -140,33 +146,12 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               <AuditsMonthlyGraph
                 height={300}
                 parameters={{
-                  startDate: monthsAgo(6),
-                  endDate: now(),
-                  interval: 'month',
+                  title: "Monthly Active Users"
                 }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
+                variant={undefined}
               />
             </Grid>
           </AuditsMonthlyProvider>
-          {/* <AuditsWeeklyProvider> */}
             <Grid item xs={2} marginTop={4}>
               <AuditsWeekly
                 height={300}
@@ -201,28 +186,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                 parameters={{
                   title: "Weekly Active Users"
                 }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
+                variant={undefined}
               />
             </Grid>
-          {/* </AuditsWeeklyProvider> */}
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
               height={350}
@@ -305,6 +271,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={8} marginTop={4}>
@@ -332,6 +301,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
@@ -362,6 +334,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   number: 20,
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
         </Grid>
