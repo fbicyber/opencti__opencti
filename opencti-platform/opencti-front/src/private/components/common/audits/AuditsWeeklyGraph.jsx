@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { graphql, useRelayEnvironment } from 'react-relay';
+import { RecordSource } from 'relay-runtime';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
 import useGranted, { SETTINGS_SECURITYACTIVITY, SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '../../../../utils/hooks/useGranted';
@@ -9,7 +10,6 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from './AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import { getWeekStartEnd } from '../../../../utils/Time';
-import { RecordSource } from 'relay-runtime';
 
 const getWeekRangesVariables = (weekStartDay = 'Monday') => {
   const today = new Date();
@@ -114,7 +114,7 @@ const auditsWeeklyGraphQuery = graphql`
   }
 `;
 
-console.log("auditsWeeklyGraphQuery: ", auditsWeeklyGraphQuery);
+console.log('auditsWeeklyGraphQuery: ', auditsWeeklyGraphQuery);
 
 const AuditsWeeklyGraph = ({
   variant,
@@ -163,10 +163,10 @@ const AuditsWeeklyGraph = ({
         }}
         fetchPolicy="network-only"
         render={({ props }) => {
-          console.log("props: ", props);
+          console.log('props: ', props);
 
           if (props && props.userLoginResults) {
-            console.log("props.userLoginResults: ", props.userLoginResults);
+            console.log('props.userLoginResults: ', props.userLoginResults);
 
             return (
               <AuditsWidgetMultiLines

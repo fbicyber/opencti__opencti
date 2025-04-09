@@ -52,10 +52,10 @@ export const getWeekStartEnd = (offset = 0) => {
   endDateDate.setHours(23);
   endDateDate.setMinutes(59);
   endDateDate.setSeconds(59);
-  const startDate =  startDateDate.toISOString();
+  const startDate = startDateDate.toISOString();
   const endDate = endDateDate.toISOString();
-  return {startDate, endDate};
-}
+  return { startDate, endDate };
+};
 
 export const now = () => moment().format();
 

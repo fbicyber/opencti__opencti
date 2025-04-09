@@ -3,37 +3,52 @@ import Grid from '@mui/material/Grid';
 import EnterpriseEdition from '@components/common/entreprise_edition/EnterpriseEdition';
 import AuditsMultiLineChart from '@components/common/audits/AuditsMultiLineChart';
 import AuditsHorizontalBars from '@components/common/audits/AuditsHorizontalBars';
-import { graphql, useLazyLoadQuery } from 'react-relay';
-import AuditsMonthly from '@components/common/audits/AuditsMonthly';
-import AuditsMonthlyGraph from '@components/common/audits/AuditsMonthlyGraph';
+import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
+import AuditsWeekly from '@components/common/audits/AuditsWeekly';
+import AuditsWeeklyGraph from '@components/common/audits/AuditsWeeklyGraph';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
-import { dayStartDate, monthsAgo, now } from '../../../../utils/Time';
+import { monthsAgo } from '../../../../utils/Time';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import AuditsNumber from '../../common/audits/AuditsNumber';
 import AuditsDonut from '../../common/audits/AuditsDonut';
 import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 import AuditsTable from '../../common/audits/AuditsTable';
-import { AuditsMonthlyProvider } from '../../common/audits/AuditsMonthlyContext';
-import AuditsWeekly from '@components/common/audits/AuditsWeekly';
-import { AuditsWeeklyProvider } from '../../common/audits/AuditsWeeklyContext';
-import AuditsWeeklyGraph from '@components/common/audits/AuditsWeeklyGraph';
+import AuditsMonthlyGraph from '../../common/audits/AuditsMonthlyGraph';
+import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
+import AuditsMonthly from '../../common/audits/AuditsMonthly';
 
+const getUserIdsQuery = graphql`
+  query MetricsGetUserIdsQuery {
+    users {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+`;
 
 interface MetricsComponentProps {
-  userIds: string[],
+  queryRef: PreloadedQuery<MetricsGetUserIdsQuery>
 }
 
 const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
-  userIds,
+  queryRef,
 }) => {
   const { t_i18n } = useFormatter();
   const isEnterpriseEdition = useEnterpriseEdition();
+
+  const data = usePreloadedQuery<MetricsGetUserIdsQuery>(
+    getUserIdsQuery,
+    queryRef,
+  );
+  const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
 
   if (!isEnterpriseEdition) {
     return <EnterpriseEdition feature={'User activity'} />;
@@ -113,82 +128,49 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
               endDate={undefined}
             />
           </Grid>
-          <AuditsMonthlyProvider>
-            <Grid item xs={2} marginTop={4}>
-              <AuditsMonthly
-                height={300}
-                parameters={{
-                  title: t_i18n('Monthly Active Users'),
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
+          <Grid item xs={2} marginTop={4}>
+            <AuditsMonthly />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsMonthlyGraph />
+          </Grid>
+          <Grid item xs={2} marginTop={4}>
+            <AuditsWeekly
+              height={300}
+              parameters={{
+                title: t_i18n('Weekly Active Users'),
+              }}
+              dataSelection={[
+                {
+                  date_attribute: 'created_at',
+                  filters: {
+                    mode: 'and',
+                    filters: [
+                      {
+                        key: 'members_user',
+                        values: userIds,
+                      },
+                      {
+                        key: 'event_scope',
+                        values: ['login'],
+                      },
+                    ],
+                    filterGroups: [],
                   },
-                ]}
-                variant="inLine"
-              />
-            </Grid>
-            <Grid item xs={4} marginTop={4}>
-              <AuditsMonthlyGraph
-                height={300}
-                parameters={{
-                  title: "Monthly Active Users"
-                }}
-                variant={undefined}
-              />
-            </Grid>
-          </AuditsMonthlyProvider>
-            <Grid item xs={2} marginTop={4}>
-              <AuditsWeekly
-                height={300}
-                parameters={{
-                  title: t_i18n('Weekly Active Users'),
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
-                variant="inLine"
-              />
-            </Grid>
-            <Grid item xs={4} marginTop={4}>
-              <AuditsWeeklyGraph
-                height={300}
-                parameters={{
-                  title: "Weekly Active Users"
-                }}
-                variant={undefined}
-              />
-            </Grid>
+                },
+              ]}
+              variant="inLine"
+            />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <AuditsWeeklyGraph
+              height={300}
+              parameters={{
+                title: 'Weekly Active Users',
+              }}
+              variant={undefined}
+            />
+          </Grid>
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
               height={350}
@@ -345,25 +327,14 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
   );
 };
 
-const getUserIdsQuery = graphql`
-  query MetricsGetUserIdsQuery {
-    users {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-  }
-`;
-
 const Metrics = () => {
-  const data = useLazyLoadQuery<MetricsGetUserIdsQuery>(getUserIdsQuery, {});
-  const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
-  return (
+  const queryRef = useQueryLoading<MetricsGetUserIdsQuery>(getUserIdsQuery, {});
+  return queryRef ? (
     <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
-      <MetricsComponent userIds={userIds} />
+      <MetricsComponent queryRef={queryRef} />
     </React.Suspense>
+  ) : (
+    <Loader variant={LoaderVariant.inElement} />
   );
 };
 

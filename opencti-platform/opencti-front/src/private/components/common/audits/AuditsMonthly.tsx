@@ -1,130 +1,111 @@
-import React, { useContext } from 'react';
-import { graphql } from 'react-relay';
-import { QueryRenderer } from '../../../../relay/environment';
-import { useFormatter } from '../../../../components/i18n';
-import useGranted, { SETTINGS_SECURITYACTIVITY, SETTINGS_SETACCESSES, VIRTUAL_ORGANIZATION_ADMIN } from '../../../../utils/hooks/useGranted';
-import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
-import { buildFiltersAndOptionsForWidgets } from '../../../../utils/filters/filtersUtils';
-import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
-import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
-import WidgetAccessDenied from '../../../../components/dashboard/WidgetAccessDenied';
+import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
+import React, { FunctionComponent } from 'react';
+import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
+import { AuditsMonthlyQuery } from './__generated__/AuditsMonthlyQuery.graphql';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
+import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
-import { AuditsMonthlyContext } from './AuditsMonthlyContext';
+import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
+import { useFormatter } from '../../../../components/i18n';
 
-interface LoginResult {
-  label: string;
-  value: number;
-}
-
-interface QueryProps {
-  loginResults?: LoginResult[];
-}
-
-const getMonthStartEnd = (offset = 0) => {
-  const now = new Date();
-  now.setMonth(now.getMonth() + offset);
-  now.setDate(1);
-  const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
-  return { startDate, endDate };
-};
-
-const auditsMonthlyLoginDistributionQuery = graphql`
-  query AuditsMonthlyLoginDistributionQuery (
-    $startDate: DateTime
-    $endDate: DateTime
-    $dateAttribute: String
-    $filters: FilterGroup
+export const mauDataQuery = graphql`
+  query AuditsMonthlyQuery (
+    $distributionParameters: [auditsDistributionParameters]
   ) {
-    loginResults: auditsDistribution(
-        field: "user_id"
-        startDate: $startDate
-        endDate: $endDate
-        dateAttribute: $dateAttribute
-        operation: count
-        limit: 30
-        types: ["History", "Activity"]
-        filters: $filters
+    auditsMultiDistribution(
+      dateAttribute: ""
+      operation: count
+      types: ["History", "Activity"]
+      distributionParameters: $distributionParameters
     ) {
+      data {
         label
         value
+      }
     }
   }
 `;
 
-interface AuditsMonthlyProps {
-  variant: string;
-  height: number;
-  dataSelection: any[];
-  parameters?: { title?: string };
+interface AuditsMonthlyComponentProps {
+  queryRef: PreloadedQuery<AuditsMonthlyQuery>
 }
 
-const AuditsMonthly: React.FC<AuditsMonthlyProps> = ({
-  variant,
-  height,
-  dataSelection,
-  parameters = {},
+const AuditsMonthlyComponent: FunctionComponent<AuditsMonthlyComponentProps> = ({
+  queryRef,
 }) => {
-  const { loginCount, setLoginCount } = useContext(AuditsMonthlyContext);
-  const { t_i18n } = useFormatter();
-  const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
-  const isEnterpriseEdition = useEnterpriseEdition();
+  const data = usePreloadedQuery<AuditsMonthlyQuery>(
+    mauDataQuery,
+    queryRef,
+  );
 
-  const renderContent = () => {
-    if (!isGrantedToSettings || !isEnterpriseEdition) {
-      return <WidgetAccessDenied />;
-    }
-
-    const selection = dataSelection[0];
-    const dateAttribute = selection.date_attribute && selection.date_attribute.length > 0
-      ? selection.date_attribute
-      : 'timestamp';
-    const { filters } = buildFiltersAndOptionsForWidgets(selection.filters, { removeTypeAll: true, dateAttribute });
-
-    const { startDate, endDate } = getMonthStartEnd();
-    const { startDate: previousStartDate, endDate: previousEndDate } = getMonthStartEnd(-1);
+  if (data) {
+    // Previous period users, filtered to non-null users
+    const previousData = data.auditsMultiDistribution
+      ?.[0]?.data?.filter((user) => !!user) ?? [];
+    // Current period users, filtered to non-null users
+    const currentData = data.auditsMultiDistribution
+      ?.[1]?.data?.filter((user) => !!user) ?? [];
+    const previousCount = new Set(previousData.map((user) => user.label)).size;
+    const currentCount = new Set(currentData.map((user) => user.label)).size;
 
     return (
-      <QueryRenderer
-        query={auditsMonthlyLoginDistributionQuery}
-        variables={{ startDate, endDate, dateAttribute, filters }}
-        render={({ props: currentProps }: { props?: QueryProps }) => (
-          <QueryRenderer
-            query={auditsMonthlyLoginDistributionQuery}
-            variables={{ startDate: previousStartDate, endDate: previousEndDate, dateAttribute, filters }}
-            render={({ props: previousProps }: { props?: QueryProps }) => {
-              if (currentProps && previousProps) {
-                const currentUsers = new Set(currentProps.loginResults?.map((user) => user.label));
-                const previousUsers = new Set(previousProps.loginResults?.map((user) => user.label));
-
-                const currentCount = currentUsers.size;
-                const previousCount = previousUsers.size;
-
-                const difference = currentCount - previousCount;
-
-                setLoginCount(currentCount);
-
-                return <WidgetDifference count={loginCount} change={difference} interval={"month"} />;
-              }
-              if (currentProps || previousProps) {
-                return <WidgetNoData />;
-              }
-              return <Loader variant={LoaderVariant.inElement} />;
-            }}
-          />
-        )}
+      <WidgetDifference
+        count={currentCount}
+        change={currentCount - previousCount}
+        interval="month"
       />
     );
-  };
+  }
+  return <WidgetNoData />;
+};
+
+const AuditsMonthly = ({
+  height = 300,
+  title = 'Monthly Active Users',
+  variant = 'inLine',
+}) => {
+  const { t_i18n } = useFormatter();
+
+  // Last period consists of two months ago to one month ago
+  // Current period consists of one month ago to now
+  const now = new Date();
+  const lastPeriodStartDate = new Date(now);
+  const lastPeriodEndDate = new Date(now);
+  lastPeriodStartDate.setMonth(now.getMonth() - 2);
+  lastPeriodEndDate.setMonth(now.getMonth() - 1);
+
+  // Get the user logins for last month and this current month
+  const distributionParameters = [
+    {
+      field: 'user_id',
+      startDate: lastPeriodStartDate.toISOString(),
+      endDate: lastPeriodEndDate.toISOString(),
+    },
+    {
+      field: 'user_id',
+      startDate: lastPeriodEndDate.toISOString(),
+      endDate: now.toISOString(),
+    },
+  ];
+
+  const queryRef = useQueryLoading<AuditsMonthlyQuery>(
+    mauDataQuery,
+    { distributionParameters },
+  );
 
   return (
     <WidgetContainer
       height={height}
-      title={parameters.title ?? t_i18n('Entities number')}
+      title={t_i18n(title)}
       variant={variant}
     >
-      {renderContent()}
+      {queryRef ? (
+        <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
+          <AuditsMonthlyComponent queryRef={queryRef} />
+        </React.Suspense>
+      ) : (
+        <Loader variant={LoaderVariant.inElement} />
+      )}
     </WidgetContainer>
   );
 };

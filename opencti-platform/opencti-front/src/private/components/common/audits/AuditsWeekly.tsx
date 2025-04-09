@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { graphql } from 'react-relay';
 import { QueryRenderer } from '../../../../relay/environment';
 import { useFormatter } from '../../../../components/i18n';
@@ -56,7 +56,6 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
   dataSelection,
   parameters = {},
 }) => {
-  // const { loginCount, setLoginCount, setWeeklyActiveUsersHistory } = useContext(AuditsWeeklyContext);
   const { t_i18n } = useFormatter();
   const isGrantedToSettings = useGranted([SETTINGS_SETACCESSES, SETTINGS_SECURITYACTIVITY, VIRTUAL_ORGANIZATION_ADMIN]);
   const isEnterpriseEdition = useEnterpriseEdition();
@@ -73,9 +72,9 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
     const { filters } = buildFiltersAndOptionsForWidgets(selection.filters, { removeTypeAll: true, dateAttribute });
 
     const weeks = new Array(6);
-    for (let i = 0; i < 6; i++){
+    for (let i = 0; i < 6; i += 1) {
       const { startDate, endDate } = getWeekStartEnd(-i);
-      weeks[i] = ({startDate, endDate});
+      weeks[i] = ({ startDate, endDate });
     }
 
     return (
@@ -103,35 +102,35 @@ const AuditsWeekly: React.FC<AuditsWeeklyProps> = ({
               //               query={auditsWeeklyLoginDistributionQuery}
               //               variables={{ startDate: weeks[5].startDate, endDate: weeks[5].endDate, dateAttribute, filters }}
               //               render={({ props: week5Props }: { props?: QueryProps }) => (
-                              if (week0Props && week1Props) {
-                                const week0Users = new Set(week0Props.loginResults?.map((user) => user.label));
-                                const week1Users = new Set(week1Props.loginResults?.map((user) => user.label));
-                                
-                                // const week2Users = new Set(week2Props.loginResults?.map((user) => user.label));
-                                // const week3Users = new Set(week3Props.loginResults?.map((user) => user.label));
-                                // const week4Users = new Set(week4Props.loginResults?.map((user) => user.label));
-                                // const week5Users = new Set(week5Props.loginResults?.map((user) => user.label));
+              if (week0Props && week1Props) {
+                const week0Users = new Set(week0Props.loginResults?.map((user) => user.label));
+                const week1Users = new Set(week1Props.loginResults?.map((user) => user.label));
 
-                                const weeklyActiveUsersHistory = new Array(6);
-                                const currentCount = weeklyActiveUsersHistory[0] = week0Users.size;
-                                const previousCount = weeklyActiveUsersHistory[1] = week1Users.size;
-                                // weeklyActiveUsersHistory[2] = week2Users.size;
-                                // weeklyActiveUsersHistory[3] = week3Users.size;
-                                // weeklyActiveUsersHistory[4] = week4Users.size;
-                                // weeklyActiveUsersHistory[5] = week5Users.size;
+                // const week2Users = new Set(week2Props.loginResults?.map((user) => user.label));
+                // const week3Users = new Set(week3Props.loginResults?.map((user) => user.label));
+                // const week4Users = new Set(week4Props.loginResults?.map((user) => user.label));
+                // const week5Users = new Set(week5Props.loginResults?.map((user) => user.label));
 
-                                // setWeeklyActiveUsersHistory(weeklyActiveUsersHistory);
-                
-                                const difference = currentCount - previousCount;
-                
-                                // setLoginCount(currentCount);
-                
-                                return <WidgetDifference count={currentCount} change={difference} interval={"week"} />;
-                              }
-                              if (week0Props || week1Props) {
-                                return <WidgetNoData />;
-                              }
-                              return <Loader variant={LoaderVariant.inElement} />;
+                const weeklyActiveUsersHistory = new Array(6);
+                const currentCount = weeklyActiveUsersHistory[0] = week0Users.size;
+                const previousCount = weeklyActiveUsersHistory[1] = week1Users.size;
+                // weeklyActiveUsersHistory[2] = week2Users.size;
+                // weeklyActiveUsersHistory[3] = week3Users.size;
+                // weeklyActiveUsersHistory[4] = week4Users.size;
+                // weeklyActiveUsersHistory[5] = week5Users.size;
+
+                // setWeeklyActiveUsersHistory(weeklyActiveUsersHistory);
+
+                const difference = currentCount - previousCount;
+
+                // setLoginCount(currentCount);
+
+                return <WidgetDifference count={currentCount} change={difference} interval={'week'} />;
+              }
+              if (week0Props || week1Props) {
+                return <WidgetNoData />;
+              }
+              return <Loader variant={LoaderVariant.inElement} />;
               //             )}
               //            />
               //          )}

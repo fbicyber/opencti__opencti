@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { injectIntl, useIntl } from 'react-intl';
 import moment from 'moment-timezone';
-import { bytesFormat, numberFormat } from '../utils/Number';
 import { startOfWeek, format } from 'date-fns';
+import { bytesFormat, numberFormat } from '../utils/Number';
 
 const FROM_START = 0;
 const UNTIL_END = 100000000000000;
@@ -389,7 +389,7 @@ export const useFormatter = () => {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
     return `${format(weekStart, 'MMM dd')} - ${format(weekEnd, 'MMM dd')}`;
-  }
+  };
   return {
     t_i18n: translate,
     n: formatNumber,
