@@ -140,7 +140,7 @@ const PlaybookAddComponentsContent = ({
       setActionsInputs(
         actionsInputs.map((v, k) => {
           if (k === i) {
-            return { ...v, [key]: value, attribute: null, value: null };
+            return { ...v, [key]: value };
           }
           return v;
         }),
@@ -369,6 +369,7 @@ const PlaybookAddComponentsContent = ({
             onChange={(_, value) => handleChangeActionInput(i, 'value', [
               { label: value, value, patch_value: value },
             ])}
+            initialValue={false} // to force onChange call on mount, as the switch starts with a correct value "false"
           />
         );
       case 'severity':
