@@ -7,7 +7,7 @@ import WidgetDifference from '../../../../components/dashboard/WidgetDifference'
 import { useFormatter } from '../../../../components/i18n';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import { MetricsWeeklyQuery } from './__generated__/MetricsWeeklyQuery.graphql';
-import { metricsGraphqlQueryUser } from './metrics.d'
+import { metricsGraphqlQueryUser } from './metrics.d';
 
 export const wauDataQuery = graphql`
   query MetricsWeeklyQuery (
@@ -43,8 +43,8 @@ const MetricsWeeklyComponent: FunctionComponent<MetricsWeeklyComponentProps> = (
     // Current period users, filtered to non-null users
     const currentData = data.auditsMultiDistribution
       ?.[1]?.data?.filter((user: metricsGraphqlQueryUser) => !!user) ?? [];
-    const previousCount = new Set(previousData.map((user: metricsGraphqlQueryUser) => user!.label)).size;
-    const currentCount = new Set(currentData.map((user: metricsGraphqlQueryUser) => user!.label)).size;
+    const previousCount = new Set(previousData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
+    const currentCount = new Set(currentData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
 
     return (
       <WidgetDifference

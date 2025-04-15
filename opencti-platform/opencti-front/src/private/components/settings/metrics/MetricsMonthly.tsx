@@ -7,7 +7,7 @@ import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
 import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import { useFormatter } from '../../../../components/i18n';
-import { metricsGraphqlQueryUser } from './metrics.d'
+import { metricsGraphqlQueryUser } from './metrics.d';
 
 export const mauDataQuery = graphql`
   query MetricsMonthlyQuery (
@@ -45,8 +45,8 @@ const MetricsMonthlyComponent: FunctionComponent<MetricsMonthlyComponentProps> =
     // Current period users, filtered to non-null users
     const currentData = data.auditsMultiDistribution
       ?.[1]?.data?.filter((user: metricsGraphqlQueryUser) => !!user) ?? [];
-    const previousCount = new Set(previousData.map((user: metricsGraphqlQueryUser) => user!.label)).size;
-    const currentCount = new Set(currentData.map((user: metricsGraphqlQueryUser) => user!.label)).size;
+    const previousCount = new Set(previousData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
+    const currentCount = new Set(currentData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
 
     return (
       <WidgetDifference

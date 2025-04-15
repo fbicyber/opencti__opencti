@@ -192,6 +192,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={''}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
