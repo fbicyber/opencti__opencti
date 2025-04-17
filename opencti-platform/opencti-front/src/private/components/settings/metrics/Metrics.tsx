@@ -49,7 +49,6 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
     queryRef,
   );
   const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
-
   if (!isEnterpriseEdition) {
     return <EnterpriseEdition feature={'User activity'} />;
   }
