@@ -3,34 +3,52 @@ import Grid from '@mui/material/Grid';
 import EnterpriseEdition from '@components/common/entreprise_edition/EnterpriseEdition';
 import AuditsMultiLineChart from '@components/common/audits/AuditsMultiLineChart';
 import AuditsHorizontalBars from '@components/common/audits/AuditsHorizontalBars';
-import { graphql, useLazyLoadQuery } from 'react-relay';
-import AuditsMonthly from '@components/common/audits/AuditsMonthly';
-import AuditsMonthlyGraph from '@components/common/audits/AuditsMonthlyGraph';
+import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
+import MetricsWeekly from './MetricsWeekly';
+import MetricsWeeklyGraph from './MetricsWeeklyGraph';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { useFormatter } from '../../../../components/i18n';
 import useEnterpriseEdition from '../../../../utils/hooks/useEnterpriseEdition';
 import { SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Security from '../../../../utils/Security';
-import { dayStartDate, monthsAgo, now } from '../../../../utils/Time';
+import { monthsAgo } from '../../../../utils/Time';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import AuditsNumber from '../../common/audits/AuditsNumber';
 import AuditsDonut from '../../common/audits/AuditsDonut';
 import AuditsRadar from '../../common/audits/AuditsRadar';
 import AuditsList from '../../common/audits/AuditsList';
 import { MetricsGetUserIdsQuery } from './__generated__/MetricsGetUserIdsQuery.graphql';
 import AuditsTable from '../../common/audits/AuditsTable';
-import { AduitsMonthlyProvider } from '../../common/audits/AuditsMonthlyContext';
+import MetricsMonthlyGraph from './MetricsMonthlyGraph';
+import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
+import MetricsMonthly from './MetricsMonthly';
+
+const getUserIdsQuery = graphql`
+  query MetricsGetUserIdsQuery {
+    users {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+`;
 
 interface MetricsComponentProps {
-  userIds: string[],
+  queryRef: PreloadedQuery<MetricsGetUserIdsQuery>
 }
 
 const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
-  userIds,
+  queryRef,
 }) => {
   const { t_i18n } = useFormatter();
   const isEnterpriseEdition = useEnterpriseEdition();
 
+  const data = usePreloadedQuery<MetricsGetUserIdsQuery>(
+    getUserIdsQuery,
+    queryRef,
+  );
+  const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
   if (!isEnterpriseEdition) {
     return <EnterpriseEdition feature={'User activity'} />;
   }
@@ -48,8 +66,6 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
           <Grid item xs={6}>
             <AuditsMultiLineChart
               height={300}
-              // startDate={monthsAgo(1)} // need to convert AuditsMultiLineChart from .jsx to .tsx component in order to pass prop..?
-              // currently getting "cannot assign string to type 'null | undefined'"
               parameters={{
                 title: t_i18n('Logins to the platform'),
                 startDate: monthsAgo(1),
@@ -73,6 +89,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={6}>
@@ -103,124 +122,22 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   number: 20,
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
-          <AduitsMonthlyProvider>
-            <Grid item xs={2} marginTop={4}>
-              <AuditsMonthly
-                height={300}
-                parameters={{
-                  title: t_i18n('Monthly Active Users'),
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
-                variant="inLine"
-              />
-            </Grid>
-            <Grid item xs={4} marginTop={4}>
-              <AuditsMonthlyGraph
-                height={300}
-                parameters={{
-                  startDate: monthsAgo(5),
-                  endDate: now(),
-                  interval: 'month',
-                }}
-                dataSelection={[
-                  {
-                    date_attribute: 'created_at',
-                    filters: {
-                      mode: 'and',
-                      filters: [
-                        {
-                          key: 'members_user',
-                          values: userIds,
-                        },
-                        {
-                          key: 'event_scope',
-                          values: ['login'],
-                        },
-                      ],
-                      filterGroups: [],
-                    },
-                  },
-                ]}
-              />
-            </Grid>
-          </AduitsMonthlyProvider>
           <Grid item xs={2} marginTop={4}>
-            <AuditsNumber
-              height={300}
-              parameters={{
-                title: t_i18n('Weekly Active Users'),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
-                  },
-                },
-              ]}
-              variant="inLine"
-              startDate={monthsAgo(3)}
-              endDate={dayStartDate(null, false)}
-            />
+            <MetricsMonthly />
           </Grid>
           <Grid item xs={4} marginTop={4}>
-            <AuditsMultiLineChart
-              height={300}
-              parameters={{
-                title: '',
-                startDate: monthsAgo(3),
-              }}
-              dataSelection={[
-                {
-                  date_attribute: 'created_at',
-                  filters: {
-                    mode: 'and',
-                    filters: [
-                      {
-                        key: 'members_user',
-                        values: userIds,
-                      },
-                      {
-                        key: 'event_scope',
-                        values: ['login'],
-                      },
-                    ],
-                    filterGroups: [],
-                  },
-                },
-              ]}
-            />
+            <MetricsMonthlyGraph />
+          </Grid>
+          <Grid item xs={2} marginTop={4}>
+            <MetricsWeekly />
+          </Grid>
+          <Grid item xs={4} marginTop={4}>
+            <MetricsWeeklyGraph />
           </Grid>
           <Grid item xs={4} marginTop={4}>
             <AuditsTable
@@ -274,6 +191,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={''}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
@@ -304,6 +224,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={8} marginTop={4}>
@@ -331,6 +254,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   },
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
           <Grid item xs={4} marginTop={4}>
@@ -361,6 +287,9 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
                   number: 20,
                 },
               ]}
+              variant={undefined}
+              startDate={undefined}
+              endDate={undefined}
             />
           </Grid>
         </Grid>
@@ -369,25 +298,14 @@ const MetricsComponent: FunctionComponent<MetricsComponentProps> = ({
   );
 };
 
-const getUserIdsQuery = graphql`
-  query MetricsGetUserIdsQuery {
-    users {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-  }
-`;
-
 const Metrics = () => {
-  const data = useLazyLoadQuery<MetricsGetUserIdsQuery>(getUserIdsQuery, {});
-  const userIds = data.users?.edges.map(({ node }) => node.id) ?? [];
-  return (
+  const queryRef = useQueryLoading<MetricsGetUserIdsQuery>(getUserIdsQuery, {});
+  return queryRef ? (
     <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
-      <MetricsComponent userIds={userIds} />
+      <MetricsComponent queryRef={queryRef} />
     </React.Suspense>
+  ) : (
+    <Loader variant={LoaderVariant.inElement} />
   );
 };
 

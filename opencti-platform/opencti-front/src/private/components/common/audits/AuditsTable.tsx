@@ -12,6 +12,7 @@ import { graphql } from 'react-relay';
 import { useFormatter } from '../../../../components/i18n';
 import { QueryRenderer } from '../../../../relay/environment';
 import { NO_DATA_WIDGET_MESSAGE } from '../../../../components/dashboard/WidgetNoData';
+import { FilterGroup } from '../../../../utils/filters/filtersHelpers-types';
 
 const auditsTableTopKeywordsQuery = graphql`
   query AuditsTableTopKeywordsQuery($field: String!, $limit: Int, $filters: FilterGroup) {
@@ -36,7 +37,7 @@ interface AuditsTableProps {
     filters: {
       mode: string;
       filters: { key: string; values: string[] } [];
-      filterGroups: any[];
+      filterGroups: FilterGroup[];
     };
   }[];
 }

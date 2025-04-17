@@ -342,8 +342,6 @@ export const verticalBarsChartOptions = (
     labels: {
       formatter: (value) => (yFormatter ? yFormatter(value) : value),
       align: 'bottom',
-      // maxWidth: "80px",
-      // offsetY: "-20px",
       style: {
         fontFamily: '"IBM Plex Sans", sans-serif',
       },
