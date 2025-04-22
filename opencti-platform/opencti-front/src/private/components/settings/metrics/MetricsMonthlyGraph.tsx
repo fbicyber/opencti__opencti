@@ -1,7 +1,7 @@
 import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
 import React, { FunctionComponent } from 'react';
 import AuditsWidgetMultiLines from '../../common/audits/AuditsWidgetMultiLines';
-import { MetricsMonthlyQuery } from './__generated__/MetricsMonthlyQuery.graphql';
+import { FilterGroup, MetricsMonthlyQuery } from './__generated__/MetricsMonthlyQuery.graphql';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import { mauDataQuery } from './MetricsMonthly';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
@@ -75,6 +75,18 @@ const MetricsMonthlyGraph = ({
     // Date range is `i` months ago to `i+1` months ago
     startDate.setMonth(now.getMonth() - i);
     endDate.setMonth(now.getMonth() - i + 1);
+
+    const filters: FilterGroup = {
+      mode: 'and',
+      filters: [
+        {
+          key: ['event_scope'],
+          values: ['login', 'logout'],
+          operator: 'not_eq',
+        },
+      ],
+      filterGroups: [],
+    };
 
     distributionParameters.push({
       field: 'user_id',

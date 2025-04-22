@@ -1,7 +1,7 @@
 import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
 import React, { FunctionComponent } from 'react';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
-import { MetricsMonthlyQuery } from './__generated__/MetricsMonthlyQuery.graphql';
+import { FilterGroup, MetricsMonthlyQuery, MetricsMonthlyQuery$variables } from './__generated__/MetricsMonthlyQuery.graphql';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
@@ -75,17 +75,31 @@ const MetricsMonthly = ({
   lastPeriodStartDate.setMonth(now.getMonth() - 2);
   lastPeriodEndDate.setMonth(now.getMonth() - 1);
 
+  const filters: FilterGroup = {
+    mode: 'and',
+    filters: [
+      {
+        key: ['event_scope'],
+        values: ['login', 'logout'],
+        operator: 'not_eq',
+      },
+    ],
+    filterGroups: [],
+  };
+
   // Get the user logins for last month and this current month
-  const distributionParameters = [
+  const distributionParameters: MetricsMonthlyQuery$variables['distributionParameters'] = [
     {
       field: 'user_id',
       startDate: lastPeriodStartDate.toISOString(),
       endDate: lastPeriodEndDate.toISOString(),
+      filters,
     },
     {
       field: 'user_id',
       startDate: lastPeriodEndDate.toISOString(),
       endDate: now.toISOString(),
+      filters,
     },
   ];
 
