@@ -7,21 +7,16 @@ import { mauDataQuery } from './MetricsMonthly';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import { useFormatter } from '../../../../components/i18n';
+import { auditsDistributionParameters } from './__generated__/AuditsWeeklyQuery.graphql';
 
 /**
  * This file exports a graph widget showing unique user activity over a given
- * number of months. Defaults to a 6-month rolling range.
+ * number of months. Defa`ults to a 6-month rolling range.
  */
-
-type auditsDistributionParameter = {
-  field: string,
-  startDate: string,
-  endDate: string,
-};
 
 interface MetricsMonthlyGraphComponentProps {
   queryRef: PreloadedQuery<MetricsMonthlyQuery>,
-  dateRanges: auditsDistributionParameter[],
+  dateRanges: auditsDistributionParameters[],
 }
 
 const MetricsMonthlyGraphComponent: FunctionComponent<
@@ -64,7 +59,7 @@ const MetricsMonthlyGraph = ({
 }) => {
   const now = new Date();
   now.setHours(23, 59, 59, 999);
-  const distributionParameters: auditsDistributionParameter[] = [];
+  const distributionParameters: auditsDistributionParameters[] = [];
 
   // Create rolling date ranges for specified number of months
   for (let i = months; i > 0; i -= 1) {
@@ -81,8 +76,7 @@ const MetricsMonthlyGraph = ({
       filters: [
         {
           key: ['event_scope'],
-          values: ['login', 'logout'],
-          operator: 'not_eq',
+          values: ['Create', 'Update', 'Unauthorized'],
         },
       ],
       filterGroups: [],
@@ -92,6 +86,7 @@ const MetricsMonthlyGraph = ({
       field: 'user_id',
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
+      filters,
     });
   }
 

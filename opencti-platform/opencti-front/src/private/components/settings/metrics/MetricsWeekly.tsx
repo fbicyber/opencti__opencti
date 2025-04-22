@@ -6,7 +6,7 @@ import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetDifference from '../../../../components/dashboard/WidgetDifference';
 import { useFormatter } from '../../../../components/i18n';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
-import { MetricsWeeklyQuery } from './__generated__/MetricsWeeklyQuery.graphql';
+import { FilterGroup, MetricsWeeklyQuery } from './__generated__/MetricsWeeklyQuery.graphql';
 import { metricsGraphqlQueryUser } from './metrics.d';
 
 export const wauDataQuery = graphql`
@@ -82,17 +82,30 @@ const MetricsWeekly = ({
   const lastPeriodStartDate = new Date(startOfWeek);
   lastPeriodStartDate.setDate(lastPeriodStartDate.getDate() - 7);
 
+  const filters: FilterGroup = {
+    mode: 'and',
+    filters: [
+      {
+        key: ['event_scope'],
+        values: ['Create', 'Update', 'Unauthorized'],
+      },
+    ],
+    filterGroups: [],
+  };
+
   // Get the user logins for last month and this current month
   const distributionParameters = [
     {
       field: 'user_id',
       startDate: lastPeriodStartDate.toISOString(),
       endDate: lastPeriodEndDate.toISOString(),
+      filters,
     },
     {
       field: 'user_id',
       startDate: lastPeriodEndDate.toISOString(),
       endDate: now.toISOString(),
+      filters,
     },
   ];
 

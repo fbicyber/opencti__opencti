@@ -80,8 +80,7 @@ const MetricsMonthly = ({
     filters: [
       {
         key: ['event_scope'],
-        values: ['login', 'logout'],
-        operator: 'not_eq',
+        values: ['Create', 'Update', 'Unauthorized'],
       },
     ],
     filterGroups: [],
