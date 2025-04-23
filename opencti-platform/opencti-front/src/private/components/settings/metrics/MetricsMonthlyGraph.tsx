@@ -76,7 +76,7 @@ const MetricsMonthlyGraph = ({
       filters: [
         {
           key: ['event_scope'],
-          values: ['Create', 'Update', 'Unauthorized'],
+          values: ["search", "analyze", "enrich", "import", "export", "read", "create", "delete", "download", "disseminate", "update"],
         },
       ],
       filterGroups: [],
