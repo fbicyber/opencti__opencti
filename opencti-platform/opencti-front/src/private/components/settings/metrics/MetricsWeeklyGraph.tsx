@@ -3,10 +3,12 @@ import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import AuditsWidgetMultiLines from '../../common/audits/AuditsWidgetMultiLines';
 import Loader, { LoaderVariant } from '../../../../components/Loader';
-import { MetricsWeeklyQuery } from './__generated__/MetricsWeeklyQuery.graphql';
+import { FilterGroup, MetricsWeeklyQuery } from './__generated__/MetricsWeeklyQuery.graphql';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import { wauDataQuery } from './MetricsWeekly';
 import { useFormatter } from '../../../../components/i18n';
+import { auditsDistributionParameters } from './__generated__/AuditsWeeklyQuery.graphql';
+
 /**
  * This file exports a graph widget showing unique user activity over a given
  * number of weeks. Defaults to a 6-week rolling range, monday start-of-week.
@@ -47,15 +49,9 @@ const getWeekRangesVariables = (weekStartDay = 'Monday', numWeeks = 6) => {
   return results;
 };
 
-type auditsDistributionParameter = {
-  field: string,
-  startDate: string,
-  endDate: string,
-};
-
 interface MetricsWeeklyGraphComponentProps {
   queryRef: PreloadedQuery<MetricsWeeklyQuery>,
-  dateRanges: auditsDistributionParameter[],
+  dateRanges: auditsDistributionParameters[],
 }
 
 const MetricsWeeklyGraphComponent: FunctionComponent<
@@ -96,15 +92,27 @@ MetricsWeeklyGraphComponentProps
 const MetricsWeeklyGraph = ({
   weeks = 6,
 }) => {
-  const distributionParameters: auditsDistributionParameter[] = [];
+  const distributionParameters: auditsDistributionParameters[] = [];
 
   const weeksDates = getWeekRangesVariables(undefined, weeks);
+
+  const filters: FilterGroup = {
+    mode: 'and',
+    filters: [
+      {
+        key: ['event_scope'],
+        values: ["search", "analyze", "enrich", "import", "export", "read", "create", "delete", "download", "disseminate", "update"],
+      },
+    ],
+    filterGroups: [],
+  };
 
   for (const weekDatePair of weeksDates) {
     distributionParameters.push({
       field: 'user_id',
       startDate: weekDatePair.startDate.toISOString(),
       endDate: weekDatePair.endDate.toISOString(),
+      filters,
     });
   }
 
