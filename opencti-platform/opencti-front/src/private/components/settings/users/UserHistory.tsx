@@ -5,7 +5,6 @@ import { useQueryLoader } from 'react-relay';
 import { LogsOrdering, OrderingMode, UserHistoryLinesQuery, UserHistoryLinesQuery$variables } from '@components/settings/users/__generated__/UserHistoryLinesQuery.graphql';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import { StorageOutlined } from '@mui/icons-material';
 import { VectorRadius } from 'mdi-material-ui';
 import { Link } from 'react-router-dom';
 import { GqlFilterGroup } from '../../../../utils/filters/filtersUtils';
@@ -15,10 +14,9 @@ import SearchInput from '../../../../components/SearchInput';
 import UserHistoryLines, { userHistoryLinesQuery } from './UserHistoryLines';
 import useGranted, { KNOWLEDGE, SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
-import { useTheme } from '@mui/styles';
 import Box from '@mui/material/Box';
 import { Close } from '@mui/icons-material';
+import { StorageOutlined, HistoryOutlined } from '@mui/icons-material';
 
 
 const createdByUserRedirectButton = {
@@ -59,6 +57,22 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
       ],
     } as GqlFilterGroup,
     first: 10,
+    orderBy: 'timestamp' as LogsOrdering,
+    orderMode: 'desc' as OrderingMode,
+    search: entitySearchTerm,
+  };
+
+  const queryArgsHistory = {
+    types: historyTypes,
+    filters: {
+      mode: 'or',
+      filterGroups: [],
+      filters: [
+        { key: ['user_id'], values: [userId], operator: 'wildcard', mode: 'or' },
+        { key: ['context_data.id'], values: [userId], operator: 'wildcard', mode: 'or' },
+      ],
+    } as GqlFilterGroup,
+    first: 25,
     orderBy: 'timestamp' as LogsOrdering,
     orderMode: 'desc' as OrderingMode,
     search: entitySearchTerm,
@@ -121,37 +135,38 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
         </IconButton>
       </Tooltip>
       <Tooltip title={t_i18n('Browse User History')}>
-        <Button
-          sx={{...createdByUserRedirectButton, marginLeft: '10px'}}
-          variant="outlined"
+        <IconButton
+          sx={createdByUserRedirectButton}
+          size="large"
           color="primary"
           onClick={() => setDrawerOpen(true)}
         >
-          {t_i18n('Browse User History')}
-        </Button>
+          <HistoryOutlined fontSize="small" />
+        </IconButton>
       </Tooltip>
       <div className="clearfix" />
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        slotProps={{
-          paper: {
-            sx: {
-              minHeight: '100vh',
-              width: '50%',
-              position: 'fixed',
-              padding: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              transition: (theme) =>
-                theme.transitions.create('width', {
-                  easing: theme.transitions.easing.sharp,
-                  duration: theme.transitions.duration.enteringScreen,
-                }),
-            },
-          },
+        sx={{
+          zIndex: 1302,
+          minHeight: '100vh',
+          width: '50%',
+          position: 'fixed',
+          padding: 0,
+          display: 'flex',
+          overflow: 'hidden',
+          flexDirection: 'column',
+          transition: (theme) =>
+            theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+        }}
+        ModalProps={{
+          disablePortal: false,
+          keepMounted: true,
         }}
       >
         {/*Header*/}
@@ -190,18 +205,18 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
             overflowY: 'auto'
           }}
         >
-          {/* {queryRef ? (
+          {queryRef ? (
             <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
               <UserHistoryLines
                 queryRef={queryRef}
-                queryArgs={queryArgs}
+                queryArgs={queryArgsHistory}
                 isRelationLog={false}
                 refetch={refetch}
               />
             </React.Suspense>
           ) : (
             <Loader variant={LoaderVariant.inElement} />
-          )} */}
+          )}
         </Box>
       </Drawer>
 
