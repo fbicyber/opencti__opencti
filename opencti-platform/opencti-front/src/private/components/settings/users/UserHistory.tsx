@@ -14,6 +14,12 @@ import Loader, { LoaderVariant } from '../../../../components/Loader';
 import SearchInput from '../../../../components/SearchInput';
 import UserHistoryLines, { userHistoryLinesQuery } from './UserHistoryLines';
 import useGranted, { KNOWLEDGE, SETTINGS_SECURITYACTIVITY } from '../../../../utils/hooks/useGranted';
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/styles';
+import Box from '@mui/material/Box';
+import { Close } from '@mui/icons-material';
+
 
 const createdByUserRedirectButton = {
   float: 'left',
@@ -35,6 +41,7 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
     setEntitySearchTerm(value);
   };
   const [queryRef, loadQuery] = useQueryLoader<UserHistoryLinesQuery>(userHistoryLinesQuery);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   let historyTypes = ['History'];
   if (isGrantedToAudit && !isGrantedToKnowledge) {
     historyTypes = ['Activity'];
@@ -113,7 +120,91 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
           <VectorRadius fontSize="small" />
         </IconButton>
       </Tooltip>
+      <Tooltip title={t_i18n('Browse User History')}>
+        <Button
+          sx={{...createdByUserRedirectButton, marginLeft: '10px'}}
+          variant="outlined"
+          color="primary"
+          onClick={() => setDrawerOpen(true)}
+        >
+          {t_i18n('Browse User History')}
+        </Button>
+      </Tooltip>
       <div className="clearfix" />
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              minHeight: '100vh',
+              width: '50%',
+              position: 'fixed',
+              padding: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              transition: (theme) =>
+                theme.transitions.create('width', {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.enteringScreen,
+                }),
+            },
+          },
+        }}
+      >
+        {/*Header*/}
+        <Box
+          sx={(theme) => ({
+            backgroundColor:
+              theme.palette.mode === 'light'
+                ? theme.palette.background.default
+                : theme.palette.background.paper,
+            padding: '10px 0 10px 5px',
+            paddingLeft: '5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            flexShrink: 0,
+          })}
+        >
+          <IconButton
+            aria-label="Close"
+            onClick={() => setDrawerOpen(false)}
+            size="large"
+            color='primary'
+          >
+            <Close fontSize="small" />
+          </IconButton>
+          <Typography variant="subtitle2">
+            {t_i18n('User History')}
+          </Typography>
+        </Box>
+
+        {/*Scrollable content*/}
+        <Box
+          sx={{
+            padding: '10px 20px 20px 20px',
+            flexGrow: 1,
+            overflowY: 'auto'
+          }}
+        >
+          {/* {queryRef ? (
+            <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
+              <UserHistoryLines
+                queryRef={queryRef}
+                queryArgs={queryArgs}
+                isRelationLog={false}
+                refetch={refetch}
+              />
+            </React.Suspense>
+          ) : (
+            <Loader variant={LoaderVariant.inElement} />
+          )} */}
+        </Box>
+      </Drawer>
+
       {queryRef ? (
         <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
           <UserHistoryLines
