@@ -22,10 +22,14 @@ const createdByUserRedirectButton = {
 
 interface UserHistoryProps {
   userId: string,
+  itemCount?: number;
+  historyTab?: boolean;
 }
 
 const UserHistory: FunctionComponent<UserHistoryProps> = ({
   userId,
+  itemCount,
+  historyTab
 }) => {
   const { t_i18n } = useFormatter();
   const [entitySearchTerm, setEntitySearchTerm] = useState<string>('');
@@ -51,7 +55,7 @@ const UserHistory: FunctionComponent<UserHistoryProps> = ({
         { key: ['context_data.id'], values: [userId], operator: 'wildcard', mode: 'or' },
       ],
     } as GqlFilterGroup,
-    first: 10,
+    first: historyTab ? itemCount ?? 10: 10,
     orderBy: 'timestamp' as LogsOrdering,
     orderMode: 'desc' as OrderingMode,
     search: entitySearchTerm,

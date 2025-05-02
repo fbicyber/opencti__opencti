@@ -17,6 +17,7 @@ import UserAnalytics from './UserAnalytics';
 import { useFormatter } from '../../../../components/i18n';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import UserEdition from './UserEdition';
+import UserHistoryTab from './UserHistoryTab';
 
 const userEditionQuery = graphql`
   query RootUserEditionQuery($id: String!) {
@@ -139,6 +140,12 @@ const RootUserComponent = ({ queryRef, userId, refetch }) => {
                 value={`/dashboard/settings/accesses/users/${data.id}/analytics`}
                 label={t_i18n('Analytics')}
               />
+              <Tab
+                component={Link}
+                to={`/dashboard/settings/accesses/users/${data.id}/history`}
+                value={`/dashboard/settings/accesses/users/${data.id}/history`}
+                label={t_i18n('History')}
+              />
             </Tabs>
           </Box>
           <Routes>
@@ -152,6 +159,12 @@ const RootUserComponent = ({ queryRef, userId, refetch }) => {
               path="/analytics"
               element={ (
                 <UserAnalytics data={data} refetch={refetch} />
+              )}
+            />
+            <Route
+              path="/history"
+              element={ (
+                <UserHistoryTab userId={data.id} />
               )}
             />
           </Routes>
