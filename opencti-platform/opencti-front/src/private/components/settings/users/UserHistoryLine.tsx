@@ -70,7 +70,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const userHistoryLineFragment = graphql`
+export const userHistoryLineFragment = graphql`
   fragment UserHistoryLine_node on Log {
     id
     event_type

@@ -1,17 +1,10 @@
-import React, { useState, FunctionComponent, useEffect, ReactNode, useContext } from 'react';
-import { graphql, PreloadedQuery, usePreloadedQuery, useQueryLoader } from 'react-relay';
-import { UserHistoryLinesQuery, UserHistoryLinesQuery$variables } from '@components/settings/users/__generated__/UserHistoryLinesQuery.graphql';
-import userHistoryLinesFragment, { userHistoryLinesQuery } from './UserHistoryLines';
+import React from 'react';
 import { useFormatter } from '../../../../components/i18n';
-import useGranted, { SETTINGS_SECURITYACTIVITY, KNOWLEDGE } from '../../../../utils/hooks/useGranted';
-import { GqlFilterGroup } from '../../../../utils/filters/filtersUtils';
 import DataTable from '../../../../components/dataGrid/DataTable';
-import userHistoryLineFragment from './UserHistoryLine';
 import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
 import { UsersLinesPaginationQuery, UsersLinesPaginationQuery$variables } from '@components/settings/users/__generated__/UsersLinesPaginationQuery.graphql';
 import { usePaginationLocalStorage } from '../../../../utils/hooks/useLocalStorage';
 import { UsersLines_data$data } from '@components/settings/users/__generated__/UsersLines_data.graphql';
-import UsersLines, { usersLinesQuery } from './UsersLines';
 import { UsePreloadedPaginationFragment } from '../../../../utils/hooks/usePreloadedPaginationFragment';
 import Security from '../../../../utils/Security';
 import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
@@ -20,75 +13,21 @@ import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import { groupsQuery } from '../../common/form/GroupField';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import ExportContextProvider from '../../../../utils/ExportContextProvider';
+import { DataTableProps } from '../../../../components/dataGrid/dataTableTypes';
+import { userHistoryLinesFragment, userHistoryLinesQuery } from './UserHistoryLines';
+import { userHistoryLineFragment } from './UserHistoryLine';
 
 const LOCAL_STORAGE_KEY = 'userHistory';
 
-const createdByUserRedirectButton = {
-  float: 'left',
-  marginTop: '-15px',
-};
-
-interface UserHistoryTabProps {
-  userId: string;
-}
-
-const dataColumns = {
-  id: {
-    label: 'ID',
-    width: 150,
-    isSortable: true,
-  },
-  timestamp: {
-    label: 'Timestamp',
-    width: 200,
-    isSortable: true,
-    format: (value: string) => new Date(value).toLocaleString(),
-  },
-  event_type: {
-    label: 'Event Type',
-    width: 120,
-    isSortable: true,
-  },
-  event_scope: {
-    label: 'Action',
-    width: 120,
-    isSortable: true,
-  },
-  user_name: {
-    label: 'User',
-    width: 150,
-    isSortable: true,
-    format: (value: string, data: any) => data.user?.name || 'Unknown',
-  },
-  message: {
-    label: 'Description',
-    width: 300,
-    isSortable: false,
-    format: (value: string) => (
-      <div style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>{value || 'N/A'}</div>
-    ),
-  },
-  commit: {
-    label: 'Commit',
-    width: 200,
-    isSortable: false,
-    format: (value: string) => value || 'N/A',
-  },
-};
-
-const UserHistoryTab: FunctionComponent<UserHistoryTabProps> = ({ userId }) => {
+const UserHistoryTab = () => {
   const { t_i18n } = useFormatter();
-  const [entitySearchTerm, setEntitySearchTerm] = useState<string>('');
-  const isGrantedToAudit = useGranted([SETTINGS_SECURITYACTIVITY]);
-  const isGrantedToKnowledge = useGranted([KNOWLEDGE]);
 
   const initialValues = {
     filters: emptyFilterGroup,
     searchTerm: '',
-    sortBy: 'created_at',
+    sortBy: 'name',
     orderAsc: false,
     openExports: false,
-    types: ['User History'],
   };
 
   const { viewStorage: { filters }, paginationOptions, helpers: storageHelpers } = usePaginationLocalStorage<UsersLinesPaginationQuery$variables>(
@@ -96,50 +35,30 @@ const UserHistoryTab: FunctionComponent<UserHistoryTabProps> = ({ userId }) => {
     initialValues,
   );
 
-  const contextFilters = useBuildEntityTypeBasedFilterContext('User History', filters);
+  const contextFilters = useBuildEntityTypeBasedFilterContext('User-History', filters);
   const queryPaginationOptions = {
     ...paginationOptions,
     filters: contextFilters,
   } as unknown as UsersLinesPaginationQuery$variables;
 
-  const handleSearchEntity = (value: string) => {
-    setEntitySearchTerm(value);
+  const dataColumns: DataTableProps['dataColumns'] = {
+    id: {},
+    event_type: {},
+    event_scope: {},
+    timestamp: {},
+    context_data: {},
   };
 
-  const [queryRef, loadQuery] = useQueryLoader<UserHistoryLinesQuery>(userHistoryLinesQuery);
-
-  let historyTypes = ['History'];
-  if (isGrantedToAudit && !isGrantedToKnowledge) {
-    historyTypes = ['Activity'];
-  } else if (isGrantedToAudit && isGrantedToKnowledge) {
-    historyTypes = ['History', 'Activity'];
-  }
-
-  const queryArgs: UserHistoryLinesQuery$variables = {
-    types: historyTypes,
-    filters: {
-      mode: 'or',
-      filterGroups: [],
-      filters: [
-        { key: ['user_id'], values: [userId], operator: 'wildcard', mode: 'or' },
-        { key: ['context_data.id'], values: [userId], operator: 'wildcard', mode: 'or' },
-      ],
-    } as GqlFilterGroup,
-    first: 10,
-    orderBy: 'timestamp',
-    orderMode: 'desc',
-    search: entitySearchTerm,
-  };
-
-  useEffect(() => {
-    loadQuery(queryArgs, { fetchPolicy: 'store-and-network' });
-  }, [entitySearchTerm, loadQuery]);
+  const queryRef = useQueryLoading<UsersLinesPaginationQuery>(
+    userHistoryLinesQuery,
+    queryPaginationOptions,
+  );
 
   const preloadedPaginationOptions = {
-    linesQuery: usersLinesQuery,
+    linesQuery: userHistoryLinesQuery,
     linesFragment: userHistoryLinesFragment,
     queryRef,
-    nodePath: ['stixCyberObservables', 'pageInfo', 'globalCount'],
+    nodePath: ['audits'],
     setNumberOfElements: storageHelpers.handleSetNumberOfElements,
   } as UsePreloadedPaginationFragment<UsersLinesPaginationQuery>;
 
@@ -170,7 +89,7 @@ const UserHistoryTab: FunctionComponent<UserHistoryTabProps> = ({ userId }) => {
             toolbarFilters={contextFilters}
             lineFragment={userHistoryLineFragment}
             preloadedPaginationProps={preloadedPaginationOptions}
-            exportContext={{ entity_type: 'Artifact' }}
+            exportContext={{ entity_type: 'User-History' }}
             createButton={(
               <Security needs={[KNOWLEDGE_KNUPDATE]}>
                 <UserCreation
