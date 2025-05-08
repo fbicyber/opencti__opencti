@@ -1,16 +1,12 @@
 import React from 'react';
+import { UsersLinesPaginationQuery, UsersLinesPaginationQuery$variables } from '@components/settings/users/__generated__/UsersLinesPaginationQuery.graphql';
+import { UsersLines_data$data } from '@components/settings/users/__generated__/UsersLines_data.graphql';
 import { useFormatter } from '../../../../components/i18n';
 import DataTable from '../../../../components/dataGrid/DataTable';
 import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
-import { UsersLinesPaginationQuery, UsersLinesPaginationQuery$variables } from '@components/settings/users/__generated__/UsersLinesPaginationQuery.graphql';
 import { usePaginationLocalStorage } from '../../../../utils/hooks/useLocalStorage';
-import { UsersLines_data$data } from '@components/settings/users/__generated__/UsersLines_data.graphql';
 import { UsePreloadedPaginationFragment } from '../../../../utils/hooks/usePreloadedPaginationFragment';
-import Security from '../../../../utils/Security';
-import { KNOWLEDGE_KNUPDATE } from '../../../../utils/hooks/useGranted';
-import UserCreation from './UserCreation';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
-import { groupsQuery } from '../../common/form/GroupField';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import ExportContextProvider from '../../../../utils/ExportContextProvider';
 import { DataTableProps } from '../../../../components/dataGrid/dataTableTypes';
@@ -42,11 +38,10 @@ const UserHistoryTab = () => {
   } as unknown as UsersLinesPaginationQuery$variables;
 
   const dataColumns: DataTableProps['dataColumns'] = {
-    id: {},
-    event_type: {},
-    event_scope: {},
-    timestamp: {},
-    context_data: {},
+    event_type: { percentWidth: 25 },
+    event_scope: { percentWidth: 25 },
+    timestamp: { percentWidth: 25 },
+    context_data: { percentWidth: 25 },
   };
 
   const queryRef = useQueryLoading<UsersLinesPaginationQuery>(
@@ -58,23 +53,9 @@ const UserHistoryTab = () => {
     linesQuery: userHistoryLinesQuery,
     linesFragment: userHistoryLinesFragment,
     queryRef,
-    nodePath: ['audits'],
+    nodePath: ['audits', 'pageInfo', 'globalCount'],
     setNumberOfElements: storageHelpers.handleSetNumberOfElements,
   } as UsePreloadedPaginationFragment<UsersLinesPaginationQuery>;
-
-  const defaultAssignationFilter = {
-    mode: 'and',
-    filters: [{ key: 'default_assignation', values: [true] }],
-    filterGroups: [],
-  };
-  const defaultGroupsQueryRef = useQueryLoading(
-    groupsQuery,
-    {
-      orderBy: 'name',
-      orderMode: 'asc',
-      filters: defaultAssignationFilter,
-    },
-  );
 
   return (
     <div data-testid="user-history-page">
@@ -90,14 +71,6 @@ const UserHistoryTab = () => {
             lineFragment={userHistoryLineFragment}
             preloadedPaginationProps={preloadedPaginationOptions}
             exportContext={{ entity_type: 'User-History' }}
-            createButton={(
-              <Security needs={[KNOWLEDGE_KNUPDATE]}>
-                <UserCreation
-                  paginationOptions={queryPaginationOptions}
-                  defaultGroupsQueryRef={defaultGroupsQueryRef}
-                />
-              </Security>
-            )}
           />
         )}
       </ExportContextProvider>
