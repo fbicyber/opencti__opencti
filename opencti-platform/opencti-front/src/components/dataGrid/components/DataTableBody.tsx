@@ -45,12 +45,21 @@ const DataTableBody = ({
     if (!queryData) {
       return [];
     }
-    return resolvePath(queryData).slice(pageStart, pageStart + pageSize);
+    try {
+      return resolvePath(queryData).slice(pageStart, pageStart + pageSize);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }, [queryData, pageStart, pageSize]);
 
   useEffect(() => {
-    if (resolvePath(queryData).length < pageStart + pageSize && hasMore?.()) {
-      loadMore?.(pageSize);
+    try {
+      if (resolvePath(queryData).length < pageStart + pageSize && hasMore?.()) {
+        loadMore?.(pageSize);
+      }
+    } catch (err) {
+      console.error(err);
     }
   }, [resolvedData]);
 

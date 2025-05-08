@@ -1306,6 +1306,31 @@ const defaultColumns: DataTableProps['dataColumns'] = {
     isSortable: true,
     render: ({ x_opencti_score }) => <ItemScore score={x_opencti_score} />,
   },
+  // TODO: @daimyo007 modify the below renders to match what you need
+  event_type: {
+    id: 'event_type',
+    label: 'Event Type',
+    percentWidth: 10,
+    render: ({ event_type }) => <strong>{event_type}</strong>,
+  },
+  event_scope: {
+    id: 'event_scope',
+    label: 'Event Scope',
+    percentWidth: 10,
+    render: ({ event_scope }) => <strong>{event_scope}</strong>,
+  },
+  timestamp: {
+    id: 'timestamp',
+    label: 'Timestamp',
+    percentWidth: 10,
+    render: ({ timestamp }) => <strong>{timestamp}</strong>,
+  },
+  context_data: {
+    id: 'context_data',
+    label: 'Context Data',
+    percentWidth: 10,
+    render: ({ context_data }) => <strong>{context_data}</strong>,
+  },
 };
 
 export const defaultColumnsMap = new Map<string, Partial<DataTableColumn>>(Object.entries(defaultColumns));

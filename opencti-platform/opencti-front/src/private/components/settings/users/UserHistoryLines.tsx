@@ -63,6 +63,11 @@ export const userHistoryLinesFragment = graphql`
             ...UserHistoryLine_node
           }
         }
+        pageInfo {
+          endCursor
+          hasNextPage
+          globalCount
+        }
       }
     }
   `;
