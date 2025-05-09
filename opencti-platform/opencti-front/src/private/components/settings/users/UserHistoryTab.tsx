@@ -31,11 +31,11 @@ const UserHistoryTab = () => {
     initialValues,
   );
 
-  const contextFilters = useBuildEntityTypeBasedFilterContext('User-History', filters);
-  const queryPaginationOptions = {
-    ...paginationOptions,
-    filters: contextFilters,
-  } as unknown as UsersLinesPaginationQuery$variables;
+  // const contextFilters = useBuildEntityTypeBasedFilterContext('User-History', filters);
+  // const queryPaginationOptions = {
+  //   ...paginationOptions,
+  //   filters: contextFilters,
+  // } as unknown as UsersLinesPaginationQuery$variables;
 
   const dataColumns: DataTableProps['dataColumns'] = {
     event_type: { percentWidth: 25 },
@@ -45,8 +45,7 @@ const UserHistoryTab = () => {
   };
 
   const queryRef = useQueryLoading<UsersLinesPaginationQuery>(
-    userHistoryLinesQuery,
-    queryPaginationOptions,
+    userHistoryLinesQuery
   );
 
   const preloadedPaginationOptions = {
@@ -67,10 +66,8 @@ const UserHistoryTab = () => {
             resolvePath={(data: UsersLines_data$data) => data.users?.edges?.map((n) => n?.node)}
             storageKey={LOCAL_STORAGE_KEY}
             initialValues={initialValues}
-            toolbarFilters={contextFilters}
             lineFragment={userHistoryLineFragment}
             preloadedPaginationProps={preloadedPaginationOptions}
-            exportContext={{ entity_type: 'User-History' }}
           />
         )}
       </ExportContextProvider>
