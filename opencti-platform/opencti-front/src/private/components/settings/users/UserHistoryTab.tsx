@@ -3,7 +3,7 @@ import { UsersLinesPaginationQuery, UsersLinesPaginationQuery$variables } from '
 import { UsersLines_data$data } from '@components/settings/users/__generated__/UsersLines_data.graphql';
 import { useFormatter } from '../../../../components/i18n';
 import DataTable from '../../../../components/dataGrid/DataTable';
-import { emptyFilterGroup, useBuildEntityTypeBasedFilterContext } from '../../../../utils/filters/filtersUtils';
+import { emptyFilterGroup } from '../../../../utils/filters/filtersUtils';
 import { usePaginationLocalStorage } from '../../../../utils/hooks/useLocalStorage';
 import { UsePreloadedPaginationFragment } from '../../../../utils/hooks/usePreloadedPaginationFragment';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
@@ -26,16 +26,10 @@ const UserHistoryTab = () => {
     openExports: false,
   };
 
-  const { viewStorage: { filters }, paginationOptions, helpers: storageHelpers } = usePaginationLocalStorage<UsersLinesPaginationQuery$variables>(
+  const { helpers: storageHelpers } = usePaginationLocalStorage<UsersLinesPaginationQuery$variables>(
     LOCAL_STORAGE_KEY,
     initialValues,
   );
-
-  // const contextFilters = useBuildEntityTypeBasedFilterContext('User-History', filters);
-  // const queryPaginationOptions = {
-  //   ...paginationOptions,
-  //   filters: contextFilters,
-  // } as unknown as UsersLinesPaginationQuery$variables;
 
   const dataColumns: DataTableProps['dataColumns'] = {
     event_type: { percentWidth: 25 },
@@ -45,7 +39,7 @@ const UserHistoryTab = () => {
   };
 
   const queryRef = useQueryLoading<UsersLinesPaginationQuery>(
-    userHistoryLinesQuery
+    userHistoryLinesQuery,
   );
 
   const preloadedPaginationOptions = {
