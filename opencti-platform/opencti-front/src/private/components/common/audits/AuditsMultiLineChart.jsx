@@ -115,6 +115,7 @@ const AuditsMultiLineChart = ({
                   })),
                 }))}
                 interval={parameters.interval}
+                isUniqueUsers={parameters.uniqueUsers}
                 hasLegend={parameters.legend}
                 withExport={withExportPopover}
                 readonly={isReadOnly}

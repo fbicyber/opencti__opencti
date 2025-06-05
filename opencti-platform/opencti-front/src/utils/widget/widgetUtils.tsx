@@ -82,7 +82,7 @@ const widgetVisualizationTypes = [
     name: 'Line',
     dataSelectionLimit: 5,
     category: 'timeseries',
-    availableParameters: ['legend'],
+    availableParameters: ['legend', 'uniqueUsers'],
     isRelationships: true,
     isEntities: true,
     isAudits: true,

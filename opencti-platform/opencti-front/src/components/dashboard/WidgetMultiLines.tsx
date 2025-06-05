@@ -13,11 +13,13 @@ interface WidgetMultiLinesProps {
   hasLegend?: boolean
   withExport?: boolean
   readonly?: boolean
+  isUniqueUsers?: boolean
 }
 
 const WidgetMultiLines = ({
   series,
   interval,
+  isUniqueUsers = false,
   hasLegend = false,
   withExport = false,
   readonly = false,
@@ -41,6 +43,7 @@ const WidgetMultiLines = ({
       simpleNumberFormat,
       interval && !['day', 'week'].includes(interval) ? 'dataPoints' : undefined,
       false,
+      isUniqueUsers,
       hasLegend,
     ) as ApexOptions;
   }, [interval]);

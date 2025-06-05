@@ -784,6 +784,17 @@ const WidgetCreationParameters = () => {
             label={t_i18n('Display legend')}
           />
         )}
+        {getCurrentAvailableParameters(type).includes('uniqueUsers') && (
+          <FormControlLabel
+            control={
+              <Switch
+                onChange={() => handleToggleParameter('uniqueUsers')}
+                checked={parameters.uniqueUsers ?? undefined}
+              />
+            }
+            label={t_i18n('Unique Users')}
+          />
+        )}
         {getCurrentCategory(type) === 'list' && context !== 'fintelTemplate'
           && dataSelection.map(({ perspective, columns, filters }, index) => {
             if (perspective === 'relationships' || perspective === 'entities') {

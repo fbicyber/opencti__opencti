@@ -63,6 +63,7 @@ const simpleLabelTooltip = (theme) => ({ seriesIndex, w }) => (`
  * @param {number | 'dataPoints'} tickAmount
  * @param {boolean} dataLabels
  * @param {boolean} legend
+ * @param {boolean} uniqueUsers
  */
 export const lineChartOptions = (
   theme,
@@ -72,6 +73,7 @@ export const lineChartOptions = (
   tickAmount = undefined,
   dataLabels = false,
   legend = true,
+  uniqueUsers = true,
 ) => ({
   chart: {
     type: 'line',
@@ -108,6 +110,13 @@ export const lineChartOptions = (
   },
   legend: {
     show: legend,
+    itemMargin: {
+      horizontal: 5,
+      vertical: 20,
+    },
+  },
+  uniqueUsers: {
+    show: uniqueUsers,
     itemMargin: {
       horizontal: 5,
       vertical: 20,

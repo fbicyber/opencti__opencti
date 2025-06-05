@@ -37,6 +37,7 @@ interface WidgetParameters {
   legend?: boolean | null
   distributed?: boolean | null
   content?: string | null
+  uniqueUsers?: boolean | null
 }
 
 interface WidgetLayout {
