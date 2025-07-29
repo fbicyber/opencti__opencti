@@ -102,6 +102,7 @@ type ThreatActorIndividual implements BasicObject & StixObject & StixCoreObject 
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]
@@ -110,7 +111,6 @@ type ThreatActorIndividual implements BasicObject & StixObject & StixCoreObject 
   name: String!
   description: String
   aliases: [String]
-  x_opencti_display_name: String
   threat_actor_types: [String]
   first_seen: DateTime
   last_seen: DateTime

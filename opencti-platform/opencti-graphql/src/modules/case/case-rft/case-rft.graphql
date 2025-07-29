@@ -92,6 +92,7 @@ type CaseRft implements BasicObject & StixObject & StixCoreObject & StixDomainOb
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]

@@ -6,7 +6,7 @@ import { FormikConfig } from 'formik/dist/types';
 import { useTheme } from '@mui/styles';
 import { MenuItem, Stack } from '@mui/material';
 import TextField from '../../../../components/TextField';
-import SelectField from '../../../..//components/fields/SelectField.jsx'
+import SelectField from '../../../../components/fields/SelectField.jsx';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -292,15 +292,16 @@ ThreatActorIndividualEditionOverviewProps
             helperText={
               <SubscriptionFocus context={context} fieldName="x_opencti_display_name" />
             }
+            disabled={!threatActorIndividual.aliases?.length}
             multiple={false}
-            style={{width: "100%"}}
+            style={{ width: '100%' }}
           >
-            {threatActorIndividual.aliases?.map(alias => {
+            {threatActorIndividual.aliases?.map((alias) => {
               return (
-              <MenuItem key={alias}>
-                {alias}
-              </MenuItem>
-              )
+                <MenuItem key={alias} value={alias}>
+                  {alias}
+                </MenuItem>
+              );
             })}
           </Field>
           <OpenVocabField

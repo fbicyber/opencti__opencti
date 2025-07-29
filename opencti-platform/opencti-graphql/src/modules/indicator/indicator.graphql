@@ -151,6 +151,7 @@ type Indicator implements BasicObject & StixObject & StixCoreObject & StixDomain
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]
