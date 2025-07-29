@@ -11,6 +11,7 @@ export const ThreatActorIndividualCardFragment = graphql`
       draft_operation
     }
     name
+    x_opencti_display_name
     aliases
     description
     created

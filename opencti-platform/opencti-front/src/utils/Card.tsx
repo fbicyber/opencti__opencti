@@ -8,7 +8,9 @@ export interface toEdgesLocated {
   edges: ReadonlyArray<{ node: { to: { x_opencti_aliases?: ReadonlyArray<string | null> | null; name?: string } | null } }>;
 }
 
-export const renderCardTitle = (entity: { countryFlag?: toEdgesLocated | null | undefined; name: string; draftVersion?: DraftVersion | null }) => {
+export const renderCardTitle = (
+  entity: { countryFlag?: toEdgesLocated | null | undefined; name: string; draftVersion?: DraftVersion | null, x_opencti_display_name?: string | null | undefined },
+) => {
   if ((entity.countryFlag?.edges ?? []).length > 0) {
     const country = entity.countryFlag?.edges[0]?.node?.to;
     const flag = country?.x_opencti_aliases
@@ -26,7 +28,7 @@ export const renderCardTitle = (entity: { countryFlag?: toEdgesLocated | null | 
             </Tooltip>
           </div>
           <div style={{ marginLeft: 10 }}>
-            {entity.name}
+            {entity.x_opencti_display_name ? entity.x_opencti_display_name : entity.name}
           </div>
           {entity.draftVersion && (
             <DraftChip style={{ marginLeft: 10 }} />
@@ -38,7 +40,7 @@ export const renderCardTitle = (entity: { countryFlag?: toEdgesLocated | null | 
   return (
     <div style={{ display: 'inline-flex' }}>
       <div>
-        {entity.name}
+        {entity.x_opencti_display_name ? entity.x_opencti_display_name : entity.name}
       </div>
       {entity.draftVersion && (
         <DraftChip style={{ marginLeft: 10 }} />

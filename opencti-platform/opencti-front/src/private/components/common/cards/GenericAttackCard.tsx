@@ -106,6 +106,7 @@ export interface GenericAttack {
   id: string;
   draftVersion: DraftVersion | null;
   name: string;
+  x_opencti_display_name?: string | null;
   description: string | null;
   modified: string;
   aliases: ReadonlyArray<string | null> | null;

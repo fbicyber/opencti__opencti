@@ -5527,6 +5527,7 @@ type IntrusionSet implements BasicObject & StixObject & StixCoreObject & StixDom
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]
@@ -6802,6 +6803,7 @@ interface ThreatActor implements BasicObject & StixObject & StixCoreObject & Sti
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]
@@ -6954,6 +6956,7 @@ type ThreatActorGroup implements BasicObject & StixObject & StixCoreObject & Sti
   lang: String
   created: DateTime
   modified: DateTime
+  x_opencti_display_name: String
   x_opencti_graph_data: String
   objectAssignee: [Assignee!]
   objectParticipant: [Participant!]

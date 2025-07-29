@@ -11,6 +11,7 @@ export const IntrusionSetCardFragment = graphql`
       draft_operation
     }
     name
+    x_opencti_display_name
     aliases
     entity_type
     description

@@ -11738,6 +11738,7 @@ export type IntrusionSet = BasicObject & StixCoreObject & StixDomainObject & Sti
   toStix?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['DateTime']['output'];
   workflowEnabled?: Maybe<Scalars['Boolean']['output']>;
+  x_opencti_display_name?: Maybe<Scalars['String']['output']>;
   x_opencti_graph_data?: Maybe<Scalars['String']['output']>;
   x_opencti_inferences?: Maybe<Array<Maybe<Inference>>>;
   x_opencti_stix_ids?: Maybe<Array<Maybe<Scalars['StixId']['output']>>>;
@@ -29219,6 +29220,7 @@ export type ThreatActor = {
   toStix?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['DateTime']['output'];
   workflowEnabled?: Maybe<Scalars['Boolean']['output']>;
+  x_opencti_display_name?: Maybe<Scalars['String']['output']>;
   x_opencti_graph_data?: Maybe<Scalars['String']['output']>;
   x_opencti_inferences?: Maybe<Array<Maybe<Inference>>>;
   x_opencti_stix_ids?: Maybe<Array<Maybe<Scalars['StixId']['output']>>>;
@@ -29439,6 +29441,7 @@ export type ThreatActorGroup = BasicObject & StixCoreObject & StixDomainObject &
   toStix?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['DateTime']['output'];
   workflowEnabled?: Maybe<Scalars['Boolean']['output']>;
+  x_opencti_display_name?: Maybe<Scalars['String']['output']>;
   x_opencti_graph_data?: Maybe<Scalars['String']['output']>;
   x_opencti_inferences?: Maybe<Array<Maybe<Inference>>>;
   x_opencti_stix_ids?: Maybe<Array<Maybe<Scalars['StixId']['output']>>>;
@@ -29735,6 +29738,7 @@ export type ThreatActorIndividual = BasicObject & StixCoreObject & StixDomainObj
   updated_at: Scalars['DateTime']['output'];
   weight?: Maybe<Array<Measure>>;
   workflowEnabled?: Maybe<Scalars['Boolean']['output']>;
+  x_opencti_display_name?: Maybe<Scalars['String']['output']>;
   x_opencti_graph_data?: Maybe<Scalars['String']['output']>;
   x_opencti_inferences?: Maybe<Array<Maybe<Inference>>>;
   x_opencti_stix_ids?: Maybe<Array<Maybe<Scalars['StixId']['output']>>>;
@@ -29919,6 +29923,7 @@ export type ThreatActorIndividualAddInput = {
   threat_actor_types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   update?: InputMaybe<Scalars['Boolean']['input']>;
   weight?: InputMaybe<Array<MeasureInput>>;
+  x_opecnti_display_name?: InputMaybe<Scalars['String']['input']>;
   x_opencti_stix_ids?: InputMaybe<Array<InputMaybe<Scalars['StixId']['input']>>>;
   x_opencti_workflow_id?: InputMaybe<Scalars['String']['input']>;
 };
@@ -38816,6 +38821,7 @@ export type IntrusionSetResolvers<ContextType = any, ParentType extends Resolver
   toStix?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   workflowEnabled?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  x_opencti_display_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_graph_data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_inferences?: Resolver<Maybe<Array<Maybe<ResolversTypes['Inference']>>>, ParentType, ContextType>;
   x_opencti_stix_ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['StixId']>>>, ParentType, ContextType>;
@@ -43780,6 +43786,7 @@ export type ThreatActorResolvers<ContextType = any, ParentType extends Resolvers
   toStix?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   workflowEnabled?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  x_opencti_display_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_graph_data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_inferences?: Resolver<Maybe<Array<Maybe<ResolversTypes['Inference']>>>, ParentType, ContextType>;
   x_opencti_stix_ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['StixId']>>>, ParentType, ContextType>;
@@ -43859,6 +43866,7 @@ export type ThreatActorGroupResolvers<ContextType = any, ParentType extends Reso
   toStix?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   workflowEnabled?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  x_opencti_display_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_graph_data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_inferences?: Resolver<Maybe<Array<Maybe<ResolversTypes['Inference']>>>, ParentType, ContextType>;
   x_opencti_stix_ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['StixId']>>>, ParentType, ContextType>;
@@ -43959,6 +43967,7 @@ export type ThreatActorIndividualResolvers<ContextType = any, ParentType extends
   updated_at?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   weight?: Resolver<Maybe<Array<ResolversTypes['Measure']>>, ParentType, ContextType>;
   workflowEnabled?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  x_opencti_display_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_graph_data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   x_opencti_inferences?: Resolver<Maybe<Array<Maybe<ResolversTypes['Inference']>>>, ParentType, ContextType>;
   x_opencti_stix_ids?: Resolver<Maybe<Array<Maybe<ResolversTypes['StixId']>>>, ParentType, ContextType>;

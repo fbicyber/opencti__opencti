@@ -57,6 +57,7 @@ export const ThreatActorsIndividualCardsFragment = graphql`
         node {
           id
           name
+          x_opencti_display_name
           description
           ...ThreatActorIndividualCard_node
         }

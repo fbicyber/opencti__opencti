@@ -4,7 +4,9 @@ import { createFragmentContainer, graphql } from 'react-relay';
 import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useTheme } from '@mui/styles';
+import { MenuItem } from '@mui/material';
 import TextField from '../../../../components/TextField';
+import SelectField from '../../../../components/fields/SelectField';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -93,6 +95,7 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
   const { mandatoryAttributes } = useIsMandatoryAttribute(THREAT_ACTOR_GROUP_TYPE);
   const basicShape = yupShapeConditionalRequired({
     name: Yup.string().trim().min(2),
+    x_opencti_display_name: Yup.string().trim().nullable(),
     threat_actor_types: Yup.array().nullable(),
     confidence: Yup.number().nullable(),
     description: Yup.string().nullable(),
@@ -162,6 +165,8 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
         .catch(() => false);
     }
   };
+  const possible_display_names = (threatActorGroup.aliases ?? []).concat([threatActorGroup.name]);
+
   const initialValues = R.pipe(
     R.assoc('createdBy', convertCreatedBy(threatActorGroup)),
     R.assoc('killChainPhases', convertKillChainPhases(threatActorGroup)),
@@ -176,6 +181,7 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
     ),
     R.pick([
       'name',
+      'x_opencti_display_name',
       'references',
       'threat_actor_types',
       'confidence',
@@ -218,6 +224,27 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
               <SubscriptionFocus context={context} fieldName="name" />
             }
           />
+          <Field
+            component={SelectField}
+            name="x_opencti_display_name"
+            label={t_i18n('Display Name')}
+            required={mandatoryAttributes.includes('x_opencti_display_name')}
+            fullWidth
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            helperText={
+              <SubscriptionFocus context={context} fieldName="x_opencti_display_name" />
+            }
+            disabled={!possible_display_names.length}
+            multiple={false}
+            containerstyle={{ width: '100%' }}
+          >
+            {possible_display_names?.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
+          </Field>
           <OpenVocabField
             variant="edit"
             type="threat-actor-group-type-ov"
@@ -314,6 +341,8 @@ export default createFragmentContainer(
       fragment ThreatActorGroupEditionOverview_ThreatActorGroup on ThreatActorGroup {
         id
         name
+        x_opencti_display_name
+        aliases
         threat_actor_types
         confidence
         entity_type

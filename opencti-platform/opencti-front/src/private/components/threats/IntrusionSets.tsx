@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import { GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
+import { GenericAttack, GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip from '@mui/material/Tooltip';
 import { ViewListOutlined, ViewModuleOutlined } from '@mui/icons-material';
@@ -131,6 +131,12 @@ const IntrusionSets = () => {
     const dataColumns = {
       name: {
         percentWidth: 15,
+        render: (data: GenericAttack) => {
+          const display_name = data.x_opencti_display_name ? data.x_opencti_display_name : data.name;
+          return (
+            <div>{display_name}</div>
+          );
+        },
       },
       resource_level: {},
       primary_motivation: {},

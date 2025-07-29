@@ -4,7 +4,9 @@ import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { FormikConfig } from 'formik/dist/types';
 import { useTheme } from '@mui/styles';
+import { MenuItem } from '@mui/material';
 import TextField from '../../../../components/TextField';
+import SelectField from '../../../../components/fields/SelectField';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -87,6 +89,8 @@ const threatActorIndividualEditionOverviewFragment = graphql`
   fragment ThreatActorIndividualEditionOverview_ThreatActorIndividual on ThreatActorIndividual {
     id
     name
+    x_opencti_display_name
+    aliases
     threat_actor_types
     confidence
     entity_type
@@ -151,6 +155,7 @@ ThreatActorIndividualEditionOverviewProps
   const { mandatoryAttributes } = useIsMandatoryAttribute(THREAT_ACTOR_INDIVIDUAL_TYPE);
   const basicShape = yupShapeConditionalRequired({
     name: Yup.string().trim().min(2).required(t_i18n('This field is required')),
+    x_opencti_display_name: Yup.string().trim().nullable(),
     threat_actor_types: Yup.array().nullable(),
     confidence: Yup.number().nullable(),
     description: Yup.string().nullable(),
@@ -230,8 +235,11 @@ ThreatActorIndividualEditionOverviewProps
     }
   };
 
+  const possible_display_names = [threatActorIndividual.name].concat((threatActorIndividual.aliases ?? []).filter((alias) => (typeof alias === 'string')) as string[]);
+
   const initialValues = {
     name: threatActorIndividual.name,
+    x_opencti_display_name: threatActorIndividual.x_opencti_display_name,
     description: threatActorIndividual.description,
     createdBy: convertCreatedBy(threatActorIndividual) as FieldOption,
     objectMarking: convertMarkings(threatActorIndividual),
@@ -273,6 +281,27 @@ ThreatActorIndividualEditionOverviewProps
               <SubscriptionFocus context={context} fieldName="name" />
             }
           />
+          <Field
+            component={SelectField}
+            name="x_opencti_display_name"
+            label={t_i18n('Display Name')}
+            required={(mandatoryAttributes.includes('x_opencti_display_name'))}
+            fullWidth
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            helperText={
+              <SubscriptionFocus context={context} fieldName="x_opencti_display_name" />
+            }
+            disabled={!possible_display_names?.length}
+            multiple={false}
+            containerstyle={{ width: '100%' }}
+          >
+            {possible_display_names?.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
+          </Field>
           <OpenVocabField
             variant="edit"
             type="threat-actor-individual-type-ov"
