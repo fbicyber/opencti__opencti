@@ -11681,6 +11681,7 @@ type ThreatActorIndividual implements BasicObject & StixObject & StixCoreObject 
   name: String!
   description: String
   aliases: [String]
+  x_opencti_display_name: String
   threat_actor_types: [String]
   first_seen: DateTime
   last_seen: DateTime

@@ -5519,6 +5519,7 @@ type IntrusionSet implements BasicObject & StixObject & StixCoreObject & StixDom
   name: String!
   description: String
   aliases: [String]
+  x_opencti_display_name: String
   first_seen: DateTime
   last_seen: DateTime
   goals: [String]
@@ -6794,6 +6795,7 @@ interface ThreatActor implements BasicObject & StixObject & StixCoreObject & Sti
   name: String!
   description: String
   aliases: [String]
+  x_opencti_display_name: String
   threat_actor_types: [String]
   first_seen: DateTime
   last_seen: DateTime
@@ -6946,6 +6948,7 @@ type ThreatActorGroup implements BasicObject & StixObject & StixCoreObject & Sti
   name: String!
   description: String
   aliases: [String]
+  x_opencti_display_name: String
   threat_actor_types: [String]
   first_seen: DateTime
   last_seen: DateTime
