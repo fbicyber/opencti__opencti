@@ -156,7 +156,7 @@ ThreatActorIndividualEditionOverviewProps
   const { mandatoryAttributes } = useIsMandatoryAttribute(THREAT_ACTOR_INDIVIDUAL_TYPE);
   const basicShape = yupShapeConditionalRequired({
     name: Yup.string().trim().min(2).required(t_i18n('This field is required')),
-    x_opencti_display_name: Yup.string().trim(),
+    x_opencti_display_name: Yup.string().trim().nullable(),
     threat_actor_types: Yup.array().nullable(),
     confidence: Yup.number().nullable(),
     description: Yup.string().nullable(),
@@ -213,7 +213,6 @@ ThreatActorIndividualEditionOverviewProps
     name: string,
     value: string | string[] | number | number[] | null,
   ) => {
-    console.log(name, value, typeof value);
     if (!enableReferences) {
       let finalValue = value;
       if (name === 'x_opencti_workflow_id') {
@@ -236,6 +235,8 @@ ThreatActorIndividualEditionOverviewProps
         .catch(() => false);
     }
   };
+
+  const possible_display_names = (threatActorIndividual.aliases ?? []).concat([threatActorIndividual.name])
 
   const initialValues = {
     name: threatActorIndividual.name,
@@ -286,20 +287,21 @@ ThreatActorIndividualEditionOverviewProps
             name="x_opencti_display_name"
             label={t_i18n('Display Name')}
             required={(mandatoryAttributes.includes('x_opencti_display_name'))}
-            fullWidth={true}
+            fullWidth
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
             helperText={
               <SubscriptionFocus context={context} fieldName="x_opencti_display_name" />
             }
-            disabled={!threatActorIndividual.aliases?.length}
+            disabled={!possible_display_names?.length}
             multiple={false}
             style={{ width: '100%' }}
+            sx={{  width: '100%' }}
           >
-            {threatActorIndividual.aliases?.map((alias) => {
+            {possible_display_names?.map((name) => {
               return (
-                <MenuItem key={alias} value={alias}>
-                  {alias}
+                <MenuItem key={name} value={name}>
+                  {name}
                 </MenuItem>
               );
             })}

@@ -4,9 +4,10 @@ import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import * as R from 'ramda';
 import { useTheme } from '@mui/styles';
-import { Stack } from '@mui/material';
+import { MenuItem, Stack } from '@mui/material';
 import { useFormatter } from '../../../../components/i18n';
 import TextField from '../../../../components/TextField';
+import SelectField from '../../../../components/fields/SelectField.jsx';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -96,6 +97,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
   );
   const basicShape = yupShapeConditionalRequired({
     name: Yup.string().trim().min(2),
+    x_opencti_display_name: Yup.string().trim().nullable(),
     confidence: Yup.number().nullable(),
     description: Yup.string().nullable(),
     references: Yup.array(),
@@ -170,6 +172,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
         .catch(() => false);
     }
   };
+  const possible_display_names = (intrusionSet.aliases ?? []).concat([intrusionSet.name]);
 
   const initialValues = R.pipe(
     R.assoc('createdBy', convertCreatedBy(intrusionSet)),
@@ -178,6 +181,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
     R.assoc('references', []),
     R.pick([
       'name',
+      'x_opencti_display_name',
       'references',
       'confidence',
       'description',
@@ -218,6 +222,28 @@ const IntrusionSetEditionOverviewComponent = (props) => {
               <SubscriptionFocus context={context} fieldName="name" />
             }
           />
+          <Field
+            component={SelectField}
+            name="x_opencti_display_name"
+            label={t_i18n('Display Name')}
+            required={(mandatoryAttributes.includes('x_opencti_display_name'))}
+            fullWidth={true}
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            helperText={
+              <SubscriptionFocus context={context} fieldName="x_opencti_display_name" />
+            }
+            disabled={!possible_display_names.length}
+            multiple={false}
+            style={{width: '100%'}}
+          >
+            {possible_display_names?.map((name) => (
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+              )
+            )}
+          </Field>
           <ConfidenceField
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
@@ -304,6 +330,8 @@ export default createFragmentContainer(IntrusionSetEditionOverviewComponent, {
     fragment IntrusionSetEditionOverview_intrusionSet on IntrusionSet {
       id
       name
+      x_opencti_display_name
+      aliases
       confidence
       entity_type
       description

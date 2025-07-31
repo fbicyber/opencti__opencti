@@ -91,8 +91,7 @@ type AdministrativeArea implements BasicObject & StixCoreObject & StixDomainObje
     lang: String
     created: DateTime
     modified: DateTime
-    x_opencti_display_name: String
-  x_opencti_graph_data: String
+    x_opencti_graph_data: String
     objectAssignee: [Assignee!]
     objectParticipant: [Participant!]
     avatar: OpenCtiFile
