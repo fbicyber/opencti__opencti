@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
-import { GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
+import { GenericAttack, GenericAttackCardDummy } from '@components/common/cards/GenericAttackCard';
 import {
   ThreatActorsGroupCardsPaginationQuery,
   ThreatActorsGroupCardsPaginationQuery$variables,
@@ -133,7 +133,7 @@ const ThreatActorsGroup = () => {
     const dataColumns = {
       name: {
         percentWidth: 15,
-        render: (data: any) => {
+        render: (data: GenericAttack) => {
           const display_name = data.x_opencti_display_name ? data.x_opencti_display_name : data.name;
           return (
             <div>{display_name}</div>

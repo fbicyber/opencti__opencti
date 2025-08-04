@@ -10,7 +10,7 @@ import ListCards from '../../../components/list_cards/ListCards';
 import useQueryLoading from '../../../utils/hooks/useQueryLoading';
 import { KNOWLEDGE_KNUPDATE } from '../../../utils/hooks/useGranted';
 import Security from '../../../utils/Security';
-import { GenericAttackCardDummy } from '../common/cards/GenericAttackCard';
+import { GenericAttack, GenericAttackCardDummy } from '../common/cards/GenericAttackCard';
 import ThreatActorsIndividualCards, {
   ThreatActorsIndividualCardsFragment,
   threatActorsIndividualCardsPaginationQuery,
@@ -136,7 +136,7 @@ const ThreatActorsIndividual = () => {
     const dataColumns = {
       name: {
         percentWidth: 15,
-        render: (data: any) => {
+        render: (data: GenericAttack) => {
           const display_name = data.x_opencti_display_name ? data.x_opencti_display_name : data.name;
           return (
             <div>{display_name}</div>

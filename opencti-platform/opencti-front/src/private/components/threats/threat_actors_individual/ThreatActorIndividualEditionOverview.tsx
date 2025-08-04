@@ -236,7 +236,7 @@ ThreatActorIndividualEditionOverviewProps
     }
   };
 
-  const possible_display_names = (threatActorIndividual.aliases ?? []).concat([threatActorIndividual.name]);
+  const possible_display_names = [threatActorIndividual.name].concat((threatActorIndividual.aliases ?? []).filter((alias) => (typeof alias === 'string')) as string[]);
 
   const initialValues = {
     name: threatActorIndividual.name,
@@ -297,11 +297,11 @@ ThreatActorIndividualEditionOverviewProps
             multiple={false}
             containerstyle={{ width: '100%' }}
           >
-            {possible_display_names?.map((name) => {
+            {possible_display_names?.map((name) => (
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>
-            })}
+            ))}
           </Field>
           <OpenVocabField
             variant="edit"
