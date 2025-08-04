@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useTheme } from '@mui/styles';
 import { MenuItem, Stack } from '@mui/material';
 import TextField from '../../../../components/TextField';
-import SelectField from '../../../../components/fields/SelectField.jsx';
+import SelectField from '../../../../components/fields/SelectField';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -238,14 +238,13 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
             }
             disabled={!possible_display_names.length}
             multiple={false}
-            containerstyle={{width: '100%'}}
-            >
+            containerstyle={{ width: '100%' }}
+          >
             {possible_display_names?.map((name) => (
-                <MenuItem key={name} value={name}>
-                  {name}
-                </MenuItem>
-              )
-            )}
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
+            ))}
           </Field>
           <OpenVocabField
             variant="edit"

@@ -6,7 +6,7 @@ import { FormikConfig } from 'formik/dist/types';
 import { useTheme } from '@mui/styles';
 import { MenuItem, Stack } from '@mui/material';
 import TextField from '../../../../components/TextField';
-import SelectField from '../../../../components/fields/SelectField.jsx';
+import SelectField from '../../../../components/fields/SelectField';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -236,7 +236,7 @@ ThreatActorIndividualEditionOverviewProps
     }
   };
 
-  const possible_display_names = (threatActorIndividual.aliases ?? []).concat([threatActorIndividual.name])
+  const possible_display_names = (threatActorIndividual.aliases ?? []).concat([threatActorIndividual.name]);
 
   const initialValues = {
     name: threatActorIndividual.name,
@@ -295,14 +295,12 @@ ThreatActorIndividualEditionOverviewProps
             }
             disabled={!possible_display_names?.length}
             multiple={false}
-            containerstyle={{width: '100%'}}
+            containerstyle={{ width: '100%' }}
           >
             {possible_display_names?.map((name) => {
-              return (
-                <MenuItem key={name} value={name}>
-                  {name}
-                </MenuItem>
-              );
+              <MenuItem key={name} value={name}>
+                {name}
+              </MenuItem>
             })}
           </Field>
           <OpenVocabField

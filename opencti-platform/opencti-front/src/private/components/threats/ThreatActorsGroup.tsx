@@ -133,12 +133,12 @@ const ThreatActorsGroup = () => {
     const dataColumns = {
       name: {
         percentWidth: 15,
-        render: (data: any, helpers?: any, draftVersion?: boolean) => {
+        render: (data: any) => {
           const display_name = data.x_opencti_display_name ? data.x_opencti_display_name : data.name;
           return (
             <div>{display_name}</div>
-          )
-        }
+          );
+        },
       },
       threat_actor_types: {
         label: 'Type',

@@ -7,7 +7,7 @@ import { useTheme } from '@mui/styles';
 import { MenuItem, Stack } from '@mui/material';
 import { useFormatter } from '../../../../components/i18n';
 import TextField from '../../../../components/TextField';
-import SelectField from '../../../../components/fields/SelectField.jsx';
+import SelectField from '../../../../components/fields/SelectField';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -228,7 +228,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
             label={t_i18n('Display Name')}
             required={(mandatoryAttributes.includes('x_opencti_display_name'))}
             fullWidth={true}
-            containerstyle={{width: '100%'}}
+            containerstyle={{ width: '100%' }}
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
             helperText={
@@ -241,8 +241,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>
-              )
-            )}
+            ))}
           </Field>
           <ConfidenceField
             onFocus={editor.changeFocus}
