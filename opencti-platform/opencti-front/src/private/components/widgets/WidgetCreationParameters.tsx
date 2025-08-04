@@ -171,10 +171,15 @@ const WidgetCreationParameters = () => {
   };
 
   const [uniqueUsers, setUniqueUsers] = React.useState(parameters?.uniqueUsers === true);
+  const [userRetention, setUserRetention] = React.useState(parameters?.userRetention === true);
 
   React.useEffect(() => {
     setUniqueUsers(parameters?.uniqueUsers === true);
   }, [parameters?.uniqueUsers]);
+
+  React.useEffect(() => {
+    setUserRetention(parameters?.userRetention === true);
+  }, [parameters?.userRetention]);
 
   let varNameError = '';
   if (isWidgetVarNameAlreadyUsed) {
@@ -240,7 +245,7 @@ const WidgetCreationParameters = () => {
         </div>
       )}
 
-      {!uniqueUsers && getCurrentCategory(type) === 'timeseries' && (
+      {!uniqueUsers && !userRetention && getCurrentCategory(type) === 'timeseries' && (
         <FormControl fullWidth={true} style={{ marginTop: 20 }}>
           <InputLabel id="relative">{t_i18n('Interval')}</InputLabel>
           <Select
@@ -758,7 +763,7 @@ const WidgetCreationParameters = () => {
       </>
 
       <div style={{ display: 'flex', width: '100%', marginTop: 20 }}>
-        {!uniqueUsers && getCurrentAvailableParameters(type).includes('stacked') && (
+        {!uniqueUsers && !userRetention && getCurrentAvailableParameters(type).includes('stacked') && (
           <FormControlLabel
             control={
               <Switch
@@ -780,7 +785,7 @@ const WidgetCreationParameters = () => {
             label={t_i18n('Distributed')}
           />
         )}
-        {!uniqueUsers && getCurrentAvailableParameters(type).includes('legend') && (
+        {!uniqueUsers && !userRetention && getCurrentAvailableParameters(type).includes('legend') && (
           <FormControlLabel
             control={
               <Switch
@@ -802,7 +807,7 @@ const WidgetCreationParameters = () => {
             label={t_i18n('Unique Users')}
           />
         )}
-        {uniqueUsers && getCurrentAvailableParameters(type).includes('intervalUniqueUsers') && (
+        {uniqueUsers && !userRetention && getCurrentAvailableParameters(type).includes('intervalUniqueUsers') && (
           <Box display="flex" alignItems="center" gap={1}>
             <Box component="label" htmlFor="unique-interval-select">
               <InputLabel id="unique-interval-label">{t_i18n('Unique Interval')}</InputLabel>
@@ -815,6 +820,33 @@ const WidgetCreationParameters = () => {
             >
               <MenuItem value="weeks">{t_i18n('Weekly')}</MenuItem>
               <MenuItem value="months">{t_i18n('Monthly')}</MenuItem>
+            </Select>
+          </Box>
+        )}
+        {getCurrentAvailableParameters(type).includes('userRetention') && (
+          <FormControlLabel
+            control={
+              <Switch
+                onChange={() => handleToggleParameter('userRetention')}
+                checked={parameters?.userRetention ?? undefined}
+              />
+            }
+            label={t_i18n('User Retention')}
+          />
+        )}
+        {!uniqueUsers && userRetention && getCurrentAvailableParameters(type).includes('userRetentionOptions') && (
+          <Box display="flex" alignItems="center" gap={1}>
+            <Box component="label" htmlFor="unique-interval-select">
+              <InputLabel id="unique-interval-label">{t_i18n('Retention Interval')}</InputLabel>
+            </Box>
+            <Select
+              id="unique-interval-select"
+              value={parameters?.userRetentionOptions || '3 months'}
+              onChange={(e) => handleChangeParameter('userRetentionOptions', e.target.value)}
+              label={t_i18n('Retention Interval')}
+            >
+              <MenuItem value="3-month">{t_i18n('3 Months')}</MenuItem>
+              <MenuItem value="6-month">{t_i18n('6 Months')}</MenuItem>
             </Select>
           </Box>
         )}

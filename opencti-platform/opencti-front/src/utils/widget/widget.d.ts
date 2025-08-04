@@ -40,6 +40,8 @@ interface WidgetParameters {
   content?: string | null
   uniqueUsers?: boolean | null
   intervalUniqueUsers?: string | null
+  userRetention?: boolean | null
+  userRetentionOptions?: string | null
 }
 
 interface WidgetLayout {

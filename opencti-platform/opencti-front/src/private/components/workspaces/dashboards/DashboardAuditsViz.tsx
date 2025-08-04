@@ -16,6 +16,7 @@ import MetricsMonthlyChart from '@components/settings/metrics/MetricsMonthlyChar
 import MetricsWeeklyChart from '@components/settings/metrics/MetricsWeeklyChart';
 import MetricsMonthly from '@components/settings/metrics/MetricsMonthly';
 import MetricsWeekly from '@components/settings/metrics/MetricsWeekly';
+import MetricsRetentionQuarter from '@components/settings/metrics/MetricsRetentionQuarter';
 import { computerRelativeDate, dayStartDate, formatDate } from '../../../../utils/Time';
 import type { Widget } from '../../../../utils/widget/widget';
 import { useRemoveIdAndIncorrectKeysFromFilterGroupObject } from '../../../../utils/filters/filtersUtils';
@@ -60,6 +61,10 @@ const DashboardAuditsViz = ({
   const isWeekly = widget?.parameters?.intervalUniqueUsers === 'weeks';
   const isMonthly = widget?.parameters?.intervalUniqueUsers === 'months';
 
+  const isUserRetention = widget?.parameters?.userRetention === true;
+  const is3Months = widget?.parameters?.userRetentionOptions === '3-month';
+  // const is6Months = widget?.parameters?.userRetentionOptions === '6-month';
+
   switch (widget?.type) {
     case 'number':
       if (isUniqueUser && isWeekly) {
@@ -76,6 +81,17 @@ const DashboardAuditsViz = ({
       if (isUniqueUser && isMonthly) {
         return (
           <MetricsMonthly
+            variant="inLine"
+            endDate={endDate}
+            startDate={startDate}
+            dataSelection={dataSelection}
+            parameters={widget?.parameters as object}
+          />
+        );
+      }
+      if (isUserRetention && is3Months) {
+        return (
+          <MetricsRetentionQuarter
             variant="inLine"
             endDate={endDate}
             startDate={startDate}
