@@ -238,8 +238,8 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
             }
             disabled={!possible_display_names.length}
             multiple={false}
-            style={{ width: '100%'}}
-          >
+            containerstyle={{width: '100%'}}
+            >
             {possible_display_names?.map((name) => (
                 <MenuItem key={name} value={name}>
                   {name}

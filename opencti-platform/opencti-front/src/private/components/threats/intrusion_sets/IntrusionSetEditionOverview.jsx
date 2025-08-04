@@ -228,6 +228,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
             label={t_i18n('Display Name')}
             required={(mandatoryAttributes.includes('x_opencti_display_name'))}
             fullWidth={true}
+            containerstyle={{width: '100%'}}
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
             helperText={
@@ -235,7 +236,6 @@ const IntrusionSetEditionOverviewComponent = (props) => {
             }
             disabled={!possible_display_names.length}
             multiple={false}
-            style={{width: '100%'}}
           >
             {possible_display_names?.map((name) => (
               <MenuItem key={name} value={name}>

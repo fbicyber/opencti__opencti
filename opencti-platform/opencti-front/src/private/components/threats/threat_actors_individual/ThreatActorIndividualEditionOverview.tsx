@@ -295,8 +295,7 @@ ThreatActorIndividualEditionOverviewProps
             }
             disabled={!possible_display_names?.length}
             multiple={false}
-            style={{ width: '100%' }}
-            sx={{  width: '100%' }}
+            containerstyle={{width: '100%'}}
           >
             {possible_display_names?.map((name) => {
               return (
