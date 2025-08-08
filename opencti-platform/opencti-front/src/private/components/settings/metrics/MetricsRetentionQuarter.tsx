@@ -1,6 +1,5 @@
 import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
-import React, { FunctionComponent, useMemo } from 'react';
-import { parseISO, differenceInDays } from 'date-fns';
+import React, { FunctionComponent } from 'react';
 import useQueryLoading from '../../../../utils/hooks/useQueryLoading';
 import {
   FilterGroup as RelayFilterGroup,
@@ -12,40 +11,47 @@ import Loader, { LoaderVariant } from '../../../../components/Loader';
 import WidgetNoData from '../../../../components/dashboard/WidgetNoData';
 import WidgetContainer from '../../../../components/dashboard/WidgetContainer';
 import { useFormatter } from '../../../../components/i18n';
+import { metricsGraphqlQueryUser } from './metrics.d';
 
-export const metricsRetentionQuarterDataQuery = graphql`
-  query MetricsRetentionQuarterQuery(
-    $distributionParameters: [auditsDistributionParameters]
+export const metricsRetentionQuarterQuery = graphql`
+  query MetricsRetentionQuarterQuery (
+    $numeratorParameters: [auditsDistributionParameters]
+    $denominatorParameters: [auditsDistributionParameters]
   ) {
-    auditsMultiDistribution(
+    numerator: auditsMultiDistribution(
       dateAttribute: ""
       operation: count
       types: ["History", "Activity"]
-      distributionParameters: $distributionParameters
+      distributionParameters: $numeratorParameters
     ) {
       data {
-        user {
-          id
-          created_at
-          last_login
-          login_count
-        }
+        label
+      }
+    }
+    denominator: auditsMultiDistribution(
+      dateAttribute: ""
+      operation: count
+      types: ["History", "Activity"]
+      distributionParameters: $denominatorParameters
+    ) {
+      data {
+        label
       }
     }
   }
 `;
 
-interface RetentionQuarterComponentProps {
-  queryRef: PreloadedQuery<MetricsRetentionQuarterQuery>;
+interface MetricsRetentionQuarterComponentProps {
+  queryRef: PreloadedQuery<MetricsRetentionQuarterQuery>
 }
 
 interface MetricsRetentionQuarterProps {
-  variant: string,
-  endDate: string | null,
-  startDate: string | null,
+  variant: string;
+  endDate: string | null;
+  startDate: string | null;
   parameters: {
     title?: string;
-  }
+  };
   dataSelection?: {
     filters?: unknown;
   }[];
@@ -64,74 +70,105 @@ function convertToRelayFilterGroup(input?: any): RelayFilterGroup | undefined {
   };
 }
 
-const MetricsRetentionQuarterComponent: FunctionComponent<RetentionQuarterComponentProps> = ({ queryRef }) => {
-  const data = usePreloadedQuery<MetricsRetentionQuarterQuery>(MetricsRetentionQuarterQuery, queryRef);
-  const now = new Date();
-
-  const retention3m = useMemo(() => {
-    if (!data?.auditsMultiDistribution?.data) return 0;
-
-    const users = data.auditsMultiDistribution.data.map((d: { user: any; }) => d.user).filter(Boolean);
-
-    const eligible = users.filter(u => {
-      if (!u.created_at || !u.last_login || u.login_count == null) return false;
-      const accountAge = differenceInDays(now, parseISO(u.created_at));
-      const lastLoginDays = differenceInDays(now, parseISO(u.lastLogin));
-      return accountAge >= 30 && lastLoginDays <= 30 && u.login_count > 1;
-    });
-
-    return users.length > 0 ? Math.round((eligible.length / users.length) * 100) : 0;
-  }, [data, now]);
-
-  return data ? (
-    <div style={{ textAlign: 'center', fontSize: '1.5em', fontWeight: 'bold' }}>
-      3-Month Retention: {retention3m}%
-    </div>
-  ) : (
-    <WidgetNoData />
+const RetentionMonthlyComponent: FunctionComponent<MetricsRetentionQuarterComponentProps> = ({
+  queryRef,
+}) => {
+  const { t_i18n } = useFormatter();
+  const data = usePreloadedQuery<MetricsRetentionQuarterQuery>(
+    metricsRetentionQuarterQuery,
+    queryRef,
   );
+
+  if (data) {
+    // Users who logged in within the last 30 days
+    const numeratorData = data.numerator
+      ?.[0]?.data?.filter((user: metricsGraphqlQueryUser) => !!user) ?? [];
+    // Users with accounts >= 90 days old and at least one login
+    const denominatorData = data.denominator
+      ?.[0]?.data?.filter((user: metricsGraphqlQueryUser) => !!user) ?? [];
+
+    const numeratorCount = new Set(numeratorData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
+    const denominatorCount = new Set(denominatorData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
+
+    // Calculate retention rate (avoid division by zero)
+    const retentionRate = denominatorCount > 0 ? (numeratorCount / denominatorCount) * 100 : 0;
+
+    return (
+      <WidgetContainer
+        height={300}
+        title={t_i18n('Monthly Retention Rate')}
+        variant="inElement"
+      >
+        <div style={{ padding: '16px', textAlign: 'center' }}>
+          <h3>{retentionRate.toFixed(2)}%</h3>
+          <p>
+            {t_i18n('Retention Rate')}: {numeratorCount} / {denominatorCount} {t_i18n('users')}
+          </p>
+        </div>
+      </WidgetContainer>
+    );
+  }
+  return <WidgetNoData />;
 };
 
-const MetricsRetentionQuarter: React.FC<MetricsRetentionQuarterProps> = ({
+const RetentionMonthly: React.FC<MetricsRetentionQuarterProps> = ({
   parameters,
   variant,
   endDate,
   startDate,
-  dataSelection
+  dataSelection,
 }) => {
   const { t_i18n } = useFormatter();
   const height = 300;
   const filters = convertToRelayFilterGroup(dataSelection?.[0]?.filters);
 
+  // Define time periods
   const now = new Date();
   now.setHours(23, 59, 59, 999);
 
-  const start = startDate ? new Date(startDate) : new Date(now);
-  start.setMonth(now.getMonth() - 6);
-  const end = endDate ? new Date(endDate) : now;
+  // Last 30 days for numerator
+  const numeratorEnd = endDate ? new Date(endDate) : now;
+  const numeratorStart = new Date(numeratorEnd);
+  numeratorStart.setDate(numeratorEnd.getDate() - 30);
 
-  const distributionParameters: MetricsRetentionQuarterQuery$variables['distributionParameters'] = [
+  // Accounts created at least 90 days ago for denominator
+  const denominatorEnd = startDate ? new Date(startDate) : now;
+  const denominatorStart = new Date(denominatorEnd);
+  denominatorStart.setDate(denominatorEnd.getDate() - 90);
+
+  // Query parameters for numerator and denominator
+  const numeratorParameters: MetricsRetentionQuarterQuery$variables['numeratorParameters'] = [
     {
       field: 'user_id',
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
+      startDate: numeratorStart.toISOString(),
+      endDate: numeratorEnd.toISOString(),
       filters,
     },
   ];
 
-  const queryRef = useQueryLoading<MetricsRetentionQuarterQuery>(metricsRetentionQuarterDataQuery, {
-    distributionParameters,
-  });
+  const denominatorParameters: MetricsRetentionQuarterQuery$variables['denominatorParameters'] = [
+    {
+      field: 'user_id',
+      startDate: denominatorStart.toISOString(),
+      endDate: denominatorEnd.toISOString(),
+      filters,
+    },
+  ];
+
+  const queryRef = useQueryLoading<MetricsRetentionQuarterQuery>(
+    metricsRetentionQuarterQuery,
+    { numeratorParameters, denominatorParameters },
+  );
 
   return (
     <WidgetContainer
       height={height}
-      title={t_i18n(parameters?.title?.trim()) ?? t_i18n('3-Month Retention')}
+      title={t_i18n(parameters?.title?.trim()) ?? t_i18n('Quarter Retention Rate')}
       variant={variant}
     >
       {queryRef ? (
         <React.Suspense fallback={<Loader variant={LoaderVariant.inElement} />}>
-          <MetricsRetentionQuarterComponent queryRef={queryRef} />
+          <RetentionMonthlyComponent queryRef={queryRef} />
         </React.Suspense>
       ) : (
         <Loader variant={LoaderVariant.inElement} />
@@ -140,4 +177,4 @@ const MetricsRetentionQuarter: React.FC<MetricsRetentionQuarterProps> = ({
   );
 };
 
-export default MetricsRetentionQuarter;
+export default RetentionMonthly;
