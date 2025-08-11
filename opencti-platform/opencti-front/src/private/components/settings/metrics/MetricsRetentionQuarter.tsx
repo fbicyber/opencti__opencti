@@ -90,22 +90,15 @@ const RetentionMonthlyComponent: FunctionComponent<MetricsRetentionQuarterCompon
     const numeratorCount = new Set(numeratorData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
     const denominatorCount = new Set(denominatorData.map((user: metricsGraphqlQueryUser) => user?.label)).size;
 
+    console.log('numeratorCount: ', numeratorCount);
+    console.log('denominatorCount: ', denominatorCount);
     // Calculate retention rate (avoid division by zero)
     const retentionRate = denominatorCount > 0 ? (numeratorCount / denominatorCount) * 100 : 0;
 
     return (
-      <WidgetContainer
-        height={300}
-        title={t_i18n('Monthly Retention Rate')}
-        variant="inElement"
-      >
-        <div style={{ padding: '16px', textAlign: 'center' }}>
-          <h3>{retentionRate.toFixed(2)}%</h3>
-          <p>
-            {t_i18n('Retention Rate')}: {numeratorCount} / {denominatorCount} {t_i18n('users')}
-          </p>
-        </div>
-      </WidgetContainer>
+      <div style={{ padding: '16px', textAlign: 'center' }}>
+        <h3>{retentionRate.toFixed(2)}%</h3>
+      </div>
     );
   }
   return <WidgetNoData />;

@@ -796,7 +796,7 @@ const WidgetCreationParameters = () => {
             label={t_i18n('Display legend')}
           />
         )}
-        {getCurrentAvailableParameters(type).includes('uniqueUsers') && (
+        {!userRetention && getCurrentAvailableParameters(type).includes('uniqueUsers') && (
           <FormControlLabel
             control={
               <Switch
@@ -823,7 +823,7 @@ const WidgetCreationParameters = () => {
             </Select>
           </Box>
         )}
-        {getCurrentAvailableParameters(type).includes('userRetention') && (
+        {!uniqueUsers && getCurrentAvailableParameters(type).includes('userRetention') && (
           <FormControlLabel
             control={
               <Switch
@@ -836,17 +836,17 @@ const WidgetCreationParameters = () => {
         )}
         {!uniqueUsers && userRetention && getCurrentAvailableParameters(type).includes('userRetentionOptions') && (
           <Box display="flex" alignItems="center" gap={1}>
-            <Box component="label" htmlFor="unique-interval-select">
-              <InputLabel id="unique-interval-label">{t_i18n('Retention Interval')}</InputLabel>
+            <Box component="label" htmlFor="unique-options-select">
+              <InputLabel id="unique-options-label">{t_i18n('Retention Interval')}</InputLabel>
             </Box>
             <Select
-              id="unique-interval-select"
-              value={parameters?.userRetentionOptions || '3 months'}
+              id="unique-options-select"
+              value={parameters?.userRetentionOptions || 'threeMonth'}
               onChange={(e) => handleChangeParameter('userRetentionOptions', e.target.value)}
               label={t_i18n('Retention Interval')}
             >
-              <MenuItem value="3-month">{t_i18n('3 Months')}</MenuItem>
-              <MenuItem value="6-month">{t_i18n('6 Months')}</MenuItem>
+              <MenuItem value="threeMonth">{t_i18n('3 Months')}</MenuItem>
+              <MenuItem value="sixMonth">{t_i18n('6 Months')}</MenuItem>
             </Select>
           </Box>
         )}
