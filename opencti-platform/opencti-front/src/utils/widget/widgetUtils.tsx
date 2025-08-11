@@ -44,7 +44,7 @@ const widgetVisualizationTypes = [
     name: 'Number',
     dataSelectionLimit: 1,
     category: 'number',
-    availableParameters: ['uniqueUsers', 'intervalUniqueUsers'],
+    availableParameters: ['uniqueUsers', 'intervalUniqueUsers', 'userRetention', 'userRetentionOptions'],
     isRelationships: true,
     isEntities: true,
     isAudits: true,

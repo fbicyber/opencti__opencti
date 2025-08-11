@@ -62,8 +62,8 @@ const DashboardAuditsViz = ({
   const isMonthly = widget?.parameters?.intervalUniqueUsers === 'months';
 
   const isUserRetention = widget?.parameters?.userRetention === true;
-  const is3Months = widget?.parameters?.userRetentionOptions === '3-month';
-  // const is6Months = widget?.parameters?.userRetentionOptions === '6-month';
+  const is3Months = widget?.parameters?.userRetentionOptions === 'threeMonth';
+  const is6Months = widget?.parameters?.userRetentionOptions === 'sixMonth';
 
   switch (widget?.type) {
     case 'number':
@@ -90,6 +90,17 @@ const DashboardAuditsViz = ({
         );
       }
       if (isUserRetention && is3Months) {
+        return (
+          <MetricsRetentionQuarter
+            variant="inLine"
+            endDate={endDate}
+            startDate={startDate}
+            dataSelection={dataSelection}
+            parameters={widget?.parameters as object}
+          />
+        );
+      }
+      if (isUserRetention && is6Months) {
         return (
           <MetricsRetentionQuarter
             variant="inLine"
