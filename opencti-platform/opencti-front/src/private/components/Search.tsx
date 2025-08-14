@@ -15,6 +15,7 @@ import DataTable from '../../components/dataGrid/DataTable';
 import { UsePreloadedPaginationFragment } from '../../utils/hooks/usePreloadedPaginationFragment';
 import { useFormatter } from '../../components/i18n';
 import useConnectedDocumentModifier from '../../utils/hooks/useConnectedDocumentModifier';
+import { GenericAttack } from './common/cards/GenericAttackCard';
 
 const LOCAL_STORAGE_KEY = 'search';
 
@@ -57,6 +58,18 @@ const searchLineFragment = graphql`
     }
     containersNumber {
       total
+    }
+    ... on IntrusionSet {
+      x_opencti_display_name
+      name
+    }
+    ... on ThreatActor {
+      x_opencti_display_name
+      name
+    }
+    ... on ThreatActorGroup {
+      x_opencti_display_name
+      name
     }
   }
 `;
@@ -190,6 +203,13 @@ const Search = () => {
       label: 'Value',
       percentWidth: 22,
       isSortable: false,
+      render: (data: GenericAttack ) => {
+        const display_name = data.x_opencti_display_name ? data.x_opencti_display_name : data.name;
+        console.log(data);
+        return (
+          <div>{display_name}</div>
+        );
+      },
     },
     createdBy: {
       label: 'Author',
