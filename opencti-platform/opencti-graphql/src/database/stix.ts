@@ -23,6 +23,7 @@ import {
 } from '../schema/stixDomainObject';
 import {
   ENTITY_AUTONOMOUS_SYSTEM,
+  ENTITY_BANK_ACCOUNT,
   ENTITY_DOMAIN_NAME,
   ENTITY_HASHED_OBSERVABLE_ARTIFACT,
   ENTITY_HASHED_OBSERVABLE_STIX_FILE,
@@ -78,6 +79,7 @@ import {
   RELATION_VARIANT_OF,
   RELATION_TECHNOLOGY,
   RELATION_TECHNOLOGY_TO,
+  RELATION_TRANSFERRED_TO,
   RELATION_DEMONSTRATES,
 } from '../schema/stixCoreRelationship';
 import { isStixRefRelationship } from '../schema/stixRefRelationship';
@@ -995,6 +997,11 @@ export const stixCoreRelationshipsMapping: RelationshipMappings = {
   // endregion
   // endregion
   // Observables
+  // region BANK_ACCOUNT
+  [`${ENTITY_BANK_ACCOUNT}_${ENTITY_BANK_ACCOUNT}`]: [
+    { name: RELATION_TRANSFERRED_TO, type: REL_EXTENDED }
+  ],
+  // endregion
   // region HOSTNAME
   [`${ENTITY_HOSTNAME}_${ENTITY_HASHED_OBSERVABLE_ARTIFACT}`]: [
     { name: RELATION_DROPS, type: REL_EXTENDED }

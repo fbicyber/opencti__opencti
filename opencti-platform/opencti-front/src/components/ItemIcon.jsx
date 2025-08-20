@@ -491,6 +491,7 @@ const iconSelector = (type, variant, fontSize, color, isReversed) => {
     case 'consists-of':
     case 'technology-to':
     case 'technology':
+    case 'transferred-to':
     case 'demonstrates':
     case 'controls':
     case 'cooperates-with':
