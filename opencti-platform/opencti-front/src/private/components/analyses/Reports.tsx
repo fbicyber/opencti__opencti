@@ -217,6 +217,7 @@ const Reports: FunctionComponent = () => {
           lineFragment={reportLineFragment}
           exportContext={{ entity_type: 'Report' }}
           redirectionModeEnabled
+          selectColumnsEnabled
           createButton={(
             <Security needs={[KNOWLEDGE_KNUPDATE]}>
               <ReportCreation paginationOptions={queryPaginationOptions} />

@@ -178,6 +178,7 @@ type OCTIDataTableProps = Pick<DataTableProps,
 | 'initialValues'
 | 'availableFilterKeys'
 | 'redirectionModeEnabled'
+| 'selectColumnsEnabled'
 | 'additionalFilterKeys'
 | 'additionalFilters'
 | 'variant'

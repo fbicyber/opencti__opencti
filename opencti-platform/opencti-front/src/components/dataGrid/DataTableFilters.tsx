@@ -76,6 +76,7 @@ const DataTableFilters = ({
   const {
     storageKey,
     redirectionModeEnabled,
+    selectColumnsEnabled,
     variant,
     createButton,
     page,
@@ -114,7 +115,10 @@ const DataTableFilters = ({
   };
 
   return (
-    <ExportContext.Provider value={{ selectedIds: Object.keys(selectedElements) }}>
+    <ExportContext.Provider value={{
+      selectedIds: Object.keys(selectedElements),
+      selectedColumns: [],
+    }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
         <div style={{
           display: 'flex',
@@ -147,6 +151,7 @@ const DataTableFilters = ({
               setPage={setPage}
               numberOfElements={numberOfElements}
               redirectionModeEnabled={redirectionModeEnabled}
+              selectColumnsEnabled={selectColumnsEnabled}
             />
           )}
           <ToggleButtonGroup

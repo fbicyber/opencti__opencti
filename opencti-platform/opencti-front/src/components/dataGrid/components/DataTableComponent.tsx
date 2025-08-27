@@ -34,6 +34,7 @@ type DataTableComponentProps = Pick<DataTableProps,
 | 'dataQueryArgs'
 | 'resolvePath'
 | 'redirectionModeEnabled'
+| 'selectColumnsEnabled'
 | 'useLineData'
 | 'rootRef'
 | 'createButton'
@@ -55,6 +56,7 @@ const DataTableComponent = ({
   dataQueryArgs,
   data,
   redirectionModeEnabled = false,
+  selectColumnsEnabled = false,
   useLineData,
   useComputeLink,
   settingsMessagesBannerHeight,
@@ -198,6 +200,7 @@ const DataTableComponent = ({
         resetColumns: () => setColumns(buildColumns(false)),
         resolvePath,
         redirectionModeEnabled,
+        selectColumnsEnabled,
         useLineData,
         dataQueryArgs,
         data,
