@@ -170,6 +170,7 @@ const ExternalReferences: FunctionComponent<ExternalReferencesProps> = () => {
               />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

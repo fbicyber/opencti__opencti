@@ -47,6 +47,7 @@ export interface DataTableContextProps {
   setColumns: Dispatch<SetStateAction<DataTableColumns>>
   resolvePath: (data: any) => any
   redirectionModeEnabled?: boolean
+  selectColumnsEnabled?: boolean
   useLineData: DataTableProps['useLineData']
   dataQueryArgs: UsePreloadedPaginationFragment<OperationType>,
   data: unknown,
@@ -92,6 +93,7 @@ export interface DataTableProps {
   data?: unknown
   availableFilterKeys?: string[] | undefined;
   redirectionModeEnabled?: boolean
+  selectColumnsEnabled?: boolean
   additionalFilters?: FilterGroup
   additionalFilterKeys?: string[]
   entityTypes?: string[]

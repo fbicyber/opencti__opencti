@@ -218,6 +218,7 @@ const Notes: FunctionComponent = () => {
               <NoteCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </span>

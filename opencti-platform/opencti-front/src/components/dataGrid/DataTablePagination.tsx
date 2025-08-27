@@ -17,11 +17,13 @@ const DataTablePagination = ({
   setPage,
   numberOfElements: unstoreNOE,
   redirectionModeEnabled = false,
+  selectColumnsEnabled = false,
 }: {
   page: number,
   setPage: Dispatch<SetStateAction<number>>,
   numberOfElements?: NumberOfElements,
   redirectionModeEnabled?: boolean,
+  selectColumnsEnabled?: boolean,
 }) => {
   const { t_i18n } = useFormatter();
 
@@ -137,12 +139,16 @@ const DataTablePagination = ({
         },
       ]
       : []),
-    {
-      label: t_i18n('Select columns'),
-      value: 'col-select',
-      menuLevel: 1,
-      onClick: () => setIsOpen(true),
-    },
+    ...(selectColumnsEnabled
+      ? [
+        {
+          label: t_i18n('Select columns'),
+          value: 'col-select',
+          menuLevel: 1,
+          onClick: () => setIsOpen(true),
+        },
+      ]
+      : []),
   ];
 
   return (

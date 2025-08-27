@@ -219,6 +219,7 @@ const Groupings: FunctionComponent<GroupingsProps> = () => {
               <GroupingCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </span>
