@@ -1,7 +1,7 @@
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
-import React, { type Dispatch, type SetStateAction, Suspense, useCallback, useEffect } from 'react';
+import React, { type Dispatch, type SetStateAction, Suspense, useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 import { ButtonGroup } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -10,6 +10,7 @@ import { useFormatter } from '../i18n';
 import { NumberOfElements } from '../../utils/hooks/useLocalStorage';
 import NestedMenuButton from '../nested_menu/NestedMenuButton';
 import { useDataTableContext } from './components/DataTableContext';
+import SelectColumnsDialog from './components/SelectColumnsDialog';
 
 const DataTablePagination = ({
   page,
@@ -23,6 +24,9 @@ const DataTablePagination = ({
   redirectionModeEnabled?: boolean,
 }) => {
   const { t_i18n } = useFormatter();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const handleClose = () => setIsOpen(false);
 
   const {
     resetColumns,
@@ -133,6 +137,12 @@ const DataTablePagination = ({
         },
       ]
       : []),
+    {
+      label: t_i18n('Select columns'),
+      value: 'col-select',
+      menuLevel: 1,
+      onClick: () => setIsOpen(true),
+    },
   ];
 
   return (
@@ -211,6 +221,10 @@ const DataTablePagination = ({
           menuLevels={2}
         />
       </Suspense>
+      <SelectColumnsDialog
+        open={isOpen}
+        handleClose={handleClose}
+      />
     </Box>
   );
 };
