@@ -1,5 +1,5 @@
 import Filters from '@components/common/lists/Filters';
-import React from 'react';
+import React, { useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { FileDownloadOutlined } from '@mui/icons-material';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -83,6 +83,10 @@ const DataTableFilters = ({
     },
   } = useDataTableContext();
   const { selectedElements } = useEntityToggle(storageKey);
+  const [availableColumns, setAvailableColumns] = useState<string[]>(
+    ['name', 'marking', 'author'],
+  );
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
   const exportDisabled = !exportContext || (numberOfElements
     && ((Object.keys(selectedElements).length > export_max_size
@@ -113,8 +117,12 @@ const DataTableFilters = ({
   return (
     <ExportContext.Provider value={{
       selectedIds: Object.keys(selectedElements),
-      selectedColumns: [],
-    }}>
+      availableColumns,
+      setAvailableColumns: (cols) => setAvailableColumns(cols),
+      selectedColumns,
+      setSelectedColumns: (cols) => setSelectedColumns(cols),
+    }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1 }}>
         <div style={{
           display: 'flex',
