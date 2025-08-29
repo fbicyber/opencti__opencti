@@ -87,6 +87,7 @@ const DataTableFilters = ({
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
+  // Update available columns whenever selectedElements changed
   useEffect(() => {
     // Used to filter down to only unique values in an array
     function uniq<T>(value: T, index: number, arr: T[]) {
@@ -98,10 +99,19 @@ const DataTableFilters = ({
       return value !== null && typeof value !== 'undefined';
     }
 
-    const getColumnsForType = (entityType: string) => entityTypeToColumns[entityType]
-      .map((c) => c.pretty)
-      .filter(presentOnly)
-      .filter(uniq);
+    /**
+     * Fetches the available columns for a given entity type. Filters down to
+     * non-null, defined, unique values.
+     */
+    function getColumnsForType(entityType: string) {
+      if (entityTypeToColumns[entityType]) {
+        return entityTypeToColumns[entityType]
+          .map((c) => c.pretty)
+          .filter(presentOnly)
+          .filter(uniq);
+      }
+      return [];
+    }
 
     const selectedEntityTypes = Object.values(selectedElements)
       .map((e) => e.entity_type)

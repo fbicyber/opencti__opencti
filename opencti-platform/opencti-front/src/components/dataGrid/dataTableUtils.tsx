@@ -1527,18 +1527,18 @@ const defaultColumns: DataTableProps['dataColumns'] = {
 export const defaultColumnsMap = new Map<string, Partial<DataTableColumn>>(Object.entries(defaultColumns));
 
 /**
- *
+ * Value in mapping from a given entity type to its available columns in the
+ * generated CSV.
  *
  * If there is no `pretty` attribute, this column *must* appear in the
  * generated CSV and does not require it to be selectable in the modal.
  *
- * key: The column name in the generated CSV.
+ * key: The column name in the generated CSV. Should be unique.
  * pretty: How this column should appear in the selection modal.
  */
 type EntityTypeToColumnsValueType = {
   key: string,
   pretty?: string,
-  path?: string,
 };
 
 /**
