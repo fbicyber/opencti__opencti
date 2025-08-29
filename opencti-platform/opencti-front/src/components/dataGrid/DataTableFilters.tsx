@@ -1,5 +1,5 @@
 import Filters from '@components/common/lists/Filters';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { FileDownloadOutlined } from '@mui/icons-material';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -21,6 +21,7 @@ import { ExportContext } from '../../utils/ExportContextProvider';
 import DataTablePagination from './DataTablePagination';
 import { isFilterGroupNotEmpty } from '../../utils/filters/filtersUtils';
 import { useDataTableContext } from './components/DataTableContext';
+import { entityTypeToColumns } from './dataTableUtils';
 
 export const DataTableDisplayFilters = ({
   availableFilterKeys,
@@ -83,10 +84,41 @@ const DataTableFilters = ({
     },
   } = useDataTableContext();
   const { selectedElements } = useEntityToggle(storageKey);
-  const [availableColumns, setAvailableColumns] = useState<string[]>(
-    ['name', 'marking', 'author'],
-  );
+  const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Used to filter down to only unique values in an array
+    function uniq<T>(value: T, index: number, arr: T[]) {
+      return arr.indexOf(value) === index;
+    }
+
+    // Used to filter away null and undefined values in an array
+    function presentOnly<T>(value: T | null | undefined) {
+      return value !== null && typeof value !== 'undefined';
+    }
+
+    const getColumnsForType = (entityType: string) => entityTypeToColumns[entityType]
+      .map((c) => c.pretty)
+      .filter(presentOnly)
+      .filter(uniq);
+
+    const selectedEntityTypes = Object.values(selectedElements)
+      .map((e) => e.entity_type)
+      .filter(uniq);
+    const commonColumns = getColumnsForType('common');
+    const columns = [
+      ...commonColumns,
+      ...selectedEntityTypes
+        .filter(presentOnly)
+        .flatMap(getColumnsForType),
+    ];
+
+    setAvailableColumns(columns);
+
+    // Clear selected columns, b/c entity types may have been removed
+    setSelectedColumns([]);
+  }, [selectedElements]);
 
   const exportDisabled = !exportContext || (numberOfElements
     && ((Object.keys(selectedElements).length > export_max_size
