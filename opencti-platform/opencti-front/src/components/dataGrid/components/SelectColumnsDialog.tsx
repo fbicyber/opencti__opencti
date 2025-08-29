@@ -14,7 +14,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { Dispatch, useContext, useState } from 'react';
+import React, { Dispatch, useContext, useEffect, useState } from 'react';
 import { useTheme } from '@mui/styles';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { DragIndicatorOutlined } from '@mui/icons-material';
@@ -153,6 +153,9 @@ SelectColumnsDialogProps
   } = useContext(ExportContext);
 
   const [prevSelection, setPrevSelection] = useState<string[]>(selectedColumns);
+  useEffect(() => {
+    setPrevSelection(selectedColumns);
+  }, [selectedColumns]);
 
   const handleReset = () => {
     if (setSelectedColumns) {
