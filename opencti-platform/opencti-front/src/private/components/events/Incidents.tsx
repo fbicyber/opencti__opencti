@@ -93,6 +93,7 @@ const Incidents: FunctionComponent = () => {
               <IncidentCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

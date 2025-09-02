@@ -210,6 +210,7 @@ const CaseIncidents: FunctionComponent<CaseIncidentsProps> = () => {
               <CaseIncidentCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

@@ -168,6 +168,7 @@ const CoursesOfAction = () => {
               <CourseOfActionCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

@@ -164,6 +164,7 @@ const Tools = () => {
               <ToolCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

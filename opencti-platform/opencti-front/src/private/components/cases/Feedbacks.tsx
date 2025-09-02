@@ -196,6 +196,7 @@ const Feedbacks: FunctionComponent<FeedbacksProps> = () => {
           preloadedPaginationProps={preloadedPaginationProps}
           lineFragment={feedbackFragment}
           exportContext={{ entity_type: 'Feedback' }}
+          selectColumnsEnabled
         />
       )}
     </span>

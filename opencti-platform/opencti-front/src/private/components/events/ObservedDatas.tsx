@@ -199,6 +199,7 @@ const ObservedDatas: FunctionComponent = () => {
               <ObservedDataCreation paginationOptions={queryPaginationOptions}/>
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </span>

@@ -202,6 +202,7 @@ const Artifacts: FunctionComponent = () => {
                 />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </ExportContextProvider>

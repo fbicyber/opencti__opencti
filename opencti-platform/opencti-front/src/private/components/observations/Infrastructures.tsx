@@ -183,6 +183,7 @@ const Infrastructures = () => {
               <InfrastructureCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
         )}
       </div>

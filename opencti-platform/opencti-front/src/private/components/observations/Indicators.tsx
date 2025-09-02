@@ -210,6 +210,7 @@ const Indicators = () => {
               <IndicatorCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

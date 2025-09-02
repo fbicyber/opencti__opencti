@@ -213,6 +213,7 @@ const CaseRfts: FunctionComponent<CaseRftsProps> = () => {
               <CaseRftCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

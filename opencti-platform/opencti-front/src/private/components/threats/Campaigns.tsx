@@ -182,6 +182,7 @@ const Campaigns = () => {
                 <CampaignCreation paginationOptions={queryPaginationOptions} />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </>

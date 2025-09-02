@@ -178,6 +178,7 @@ const IntrusionSets = () => {
                 <IntrusionSetCreation paginationOptions={queryPaginationOptions} />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </>

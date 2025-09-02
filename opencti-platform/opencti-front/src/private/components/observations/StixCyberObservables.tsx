@@ -161,6 +161,7 @@ const StixCyberObservables: FunctionComponent = () => {
                 />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </ExportContextProvider>

@@ -164,6 +164,7 @@ const DataComponents: FunctionComponent = () => {
               <DataComponentCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

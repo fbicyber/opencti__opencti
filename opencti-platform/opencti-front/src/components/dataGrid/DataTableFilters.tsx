@@ -23,6 +23,30 @@ import { isFilterGroupNotEmpty } from '../../utils/filters/filtersUtils';
 import { useDataTableContext } from './components/DataTableContext';
 import { entityTypeToColumns } from './dataTableUtils';
 
+// Used to filter down to only unique values in an array
+function uniq<T>(value: T, index: number, arr: T[]) {
+  return arr.indexOf(value) === index;
+}
+
+// Used to filter away null and undefined values in an array
+function presentOnly<T>(value: T | null | undefined) {
+  return value !== null && typeof value !== 'undefined';
+}
+
+/**
+ * Fetches the available columns for a given entity type. Filters down to
+ * non-null, defined, unique values.
+ */
+function getColumnsForType(entityType: string) {
+  if (entityTypeToColumns[entityType]) {
+    return entityTypeToColumns[entityType]
+      .map((c) => c.pretty)
+      .filter(presentOnly)
+      .filter(uniq);
+  }
+  return [];
+}
+
 export const DataTableDisplayFilters = ({
   availableFilterKeys,
   availableRelationFilterTypes,
@@ -89,45 +113,24 @@ const DataTableFilters = ({
 
   // Update available columns whenever selectedElements changed
   useEffect(() => {
-    // Used to filter down to only unique values in an array
-    function uniq<T>(value: T, index: number, arr: T[]) {
-      return arr.indexOf(value) === index;
-    }
-
-    // Used to filter away null and undefined values in an array
-    function presentOnly<T>(value: T | null | undefined) {
-      return value !== null && typeof value !== 'undefined';
-    }
-
-    /**
-     * Fetches the available columns for a given entity type. Filters down to
-     * non-null, defined, unique values.
-     */
-    function getColumnsForType(entityType: string) {
-      if (entityTypeToColumns[entityType]) {
-        return entityTypeToColumns[entityType]
-          .map((c) => c.pretty)
+    // Only relevant when able to select export columns
+    if (selectColumnsEnabled) {
+      const selectedEntityTypes = Object.values(selectedElements)
+        .map((e) => e.entity_type)
+        .filter(uniq);
+      const commonColumns = getColumnsForType('common');
+      const columns = [
+        ...commonColumns,
+        ...selectedEntityTypes
           .filter(presentOnly)
-          .filter(uniq);
-      }
-      return [];
+          .flatMap(getColumnsForType),
+      ].filter(uniq);
+
+      setAvailableColumns(columns);
+
+      // Clear selected columns, because entity types may have been removed
+      setSelectedColumns([]);
     }
-
-    const selectedEntityTypes = Object.values(selectedElements)
-      .map((e) => e.entity_type)
-      .filter(uniq);
-    const commonColumns = getColumnsForType('common');
-    const columns = [
-      ...commonColumns,
-      ...selectedEntityTypes
-        .filter(presentOnly)
-        .flatMap(getColumnsForType),
-    ];
-
-    setAvailableColumns(columns);
-
-    // Clear selected columns, b/c entity types may have been removed
-    setSelectedColumns([]);
   }, [selectedElements]);
 
   const exportDisabled = !exportContext || (numberOfElements

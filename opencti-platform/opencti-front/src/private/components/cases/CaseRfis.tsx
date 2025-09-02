@@ -206,6 +206,7 @@ const CaseRfis: FunctionComponent<CaseRfisProps> = () => {
               <CaseRfiCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

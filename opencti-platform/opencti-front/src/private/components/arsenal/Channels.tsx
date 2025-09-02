@@ -172,6 +172,7 @@ const Channels = () => {
               <ChannelCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

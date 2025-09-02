@@ -205,6 +205,7 @@ const Narratives: FunctionComponent = () => {
                 <NarrativeCreation paginationOptions={queryPaginationOptions} />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </>

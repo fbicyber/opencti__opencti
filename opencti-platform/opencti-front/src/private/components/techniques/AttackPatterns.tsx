@@ -168,6 +168,7 @@ const AttackPatterns = () => {
               <AttackPatternCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

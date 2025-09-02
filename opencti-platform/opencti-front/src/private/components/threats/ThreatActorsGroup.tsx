@@ -183,6 +183,7 @@ const ThreatActorsGroup = () => {
                 <ThreatActorGroupCreation paginationOptions={queryPaginationOptions} />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </>

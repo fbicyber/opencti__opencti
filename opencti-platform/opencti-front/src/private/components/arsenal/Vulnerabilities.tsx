@@ -177,6 +177,7 @@ const Vulnerabilities = () => {
               <VulnerabilityCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>

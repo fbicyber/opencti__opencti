@@ -139,6 +139,7 @@ const Tasks = () => {
           preloadedPaginationProps={preloadedPaginationProps}
           lineFragment={TaskFragment}
           exportContext={{ entity_type: 'Task' }}
+          selectColumnsEnabled
         />
       )}
       {/* TODO Add task creation when it will be possible to assign a task to something

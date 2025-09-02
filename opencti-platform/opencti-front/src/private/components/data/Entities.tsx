@@ -86,6 +86,7 @@ const Entities = () => {
           toolbarFilters={contextFilters}
           exportContext={{ entity_type: 'Stix-Domain-Object' }}
           availableEntityTypes={['Stix-Domain-Object']}
+          selectColumnsEnabled
         />
       )}
     </div>

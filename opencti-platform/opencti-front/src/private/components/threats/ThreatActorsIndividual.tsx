@@ -186,6 +186,7 @@ const ThreatActorsIndividual = () => {
                 <ThreatActorIndividualCreation paginationOptions={queryPaginationOptions} />
               </Security>
             )}
+            selectColumnsEnabled
           />
         )}
       </>

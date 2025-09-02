@@ -168,6 +168,7 @@ const DataSources: FunctionComponent = () => {
               <DataSourceCreation paginationOptions={queryPaginationOptions} />
             </Security>
           )}
+          selectColumnsEnabled
         />
       )}
     </div>
