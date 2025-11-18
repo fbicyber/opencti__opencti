@@ -16,34 +16,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import { v4 as uuidv4 } from 'uuid';
 import { clearIntervalAsync, setIntervalAsync, type SetIntervalAsyncTimer } from 'set-interval-async/fixed';
 import type { Moment } from 'moment/moment';
-import { createStreamProcessor, type StreamProcessor } from '../../database/redis';
-import { lockResources } from '../../lock/master-lock';
-import conf, { booleanConf, logApp } from '../../config/conf';
-import { FunctionalError, TYPE_LOCK_ERROR } from '../../config/errors';
-import { AUTOMATION_MANAGER_USER, executionContext, RETENTION_MANAGER_USER, SYSTEM_USER } from '../../utils/access';
-import type { SseEvent, StreamDataEvent } from '../../types/event';
-import type { StixBundle } from '../../types/stix-2-1-common';
-import { streamEventId, utcDate } from '../../utils/format';
-import { findById } from '../../modules/playbook/playbook-domain';
-import { type CronConfiguration, PLAYBOOK_INTERNAL_DATA_CRON, type StreamConfiguration } from '../../modules/playbook/playbook-components';
-import { PLAYBOOK_COMPONENTS } from '../../modules/playbook/playbook-components';
-import type { BasicStoreEntityPlaybook, ComponentDefinition } from '../../modules/playbook/playbook-types';
-import { ENTITY_TYPE_PLAYBOOK } from '../../modules/playbook/playbook-types';
-import { READ_STIX_INDICES } from '../../database/utils';
-import type { BasicStoreSettings } from '../../types/settings';
-import type { AuthContext, AuthUser } from '../../types/user';
-import { type MutationPlaybookStepExecutionArgs } from '../../generated/graphql';
-import { STIX_SPEC_VERSION } from '../../database/stix';
-import { getEntitiesListFromCache } from '../../database/cache';
-import { isStixMatchFilterGroup } from '../../utils/filtering/filtering-stix/stix-filtering';
-import { convertFiltersToQueryOptions } from '../../utils/filtering/filtering-resolution';
-import { elPaginate } from '../../database/engine';
-import { stixLoadByFilters, stixLoadById } from '../../database/middleware';
-import { convertRelationRefsFilterKeys } from '../../utils/filtering/filtering-utils';
-import { isEnterpriseEdition } from '../../enterprise-edition/ee';
-import { listenPirEvents } from './listenPirEventsUtils';
-import { isValidEventType } from './playbookManagerUtils';
-import { playbookExecutor } from './playbookExecutor';
+import { createStreamProcessor, redisPlaybookUpdate, type StreamProcessor } from '../database/redis';
+import { lockResources } from '../lock/master-lock';
+import conf, { booleanConf, logApp } from '../config/conf';
+import { FunctionalError, TYPE_LOCK_ERROR, UnsupportedError } from '../config/errors';
+import { AUTOMATION_MANAGER_USER, executionContext, RETENTION_MANAGER_USER, SYSTEM_USER } from '../utils/access';
+import type { SseEvent, StreamDataEvent } from '../types/event';
+import type { StixBundle, StixObject } from '../types/stix-2-1-common';
+import { streamEventId, utcDate } from '../utils/format';
+import { findById } from '../modules/playbook/playbook-domain';
+import { type CronConfiguration, PLAYBOOK_INTERNAL_DATA_CRON, type StreamConfiguration } from '../modules/playbook/playbook-components';
+import { PLAYBOOK_COMPONENTS } from '../modules/playbook/playbook-components';
+import type { BasicStoreEntityPlaybook, ComponentDefinition, PlaybookExecution, PlaybookExecutionStep } from '../modules/playbook/playbook-types';
+import { ENTITY_TYPE_PLAYBOOK } from '../modules/playbook/playbook-types';
+import { READ_STIX_INDICES } from '../database/utils';
+import type { BasicStoreSettings } from '../types/settings';
+import type { AuthContext, AuthUser } from '../types/user';
+import type { MutationPlaybookStepExecutionArgs } from '../generated/graphql';
+import { STIX_SPEC_VERSION } from '../database/stix';
+import { getEntitiesListFromCache } from '../database/cache';
+import { isStixMatchFilterGroup } from '../utils/filtering/filtering-stix/stix-filtering';
+import { convertFiltersToQueryOptions } from '../utils/filtering/filtering-resolution';
+import { elPaginate } from '../database/engine';
+import { stixLoadByFilters, stixLoadById } from '../database/middleware';
+import { convertRelationRefsFilterKeys } from '../utils/filtering/filtering-utils';
+import type { ExecutionEnvelop, ExecutionEnvelopStep } from '../types/playbookExecution';
+import { isEnterpriseEdition } from '../enterprise-edition/ee';
 
 const PLAYBOOK_LIVE_KEY = conf.get('playbook_manager:lock_key');
 const PLAYBOOK_CRON_KEY = conf.get('playbook_manager:lock_cron_key');
@@ -141,7 +139,7 @@ export const executePlaybookOnEntity = async (context: AuthContext, id: string, 
     const instance = def.nodes.find((n) => n.id === playbook.playbook_start);
     if (instance) {
       const connector = PLAYBOOK_COMPONENTS[instance.component_id];
-      const data = await stixLoadById(context, RETENTION_MANAGER_USER, entityId);
+      const data = await stixLoadById(context, RETENTION_MANAGER_USER, entityId) as unknown as StixObject;
       if (data) {
         try {
           const eventId = streamEventId();
@@ -317,7 +315,7 @@ const initPlaybookManager = () => {
               logApp.info(`[OPENCTI-MODULE] Running playbook ${instance.name} on ${elements.length} elements`);
               for (let index = 0; index < elements.length; index += 1) {
                 const { node } = elements[index];
-                const data = await stixLoadById(context, RETENTION_MANAGER_USER, node.internal_id);
+                const data = await stixLoadById(context, RETENTION_MANAGER_USER, node.internal_id) as unknown as StixObject;
                 if (data) {
                   try {
                     const eventId = streamEventId(null, index);
