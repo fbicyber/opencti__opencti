@@ -27,28 +27,65 @@ import Transition from '../../../../components/Transition';
 import ItemIcon from '../../../../components/ItemIcon';
 import { truncate } from '../../../../utils/String';
 
-export const StixCoreObjectHistoryFragment = graphql`
-  fragment StixCoreObjectHistoryLine_node on Log {
-    id
-    event_type
-    event_scope
-    timestamp
-    user {
-      name
-    }
-    context_data {
-      message
-      commit
-      to_id
-      from_id
-      external_references {
-        id
-        source_name
-        external_id
-        url
-        description
-      }
-    }
+const styles = () => ({
+  container: {
+    height: 40,
+    padding: 0,
+  },
+  line: {
+    content: ' ',
+    display: 'block',
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    width: 1,
+    height: 18,
+  },
+  avatar: {
+    float: 'left',
+    width: 30,
+    height: 30,
+    margin: '7px 0 0 0',
+  },
+  content: {
+    flex: 1,
+    width: 'auto',
+    overflow: 'hidden',
+  },
+  tooltip: {
+    maxWidth: '80%',
+    lineHeight: 2,
+    padding: 10,
+  },
+  paper: {
+    width: '100%',
+    height: '100%',
+    padding: '8px 15px 0 15px',
+    background: 0,
+  },
+  description: {
+    height: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  date: {
+    float: 'right',
+    textAlign: 'right',
+    width: 180,
+    paddingTop: 4,
+    fontSize: 11,
+  },
+});
+
+class StixCoreObjectHistoryLineComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      displayExternalLink: false,
+      externalLink: null,
+    };
   }
 `;
 
