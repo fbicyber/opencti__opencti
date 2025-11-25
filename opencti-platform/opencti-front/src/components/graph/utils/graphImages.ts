@@ -370,6 +370,10 @@ const GRAPH_IMAGES: GraphImages = {
     rawImg: StixCyberObservable,
     img: generateHtmlImageElement(StixCyberObservable),
   },
+  ICCID: {
+    rawImg: StixCyberObservable,
+    img: generateHtmlImageElement(StixCyberObservable),
+  },
   relationship: {
     rawImg: Relationship,
     img: generateHtmlImageElement(Relationship),

@@ -35,6 +35,7 @@ export const ENTITY_MEDIA_CONTENT = 'Media-Content'; // Custom
 export const ENTITY_PERSONA = 'Persona'; // Custom
 export const ENTITY_SSH_KEY = 'SSH-Key'; // Custom
 export const ENTITY_IMEI = 'IMEI'; // Custom
+export const ENTITY_ICCID = 'ICCID'; // Custom
 
 const STIX_CYBER_OBSERVABLES_HASHED_OBSERVABLES = [
   ENTITY_HASHED_OBSERVABLE_ARTIFACT,
@@ -76,7 +77,8 @@ export const STIX_CYBER_OBSERVABLES = [
   ENTITY_MEDIA_CONTENT,
   ENTITY_PERSONA,
   ENTITY_SSH_KEY,
-  ENTITY_IMEI
+  ENTITY_IMEI,
+  ENTITY_ICCID
 ];
 schemaTypesDefinition.register(ABSTRACT_STIX_CYBER_OBSERVABLE, STIX_CYBER_OBSERVABLES);
 

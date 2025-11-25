@@ -16,6 +16,7 @@ import {
   ENTITY_HASHED_OBSERVABLE_STIX_FILE,
   ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE,
   ENTITY_HOSTNAME,
+  ENTITY_ICCID,
   ENTITY_IMEI,
   ENTITY_IPV4_ADDR,
   ENTITY_IPV6_ADDR,
@@ -315,6 +316,9 @@ const stixCyberObservablesAttributes: { [k: string]: Array<AttributeDefinition> 
     { name: 'expiration_date', label: 'Expiration date', type: 'date', mandatoryType: 'no', editDefault: false, multiple: false, upsert: true, isFilterable: true },
   ],
    [ENTITY_IMEI]: [
+    { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
+  ],
+   [ENTITY_ICCID]: [
     { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
   ]
 };

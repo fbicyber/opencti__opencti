@@ -49,6 +49,7 @@ import {
   ENTITY_HASHED_OBSERVABLE_STIX_FILE,
   ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE,
   ENTITY_HOSTNAME,
+  ENTITY_ICCID,
   ENTITY_IMEI,
   ENTITY_IPV4_ADDR,
   ENTITY_IPV6_ADDR,
@@ -157,3 +158,4 @@ schemaRelationsRefDefinition.registerRelationsRef(ENTITY_WINDOWS_REGISTRY_VALUE_
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_SSH_KEY, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_IMEI, []);
+schemaRelationsRefDefinition.registerRelationsRef(ENTITY_ICCID, []);

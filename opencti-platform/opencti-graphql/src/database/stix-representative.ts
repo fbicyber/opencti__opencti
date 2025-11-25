@@ -40,6 +40,7 @@ import {
   ENTITY_HASHED_OBSERVABLE_STIX_FILE,
   ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE,
   ENTITY_HOSTNAME,
+  ENTITY_ICCID,
   ENTITY_IMEI,
   ENTITY_IPV4_ADDR,
   ENTITY_IPV6_ADDR,
@@ -294,6 +295,9 @@ export const extractStixRepresentative = (
   }
   if (entityType === ENTITY_IMEI) {
     return (stix as SCO.StixIMEI).value ?? 'Unknown';
+  }
+  if (entityType === ENTITY_ICCID) {
+    return (stix as SCO.StixICCID).value ?? 'Unknown';
   }
   // endregion
   throw UnsupportedError('No representative extractor available', { type: entityType });

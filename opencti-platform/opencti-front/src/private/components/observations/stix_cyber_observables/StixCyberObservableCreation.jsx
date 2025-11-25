@@ -140,6 +140,7 @@ const stixCyberObservableMutation = graphql`
     $Persona: PersonaAddInput
     $SSHKey: SSHKeyAddInput
     $IMEI: IMEIAddInput
+    $ICCID: ICCIDAddInput
   ) {
     stixCyberObservableAdd(
       type: $type
@@ -184,6 +185,7 @@ const stixCyberObservableMutation = graphql`
       Persona: $Persona
       SSHKey: $SSHKey
       IMEI: $IMEI
+      ICCID: $ICCID
     ) {
       id
       draftVersion {
@@ -236,6 +238,7 @@ const BULK_OBSERVABLES = [
   { type: 'Domain-Name', keys: ['value'] },
   { type: 'Email-Addr', keys: ['value'] },
   { type: 'Hostname', keys: ['value'] },
+  { type: 'ICCID', keys: ['value'] },
   { type: 'IMEI', keys: ['value'] },
   { type: 'IPv4-Addr', keys: ['value'] },
   { type: 'IPv6-Addr', keys: ['value'] },

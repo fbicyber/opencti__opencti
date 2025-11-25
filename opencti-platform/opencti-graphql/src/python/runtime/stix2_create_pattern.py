@@ -56,6 +56,7 @@ PATTERN_MAPPING = {
     "SSH-Key_sha256": ["fingerprint_sha256"],
     "SSH-Key_md5": ["fingerprint_MD5"],
     "IMEI": ["value"],
+    "ICCID": ["value"]
 }
 
 

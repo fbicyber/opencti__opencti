@@ -141,6 +141,7 @@ export const resolveLink = (type = 'unknown'): string | null => {
     case 'Media-Content':
     case 'Persona':
     case 'IMEI':
+    case 'ICCID':  
       return '/dashboard/observations/observables';
     case 'Pir':
       return '/dashboard/pirs';
