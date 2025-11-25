@@ -140,6 +140,7 @@ export const resolveLink = (type = 'unknown'): string | null => {
     case 'Payment-Card':
     case 'Media-Content':
     case 'Persona':
+    case 'IMEI':
       return '/dashboard/observations/observables';
     case 'Pir':
       return '/dashboard/pirs';

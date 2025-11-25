@@ -526,6 +526,9 @@ const StixCyberObservableDetails = createFragmentContainer(
                 comment
                 created
             }
+            ... on IMEI {
+                value
+            }
             ...StixCyberObservableIndicators_stixCyberObservable
         }
     `,

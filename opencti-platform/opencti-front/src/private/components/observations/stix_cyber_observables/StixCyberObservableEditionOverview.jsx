@@ -813,6 +813,9 @@ const StixCyberObservableEditionOverview = createFragmentContainer(
           comment
           expiration_date
         }
+        ... on IMEI {
+          value
+        }
         x_opencti_score
         x_opencti_description
         createdBy {

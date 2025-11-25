@@ -412,6 +412,7 @@ enum EntityObservableEnum {
   WINDOWS_REGISTRY_VALUE_TYPE = 'Windows-Registry-Value-Type',
   X509_CERTIFICATE = 'X509-Certificate',
   SSH_KEY = 'SSH-Key',
+  IMEI = 'IMEI'
 }
 
 export const entityObservableDescription = {
@@ -676,6 +677,9 @@ export const entityObservableDescription = {
   },
   [EntityObservableEnum.SSH_KEY]: {
     description: 'A key used to securely authenticate to servers and services over SSH.',
+  },
+  [EntityObservableEnum.IMEI]: {
+    description: 'An identifier used to identify a specific mobile device.',
   },
 };
 

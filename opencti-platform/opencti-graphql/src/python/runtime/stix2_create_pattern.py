@@ -55,6 +55,7 @@ PATTERN_MAPPING = {
     "X509-Certificate_issuer": ["issuer"],
     "SSH-Key_sha256": ["fingerprint_sha256"],
     "SSH-Key_md5": ["fingerprint_MD5"],
+    "IMEI": ["value"],
 }
 
 
