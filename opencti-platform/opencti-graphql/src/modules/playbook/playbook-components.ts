@@ -16,8 +16,8 @@ import * as R from 'ramda';
 import { v4 as uuidv4 } from 'uuid';
 import type { JSONSchemaType } from 'ajv';
 import * as jsonpatch from 'fast-json-patch';
-import { type PlaybookComponent } from './playbook-types';
-import { AUTOMATION_MANAGER_USER, AUTOMATION_MANAGER_USER_UUID, executionContext, SYSTEM_USER } from '../../utils/access';
+import { type BasicStoreEntityPlaybook, ENTITY_TYPE_PLAYBOOK, type PlaybookComponent } from './playbook-types';
+import {AUTOMATION_MANAGER_USER,AUTOMATION_MANAGER_USER_UUID, executionContext, isUserCanAccessStixElement, isUserInPlatformOrganization, SYSTEM_USER } from '../../utils/access';
 import { pushToConnector, pushToWorkerForConnector } from '../../database/rabbitmq';
 import {
   ABSTRACT_STIX_CORE_OBJECT,
