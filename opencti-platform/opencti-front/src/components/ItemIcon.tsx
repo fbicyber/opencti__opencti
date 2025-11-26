@@ -441,6 +441,8 @@ const iconSelector = (
     case 'media-content':
     case 'persona':
     case 'ssh-key':
+    case 'imei':
+    case 'iccid':  
       return <HexagonOutline style={style} fontSize={fontSize} role="img" />;
     case 'stix-sighting-relationship':
     case 'sighting':
