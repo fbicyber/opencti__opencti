@@ -68,6 +68,7 @@ from .utils.constants import (
     CustomObservableCryptographicKey,
     CustomObservableHostname,
     CustomObservableICCID,
+    CustomObservableIMEI,
     CustomObservableMediaContent,
     CustomObservablePaymentCard,
     CustomObservablePersona,
