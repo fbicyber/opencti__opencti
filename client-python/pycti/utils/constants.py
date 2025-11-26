@@ -47,6 +47,8 @@ class StixCyberObservableTypes(Enum):
     SIMPLE_OBSERVABLE = "Simple-Observable"
     PERSONA = "Persona"
     SSH_KEY = "SSH-Key"
+    IMEI = "IMEI"
+    ICCID = "ICCID"
 
     @classmethod
     def has_value(cls, value: str) -> bool:
