@@ -498,3 +498,40 @@ class CustomObservableCryptographicKey:
     """Cryptographic-Key observable."""
 
     pass
+@CustomObservable(
+    "imei",
+    [
+        ("value", StringProperty(required=True)),
+        ("spec_version", StringProperty(fixed="2.1")),
+        (
+            "object_marking_refs",
+            ListProperty(
+                ReferenceProperty(valid_types="marking-definition", spec_version="2.1")
+            ),
+        ),
+    ],
+    ["value"],
+)
+class CustomObservableIMEI
+    """IMEI observable."""
+
+    pass
+
+@CustomObservable(
+    "iccid",
+    [
+        ("value", StringProperty(required=True)),
+        ("spec_version", StringProperty(fixed="2.1")),
+        (
+            "object_marking_refs",
+            ListProperty(
+                ReferenceProperty(valid_types="marking-definition", spec_version="2.1")
+            ),
+        ),
+    ],
+    ["value"],
+)
+class CustomObservableICCID
+    """ICCID observable."""
+
+    pass
