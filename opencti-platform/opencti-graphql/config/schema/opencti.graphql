@@ -12743,7 +12743,7 @@ type IMEI implements BasicObject & StixObject & StixCoreObject & StixCyberObserv
   value: String
   # Technical
   creators: [Creator!]
-  toStix: String
+  toStix(version: Version): String
   importFiles(
     first: Int
     prefixMimeType: String
@@ -12872,7 +12872,7 @@ type ICCID implements BasicObject & StixObject & StixCoreObject & StixCyberObser
   value: String
   # Technical
   creators: [Creator!]
-  toStix: String
+  toStix(version: Version): String
   importFiles(
     first: Int
     prefixMimeType: String
