@@ -512,7 +512,7 @@ class CustomObservableCryptographicKey:
     ],
     ["value"],
 )
-class CustomObservableIMEI
+class CustomObservableIMEI:
     """IMEI observable."""
 
     pass
@@ -531,7 +531,7 @@ class CustomObservableIMEI
     ],
     ["value"],
 )
-class CustomObservableICCID
+class CustomObservableICCID:
     """ICCID observable."""
 
     pass
