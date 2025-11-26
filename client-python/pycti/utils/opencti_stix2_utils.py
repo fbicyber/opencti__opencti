@@ -105,7 +105,7 @@ STIX_CYBER_OBSERVABLE_MAPPING = {
     "persona": "Persona",
     "ssh-key": "SSH-Key",
     "imei": "IMEI",
-    "iccid": "ICCID"
+    "iccid": "ICCID",
 }
 
 STIX_OBJECTS = (
@@ -144,8 +144,8 @@ PATTERN_MAPPING = {
     "Tracking-Number": ["value"],
     "Credential": ["value"],
     "Media-Content": ["url"],
-    "IMEI": ["value"]
-    "ICCID": ["value"]
+    "IMEI": ["value"],
+    "ICCID": ["value"],
 }
 
 OBSERVABLES_VALUE_INT = [

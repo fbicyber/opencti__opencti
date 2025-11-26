@@ -498,6 +498,8 @@ class CustomObservableCryptographicKey:
     """Cryptographic-Key observable."""
 
     pass
+
+
 @CustomObservable(
     "imei",
     [
@@ -516,6 +518,7 @@ class CustomObservableIMEI:
     """IMEI observable."""
 
     pass
+
 
 @CustomObservable(
     "iccid",

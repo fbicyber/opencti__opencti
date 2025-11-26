@@ -313,9 +313,9 @@ class StixCyberObservable(StixCyberObservableDeprecatedMixin):
         ):
             type = "Cryptographic-Key"
         elif type.lower() == "imei" or type.lower() == "x-opencti-imei":
-            type = "IMEI"    
+            type = "IMEI"
         elif type.lower() == "iccid" or type.lower() == "x-opencti-iccid":
-            type = "ICCID"  
+            type = "ICCID"
         elif type.lower() == "text" or type.lower() == "x-opencti-text":
             type = "Text"
 
@@ -1243,17 +1243,13 @@ class StixCyberObservable(StixCyberObservableDeprecatedMixin):
                         observable_data["value"] if "value" in observable_data else None
                     ),
                 }
-            elif (
-                type == "IMEI" or type.lower() == "x-opencti-imei"
-            ):
+            elif type == "IMEI" or type.lower() == "x-opencti-imei":
                 input_variables["IMEI"] = {
                     "value": (
                         observable_data["value"] if "value" in observable_data else None
                     ),
                 }
-            elif (
-                type == "ICCID" or type.lower() == "x-opencti-iccid"
-            ):
+            elif type == "ICCID" or type.lower() == "x-opencti-iccid":
                 input_variables["ICCID"] = {
                     "value": (
                         observable_data["value"] if "value" in observable_data else None
