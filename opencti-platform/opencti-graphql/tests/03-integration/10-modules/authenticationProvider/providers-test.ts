@@ -463,6 +463,7 @@ describe('Provider coverage', () => {
             },
           ],
           prevent_default_groups: false,
+          extend_platform_groups: false,
         },
         organizations_mapping: {
           auto_create_organizations: false,
@@ -530,6 +531,7 @@ describe('Provider coverage', () => {
             },
           ],
           prevent_default_groups: false,
+          extend_platform_groups: false,
         },
         organizations_mapping: {
           auto_create_organizations: false,
