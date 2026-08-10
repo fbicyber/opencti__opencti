@@ -495,11 +495,12 @@ const BulkRelationDialog: FunctionComponent<BulkRelationDialogProps> = ({
                 />
               </Box>
               <Box id="relationArrow" sx={{ display: 'flex', justifyContent: 'center', padding: '0 20px', flexDirection: 'column', minWidth: '200px' }}>
-                <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="bulk-relation-type-label">{t_i18n('Relationship Type')}</InputLabel>
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel htmlFor="bulk-relation-type-select">{t_i18n('Relationship Type')}</InputLabel>
                   <Select
-                    labelId="bulk-relation-type-label"
-                    label={t_i18n('Relationship Type')}
+                    inputProps={{
+                      id: "bulk-relation-type-select"
+                    }}
                     disabled={isSubmitting}
                     onChange={handleChangeSelectedRelationType}
                     value={selectedRelationType}
