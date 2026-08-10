@@ -66,8 +66,8 @@ const FintelTemplateComponent = ({ queryRef }: FintelTemplateProps) => {
               <div
                 role="tabpanel"
                 hidden={index !== 0}
-                id="fintel-templates-tabpanel-0"
-                aria-labelledby="fintel-templates-tab-0"
+                id={`fintel-templates-tabpanel-${index}`}
+                aria-labelledby={`fintel-templates-tab-${index}`}
               >
                 <FintelTemplateContentEditor data={fintelTemplate} />
               </div>
