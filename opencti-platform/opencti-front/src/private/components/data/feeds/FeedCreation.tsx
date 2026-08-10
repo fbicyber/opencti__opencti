@@ -620,7 +620,7 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                           className={classes.container}
                           style={{ marginTop: 20 }}
                         >
-                          {Object.keys(feedAttributes).map((i) => {
+                          {Object.keys(feedAttributes).map((i, index) => {
                             const hasNeighborMapping = R.values(feedAttributes[i]?.mappings || {}).some(
                               (m) => !!m?.relationship_type,
                             );
@@ -648,8 +648,11 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                     {hasNeighborMapping && (
                                       <>
                                         <FormControl variant="standard" sx={{ minWidth: 140 }}>
-                                          <InputLabel>{t_i18n('Multi-match')}</InputLabel>
+                                          <InputLabel htmlFor={`multi-match-select-${index}`}>{t_i18n('Multi-match')}</InputLabel>
                                           <Select
+                                            inputProps={{
+                                              id: `multi-match-select-${index}`,
+                                            }}
                                             value={feedAttributes[i]?.multi_match_strategy || 'list'}
                                             onChange={(event) => handleChangeMultiMatchStrategy(i, event.target.value)}
                                           >
@@ -695,8 +698,11 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                           <Grid container spacing={2}>
                                             <Grid item xs={4}>
                                               <FormControl variant="standard" fullWidth>
-                                                <InputLabel>{t_i18n('Relationship type')}</InputLabel>
+                                                <InputLabel htmlFor={`relationship-type-select-${index}`}>{t_i18n('Relationship type')}</InputLabel>
                                                 <Select
+                                                  inputProps={{
+                                                    id: `relationship-type-select-${index}`,
+                                                  }}
                                                   value={currentMapping?.relationship_type || ''}
                                                   onChange={(event) => handleChangeNeighborMapping(i, selectedType, 'relationship_type', event.target.value)}
                                                 >
@@ -710,9 +716,11 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                             </Grid>
                                             <Grid item xs={4}>
                                               <FormControl variant="standard" fullWidth disabled={!currentMapping?.relationship_type}>
-                                                <InputLabel htmlFor={`target-type-select-label-${typeIndex}`}>{t_i18n('Target type')}</InputLabel>
+                                                <InputLabel htmlFor={`target-type-select-${index}`}>{t_i18n('Target type')}</InputLabel>
                                                 <Select
-                                                  inputProps={{ id: `target-type-select-${typeIndex}` }}
+                                                  inputProps={{
+                                                    id: `target-type-select-${index}`,
+                                                  }}
                                                   value={currentMapping?.target_entity_type || ''}
                                                   onChange={(event) => handleChangeNeighborMapping(i, selectedType, 'target_entity_type', event.target.value)}
                                                 >
@@ -729,7 +737,7 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                             </Grid>
                                             <Grid item xs={4}>
                                               <FormControl variant="standard" fullWidth disabled={!currentMapping?.target_entity_type}>
-                                                <InputLabel id={`attribute-select-${typeIndex}`}>{t_i18n('Attribute')}</InputLabel>
+                                                <InputLabel htmlFor={`neighbor-attribute-select-${index}`}>{t_i18n('Attribute')}</InputLabel>
                                                 {currentMapping?.target_entity_type ? (
                                                   <QueryRenderer
                                                     query={stixCyberObservablesLinesAttributesQuery}
@@ -750,7 +758,9 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                                         }
                                                         return (
                                                           <Select
-                                                            inputProps={{ id: `attribute-select-${typeIndex}` }}
+                                                            inputProps={{
+                                                              id: `neighbor-attribute-select-${index}`,
+                                                            }}
                                                             value={currentMapping?.attribute || ''}
                                                             onChange={(event) => handleChangeAttributeMapping(i, selectedType, event.target.value)}
                                                           >
@@ -760,16 +770,16 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                                           </Select>
                                                         );
                                                       }
-                                                      return <Select inputProps={{ id: `attribute-select-${typeIndex}` }} disabled value="" />;
+                                                      return <Select inputProps={{ id: `neighbor-attribute-select-${index}` }} disabled value="" />;
                                                     }}
                                                   />
-                                                ) : <Select inputProps={{ id: `attribute-select-${typeIndex}` }} disabled value="" />}
+                                                ) : <Select inputProps={{ id: `neighbor-attribute-select-${index}` }} disabled value="" />}
                                               </FormControl>
                                             </Grid>
                                           </Grid>
                                         ) : (
                                           <FormControl variant="standard" fullWidth>
-                                            <InputLabel htmlFor={`attribute-select-${typeIndex}`}>{t_i18n('Attribute')}</InputLabel>
+                                            <InputLabel htmlFor={`attribute-select-${index}`}>{t_i18n('Attribute')}</InputLabel>
                                             <QueryRenderer
                                               query={stixCyberObservablesLinesAttributesQuery}
                                               variables={{ elementType: [selectedType] }}
@@ -789,7 +799,9 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                                   }
                                                   return (
                                                     <Select
-                                                      inputProps={{ id: `attribute-select-${typeIndex}` }}
+                                                      inputProps={{
+                                                        id: `attribute-select-${index}`,
+                                                      }}
                                                       value={currentMapping?.attribute || ''}
                                                       onChange={(event) => handleChangeAttributeMapping(i, selectedType, event.target.value)}
                                                     >
@@ -799,7 +811,7 @@ const FeedCreation: FunctionComponent<FeedCreationFormProps> = (props) => {
                                                     </Select>
                                                   );
                                                 }
-                                                return <Select inputProps={{ id: `attribute-select-${typeIndex}` }} disabled value="" />;
+                                                return <Select inputProps={{ id: `attribute-select-${index}` }} disabled value="" />;
                                               }}
                                             />
                                           </FormControl>
