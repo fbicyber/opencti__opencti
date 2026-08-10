@@ -194,10 +194,16 @@ interface FormSchemaEditorProps {
   onSchemaChange?: (schema: string) => void;
 }
 
-function a11yProps(index: number) {
+function a11yPropsTab(index: number) {
   return {
     id: `form-schema-editor-tab-${index}`,
     'aria-controls': `form-schema-editor-tabpanel-${index}`,
+  };
+}
+function a11yPropsTabPanel(index: number) {
+  return {
+    id: `form-schema-editor-tabpanel-${index}`,
+    'aria-labelledby': `form-schema-editor-tab-${index}`,
   };
 }
 
@@ -1604,17 +1610,16 @@ const FormSchemaEditor: FunctionComponent<FormSchemaEditorProps> = ({
   return (
     <div className={classes.container}>
       <Tabs value={currentTab} onChange={(_, value) => setCurrentTab(value)}>
-        <Tab label={t_i18n('Main Entity')} {...a11yProps(0)} />
-        <Tab label={t_i18n('Additional Entities')} {...a11yProps(1)} />
-        {hasAdditionalEntities && <Tab label={t_i18n('Relationships')} {...a11yProps(2)} />}
+        <Tab label={t_i18n('Main Entity')} {...a11yPropsTab(0)} />
+        <Tab label={t_i18n('Additional Entities')} {...a11yPropsTab(1)} />
+        {hasAdditionalEntities && <Tab label={t_i18n('Relationships')} {...a11yPropsTab(2)} />}
       </Tabs>
 
       {currentTab === 0 && (
         <div
           className={classes.tabPanel}
           role="tabpanel"
-          id="form-schema-editor-tabpanel-0"
-          aria-labelledby="form-schema-editor-tab-0"
+          {...a11yPropsTabPanel(0)}
         >
           <FormControl fullWidth variant="standard">
             <InputLabel>{t_i18n('Main Entity Type')}</InputLabel>
@@ -2225,8 +2230,7 @@ const FormSchemaEditor: FunctionComponent<FormSchemaEditorProps> = ({
         <div
           className={classes.tabPanel}
           role="tabpanel"
-          id="form-schema-editor-tabpanel-1"
-          aria-labelledby="form-schema-editor-tab-1"
+          {...a11yPropsTabPanel(1)}
         >
           {formData.additionalEntities.map((entity, idx) => renderAdditionalEntity(entity, idx))}
           <Button
@@ -2244,8 +2248,7 @@ const FormSchemaEditor: FunctionComponent<FormSchemaEditorProps> = ({
         <div
           className={classes.tabPanel}
           role="tabpanel"
-          id="form-schema-editor-tabpanel-2"
-          aria-labelledby="form-schema-editor-tab-2"
+          {...a11yPropsTabPanel(2)}
         >
           <Typography variant="h6" gutterBottom>
             {t_i18n('Relationships')}
