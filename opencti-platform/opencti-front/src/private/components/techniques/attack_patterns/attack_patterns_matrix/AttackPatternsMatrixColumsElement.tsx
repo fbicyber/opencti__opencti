@@ -94,14 +94,14 @@ const AttackPatternsMatrixColumnsElement = ({
   const { border, backgroundColor } = styles;
 
   const a11yProps = () => {
-    const scoreValue = getAvgCoverageScore()
+    const scoreValue = getAvgCoverageScore();
     if (scoreValue) {
       return {
-        'aria-label': `${Math.round(scoreValue)}% ${t_i18n('Coverage')}`
-      }
+        'aria-label': `${Math.round(scoreValue)}% ${t_i18n('Coverage')}`,
+      };
     }
-    return undefined
-  }
+    return undefined;
+  };
 
   return (
     <Box

@@ -101,8 +101,8 @@ const AccordionAttackPattern = ({
 
     // Calculate color based on score (0-100)
     // Green to red gradient
-    let red = 255
-    let green = 255
+    let red = 255;
+    let green = 255;
     if (avgCoverageScore) {
       red = Math.round(255 * (1 - avgCoverageScore.avg / 100));
       green = Math.round(255 * (avgCoverageScore.avg / 100));
@@ -122,14 +122,14 @@ const AccordionAttackPattern = ({
   const { border, backgroundColor } = styles;
 
   const a11yProps = () => {
-    const scoreValue = getAvgCoverageScore()
+    const scoreValue = getAvgCoverageScore();
     if (scoreValue) {
       return {
-        'aria-label': `${Math.round(scoreValue.avg)}% ${t_i18n('Coverage')}`
-      }
+        'aria-label': `${Math.round(scoreValue.avg)}% ${t_i18n('Coverage')}`,
+      };
     }
-    return undefined
-  }
+    return undefined;
+  };
 
   return (
     <MuiAccordion
