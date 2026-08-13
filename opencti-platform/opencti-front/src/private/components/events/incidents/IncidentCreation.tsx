@@ -178,6 +178,7 @@ export const IncidentCreationForm: FunctionComponent<IncidentCreationProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"

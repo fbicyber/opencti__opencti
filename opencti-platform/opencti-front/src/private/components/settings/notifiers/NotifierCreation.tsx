@@ -62,7 +62,7 @@ const notifierValidation = (t: (value: string) => string) => Yup.object().shape(
 });
 
 type NotifierFormikHelpers = Pick<FormikHelpers<NotifierAddInput>,
-'setErrors' | 'setSubmitting' | 'resetForm'>;
+  'setErrors' | 'setSubmitting' | 'resetForm'>;
 
 export const NotifierCreationForm: FunctionComponent<NotifierFormProps> = ({
   updater,
@@ -127,7 +127,7 @@ export const NotifierCreationForm: FunctionComponent<NotifierFormProps> = ({
     <Formik<NotifierAddInput>
       initialValues={initialValues}
       validationSchema={notifierValidation(t_i18n)}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
       onReset={onClose}
     >
       {({
@@ -141,6 +141,7 @@ export const NotifierCreationForm: FunctionComponent<NotifierFormProps> = ({
       }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

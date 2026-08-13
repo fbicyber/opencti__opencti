@@ -181,6 +181,7 @@ const SecurityPlatformCreationForm: FunctionComponent<SecurityPlatformCreationFo
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

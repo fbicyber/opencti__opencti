@@ -136,6 +136,7 @@ const PublicDashboardCreationFormComponent = ({
       {({ isSubmitting, isValid, dirty, handleReset, submitForm, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={SelectField}
             variant="standard"
             name="dashboard_id"
@@ -200,7 +201,7 @@ const PublicDashboardCreationFormComponent = ({
             label={t_i18n('Max level markings')}
             helpertext={t_i18n('To prevent people seeing all the data...')}
             style={fieldSpacingContainerStyle}
-            onChange={() => {}}
+            onChange={() => { }}
             setFieldValue={setFieldValue}
             limitToMaxSharing
           />

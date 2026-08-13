@@ -217,6 +217,7 @@ export const CityCreationForm: FunctionComponent<CityFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               name="name"
               label={t_i18n('Name')}

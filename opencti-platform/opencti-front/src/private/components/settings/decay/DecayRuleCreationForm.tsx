@@ -113,6 +113,7 @@ const DecayRuleCreationForm = ({ updater, onReset, onCompleted }: DecayRuleCreat
       {({ submitForm, handleReset, isSubmitting, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

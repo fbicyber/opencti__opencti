@@ -224,6 +224,7 @@ export const IndividualCreationForm: FunctionComponent<IndividualFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

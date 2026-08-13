@@ -222,6 +222,7 @@ export const AdministrativeAreaCreationForm: FunctionComponent<AdministrativeAre
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

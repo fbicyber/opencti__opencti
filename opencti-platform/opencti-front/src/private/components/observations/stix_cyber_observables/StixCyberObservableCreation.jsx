@@ -253,7 +253,7 @@ const SCO_DEFAULT_FIELD = [
 const StixCyberObservableCreation = ({
   contextual,
   open = false,
-  handleClose = () => {},
+  handleClose = () => { },
   type,
   display = false,
   speeddial = false,
@@ -264,7 +264,7 @@ const StixCyberObservableCreation = ({
   defaultCreatedBy,
   defaultMarkingDefinitions = [],
   isFromBulkRelation = false,
-  onCompleted = () => {},
+  onCompleted = () => { },
   stixCyberObservableTypes = undefined,
 }) => {
   const classes = useStyles();
@@ -785,6 +785,7 @@ const StixCyberObservableCreation = ({
                     >
                       <div>
                         <Field
+                          autoFocus={true}
                           component={TextField}
                           variant="standard"
                           name="x_opencti_score"
@@ -1045,7 +1046,7 @@ const StixCyberObservableCreation = ({
         <CreateEntityControlledDial
           entityType={type ?? 'Observable'}
           onOpen={handleOpen}
-          onClose={() => {}}
+          onClose={() => { }}
           style={controlledDialStyles}
         />
         <Drawer

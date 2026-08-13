@@ -256,6 +256,7 @@ export const PositionCreationForm: FunctionComponent<PositionFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

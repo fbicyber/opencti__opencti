@@ -54,6 +54,7 @@ interface OpenVocabFieldComponentProps {
   disabled?: boolean;
   multiple?: boolean;
   disabledOptions?: string[];
+  autoFocus?: boolean;
   onFocus?: (name: string, value: VocabFieldOption) => void;
   onChange?: (name: string, value: string | string[]) => void;
   onSubmit?: (name: string, value: string | string[]) => void;
@@ -74,6 +75,7 @@ const OpenVocabFieldComponent = ({
   queryRef,
   disabled = false,
   disabledOptions = [],
+  autoFocus = false,
 }: OpenVocabFieldComponentProps) => {
   const isEdition = variant === 'edit';
 
@@ -105,6 +107,7 @@ const OpenVocabFieldComponent = ({
 
   return (
     <Field
+      autoFocus={autoFocus}
       component={AutocompleteField}
       name={name}
       required={required}
@@ -170,6 +173,7 @@ const OpenVocabField = (props: OpenVocabFieldProps) => {
 
   const FallbackAutoComplete = (
     <Field
+      autoFocus={props.autoFocus}
       component={AutocompleteField}
       name={name}
       required={required}

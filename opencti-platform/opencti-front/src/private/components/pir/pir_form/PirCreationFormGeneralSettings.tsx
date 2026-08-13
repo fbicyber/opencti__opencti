@@ -55,6 +55,7 @@ const PirCreationFormGeneralSettings = ({ redisQueryRef }: PirCreationFormGenera
   return (
     <>
       <Field
+        autoFocus={true}
         name="name"
         required
         component={TextField}

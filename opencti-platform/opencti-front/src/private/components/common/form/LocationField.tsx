@@ -31,6 +31,7 @@ interface LocationFieldProps {
   containerStyle?: Record<string, string | number>;
   helperText?: string;
   required?: boolean;
+  autoFocus?: boolean;
 }
 
 const LocationField = ({
@@ -39,6 +40,7 @@ const LocationField = ({
   containerStyle,
   helperText,
   required,
+  autoFocus = false,
 }: LocationFieldProps) => {
   const { t_i18n } = useFormatter();
   const [options, setOptions] = useState<FieldOption[]>([]);
@@ -62,6 +64,7 @@ const LocationField = ({
 
   return (
     <Field
+      autoFocus={autoFocus}
       component={AutocompleteField}
       groupBy={(option: FieldOption) => option.type}
       multiple

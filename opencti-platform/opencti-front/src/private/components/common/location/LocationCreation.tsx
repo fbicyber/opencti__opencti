@@ -132,6 +132,7 @@ const LocationCreationForm: FunctionComponent<LocationCreationFormProps> = ({
       }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"

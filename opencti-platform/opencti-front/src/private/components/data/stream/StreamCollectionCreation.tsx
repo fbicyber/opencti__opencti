@@ -145,6 +145,7 @@ const StreamCollectionCreationForm = ({
         <Form>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <Field
+              autoFocus={true}
               component={TextField}
               variant="standard"
               name="name"

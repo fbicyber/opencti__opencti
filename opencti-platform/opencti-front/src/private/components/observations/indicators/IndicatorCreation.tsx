@@ -239,6 +239,7 @@ export const IndicatorCreationForm: FunctionComponent<IndicatorFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"

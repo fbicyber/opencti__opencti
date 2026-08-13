@@ -67,6 +67,7 @@ const DisseminationListForm: FunctionComponent<DisseminationListFormProps> = ({
       {({ submitForm, handleReset, isSubmitting }) => (
         <>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

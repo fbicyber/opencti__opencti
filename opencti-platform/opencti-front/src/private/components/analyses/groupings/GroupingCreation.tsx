@@ -207,6 +207,7 @@ export const GroupingCreationForm: FunctionComponent<GroupingFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

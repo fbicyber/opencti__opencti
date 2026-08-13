@@ -219,6 +219,7 @@ export const NoteCreationForm: FunctionComponent<NoteFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={DateTimePickerField}
             name="created"
             textFieldProps={{

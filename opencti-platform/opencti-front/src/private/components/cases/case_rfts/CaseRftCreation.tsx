@@ -224,6 +224,7 @@ export const CaseRftCreationForm: FunctionComponent<CaseRftFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values, errors }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"

@@ -120,6 +120,7 @@ const ThemeForm: FunctionComponent<ThemeFormProps> = ({
     >
       <Stack gap={2.5}>
         <Field
+          autoFocus
           component={TextField}
           variant="standard"
           name="name"

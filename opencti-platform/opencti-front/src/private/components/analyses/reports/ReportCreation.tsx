@@ -228,6 +228,7 @@ export const ReportCreationForm: FunctionComponent<ReportFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

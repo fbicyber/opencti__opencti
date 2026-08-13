@@ -232,6 +232,7 @@ const ExternalReferenceCreation: FunctionComponent<ExternalReferenceCreationProp
             {({ submitForm, handleReset, isSubmitting, setFieldValue }) => (
               <Form>
                 <Field
+                  autoFocus={true}
                   component={TextField}
                   name="source_name"
                   label={t_i18n('Source name')}
@@ -319,6 +320,7 @@ const ExternalReferenceCreation: FunctionComponent<ExternalReferenceCreationProp
             {({ submitForm, handleReset, isSubmitting, setFieldValue }) => (
               <Form>
                 <Field
+                  autoFocus={true}
                   component={TextField}
                   name="source_name"
                   label={t_i18n('Source name')}

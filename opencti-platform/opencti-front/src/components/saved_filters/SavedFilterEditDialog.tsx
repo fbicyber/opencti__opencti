@@ -155,6 +155,7 @@ const SavedFilterEditDialog = ({
         {({ submitForm, values, setFieldValue }) => (
           <Form>
             <TextField
+              autoFocus={true}
               label={t_i18n('Name')}
               placeholder={t_i18n('My saved filter')}
               fullWidth

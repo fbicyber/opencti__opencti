@@ -128,6 +128,7 @@ const TokenCreationForm: FunctionComponent<TokenCreationFormProps> = ({
       {({ submitForm, isSubmitting }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"
