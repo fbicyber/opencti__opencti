@@ -126,6 +126,7 @@ const SavedFilterCreateDialog = ({ isOpen, onClose, setCurrentSavedFilter }: Sav
         {({ submitForm }) => (
           <Form>
             <TextField
+              autoFocus
               label={t_i18n('Name')}
               placeholder={t_i18n('My saved filter')}
               fullWidth

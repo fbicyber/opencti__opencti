@@ -181,6 +181,7 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <OpenVocabField
+            autoFocus={true}
             label={t_i18n('Opinion')}
             type="opinion_ov"
             name="opinion"
@@ -346,6 +347,7 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <OpenVocabField
+            autoFocus={true}
             label={t_i18n('Opinion')}
             type="opinion_ov"
             name="opinion"

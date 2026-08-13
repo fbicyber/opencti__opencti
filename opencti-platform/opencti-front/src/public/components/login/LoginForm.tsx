@@ -91,6 +91,7 @@ const LoginForm = () => {
         {({ isSubmitting, isValid }) => (
           <Form>
             <Field
+              autoFocus={true}
               component={TextField}
               name="email"
               label={t_i18n('Login')}

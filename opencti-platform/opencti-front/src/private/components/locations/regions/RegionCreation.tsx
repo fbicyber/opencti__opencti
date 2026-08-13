@@ -205,6 +205,7 @@ export const RegionCreationForm: FunctionComponent<RegionFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

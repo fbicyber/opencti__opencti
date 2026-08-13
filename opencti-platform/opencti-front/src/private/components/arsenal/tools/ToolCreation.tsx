@@ -225,6 +225,7 @@ export const ToolCreationForm: FunctionComponent<ToolFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

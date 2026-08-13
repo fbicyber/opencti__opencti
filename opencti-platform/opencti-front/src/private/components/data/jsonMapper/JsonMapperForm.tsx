@@ -162,6 +162,7 @@ const JsonMapperForm: FunctionComponent<JsonMapperFormProps> = ({ jsonMapper, on
           return (
             <Form>
               <Field
+                autoFocus={true}
                 component={TextField}
                 variant="standard"
                 name="name"

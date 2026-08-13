@@ -237,6 +237,7 @@ export const OrganizationCreationForm: FunctionComponent<OrganizationFormProps> 
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

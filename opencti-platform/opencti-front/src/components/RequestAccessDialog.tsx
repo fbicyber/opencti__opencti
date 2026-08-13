@@ -120,6 +120,7 @@ const RequestAccessDialog: React.FC<RequestAccessDialogProps> = ({ open, onClose
                       {t_i18n('Your organization does not have permission...')}
                     </DialogContentText>
                     <Field
+                      autofocus="true"
                       component={TextField}
                       name="request_access_reason"
                       label={t_i18n('Enter justification for requesting access to this knowledge')}

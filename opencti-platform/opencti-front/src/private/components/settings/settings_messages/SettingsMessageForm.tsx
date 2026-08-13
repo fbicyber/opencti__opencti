@@ -54,7 +54,7 @@ const messageValidation = () => Yup.object().shape({
 type SettingsMessageInput = Partial<
   Pick<
     SettingsMessagesLine_settingsMessage$data,
-'id' | 'activated' | 'message' | 'dismissible'
+    'id' | 'activated' | 'message' | 'dismissible'
   > & { recipients: FieldOption[] }
 >;
 
@@ -130,6 +130,7 @@ const SettingsMessageForm = ({
           {({ submitForm, handleReset, isSubmitting, isValid }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="message"

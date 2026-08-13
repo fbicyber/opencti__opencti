@@ -241,6 +241,7 @@ export const SectorCreationForm: FunctionComponent<SectorFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

@@ -237,6 +237,7 @@ const ExternalReferenceFileImportViewerBase: FunctionComponent<
                 title={t_i18n('Launch an import')}
               >
                 <Field
+                  autoFocus={true}
                   component={SelectField}
                   name="connector_id"
                   label={t_i18n('Connector')}

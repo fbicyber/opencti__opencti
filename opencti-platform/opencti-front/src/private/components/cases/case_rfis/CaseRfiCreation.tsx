@@ -222,6 +222,7 @@ export const CaseRfiCreationForm: FunctionComponent<CaseRfiFormProps> = ({
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values, errors }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             variant="standard"
             name="name"

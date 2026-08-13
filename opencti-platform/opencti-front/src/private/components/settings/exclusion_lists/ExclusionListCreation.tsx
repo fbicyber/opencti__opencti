@@ -135,6 +135,7 @@ const ExclusionListCreationForm: FunctionComponent<ExclusionListCreationFormProp
       {({ submitForm, handleReset, isSubmitting, setFieldValue, errors }) => (
         <Form style={{ margin: '20px 0 20px 0' }}>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

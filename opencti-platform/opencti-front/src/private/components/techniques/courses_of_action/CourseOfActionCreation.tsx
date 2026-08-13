@@ -178,6 +178,7 @@ export const CourseOfActionCreationForm: FunctionComponent<CourseOfActionFormPro
       }) => (
         <Form>
           <Field
+            autoFocus={true}
             component={TextField}
             name="name"
             label={t_i18n('Name')}

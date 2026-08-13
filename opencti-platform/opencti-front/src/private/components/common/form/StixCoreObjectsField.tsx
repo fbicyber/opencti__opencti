@@ -255,6 +255,7 @@ interface StixCoreObjectsFieldProps {
    * submitted (as part of the draft STIX bundle).
    */
   deferCreation?: boolean;
+  autoFocus?: boolean;
 }
 
 interface CreatedEntity {
@@ -278,6 +279,7 @@ const StixCoreObjectsField: FunctionComponent<StixCoreObjectsFieldProps> = ({
   types = null,
   disableCreation = false,
   deferCreation = false,
+  autoFocus = false,
 }) => {
   const classes = useStyles();
   const { t_i18n } = useFormatter();
@@ -646,6 +648,7 @@ const StixCoreObjectsField: FunctionComponent<StixCoreObjectsFieldProps> = ({
         required={required}
         multiple={multiple}
         textfieldprops={{
+          autoFocus: autoFocus,
           variant: 'standard',
           label: label ?? (multiple ? t_i18n('Entities') : t_i18n('Entity')),
           helperText: helpertext,

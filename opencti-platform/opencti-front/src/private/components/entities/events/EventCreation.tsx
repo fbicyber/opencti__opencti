@@ -235,6 +235,7 @@ export const EventCreationForm: FunctionComponent<EventFormProps> = ({
           </ProgressBar>
           <Form>
             <Field
+              autoFocus={true}
               component={BulkTextField}
               variant="standard"
               name="name"

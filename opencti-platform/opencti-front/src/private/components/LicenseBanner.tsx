@@ -168,6 +168,7 @@ const LicenseBanner = () => {
           {({ submitForm, isSubmitting, resetForm }) => (
             <Form>
               <Field
+                autoFocus={true}
                 component={TextField}
                 name="message"
                 variant="standard"

@@ -164,6 +164,7 @@ export const ObservedDataCreationForm: FunctionComponent<
       {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
         <Form>
           <StixCoreObjectsField
+            autoFocus={true}
             name="objects"
             required={(mandatoryAttributes.includes('objects'))}
           />

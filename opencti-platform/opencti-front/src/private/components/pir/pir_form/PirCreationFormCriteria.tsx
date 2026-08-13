@@ -26,6 +26,7 @@ const PirCreationFormCriteria = () => {
   return (
     <>
       <LocationField
+        autoFocus={true}
         name="locations"
         label={t_i18n('Targeted locations')}
         helperText={t_i18n('Pir targeted locations...')}

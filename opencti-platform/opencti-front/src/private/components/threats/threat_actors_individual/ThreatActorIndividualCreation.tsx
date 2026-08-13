@@ -389,6 +389,7 @@ export const ThreatActorIndividualCreationForm: FunctionComponent<
                 <BulkResult variablesToString={(v) => v.input.name} />
               </ProgressBar>
               <Field
+                autoFocus={true}
                 component={BulkTextField}
                 style={{ marginTop: 20 }}
                 name="name"

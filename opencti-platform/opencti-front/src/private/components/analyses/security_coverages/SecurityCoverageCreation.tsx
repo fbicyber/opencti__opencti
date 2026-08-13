@@ -684,6 +684,7 @@ const SecurityCoverageCreationFormInner: FunctionComponent<SecurityCoverageFormI
         return (
           <Box>
             <Field
+              autoFocus={true}
               component={TextField}
               variant="standard"
               name="name"
