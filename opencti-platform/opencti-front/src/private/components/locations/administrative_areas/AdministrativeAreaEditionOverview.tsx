@@ -251,6 +251,7 @@ const AdministrativeAreaEditionOverview: FunctionComponent<
         <Form>
           <AlertConfidenceForEntity entity={administrativeArea} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

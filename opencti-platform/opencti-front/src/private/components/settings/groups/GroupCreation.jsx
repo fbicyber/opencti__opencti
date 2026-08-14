@@ -104,6 +104,7 @@ const GroupCreation = ({ paginationOptions }) => {
           {({ submitForm, handleReset, isSubmitting }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 name="name"
                 label={t_i18n('Name')}

@@ -272,6 +272,7 @@ const CertStrategyForm = ({ onCancel }: CertStrategyFormProps) => {
             <>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginTop: 2.5, gap: 0 }}>
                 <Field
+                  autoFocus
                   component={SwitchField}
                   type="checkbox"
                   name="enabled"

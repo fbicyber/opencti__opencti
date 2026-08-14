@@ -106,6 +106,7 @@ const StatusTemplateEdition: FunctionComponent<StatusTemplateEditionProps> = ({
       {() => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

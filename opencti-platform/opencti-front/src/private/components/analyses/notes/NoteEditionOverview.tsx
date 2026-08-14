@@ -162,6 +162,7 @@ const NoteEditionOverviewComponent: FunctionComponent<NoteEditionOverviewProps> 
         <Form>
           <AlertConfidenceForEntity entity={note} />
           <Field
+            autoFocus
             component={DateTimePickerField}
             name="created"
             onFocus={editor.changeFocus}

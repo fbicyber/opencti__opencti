@@ -124,11 +124,12 @@ const DraftEditionOverviewComponent: FunctionComponent<
       validateOnChange={true}
       validateOnBlur={true}
       validationSchema={draftValidator}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
     >
       {({ setFieldValue }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

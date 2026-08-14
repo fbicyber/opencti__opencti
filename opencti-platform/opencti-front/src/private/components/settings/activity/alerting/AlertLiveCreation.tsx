@@ -158,6 +158,7 @@ const TriggerActivityLiveCreation: FunctionComponent<TriggerLiveCreationProps> =
   const liveFields = (setFieldValue: (field: string, value: unknown, shouldValidate?: boolean | undefined) => void, values: TriggerActivityLiveAddInput) => (
     <React.Fragment>
       <Field
+        autoFocus
         component={TextField}
         variant="standard"
         name="name"

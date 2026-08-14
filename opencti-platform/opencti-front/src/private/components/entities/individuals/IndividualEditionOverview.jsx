@@ -195,6 +195,7 @@ const IndividualEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={individual} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

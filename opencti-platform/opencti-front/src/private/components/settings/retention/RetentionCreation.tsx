@@ -146,6 +146,7 @@ const RetentionCreation = ({ paginationOptions }: { paginationOptions: Retention
           {({ submitForm, handleReset, isSubmitting, values: formValues, validateForm, setTouched }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="name"

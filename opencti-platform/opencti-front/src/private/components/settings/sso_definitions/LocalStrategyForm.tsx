@@ -151,6 +151,7 @@ const LocalStrategyForm = ({ onCancel }: LocalStrategyFormProps) => {
     });
   };
 
+  const localDisabled = isConfigurationFromEnv || (!canDisableLocal && initialValues.enabled);
   return (
     <Formik
       enableReinitialize
@@ -163,11 +164,12 @@ const LocalStrategyForm = ({ onCancel }: LocalStrategyFormProps) => {
         <Form>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Field
+              autoFocus={!localDisabled}
               component={SwitchField}
               type="checkbox"
               name="enabled"
               label={t_i18n('Enable local authentication')}
-              disabled={isConfigurationFromEnv || (!canDisableLocal && initialValues.enabled)}
+              disabled={localDisabled}
             />
             {isConfigurationFromEnv && (
               <Tooltip title={t_i18n('Local authentication cannot be changed when authentication is managed by environment configuration')}>
@@ -184,6 +186,7 @@ const LocalStrategyForm = ({ onCancel }: LocalStrategyFormProps) => {
             {t_i18n('Local password policies')}
           </Typography>
           <Field
+            autoFocus={localDisabled}
             component={TextField}
             type="number"
             variant="standard"

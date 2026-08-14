@@ -282,6 +282,7 @@ const CaseRftEditionOverview: FunctionComponent<CaseRftEditionOverviewProps> = (
         <Form>
           <AlertConfidenceForEntity entity={caseData} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

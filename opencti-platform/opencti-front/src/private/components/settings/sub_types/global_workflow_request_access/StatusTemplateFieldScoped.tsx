@@ -17,6 +17,7 @@ interface StatusTemplateFieldScopedProps {
   style?: Record<string, string | number>;
   scope: string;
   label: string;
+  autoFocus?: boolean;
 }
 
 export const StatusTemplateFieldScopedSearchQuery = graphql`
@@ -36,6 +37,7 @@ const StatusTemplateFieldScoped: FunctionComponent<StatusTemplateFieldScopedProp
   helpertext,
   required = false,
   scope,
+  autoFocus = false,
 }) => {
   const { t_i18n } = useFormatter();
   const [statusTemplates, setStatusTemplates] = useState<FieldOption[]>([]);
@@ -64,6 +66,7 @@ const StatusTemplateFieldScoped: FunctionComponent<StatusTemplateFieldScopedProp
         name={name}
         style={style}
         textfieldprops={{
+          autoFocus: autoFocus,
           variant: 'standard',
           label,
           helperText: helpertext,

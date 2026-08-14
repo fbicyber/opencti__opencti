@@ -139,6 +139,7 @@ const TriggerDigestCreation: FunctionComponent<TriggerDigestCreationProps> = ({
   ) => (
     <React.Fragment>
       <Field
+        autoFocus
         component={TextField}
         variant="standard"
         name="name"

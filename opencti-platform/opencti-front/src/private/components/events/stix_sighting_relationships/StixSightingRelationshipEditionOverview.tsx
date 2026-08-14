@@ -257,6 +257,7 @@ const StixSightingRelationshipEditionOverviewComponent: FunctionComponent<Omit<S
         <Form>
           <AlertConfidenceForEntity entity={stixSightingRelationship} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="attribute_count"

@@ -262,6 +262,7 @@ const ThreatActorIndividualEditionOverviewComponent: FunctionComponent<
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={threatActorIndividual} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

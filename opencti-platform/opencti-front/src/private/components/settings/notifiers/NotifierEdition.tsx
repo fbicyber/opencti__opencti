@@ -165,6 +165,7 @@ const NotifierEdition: FunctionComponent<NotifierEditionComponentProps> = ({
         {({ values, setFieldValue, setSubmitting, setErrors, isSubmitting }) => (
           <Form>
             <Field
+              autoFocus
               component={TextField}
               variant="standard"
               name="name"

@@ -135,6 +135,7 @@ const RequestAccessConfigurationEdition: FunctionComponent<RequestAccessWorkflow
           return (
             <Form>
               <StatusTemplateFieldScoped
+                autoFocus
                 name="acceptedTemplate"
                 label={t_i18n('On approval move to status:')}
                 setFieldValue={setFieldValue}

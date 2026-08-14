@@ -195,6 +195,7 @@ const EventEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={event} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

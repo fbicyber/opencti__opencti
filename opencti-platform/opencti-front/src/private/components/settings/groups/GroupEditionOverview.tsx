@@ -130,6 +130,7 @@ const GroupEditionOverviewComponent: FunctionComponent<GroupEditionOverviewCompo
         {() => (
           <Form style={{ marginTop: theme.spacing(2) }}>
             <Field
+              autoFocus
               component={TextField}
               name="name"
               label={t_i18n('Name')}

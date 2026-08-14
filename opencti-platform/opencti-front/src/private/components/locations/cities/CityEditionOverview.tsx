@@ -241,6 +241,7 @@ const CityEditionOverview: FunctionComponent<CityEditionOverviewProps> = ({
         <Form>
           <AlertConfidenceForEntity entity={city} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

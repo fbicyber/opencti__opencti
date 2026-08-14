@@ -209,6 +209,7 @@ const IntrusionSetEditionOverviewComponent = (props) => {
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={intrusionSet} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

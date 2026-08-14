@@ -187,6 +187,7 @@ const UserEditionOverviewComponent: FunctionComponent<
       {() => (
         <Form style={{ marginTop: theme.spacing(2) }}>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

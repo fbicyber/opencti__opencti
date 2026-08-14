@@ -288,6 +288,7 @@ const FintelDesignFormDrawer: FunctionComponent<FintelDesignFormDrawerProps> = (
             {({ submitForm, handleReset, isSubmitting, setFieldValue }) => (
               <Form style={{ margin: theme.spacing(0) }}>
                 <Field
+                  autoFocus
                   component={TextField}
                   variant={isEditMode ? 'standard' : undefined}
                   name="name"

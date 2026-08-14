@@ -146,6 +146,7 @@ const StatusTemplateCreation: FunctionComponent<StatusTemplateCreationProps> = (
             {({ submitForm, handleReset, isSubmitting }) => (
               <Form>
                 <Field
+                  autoFocus
                   component={TextField}
                   variant="standard"
                   name="name"

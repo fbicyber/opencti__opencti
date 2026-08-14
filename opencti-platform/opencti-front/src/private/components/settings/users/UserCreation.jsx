@@ -167,6 +167,7 @@ const UserCreation = ({ paginationOptions, defaultGroupsQueryRef }) => {
                 <Stack sx={{ gap: 2.5 }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Field
+                      autoFocus
                       component={SwitchField}
                       type="checkbox"
                       name="user_service_account"

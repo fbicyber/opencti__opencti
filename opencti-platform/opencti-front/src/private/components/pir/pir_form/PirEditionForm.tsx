@@ -59,6 +59,7 @@ const PirEditionForm = ({ onSubmitField, pir }: PirEditionFormProps) => {
       {() => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

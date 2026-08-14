@@ -130,6 +130,7 @@ const CustomFieldCreation: FunctionComponent<CustomFieldCreationProps> = ({
           {({ submitForm, handleReset, isSubmitting, values, setFieldValue, setFieldTouched, touched, errors, submitCount }) => (
             <Form>
               <Field
+                autoFocus
                 component={SelectField}
                 variant="standard"
                 name="field_type"

@@ -101,6 +101,7 @@ const PlaybookEditionForm: FunctionComponent<PlaybookEditionFormProps> = ({ quer
       {() => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

@@ -103,6 +103,7 @@ class LabelEditionContainer extends Component {
           {() => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="value"

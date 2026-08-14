@@ -249,6 +249,7 @@ const OrganizationEditionOverview: FunctionComponent<OrganizationEditionOverview
         <Form>
           <AlertConfidenceForEntity entity={organization} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

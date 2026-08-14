@@ -349,6 +349,7 @@ const LdapProviderForm = ({
             <>
               {/* Enabled at the very top */}
               <Field
+                autoFocus
                 component={SwitchField}
                 type="checkbox"
                 name="enabled"

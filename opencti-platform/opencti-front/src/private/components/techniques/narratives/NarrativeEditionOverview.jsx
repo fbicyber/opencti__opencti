@@ -194,6 +194,7 @@ const NarrativeEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={narrative} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

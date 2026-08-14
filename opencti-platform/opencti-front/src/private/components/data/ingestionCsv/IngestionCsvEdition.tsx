@@ -495,6 +495,7 @@ const IngestionCsvEdition: FunctionComponent<IngestionCsvEditionProps> = ({
           <Form>
             <Box sx={{ display: currentTab === 0 ? 'block' : 'none' }}>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="name"

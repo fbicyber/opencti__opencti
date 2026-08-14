@@ -194,6 +194,7 @@ const ChannelEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={channel} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

@@ -249,6 +249,7 @@ const ToolEditionOverview: FunctionComponent<ToolEditionOverviewProps> = ({
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={tool} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

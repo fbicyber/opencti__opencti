@@ -97,6 +97,7 @@ const CaseTemplateCreation: FunctionComponent<CaseTemplateCreationProps> = ({
           {({ submitForm, handleReset, isSubmitting, setFieldValue, values }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="name"

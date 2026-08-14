@@ -274,6 +274,7 @@ const IncidentEditionOverviewComponent: FunctionComponent<
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={incident} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

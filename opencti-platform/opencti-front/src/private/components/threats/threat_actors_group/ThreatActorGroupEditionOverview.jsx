@@ -211,6 +211,7 @@ const ThreatActorGroupEditionOverviewComponent = (props) => {
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={threatActorGroup} />
           <Field
+            autofocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

@@ -261,6 +261,7 @@ const DataSourceEditionOverview: FunctionComponent<
         <Form>
           <AlertConfidenceForEntity entity={dataSource} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

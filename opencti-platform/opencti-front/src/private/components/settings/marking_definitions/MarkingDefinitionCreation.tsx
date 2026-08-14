@@ -107,6 +107,7 @@ const MarkingDefinitionCreation: FunctionComponent<
           {({ submitForm, handleReset, isSubmitting }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="definition_type"

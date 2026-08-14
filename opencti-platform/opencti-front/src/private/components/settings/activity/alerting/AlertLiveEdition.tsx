@@ -152,6 +152,7 @@ const AlertLiveEdition: FunctionComponent<AlertLiveEditionProps> = ({
       {() => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

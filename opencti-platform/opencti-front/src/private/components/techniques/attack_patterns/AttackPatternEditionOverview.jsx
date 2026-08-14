@@ -205,6 +205,7 @@ const AttackPatternEditionOverviewComponent = (props) => {
         <Form style={{ marginTop: theme.spacing(2) }}>
           <AlertConfidenceForEntity entity={attackPattern} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

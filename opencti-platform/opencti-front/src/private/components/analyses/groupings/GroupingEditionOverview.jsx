@@ -197,6 +197,7 @@ const GroupingEditionOverviewComponent = (props) => {
           <Form>
             <AlertConfidenceForEntity entity={grouping} />
             <Field
+              autoFocus
               component={TextField}
               name="name"
               label={t_i18n('Name')}

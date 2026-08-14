@@ -151,6 +151,7 @@ const CaseTemplateEdition: FunctionComponent<CaseTemplateEditionProps> = ({
         {({ values: currentValues, setFieldValue }) => (
           <Form>
             <Field
+              autoFocus
               component={TextField}
               variant="standard"
               name="name"

@@ -123,6 +123,7 @@ const LabelCreation: FunctionComponent<LabelCreationProps> = ({
             {({ submitForm, handleReset, isSubmitting }) => (
               <Form>
                 <Field
+                  autoFocus
                   component={SimpleTextField}
                   variant="standard"
                   name="value"

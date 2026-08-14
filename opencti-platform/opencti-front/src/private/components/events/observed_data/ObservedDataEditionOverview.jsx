@@ -208,6 +208,7 @@ const ObservedDataEditionOverviewComponent = (props) => {
           <Form>
             <AlertConfidenceForEntity entity={observedData} />
             <Field
+              autoFocus
               component={DateTimePickerField}
               name="first_observed"
               onFocus={editor.changeFocus}

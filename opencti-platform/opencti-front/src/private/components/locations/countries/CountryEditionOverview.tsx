@@ -237,6 +237,7 @@ const CountryEditionOverviewComponent: FunctionComponent<
         <Form>
           <AlertConfidenceForEntity entity={country} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

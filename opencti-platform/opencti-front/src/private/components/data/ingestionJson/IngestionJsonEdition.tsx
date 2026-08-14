@@ -317,6 +317,7 @@ const IngestionJsonEdition: FunctionComponent<IngestionJsonEditionProps> = ({
       }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

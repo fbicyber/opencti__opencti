@@ -35,6 +35,7 @@ interface ConfidenceFieldProps {
   disabled?: boolean;
   custom_max_level?: number;
   helperText?: string;
+  autoFocus?: boolean;
 }
 
 const ConfidenceField: FunctionComponent<ConfidenceFieldProps> = ({
@@ -50,6 +51,7 @@ const ConfidenceField: FunctionComponent<ConfidenceFieldProps> = ({
   disabled,
   custom_max_level,
   helperText,
+  autoFocus = false,
 }) => {
   const { t_i18n } = useFormatter();
   const finalLabel = label || t_i18n('Confidence level');
@@ -59,6 +61,7 @@ const ConfidenceField: FunctionComponent<ConfidenceFieldProps> = ({
 
   const Slider = (
     <Field
+      autoFocus={autoFocus}
       component={InputSliderField}
       variant={variant}
       containerstyle={containerStyle}

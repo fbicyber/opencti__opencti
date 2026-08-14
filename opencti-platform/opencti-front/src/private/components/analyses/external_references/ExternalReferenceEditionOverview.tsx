@@ -103,12 +103,13 @@ const ExternalReferenceEditionOverviewComponent: FunctionComponent<
       validationSchema={externalReferenceValidation(t_i18n)}
       validateOnChange={true}
       validateOnBlur={true}
-      onSubmit={() => {}}
+      onSubmit={() => { }}
     >
       {() => (
         <div>
           <Form>
             <Field
+              autoFocus
               component={TextField}
               name="source_name"
               label={t_i18n('Source name')}

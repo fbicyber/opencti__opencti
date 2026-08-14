@@ -309,6 +309,7 @@ const StixCyberObservableEditionOverviewComponent = ({
               {({ setFieldValue }) => (
                 <Form>
                   <Field
+                    autoFocus
                     component={TextField}
                     variant="standard"
                     name="x_opencti_score"

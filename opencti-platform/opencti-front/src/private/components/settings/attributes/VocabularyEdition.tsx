@@ -117,6 +117,7 @@ const VocabularyEdition = ({
       {({ submitForm, isSubmitting, isValid }) => (
         <Form>
           <Field
+            autoFocus={!vocab.builtIn}
             component={TextField}
             variant="standard"
             name="name"
@@ -125,6 +126,7 @@ const VocabularyEdition = ({
             disabled={vocab.builtIn}
           />
           <Field
+            autoFocus={vocab.builtIn}
             component={TextField}
             variant="standard"
             name="description"

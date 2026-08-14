@@ -70,6 +70,7 @@ const BulkTextModal = ({
               {t_i18n('Attribute used to create multiple')}
             </InputLabel>
             <Select
+              autoFocus
               labelId="bulk-text-modal-key-select"
               label={t_i18n('Attribute used to create multiple')}
               value={selectedKey ?? ''}
@@ -84,6 +85,7 @@ const BulkTextModal = ({
         )}
 
         <TextField
+          autoFocus={!availableKeys}
           label={label}
           variant="outlined"
           value={value}

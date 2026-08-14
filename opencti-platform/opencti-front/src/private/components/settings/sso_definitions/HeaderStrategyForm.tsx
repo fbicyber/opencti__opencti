@@ -283,6 +283,7 @@ const HeaderStrategyForm = ({ onCancel }: HeaderStrategyFormProps) => {
           {currentTab === 0 && (
             <>
               <Field
+                autoFocus
                 component={SwitchField}
                 type="checkbox"
                 name="enabled"

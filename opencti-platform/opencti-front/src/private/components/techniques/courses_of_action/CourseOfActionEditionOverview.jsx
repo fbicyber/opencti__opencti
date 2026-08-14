@@ -208,6 +208,7 @@ const CourseOfActionEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={courseOfAction} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

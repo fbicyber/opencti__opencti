@@ -36,6 +36,7 @@ interface StatusTemplateFieldProps {
   onChange?: (field: string, value: FieldOption) => void;
   style?: Record<string, string | number>;
   label?: string;
+  autoFocus?: boolean
 }
 
 export const StatusTemplateFieldQuery = graphql`
@@ -59,6 +60,7 @@ const StatusTemplateField: FunctionComponent<StatusTemplateFieldProps> = ({
   helpertext,
   required = false,
   label,
+  autofocus = false,
 }) => {
   const { values } = useFormikContext<Record<string, { value: string; label: string; color: string } | { id: string; name: string; color: string }>>();
   const classes = useStyles();
@@ -121,6 +123,7 @@ const StatusTemplateField: FunctionComponent<StatusTemplateFieldProps> = ({
           }
         }}
         textfieldprops={{
+          autoFocus: autofocus,
           variant: 'standard',
           label: label && t_i18n('Name'),
           helperText: helpertext,

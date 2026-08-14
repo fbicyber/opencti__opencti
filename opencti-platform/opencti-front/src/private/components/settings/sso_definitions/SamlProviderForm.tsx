@@ -458,6 +458,7 @@ const SamlProviderForm = ({
               <>
                 {/* Enabled at the very top */}
                 <Field
+                  autofocus
                   component={SwitchField}
                   type="checkbox"
                   name="enabled"
