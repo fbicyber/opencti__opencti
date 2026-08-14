@@ -195,6 +195,7 @@ const SecurityPlatformEditionOverview: FunctionComponent<SecurityPlatformEdition
         <Form>
           <AlertConfidenceForEntity entity={securityPlatform} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

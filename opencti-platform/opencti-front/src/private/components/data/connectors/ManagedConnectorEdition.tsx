@@ -221,6 +221,7 @@ const ManagedConnectorEdition = ({ connector, open, onClose }: ManagedConnectorE
               )}
 
               <Field
+                autoFocus
                 component={TextField}
                 style={fieldSpacingContainerStyle}
                 variant="standard"

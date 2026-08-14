@@ -192,6 +192,7 @@ const SmtpConfigurationForm: FunctionComponent<SmtpConfigurationFormProps> = ({
       {({ values, isSubmitting, handleReset, submitForm }) => (
         <Form>
           <Field
+            autoFocus
             component={SwitchField}
             type="checkbox"
             name="smtp_enabled"

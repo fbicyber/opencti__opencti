@@ -212,6 +212,7 @@ const PositionEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={position} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

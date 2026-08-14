@@ -282,6 +282,7 @@ const SyncCreation: FunctionComponent<SyncCreationProps> = ({
             return (
               <Form>
                 <Field
+                  autoFocus
                   component={TextField}
                   variant="standard"
                   name="name"

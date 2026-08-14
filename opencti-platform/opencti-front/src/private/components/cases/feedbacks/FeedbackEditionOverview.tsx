@@ -255,6 +255,7 @@ const FeedbackEditionOverviewComponent: FunctionComponent<
         <Form>
           <AlertConfidenceForEntity entity={feedbackData} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

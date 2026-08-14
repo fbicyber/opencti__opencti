@@ -105,6 +105,7 @@ const CustomFieldEdition: FunctionComponent<CustomFieldEditionProps> = ({
             style={{ marginTop: 20 }}
           />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="label"

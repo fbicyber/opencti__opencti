@@ -159,6 +159,7 @@ const ExclusionListEdition: FunctionComponent<ExclusionListEditionComponentProps
               {({ submitForm, isSubmitting, setFieldValue }) => (
                 <Form style={{ margin: '20px 0 20px 0' }}>
                   <Field
+                    autoFocus
                     component={TextField}
                     name="name"
                     label={t_i18n('Name')}

@@ -296,6 +296,7 @@ export const StixCoreRelationshipEditionOverviewComponent: FunctionComponent<
           <Form>
             <AlertConfidenceForEntity entity={stixCoreRelationship} />
             <ConfidenceField
+              autoFocus
               variant="edit"
               onFocus={editor.changeFocus}
               onSubmit={editor.changeField}

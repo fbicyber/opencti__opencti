@@ -50,6 +50,7 @@ const CaseTemplateTasksEdition = ({ task }: { task: CaseTemplateTasksLine_node$d
       {() => (
         <Form>
           <Field
+            autoFocus
             style={{ marginBottom: 20 }}
             component={TextField}
             variant="standard"

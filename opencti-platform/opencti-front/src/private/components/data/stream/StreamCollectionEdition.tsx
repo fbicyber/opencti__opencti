@@ -152,6 +152,7 @@ const StreamCollectionEditionContainer: FunctionComponent<{ streamCollection: St
       {({ values, setFieldValue }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

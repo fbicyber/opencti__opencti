@@ -279,6 +279,7 @@ const InfrastructureEditionOverviewComponent: FunctionComponent<InfrastructureEd
         <Form>
           <AlertConfidenceForEntity entity={infrastructure} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

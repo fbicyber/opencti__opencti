@@ -251,9 +251,9 @@ const StixDomainObjectEditionContainer = (props) => {
   const createdBy = R.pathOr(null, ['createdBy', 'name'], stixDomainObject) === null
     ? ''
     : {
-        label: R.pathOr(null, ['createdBy', 'name'], stixDomainObject),
-        value: R.pathOr(null, ['createdBy', 'id'], stixDomainObject),
-      };
+      label: R.pathOr(null, ['createdBy', 'name'], stixDomainObject),
+      value: R.pathOr(null, ['createdBy', 'id'], stixDomainObject),
+    };
   const objectMarking = convertMarkings(stixDomainObject);
   let initialValues = R.pipe(
     R.assoc('createdBy', createdBy),
@@ -276,6 +276,23 @@ const StixDomainObjectEditionContainer = (props) => {
       initialValues,
     );
   }
+  const showResultNameField = 'result_name' in stixDomainObject;
+  const showNameField = !showResultNameField && 'name' in stixDomainObject;
+  const showAliasesField = 'aliases' in stixDomainObject && stixDomainObject.aliases !== undefined;
+  const showOpenCtiAliasesField = !showAliasesField && 'x_opencti_aliases' in stixDomainObject && stixDomainObject.x_opencti_aliases !== undefined;
+  const isFirstDynamicField = (fieldName: string): boolean => {
+    if (showResultNameField) {
+      return fieldName === 'result_name';
+    } else if (showNameField) {
+      return fieldName === 'name';
+    } else if (showAliasesField) {
+      return fieldName === 'aliases';
+    } else if (showOpenCtiAliasesField) {
+      return fieldName === 'x_operncti_aliases';
+    } else {
+      return false;
+    }
+  };
   return (
     <div>
       <DrawerHeader
@@ -292,8 +309,9 @@ const StixDomainObjectEditionContainer = (props) => {
         >
           {({ submitForm, isSubmitting, setFieldValue, values }) => (
             <Form>
-              {'result_name' in stixDomainObject ? (
+              {showResultNameField ? (
                 <Field
+                  autoFocus={isFirstDynamicField('result_name')}
                   component={TextField}
                   variant="standard"
                   name="result_name"
@@ -305,8 +323,9 @@ const StixDomainObjectEditionContainer = (props) => {
                     <SubscriptionFocus context={editContext} fieldName="result_name" />
                   }
                 />
-              ) : ('name' in stixDomainObject && (
+              ) : (showNameField && (
                 <Field
+                  autoFocus={isFirstDynamicField('name')}
                   component={TextField}
                   variant="standard"
                   name="name"
@@ -322,8 +341,9 @@ const StixDomainObjectEditionContainer = (props) => {
                   }
                 />
               ))}
-              {'aliases' in stixDomainObject && stixDomainObject.aliases !== undefined && (
+              {showAliasesField && (
                 <Field
+                  autoFocus={isFirstDynamicField('aliases')}
                   component={TextField}
                   variant="standard"
                   name="aliases"
@@ -340,8 +360,9 @@ const StixDomainObjectEditionContainer = (props) => {
                   )}
                 />
               )}
-              {'x_opencti_aliases' in stixDomainObject && stixDomainObject.x_opencti_aliases !== undefined && (
+              {showOpenCtiAliasesField && (
                 <Field
+                  autoFocus={isFirstDynamicField('x_opencti_aliases')}
                   component={TextField}
                   variant="standard"
                   name="x_opencti_aliases"
@@ -359,6 +380,7 @@ const StixDomainObjectEditionContainer = (props) => {
                 />
               )}
               <ConfidenceField
+                autoFocus={!showResultNameField && !showNameField && !showAliasesField && !showOpenCtiAliasesField}
                 variant="edit"
                 name="confidence"
                 onFocus={handleChangeFocus}

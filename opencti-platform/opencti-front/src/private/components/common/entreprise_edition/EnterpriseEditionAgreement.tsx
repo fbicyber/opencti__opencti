@@ -65,6 +65,7 @@ const EnterpriseEditionAgreement: FunctionComponent<
 
       <FormGroup style={{ marginTop: 15 }}>
         <TextField
+          autoFocus
           onChange={(event) => setEnterpriseLicense(event.target.value)}
           multiline={true}
           fullWidth={true}

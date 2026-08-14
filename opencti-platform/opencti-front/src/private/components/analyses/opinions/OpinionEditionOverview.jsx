@@ -137,6 +137,7 @@ const OpinionEditionOverviewComponent = (props) => {
           <Form>
             <AlertConfidenceForEntity entity={opinion} />
             <OpenVocabField
+              autoFocus
               label={t_i18n('Opinion')}
               type="opinion-ov"
               name="opinion"

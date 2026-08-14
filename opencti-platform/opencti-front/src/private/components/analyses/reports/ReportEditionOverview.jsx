@@ -219,6 +219,7 @@ const ReportEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={report} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

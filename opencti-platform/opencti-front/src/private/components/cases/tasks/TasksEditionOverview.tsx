@@ -222,6 +222,7 @@ const TasksEditionOverview: FunctionComponent<TasksEditionOverviewProps> = ({
       {({ setFieldValue }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

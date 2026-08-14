@@ -62,7 +62,7 @@ const TransitionForm = () => {
 
   return (
     <>
-      <Field component={TextField} variant="standard" name="event" label={t_i18n('Transition name')} fullWidth />
+      <Field autoFocus component={TextField} variant="standard" name="event" label={t_i18n('Transition name')} fullWidth />
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 2 }}>
         <Typography variant="h6">

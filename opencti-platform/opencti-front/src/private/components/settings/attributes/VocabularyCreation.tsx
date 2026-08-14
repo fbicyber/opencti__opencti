@@ -121,6 +121,7 @@ const VocabularyCreation: FunctionComponent<VocabularyCreationProps> = ({
           {({ submitForm, handleReset, isSubmitting, isValid, dirty }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="name"

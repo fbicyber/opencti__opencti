@@ -230,6 +230,7 @@ const SystemEditionOverviewComponent = (props) => {
             variant="edit"
           />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="contact_information"

@@ -185,6 +185,7 @@ const EntitySettingAttributeEdition = ({
         }) => (
           <Form>
             <Field
+              autoFocus
               component={SwitchField}
               type="checkbox"
               name="mandatory"

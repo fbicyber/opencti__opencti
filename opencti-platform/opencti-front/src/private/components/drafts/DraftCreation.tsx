@@ -192,6 +192,7 @@ const DraftCreationForm: React.FC<DraftFormProps> = ({ updater, onCompleted, onR
         <Form>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }} data-testid="draft-creation-form">
             <Field
+              autoFocus
               component={TextField}
               name="name"
               label={t_i18n('Name')}

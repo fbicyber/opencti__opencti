@@ -332,6 +332,7 @@ const TriggerEditionOverview: FunctionComponent<TriggerEditionOverviewProps> = (
       {({ values, setFieldValue }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

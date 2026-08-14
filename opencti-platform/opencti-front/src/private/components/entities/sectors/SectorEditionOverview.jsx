@@ -189,6 +189,7 @@ const SectorEditionOverviewComponent = (props) => {
         <Form>
           <AlertConfidenceForEntity entity={sector} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

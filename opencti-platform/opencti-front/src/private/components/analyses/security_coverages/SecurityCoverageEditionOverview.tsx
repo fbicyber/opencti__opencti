@@ -282,6 +282,7 @@ const SecurityCoverageEditionOverview: FunctionComponent<SecurityCoverageEdition
         <div style={{ margin: '20px 0 20px 0' }}>
           <AlertConfidenceForEntity entity={securityCoverageData} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

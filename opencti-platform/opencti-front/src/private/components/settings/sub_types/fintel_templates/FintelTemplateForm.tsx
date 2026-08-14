@@ -71,6 +71,7 @@ const FintelTemplateForm = ({
         return (
           <Form>
             <Field
+              autofocus
               component={TextField}
               variant="standard"
               name="name"

@@ -266,6 +266,7 @@ const IndicatorEditionOverviewComponent: FunctionComponent<IndicatorEditionOverv
         <Form>
           <AlertConfidenceForEntity entity={indicator} />
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

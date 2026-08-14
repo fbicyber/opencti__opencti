@@ -113,6 +113,7 @@ const RoleCreation = ({ paginationOptions }: {
           {({ submitForm, handleReset, isSubmitting, isValid }) => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 name="name"
                 label={t_i18n('Name')}

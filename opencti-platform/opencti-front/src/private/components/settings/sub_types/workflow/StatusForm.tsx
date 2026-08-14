@@ -29,6 +29,7 @@ const StatusForm = () => {
   return (
     <>
       <StatusTemplateField
+        autoFocus
         name="statusTemplate"
         label="Status"
         setFieldValue={(field, { value, label, color }) => setFieldValue(field, { id: value, name: label, color })}

@@ -291,6 +291,7 @@ const IngestionTaxiiEdition: FunctionComponent<IngestionTaxiiEditionProps> = ({
       }) => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             variant="standard"
             name="name"

@@ -234,6 +234,7 @@ const FormEditionInner: FunctionComponent<FormEditionInnerProps> = ({
     <div className={classes.container}>
       <div className={classes.topFields}>
         <TextField
+          autoFocus
           variant="standard"
           label={t_i18n('Name')}
           fullWidth={true}

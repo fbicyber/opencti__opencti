@@ -108,6 +108,7 @@ const WorkspaceEditionOverviewComponent = ({ workspace, context }) => {
       {() => (
         <Form>
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}

@@ -122,6 +122,7 @@ const RetentionEditionContainer = (props) => {
         {({ isSubmitting, submitForm, values: formValues, validateForm, setTouched }) => (
           <Form>
             <Field
+              autoFocus
               component={TextField}
               variant="standard"
               name="name"

@@ -136,6 +136,7 @@ const StixNestedRefRelationshipEditionOverview: FunctionComponent<StixNestedRefR
       render={() => (
         <Form>
           <Field
+            autoFocus
             component={DateTimePickerField}
             name="start_time"
             onFocus={handleChangeFocus}

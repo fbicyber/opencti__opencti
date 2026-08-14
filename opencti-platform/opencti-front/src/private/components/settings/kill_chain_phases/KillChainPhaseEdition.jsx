@@ -115,6 +115,7 @@ class KillChainPhaseEditionContainer extends Component {
           {() => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="kill_chain_name"

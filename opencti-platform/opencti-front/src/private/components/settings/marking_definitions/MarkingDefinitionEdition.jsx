@@ -117,6 +117,7 @@ class MarkingDefinitionEditionContainer extends Component {
           {() => (
             <Form>
               <Field
+                autoFocus
                 component={TextField}
                 variant="standard"
                 name="definition_type"

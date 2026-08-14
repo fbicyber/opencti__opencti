@@ -251,6 +251,7 @@ const DataComponentEditionOverview: FunctionComponent<
         <Form>
           <AlertConfidenceForEntity entity={dataComponent} />
           <Field
+            autoFocus
             component={TextField}
             name="name"
             label={t_i18n('Name')}
