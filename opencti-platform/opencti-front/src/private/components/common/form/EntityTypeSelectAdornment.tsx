@@ -44,6 +44,7 @@ const EntityTypeSelectAdornment = ({
     <InputAdornment position="end" style={{ position: 'absolute', right: 5 }}>
       <IconButton
         aria-label={t_i18n('Open menu')}
+        aria-haspopup={!disabled}
         disabled={disabled}
         onClick={(e) => setAnchorButton(e.currentTarget)}
         size="small"

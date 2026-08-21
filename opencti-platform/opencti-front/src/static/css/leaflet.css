@@ -269,7 +269,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   outline: 0;
 }
 .leaflet-container a {
-  color: #0078a8;
+  color: #0015A8;
 }
 .leaflet-container a.leaflet-active {
   outline: 2px solid orange;
@@ -430,7 +430,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 .leaflet-container .leaflet-control-attribution,
 .leaflet-container .leaflet-control-scale {
-  font-size: 11px;
+  font-size: 12px;
 }
 .leaflet-left .leaflet-control-scale {
   margin-left: 5px;
@@ -443,7 +443,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   border-top: none;
   line-height: 1.1;
   padding: 2px 5px 1px;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   -moz-box-sizing: border-box;
