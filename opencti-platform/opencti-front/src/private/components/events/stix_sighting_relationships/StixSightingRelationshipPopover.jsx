@@ -122,7 +122,7 @@ class StixSightingRelationshipPopover extends Component {
         <IconButton
           aria-label={t('Open menu')}
           onClick={this.handleOpen.bind(this)}
-          aria-haspopup="true"
+          aria-haspopup={!disabled}
           disabled={disabled}
           color="primary"
         >
