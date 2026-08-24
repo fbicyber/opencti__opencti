@@ -22,10 +22,6 @@
   height: 100vh;
 }
 
-:focus {
-  outline: 0;
-}
-
 input:-webkit-autofill {
   transition-delay: 9999s;
 }
@@ -168,4 +164,8 @@ input[type="file"] {
   overflow: hidden;
   padding: 0;
   position: absolute;
+}
+
+.focus-visible {
+  outline: 2px solid blue;
 }
