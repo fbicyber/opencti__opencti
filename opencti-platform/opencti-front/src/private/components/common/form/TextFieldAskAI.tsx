@@ -299,7 +299,7 @@ const TextFieldAskAI: FunctionComponent<TextFieldAskAiProps> = ({
           <span style={{ display: 'inline-flex' }}>
             <IconButton
               aria-label={t_i18n('Open menu')}
-              aria-haspopup={!isButtonDisabled}
+              aria-haspopup={isButtonDisabled ? undefined : true}
               size="small"
               onClick={(event) => handleOpenMenu(event)}
               disabled={isButtonDisabled}
