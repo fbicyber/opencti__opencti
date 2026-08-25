@@ -311,13 +311,13 @@ export const extractStixRepresentative = (
     return (stix as SCO.StixIMSI).value ?? 'Unknown';
   }
   if (entityType === ENTITY_CITIZENSHIP_DOCUMENTS) {
-    return (stix as SCO.StixIMEI).value ?? 'Unknown';
+    return (stix as SCO.StixCitizenshipDocuments).value ?? 'Unknown';
   }
   if (entityType === ENTITY_NATIONAL_ID) {
-    return (stix as SCO.StixIMEI).value ?? 'Unknown';
+    return (stix as SCO.StixNationalID).value ?? 'Unknown';
   }
   if (entityType === ENTITY_PASSPORT) {
-    return (stix as SCO.StixIMEI).value ?? 'Unknown';
+    return (stix as SCO.StixPassport).value ?? 'Unknown';
   }
   // endregion
   throw UnsupportedError('No representative extractor available', { type: entityType });
