@@ -38,6 +38,9 @@ export const ENTITY_AI_PROMPT = 'AI-Prompt'; // Custom
 export const ENTITY_IMEI = 'IMEI'; // Custom
 export const ENTITY_ICCID = 'ICCID'; // Custom
 export const ENTITY_IMSI = 'IMSI'; // Custom
+export const ENTITY_CITIZENSHIP_DOCUMENTS = 'Citizenship_Documents'; // Custom
+export const ENTITY_NATIONAL_ID = 'National_ID'; // Custom
+export const ENTITY_PASSPORT = 'Passport'; // Custom
 
 const STIX_CYBER_OBSERVABLES_HASHED_OBSERVABLES = [
   ENTITY_HASHED_OBSERVABLE_ARTIFACT,
@@ -83,6 +86,9 @@ export const STIX_CYBER_OBSERVABLES = [
   ENTITY_IMEI,
   ENTITY_ICCID,
   ENTITY_IMSI,
+  ENTITY_CITIZENSHIP_DOCUMENTS,
+  ENTITY_NATIONAL_ID,
+  ENTITY_PASSPORT,
 ];
 schemaTypesDefinition.register(ABSTRACT_STIX_CYBER_OBSERVABLE, STIX_CYBER_OBSERVABLES);
 
