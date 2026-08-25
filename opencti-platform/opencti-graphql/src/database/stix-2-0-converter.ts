@@ -99,6 +99,9 @@ import {
   ENTITY_IMEI,
   ENTITY_ICCID,
   ENTITY_IMSI,
+  ENTITY_CITIZENSHIP_DOCUMENTS,
+  ENTITY_NATIONAL_ID,
+  ENTITY_PASSPORT,
   isStixCyberObservable,
 } from '../schema/stixCyberObservable';
 import { isStixCoreRelationship } from '../schema/stixCoreRelationship';
@@ -743,6 +746,9 @@ const convertToStix_2_0 = (instance: StoreCommon): S.StixObject => {
     if (ENTITY_HASHED_OBSERVABLE_X509_CERTIFICATE === type) return convertX509CertificateToStix(cyber);
     if (ENTITY_SSH_KEY === type) return convertSSHKeyToStix(cyber);
     if (ENTITY_AI_PROMPT === type) return convertAIPromptToStix(cyber);
+    if (ENTITY_CITIZENSHIP_DOCUMENTS === type) return convertCitizenshipDocumentsToStix(cyber);
+    if (ENTITY_NATIONAL_ID === type) return convertNationalIDToStix(cyber);
+    if (ENTITY_PASSPORT === type) return convertPassportToStix(cyber);
     throw UnsupportedError(`No SCO stix 2.0 converter available for ${type}`);
   }
   throw UnsupportedError(`No entity stix 2.0 converter available for ${type}`);
@@ -1381,6 +1387,45 @@ export const convertICCIDToStix = (instance: StoreCyberObservable): SCO.StixICCI
 
 export const convertIMSIToStix = (instance: StoreCyberObservable): SCO.StixIMSI => {
   assertType(ENTITY_IMSI, instance.entity_type);
+  return {
+    ...buildStixCyberObservable(instance),
+    value: instance.value,
+    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
+    description: instance.x_opencti_description,
+    score: instance.x_opencti_score,
+    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
+    external_references: buildExternalReferences(instance),
+  };
+};
+
+export const convertCitizenshipDocumentsToStix = (instance: StoreCyberObservable): SCO.StixCitizenshipDocuments => {
+  assertType(ENTITY_CITIZENSHIP_DOCUMENTS, instance.entity_type);
+  return {
+    ...buildStixCyberObservable(instance),
+    value: instance.value,
+    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
+    description: instance.x_opencti_description,
+    score: instance.x_opencti_score,
+    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
+    external_references: buildExternalReferences(instance),
+  };
+};
+
+export const convertNationalIDToStix = (instance: StoreCyberObservable): SCO.StixNationalID => {
+  assertType(ENTITY_NATIONAL_ID, instance.entity_type);
+  return {
+    ...buildStixCyberObservable(instance),
+    value: instance.value,
+    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
+    description: instance.x_opencti_description,
+    score: instance.x_opencti_score,
+    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
+    external_references: buildExternalReferences(instance),
+  };
+};
+
+export const convertPassportToStix = (instance: StoreCyberObservable): SCO.StixPassport => {
+  assertType(ENTITY_PASSPORT, instance.entity_type);
   return {
     ...buildStixCyberObservable(instance),
     value: instance.value,

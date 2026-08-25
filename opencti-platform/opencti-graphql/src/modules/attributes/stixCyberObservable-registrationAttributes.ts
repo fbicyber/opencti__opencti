@@ -6,6 +6,7 @@ import {
   ENTITY_AUTONOMOUS_SYSTEM,
   ENTITY_BANK_ACCOUNT,
   ENTITY_CREDENTIAL,
+  ENTITY_CITIZENSHIP_DOCUMENTS,
   ENTITY_CRYPTOGRAPHIC_KEY,
   ENTITY_CRYPTOGRAPHIC_WALLET,
   ENTITY_DIRECTORY,
@@ -26,7 +27,9 @@ import {
   ENTITY_MAC_ADDR,
   ENTITY_MEDIA_CONTENT,
   ENTITY_MUTEX,
+  ENTITY_NATIONAL_ID,
   ENTITY_NETWORK_TRAFFIC,
+  ENTITY_PASSPORT,
   ENTITY_PAYMENT_CARD,
   ENTITY_PERSONA,
   ENTITY_PHONE_NUMBER,
@@ -329,6 +332,15 @@ const stixCyberObservablesAttributes: { [k: string]: Array<AttributeDefinition> 
     { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
   ],
   [ENTITY_IMSI]: [
+    { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
+  ],
+  [ENTITY_CITIZENSHIP_DOCUMENTS]: [
+    { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
+  ],
+  [ENTITY_NATIONAL_ID]: [
+    { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
+  ],
+  [ENTITY_PASSPORT]: [
     { name: 'value', label: 'Value', type: 'string', format: 'short', mandatoryType: 'external', editDefault: false, multiple: false, upsert: true, isFilterable: true },
   ],
 };
