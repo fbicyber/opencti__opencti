@@ -81,7 +81,6 @@ import { isStixSightingRelationship } from '../schema/stixSightingRelationship';
 import {
   ENTITY_AUTONOMOUS_SYSTEM,
   ENTITY_BANK_ACCOUNT,
-  ENTITY_CITIZENSHIP_DOCUMENTS,
   ENTITY_CREDENTIAL,
   ENTITY_CRYPTOGRAPHIC_KEY,
   ENTITY_CRYPTOGRAPHIC_WALLET,
@@ -103,9 +102,7 @@ import {
   ENTITY_MAC_ADDR,
   ENTITY_MEDIA_CONTENT,
   ENTITY_MUTEX,
-  ENTITY_NATIONAL_ID,
   ENTITY_NETWORK_TRAFFIC,
-  ENTITY_PASSPORT,
   ENTITY_PAYMENT_CARD,
   ENTITY_PERSONA,
   ENTITY_PHONE_NUMBER,
@@ -1304,60 +1301,6 @@ const convertIMSIToStix = (instance: StoreCyberObservable, type: string): SCO.St
   };
 };
 
-const convertCitizenshipDocumentsToStix = (instance: StoreCyberObservable, type: string): SCO.StixCitizenshipDocuments => {
-  assertType(ENTITY_CITIZENSHIP_DOCUMENTS, type);
-  const stixCyberObject = buildStixCyberObservable(instance);
-  return {
-    ...stixCyberObject,
-    value: instance.value,
-    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
-    description: instance.x_opencti_description,
-    score: instance.x_opencti_score,
-    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
-    external_references: buildExternalReferences(instance),
-    extensions: {
-      [STIX_EXT_OCTI]: stixCyberObject.extensions[STIX_EXT_OCTI],
-      [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' },
-    },
-  };
-};
-
-const convertNationalIDToStix = (instance: StoreCyberObservable, type: string): SCO.StixNationalID => {
-  assertType(ENTITY_NATIONAL_ID, type);
-  const stixCyberObject = buildStixCyberObservable(instance);
-  return {
-    ...stixCyberObject,
-    value: instance.value,
-    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
-    description: instance.x_opencti_description,
-    score: instance.x_opencti_score,
-    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
-    external_references: buildExternalReferences(instance),
-    extensions: {
-      [STIX_EXT_OCTI]: stixCyberObject.extensions[STIX_EXT_OCTI],
-      [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' },
-    },
-  };
-};
-
-const convertPassportToStix = (instance: StoreCyberObservable, type: string): SCO.StixPassport => {
-  assertType(ENTITY_PASSPORT, type);
-  const stixCyberObject = buildStixCyberObservable(instance);
-  return {
-    ...stixCyberObject,
-    value: instance.value,
-    labels: (instance[INPUT_LABELS] ?? []).map((m) => m.value),
-    description: instance.x_opencti_description,
-    score: instance.x_opencti_score,
-    created_by_ref: instance[INPUT_CREATED_BY]?.standard_id,
-    external_references: buildExternalReferences(instance),
-    extensions: {
-      [STIX_EXT_OCTI]: stixCyberObject.extensions[STIX_EXT_OCTI],
-      [STIX_EXT_OCTI_SCO]: { extension_type: 'new-sco' },
-    },
-  };
-};
-
 const checkInstanceCompletion = (instance: StoreRelation) => {
   if (instance.from === undefined || isEmptyField(instance.from)) {
     throw UnsupportedError(`Cannot convert relation without a resolved from: ${instance.fromId}`);
@@ -1818,15 +1761,6 @@ const convertToStix_2_1 = (instance: StoreCommon): S.StixObject => {
     }
     if (ENTITY_AI_PROMPT === type) {
       return convertAIPromptToStix(cyber, type);
-    }
-    if (ENTITY_CITIZENSHIP_DOCUMENTS === type) {
-      return convertCitizenshipDocumentsToStix(cyber, type);
-    }
-    if (ENTITY_NATIONAL_ID === type) {
-      return convertNationalIDToStix(cyber, type);
-    }
-    if (ENTITY_PASSPORT === type) {
-      return convertPassportToStix(cyber, type);
     }
     // No converter_2_1 found
     throw UnsupportedError(`No observable converter available for ${type}`);
