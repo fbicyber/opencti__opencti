@@ -28,7 +28,6 @@ import type * as SMO from '../types/stix-2-1-smo';
 import {
   ENTITY_AUTONOMOUS_SYSTEM,
   ENTITY_BANK_ACCOUNT,
-  ENTITY_CITIZENSHIP_DOCUMENTS,
   ENTITY_CREDENTIAL,
   ENTITY_CRYPTOGRAPHIC_KEY,
   ENTITY_CRYPTOGRAPHIC_WALLET,
@@ -49,9 +48,7 @@ import {
   ENTITY_MAC_ADDR,
   ENTITY_MEDIA_CONTENT,
   ENTITY_MUTEX,
-  ENTITY_NATIONAL_ID,
   ENTITY_NETWORK_TRAFFIC,
-  ENTITY_PASSPORT,
   ENTITY_PAYMENT_CARD,
   ENTITY_PERSONA,
   ENTITY_PHONE_NUMBER,
@@ -309,15 +306,6 @@ export const extractStixRepresentative = (
   }
   if (entityType === ENTITY_IMSI) {
     return (stix as SCO.StixIMSI).value ?? 'Unknown';
-  }
-  if (entityType === ENTITY_CITIZENSHIP_DOCUMENTS) {
-    return (stix as SCO.StixCitizenshipDocuments).value ?? 'Unknown';
-  }
-  if (entityType === ENTITY_NATIONAL_ID) {
-    return (stix as SCO.StixNationalID).value ?? 'Unknown';
-  }
-  if (entityType === ENTITY_PASSPORT) {
-    return (stix as SCO.StixPassport).value ?? 'Unknown';
   }
   // endregion
   throw UnsupportedError('No representative extractor available', { type: entityType });

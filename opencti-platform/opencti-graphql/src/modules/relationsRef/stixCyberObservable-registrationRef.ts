@@ -37,7 +37,6 @@ import {
 import {
   ENTITY_AUTONOMOUS_SYSTEM,
   ENTITY_BANK_ACCOUNT,
-  ENTITY_CITIZENSHIP_DOCUMENTS,
   ENTITY_CREDENTIAL,
   ENTITY_CRYPTOGRAPHIC_KEY,
   ENTITY_CRYPTOGRAPHIC_WALLET,
@@ -59,9 +58,7 @@ import {
   ENTITY_MAC_ADDR,
   ENTITY_MEDIA_CONTENT,
   ENTITY_MUTEX,
-  ENTITY_NATIONAL_ID,
   ENTITY_NETWORK_TRAFFIC,
-  ENTITY_PASSPORT,
   ENTITY_PAYMENT_CARD,
   ENTITY_PERSONA,
   ENTITY_PHONE_NUMBER,
@@ -171,6 +168,3 @@ schemaRelationsRefDefinition.registerRelationsRef(ENTITY_AI_PROMPT, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_IMEI, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_ICCID, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_IMSI, []);
-schemaRelationsRefDefinition.registerRelationsRef(ENTITY_PASSPORT, []);
-schemaRelationsRefDefinition.registerRelationsRef(ENTITY_NATIONAL_ID, []);
-schemaRelationsRefDefinition.registerRelationsRef(ENTITY_CITIZENSHIP_DOCUMENTS, []);

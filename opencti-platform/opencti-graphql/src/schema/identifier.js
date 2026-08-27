@@ -140,15 +140,9 @@ const stixBaseCyberObservableContribution = {
     [C.ENTITY_IMEI]: [{ src: 'value' }],
     [C.ENTITY_ICCID]: [{ src: 'value' }],
     [C.ENTITY_IMSI]: [{ src: 'value' }],
-    [C.ENTITY_CITIZENSHIP_DOCUMENTS]: [{ src: 'value' }],
-    [C.ENTITY_NATIONAL_ID]: [{ src: 'value' }],
-    [C.ENTITY_PASSPORT]: [{ src: 'value' }],
     // Types embedded
     [C.ENTITY_EMAIL_MIME_PART_TYPE]: [{ src: 'body' }, { src: 'content_type' }, { src: 'content_disposition' }],
     [C.ENTITY_WINDOWS_REGISTRY_VALUE_TYPE]: [{ src: 'name' }, { src: 'data' }, { src: 'data_type' }],
-    [C.ENTITY_CITIZENSHIP_DOCUMENTS]: [{ src: 'value' }],
-    [C.ENTITY_NATIONAL_ID]: [{ src: 'value' }],
-    [C.ENTITY_PASSPORT]: [{ src: 'value' }],
   },
   resolvers: {
     from(from) {

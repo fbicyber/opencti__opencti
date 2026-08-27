@@ -136,9 +136,6 @@ import {
   convertIMEIToStix,
   convertICCIDToStix,
   convertIMSIToStix,
-  convertCitizenshipDocumentsToStix,
-  convertNationalIDToStix,
-  convertPassportToStix,
 } from '../../../src/database/stix-2-0-converter';
 import { IPV6_INSTANCE, EXPECTED_IPV6 } from './stix-2-0-converter-fixtures/SCOs/ipv6-addr';
 import { MAC_ADDR_INSTANCE, EXPECTED_MAC_ADDR } from './stix-2-0-converter-fixtures/SCOs/mac-addr';
@@ -173,9 +170,6 @@ import { MEDIA_CONTENT_INSTANCE, EXPECTED_MEDIA_CONTENT } from './stix-2-0-conve
 import { SSH_KEY_INSTANCE, EXPECTED_SSH_KEY } from './stix-2-0-converter-fixtures/SCOs/ssh-key';
 import { CRYPTOGRAPHIC_KEY_INSTANCE, EXPECTED_CRYPTOGRAPHIC_KEY } from './stix-2-0-converter-fixtures/SCOs/cryptographic-key';
 import { IMEI_INSTANCE, EXPECTED_IMEI } from './stix-2-0-converter-fixtures/SCOs/imei';
-import { CITIZENSHIP_DOCUMENTS_INSTANCE, EXPECTED_CITIZENSHIP_DOCUMENTS } from './stix-2-0-converter-fixtures/SCOs/citizenship-documents';
-import { NATIONAL_ID_INSTANCE, EXPECTED_NATIONAL_ID } from './stix-2-0-converter-fixtures/SCOs/national-id';
-import { PASSPORT_INSTANCE, EXPECTED_PASSPORT } from './stix-2-0-converter-fixtures/SCOs/passport';
 import { PAYMENT_CARD_INSTANCE, EXPECTED_PAYMENT_CARD } from './stix-2-0-converter-fixtures/SCOs/payment-card';
 import { AI_PROMPT_INSTANCE, EXPECTED_AI_PROMPT } from './stix-2-0-converter-fixtures/SCOs/ai-prompt';
 import { ICCID_INSTANCE, EXPECTED_ICCID } from './stix-2-0-converter-fixtures/SCOs/iccid';
@@ -491,18 +485,6 @@ describe('Stix 2.0 opencti converter', () => {
   it('should convert IMSI', async () => {
     const result = convertIMSIToStix(IMSI_INSTANCE);
     expect(result).toEqual(EXPECTED_IMSI);
-  });
-  it('should convert Citizenship Documents', async () => {
-    const result = convertCitizenshipDocumentsToStix(CITIZENSHIP_DOCUMENTS_INSTANCE);
-    expect(result).toEqual(EXPECTED_CITIZENSHIP_DOCUMENTS);
-  });
-  it('should convert National ID', async () => {
-    const result = convertNationalIDToStix(NATIONAL_ID_INSTANCE);
-    expect(result).toEqual(EXPECTED_NATIONAL_ID);
-  });
-  it('should convert Passport', async () => {
-    const result = convertPassportToStix(PASSPORT_INSTANCE);
-    expect(result).toEqual(EXPECTED_PASSPORT);
   });
   // Locations
   it('should convert Region', async () => {
