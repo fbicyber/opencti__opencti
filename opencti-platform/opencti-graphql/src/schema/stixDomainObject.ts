@@ -59,6 +59,7 @@ export const ENTITY_TYPE_VULNERABILITY = 'Vulnerability';
 export const ENTITY_TYPE_INCIDENT = 'Incident';
 export const ENTITY_TYPE_DATA_COMPONENT = 'Data-Component';
 export const ENTITY_TYPE_DATA_SOURCE = 'Data-Source';
+export const ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT = 'Citizenship-Document';
 
 export const ENTITY_TYPE_RESOLVED_FILTERS = 'Resolved-Filters';
 
@@ -98,6 +99,7 @@ const STIX_DOMAIN_OBJECT_IDENTITIES: Array<string> = [
   ENTITY_TYPE_IDENTITY_INDIVIDUAL,
   ENTITY_TYPE_IDENTITY_SECTOR,
   ENTITY_TYPE_IDENTITY_SYSTEM,
+  ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT,
 ];
 schemaTypesDefinition.register(ENTITY_TYPE_IDENTITY, STIX_DOMAIN_OBJECT_IDENTITIES);
 export const isStixDomainObjectIdentity = (type: string): boolean => {
@@ -145,6 +147,7 @@ export const STIX_DOMAIN_OBJECTS: Array<string> = [
   ENTITY_TYPE_VULNERABILITY,
   ENTITY_TYPE_INCIDENT,
   ENTITY_TYPE_SECURITY_COVERAGE,
+  ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT,
 ];
 schemaTypesDefinition.register(ABSTRACT_STIX_DOMAIN_OBJECT, STIX_DOMAIN_OBJECTS);
 

@@ -15402,6 +15402,16 @@ type Query {
     filters: FilterGroup
     toStix: Boolean
   ): IdentityConnection @auth(for: [KNOWLEDGE, INGESTION_SETINGESTIONS])
+  citizenshipDocument(id: String!): CitizenshipDocument @auth(for: [KNOWLEDGE])
+  citizenshipDocuments(
+    first: Int
+    after: ID
+    orderBy: IndividualsOrdering
+    orderMode: OrderingMode
+    filters: FilterGroup
+    search: String
+    toStix: Boolean
+  ): CitizenshipDocumentConnection @auth(for: [KNOWLEDGE])
   individual(id: String!): Individual @auth(for: [KNOWLEDGE])
   individuals(
     first: Int
