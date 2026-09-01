@@ -1,4 +1,4 @@
-import { addCitizenshipDocument, findCitizenshipDocumentPaginated, findById, isUser, partOfOrganizationsPaginated } from '../domain/citizenshipDocument';
+import { addCitizenshipDocument, findCitizenshipDocumentPaginated, findById } from '../domain/citizenshipDocument';
 import {
   stixDomainObjectAddRelation,
   stixDomainObjectCleanContext,
@@ -13,15 +13,11 @@ import { ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT } from '../schema/stixDomainO
 
 const citizenshipDocumentResolvers = {
   Query: {
-    individual: (_, { id }, context) => findById(context, context.user, id),
-    individuals: (_, args, context) => findCitizenshipDocumentPaginated(context, context.user, args),
-  },
-  Individual: {
-    organizations: (individual, args, context) => partOfOrganizationsPaginated(context, context.user, individual.id, args),
-    isUser: (individual, _, context) => isUser(context, individual),
+    citizenshipDocument: (_, { id }, context) => findById(context, context.user, id),
+    citizenshipDocuments: (_, args, context) => findCitizenshipDocumentPaginated(context, context.user, args),
   },
   Mutation: {
-    individualEdit: (_, { id }, context) => ({
+    citizenshipDocumentEdit: (_, { id }, context) => ({
       delete: async () => {
         // Use the type-checking version that validates the entity type
         return stixDomainObjectDelete(context, context.user, id, ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT);
@@ -32,7 +28,7 @@ const citizenshipDocumentResolvers = {
       relationAdd: ({ input }) => stixDomainObjectAddRelation(context, context.user, id, input),
       relationDelete: ({ toId, relationship_type: relationshipType }) => stixDomainObjectDeleteRelation(context, context.user, id, toId, relationshipType),
     }),
-    individualAdd: (_, { input }, context) => addCitizenshipDocument(context, context.user, input),
+    citizenshipDocumentAdd: (_, { input }, context) => addCitizenshipDocument(context, context.user, input),
   },
 };
 

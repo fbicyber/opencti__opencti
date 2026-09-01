@@ -2,7 +2,6 @@ import * as R from 'ramda';
 import { createEntity } from '../database/middleware';
 import { pageEntitiesConnection, pageRegardingEntitiesConnection, storeLoadById } from '../database/middleware-loader';
 import { BUS_TOPICS } from '../config/conf';
-import { isIndividualAssociatedToUser } from '../database/data-consistency';
 import { notify } from '../database/redis';
 import { ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT } from '../schema/stixDomainObject';
 import { ABSTRACT_STIX_DOMAIN_OBJECT } from '../schema/general';
@@ -30,8 +29,4 @@ export const partOfOrganizationsPaginated = async (context, user, individualId, 
     return buildPagination(0, null, [], 0);
   }
   return pageRegardingEntitiesConnection(context, user, individualId, RELATION_PART_OF, ENTITY_TYPE_IDENTITY_ORGANIZATION, false, args);
-};
-
-export const isUser = async (context, individual) => {
-  return isIndividualAssociatedToUser(context, individual);
 };

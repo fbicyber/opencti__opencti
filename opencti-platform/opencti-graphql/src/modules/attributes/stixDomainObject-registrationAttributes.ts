@@ -193,7 +193,7 @@ const stixDomainObjectsAttributes: { [k: string]: Array<AttributeDefinition<any>
     xOpenctiReliability,
     { name: 'x_opencti_firstname', label: 'Firstname', type: 'string', format: 'short', mandatoryType: 'no', editDefault: false, multiple: false, upsert: false, isFilterable: false },
     { name: 'x_opencti_lastname', label: 'Lastname', type: 'string', format: 'short', mandatoryType: 'no', editDefault: false, multiple: false, upsert: false, isFilterable: false },
-    { name: 'x_opencti_citizenship_document_id', label: 'Citizenship Document ID', type: 'string', format: 'short', mandatoryType: 'no', editDefault: false, multiple: false, upsert: false, isFilterable: false }, // TODO: Should this be included since it is PII?
+    { name: 'x_opencti_citizenship_document_id', label: 'Citizenship Document ID', type: 'string', format: 'short', mandatoryType: 'no', editDefault: false, multiple: false, upsert: false, isFilterable: false },
     { name: 'x_opencti_citizenship_document_type', label: 'Citizenship Document Type', type: 'string', format: 'short', mandatoryType: 'no', editDefault: false, multiple: false, upsert: false, isFilterable: false },
   ],
   [ENTITY_TYPE_IDENTITY_INDIVIDUAL]: [

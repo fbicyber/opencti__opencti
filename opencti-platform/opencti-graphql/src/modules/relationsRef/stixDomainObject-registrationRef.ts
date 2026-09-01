@@ -71,7 +71,7 @@ schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_VULNERABILITY, [ob
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_IDENTITY_SYSTEM, [objectOrganization]);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_IDENTITY_SECTOR, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_IDENTITY_INDIVIDUAL, [objectOrganization]);
-schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_IDENTITY_INDIVIDUAL, []);
+schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT, []);
 
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_LOCATION_REGION, []);
 schemaRelationsRefDefinition.registerRelationsRef(ENTITY_TYPE_LOCATION_CITY, []);
