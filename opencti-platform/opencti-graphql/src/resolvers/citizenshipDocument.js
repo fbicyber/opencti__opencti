@@ -8,6 +8,7 @@ import {
   stixDomainObjectEditField,
 } from '../domain/stixDomainObject';
 import { ENTITY_TYPE_IDENTITY_CITIZENSHIP_DOCUMENT } from '../schema/stixDomainObject';
+import { logApp } from '../config/conf';
 
 // TODO REVIEW
 

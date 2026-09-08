@@ -5215,7 +5215,7 @@ type CitizenshipDocument implements BasicObject & StixObject & StixCoreObject & 
   isUser: Boolean @auth(for: [KNOWLEDGE, EXPLORE])
   pirInformation(pirId: ID!): PirInformation @auth(for: [PIRAPI])
 }
-input CitizenshipDocumentAddInput {
+input CitizenshipDocumentAddInput { 
   stix_id: StixId
   x_opencti_stix_ids: [StixId]
   name: String! @constraint(minLength: 1, format: "not-blank")
