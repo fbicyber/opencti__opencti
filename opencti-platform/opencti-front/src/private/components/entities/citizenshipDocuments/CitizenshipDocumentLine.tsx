@@ -8,7 +8,7 @@ import { KeyboardArrowRightOutlined } from '@mui/icons-material';
 import Skeleton from '@mui/material/Skeleton';
 import makeStyles from '@mui/styles/makeStyles';
 import { Theme } from '@mui/material/styles/createTheme';
-import { citizenshipDocumentLine_node$key } from '@components/entities/citizenshipDocument/__generated__/CitizenshipDocumentLine_node.graphql';
+import { citizenshipDocumentLine_node$key } from './__generated__/CitizenshipDocumentLine_node.graphql';
 import { DraftChip } from '@components/common/draft/DraftChip';
 import { ListItemButton } from '@mui/material';
 import { useFormatter } from '../../../../components/i18n';

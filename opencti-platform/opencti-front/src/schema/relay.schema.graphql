@@ -4226,6 +4226,8 @@ type CitizenshipDocument implements BasicObject & StixObject & StixCoreObject & 
   x_opencti_reliability: String
   x_opencti_firstname: String
   x_opencti_lastname: String
+  x_opencti_citizenship_document_type: String
+  x_opencti_citizenship_document_id: String
   organizations: OrganizationConnection
   creators: [Creator!]
   toStix(version: Version): String

@@ -21,7 +21,7 @@ interface CitizenshipDocumentsLinesProps {
   onLabelClick: HandleAddFilter;
 }
 
-export const CitizenshipDocumentsLinesQuery = graphql`
+export const citizenshipDocumentsLinesQuery = graphql`
   query CitizenshipDocumentsLinesPaginationQuery(
     $search: String
     $count: Int!
@@ -42,7 +42,7 @@ export const CitizenshipDocumentsLinesQuery = graphql`
   }
 `;
 
-export const CitizenshipDocumentsLinesFragment = graphql`
+export const citizenshipDocumentsLinesFragment = graphql`
   fragment CitizenshipDocumentsLines_data on Query
   @argumentDefinitions(
     search: { type: "String" }
@@ -89,8 +89,8 @@ const CitizenshipDocumentsLines: FunctionComponent<CitizenshipDocumentsLinesProp
     CitizenshipDocumentsLinesPaginationQuery,
     CitizenshipDocumentsLines_data$key
   >({
-    linesQuery: CitizenshipDocumentsLinesQuery,
-    linesFragment: CitizenshipDocumentsLinesFragment,
+    linesQuery: citizenshipDocumentsLinesQuery,
+    linesFragment: citizenshipDocumentsLinesFragment,
     queryRef,
     nodePath: ['citizenshipDocuments', 'pageInfo', 'globalCount'],
     setNumberOfElements,

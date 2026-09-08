@@ -12,14 +12,6 @@ import StixCoreObjectExternalReferences from '../../analyses/external_references
 import StixCoreObjectLatestHistory from '../../common/stix_core_objects/StixCoreObjectLatestHistory';
 import StixCoreObjectOrStixCoreRelationshipNotes from '../../analyses/notes/StixCoreObjectOrStixCoreRelationshipNotes';
 
-/* TODO
- * - check if the following items can be added to the page:
-    - x_opencti_citizenship_document_type
-    - x_opencti_citizenship_document_id
-    - x_opencti_firstname
-    - x_opencti_lastname
- */
-
 const citizenshipDocumentFragment = graphql`
   fragment CitizenshipDocument_citizenshipDocument on CitizenshipDocument {
     id

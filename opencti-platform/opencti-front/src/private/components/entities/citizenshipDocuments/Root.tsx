@@ -170,7 +170,7 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
               { label: citizenshipDocument.name, current: true },
             ]}
             />
-            <!-- TODO: Lookinto thw isUser, do we need it? -->
+            {/* TODO: Lookinto thw isUser, do we need it? */ }
             <StixDomainObjectHeader
               entityType="CitizenshipDocument"
               stixDomainObject={citizenshipDocument}
