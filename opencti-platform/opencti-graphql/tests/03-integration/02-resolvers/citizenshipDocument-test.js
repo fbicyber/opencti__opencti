@@ -1,9 +1,6 @@
 import { expect, it, describe } from 'vitest';
 import gql from 'graphql-tag';
-import { ADMIN_USER, testContext } from '../../utils/testQuery';
 import { queryAsAdmin } from '../../utils/testQueryHelper';
-import { queryAsAdminWithError } from '../../utils/testQueryHelper';
-import { elLoadById } from '../../../src/database/engine';
 
 const LIST_QUERY = gql`
   query citizenshipDocuments(
@@ -54,71 +51,58 @@ const READ_QUERY = gql`
   }
 `;
 
-describe('Individual resolver standard behavior', () => {
-  let individualInternalId;
-  const individualStixId = 'identity--a7da7a84-73a0-4f1b-b0c0-35ed56418e82';
-  it('should individual created', async () => {
+describe('Citizenship Documents resolver standard behavior', () => {
+  let citizenshipDocumentInternalId;
+  const citizenshipDocumentStixId = 'identity--a7da7a84-73a0-4f1b-b0c0-35ed56418e82';
+  it('should citizenship documents created', async () => {
     const CREATE_QUERY = gql`
-      mutation IndividualAdd($input: IndividualAddInput!) {
-        individualAdd(input: $input) {
+      mutation CitizenshipDocumentAdd($input: citizenshipDocumentAddInput!) {
+        citizenshipDocumentAdd(input: $input) {
           id
           name
           description
         }
       }
     `;
-    // Create the individual
-    const INDIVIDUAL_TO_CREATE = {
+    // Create the citizenship Documents
+    const CITIZENSHIP_DOCUMENT_TO_CREATE = {
       input: {
-        name: 'Individual',
-        stix_id: individualStixId,
-        description: 'Individual description',
+        name: 'CitizenshipDocument',
+        stix_id: citizenshipDocumentStixId,
+        description: 'Citizenship Documents description',
       },
     };
-    const individual = await queryAsAdmin({
+    const citizenshipDocuments = await queryAsAdmin({
       query: CREATE_QUERY,
-      variables: INDIVIDUAL_TO_CREATE,
+      variables: CITIZENSHIP_DOCUMENT_TO_CREATE,
     });
-    expect(individual).not.toBeNull();
-    expect(individual.data.individualAdd).not.toBeNull();
-    expect(individual.data.individualAdd.name).toEqual('Individual');
-    individualInternalId = individual.data.individualAdd.id;
+    expect(citizenshipDocuments).not.toBeNull();
+    expect(citizenshipDocuments.data.citizenshipDocumentAdd).not.toBeNull();
+    expect(citizenshipDocuments.data.citizenshipDocumentAdd.name).toEqual('CitizenshipDocument');
+    citizenshipDocumentInternalId = citizenshipDocuments.data.citizenshipDocumentAdd.id;
   });
-  it('should individual loaded by internal id', async () => {
-    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: individualInternalId } });
+  it('should citizenship document loaded by internal id', async () => {
+    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: citizenshipDocumentInternalId } });
     expect(queryResult).not.toBeNull();
-    expect(queryResult.data.individual).not.toBeNull();
-    expect(queryResult.data.individual.id).toEqual(individualInternalId);
-    expect(queryResult.data.individual.toStix.length).toBeGreaterThan(5);
+    expect(queryResult.data.citizenshipDocument).not.toBeNull();
+    expect(queryResult.data.citizenshipDocument.id).toEqual(citizenshipDocumentInternalId);
+    expect(queryResult.data.citizenshipDocument.toStix.length).toBeGreaterThan(5);
   });
-  it('should individual loaded by stix id', async () => {
-    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: individualStixId } });
+  it('should citizenship document loaded by stix id', async () => {
+    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: citizenshipDocumentStixId } });
     expect(queryResult).not.toBeNull();
-    expect(queryResult.data.individual).not.toBeNull();
-    expect(queryResult.data.individual.id).toEqual(individualInternalId);
-    expect(queryResult.data.individual.isUser).toBeFalsy();
+    expect(queryResult.data.citizenshipDocument).not.toBeNull();
+    expect(queryResult.data.citizenshipDocument.id).toEqual(citizenshipDocumentInternalId);
+    expect(queryResult.data.citizenshipDocument.isUser).toBeFalsy();
   });
-  it('should individual organizations to be accurate', async () => {
-    const individual = await elLoadById(testContext, ADMIN_USER, 'identity--d37acc64-4a6f-4dc2-879a-a4c138d0a27f');
-    const queryResult = await queryAsAdmin({
-      query: READ_QUERY,
-      variables: { id: individual.internal_id },
-    });
-    expect(queryResult).not.toBeNull();
-    expect(queryResult.data.individual).not.toBeNull();
-    expect(queryResult.data.individual.organizations.edges.length).toEqual(1);
-    expect(queryResult.data.individual.organizations.edges[0].node.standard_id).toEqual(
-      'identity--732421a0-8471-52de-8d9f-18c8b260813c',
-    );
-  });
-  it('should list individuals', async () => {
+  it('should list citizenship documents', async () => {
     const queryResult = await queryAsAdmin({ query: LIST_QUERY, variables: { first: 10 } });
-    expect(queryResult.data.individuals.edges.length).toEqual(3);
+    expect(queryResult.data.citizenshipDocument.edges.length).toEqual(3);
   });
-  it('should update individual', async () => {
+  it('should update citizenship document', async () => {
     const UPDATE_QUERY = gql`
-      mutation IndividualEdit($id: ID!, $input: [EditInput]!) {
-        individualEdit(id: $id) {
+      mutation CitizenshipDocumentEdit($id: ID!, $input: [EditInput]!) {
+        citizenshipDocumentEdit(id: $id) {
           fieldPatch(input: $input) {
             id
             name
@@ -128,14 +112,14 @@ describe('Individual resolver standard behavior', () => {
     `;
     const queryResult = await queryAsAdmin({
       query: UPDATE_QUERY,
-      variables: { id: individualInternalId, input: { key: 'name', value: ['Individual - test'] } },
+      variables: { id: citizenshipDocumentInternalId, input: { key: 'name', value: ['CitizenshipDocument - test'] } },
     });
-    expect(queryResult.data.individualEdit.fieldPatch.name).toEqual('Individual - test');
+    expect(queryResult.data.citizenshipDocumentEdit.fieldPatch.name).toEqual('CitizenshipDocument - test');
   });
-  it('should context patch individual', async () => {
+  it('should context patch citizenship document', async () => {
     const CONTEXT_PATCH_QUERY = gql`
-      mutation IndividualEdit($id: ID!, $input: EditContext) {
-        individualEdit(id: $id) {
+      mutation CitizenshipDocumentEdit($id: ID!, $input: EditContext) {
+        citizenshipDocumentEdit(id: $id) {
           contextPatch(input: $input) {
             id
           }
@@ -144,14 +128,14 @@ describe('Individual resolver standard behavior', () => {
     `;
     const queryResult = await queryAsAdmin({
       query: CONTEXT_PATCH_QUERY,
-      variables: { id: individualInternalId, input: { focusOn: 'description' } },
+      variables: { id: citizenshipDocumentInternalId, input: { focusOn: 'description' } },
     });
-    expect(queryResult.data.individualEdit.contextPatch.id).toEqual(individualInternalId);
+    expect(queryResult.data.citizenshipDocumentEdit.contextPatch.id).toEqual(citizenshipDocumentInternalId);
   });
-  it('should context clean individual', async () => {
+  it('should context clean citizenship document', async () => {
     const CONTEXT_PATCH_QUERY = gql`
-      mutation IndividualEdit($id: ID!) {
-        individualEdit(id: $id) {
+      mutation CitizenshipDocumentEdit($id: ID!) {
+        citizenshipDocumentEdit(id: $id) {
           contextClean {
             id
           }
@@ -160,18 +144,18 @@ describe('Individual resolver standard behavior', () => {
     `;
     const queryResult = await queryAsAdmin({
       query: CONTEXT_PATCH_QUERY,
-      variables: { id: individualInternalId },
+      variables: { id: citizenshipDocumentInternalId },
     });
-    expect(queryResult.data.individualEdit.contextClean.id).toEqual(individualInternalId);
+    expect(queryResult.data.citizenshipDocumentEdit.contextClean.id).toEqual(citizenshipDocumentInternalId);
   });
-  it('should add relation in individual', async () => {
+  it('should add relation in citizenship document', async () => {
     const RELATION_ADD_QUERY = gql`
-      mutation IndividualEdit($id: ID!, $input: StixRefRelationshipAddInput!) {
-        individualEdit(id: $id) {
+      mutation CitizenshipDocumentEdit($id: ID!, $input: StixRefRelationshipAddInput!) {
+        citizenshipDocumentEdit(id: $id) {
           relationAdd(input: $input) {
             id
             from {
-              ... on Individual {
+              ... on CitizenshipDocument {
                 objectMarking {
                   id
                 }
@@ -184,19 +168,19 @@ describe('Individual resolver standard behavior', () => {
     const queryResult = await queryAsAdmin({
       query: RELATION_ADD_QUERY,
       variables: {
-        id: individualInternalId,
+        id: citizenshipDocumentInternalId,
         input: {
           toId: 'marking-definition--78ca4366-f5b8-4764-83f7-34ce38198e27',
           relationship_type: 'object-marking',
         },
       },
     });
-    expect(queryResult.data.individualEdit.relationAdd.from.objectMarking.length).toEqual(1);
+    expect(queryResult.data.citizenshipDocumentEdit.relationAdd.from.objectMarking.length).toEqual(1);
   });
-  it('should delete relation in individual', async () => {
+  it('should delete relation in citizenship document', async () => {
     const RELATION_DELETE_QUERY = gql`
-      mutation IndividualEdit($id: ID!, $toId: StixRef!, $relationship_type: String!) {
-        individualEdit(id: $id) {
+      mutation citizenshipDocumentEdit($id: ID!, $toId: StixRef!, $relationship_type: String!) {
+        citizenshipDocumentEdit(id: $id) {
           relationDelete(toId: $toId, relationship_type: $relationship_type) {
             id
             objectMarking {
@@ -209,71 +193,29 @@ describe('Individual resolver standard behavior', () => {
     const queryResult = await queryAsAdmin({
       query: RELATION_DELETE_QUERY,
       variables: {
-        id: individualInternalId,
+        id: citizenshipDocumentInternalId,
         toId: 'marking-definition--78ca4366-f5b8-4764-83f7-34ce38198e27',
         relationship_type: 'object-marking',
       },
     });
-    expect(queryResult.data.individualEdit.relationDelete.objectMarking.length).toEqual(0);
+    expect(queryResult.data.citizenshipDocumentEdit.relationDelete.objectMarking.length).toEqual(0);
   });
-  it('should individual deleted', async () => {
+  it('should citizenship documentsStixId deleted', async () => {
     const DELETE_QUERY = gql`
-      mutation individualDelete($id: ID!) {
-        individualEdit(id: $id) {
+      mutation citizenshipDocumentDelete($id: ID!) {
+        citizenshipDocumentEdit(id: $id) {
           delete
         }
       }
     `;
-    // Delete the individual
+    // Delete the CitizenshipDocument
     await queryAsAdmin({
       query: DELETE_QUERY,
-      variables: { id: individualInternalId },
+      variables: { id: citizenshipDocumentInternalId },
     });
     // Verify is no longer found
-    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: individualStixId } });
+    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: citizenshipDocumentStixId } });
     expect(queryResult).not.toBeNull();
-    expect(queryResult.data.individual).toBeNull();
-  });
-});
-
-describe('Individual associated to user tests', () => {
-  const individualUserId = 'identity--cfb1de38-c40a-5f51-81f3-35036a4e3b91'; // admin individual
-  it('should individual loaded by internal id', async () => {
-    const queryResult = await queryAsAdmin({ query: READ_QUERY, variables: { id: individualUserId } });
-    expect(queryResult).not.toBeNull();
-    expect(queryResult.data.individual).not.toBeNull();
-    expect(queryResult.data.individual.isUser).toBeTruthy();
-  });
-  it('should not delete individual associated to user', async () => {
-    const DELETE_QUERY = gql`
-      mutation individualDelete($id: ID!) {
-        individualEdit(id: $id) {
-          delete
-        }
-      }
-    `;
-    // Delete the individual
-    await queryAsAdminWithError({
-      query: DELETE_QUERY,
-      variables: { id: individualUserId },
-    }, 'Cannot delete an individual corresponding to a user', 'FUNCTIONAL_ERROR');
-  });
-  it('should not update individual if user', async () => {
-    const UPDATE_QUERY = gql`
-      mutation IndividualEdit($id: ID!, $input: [EditInput]!) {
-        individualEdit(id: $id) {
-          fieldPatch(input: $input) {
-            id
-            name
-            contact_information
-            isUser
-          }
-        }
-      }
-    `;
-    await queryAsAdminWithError({
-      query: UPDATE_QUERY,
-      variables: { id: individualUserId, input: [{ key: 'name', value: ['Individual - test'] }] },
-    }, 'Cannot update an individual corresponding to a user', 'FUNCTIONAL_ERROR');
+    expect(queryResult.data.citizenshipDocument).toBeNull();
   });
 });
