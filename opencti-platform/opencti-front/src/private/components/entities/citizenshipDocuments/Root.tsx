@@ -82,7 +82,7 @@ const citizenshipDocumentQuery = graphql`
 `;
 
 type RootCitizenshipDocumentProps = {
-  individualId: string;
+  citizenshipDocumentId: string;
   queryRef: PreloadedQuery<RootCitizenshipDocumentQuery>;
 };
 
@@ -172,7 +172,7 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
             />
             <!-- TODO: Lookinto thw isUser, do we need it? -->
             <StixDomainObjectHeader
-              entityType="Individual"
+              entityType="CitizenshipDocument"
               stixDomainObject={citizenshipDocument}
               isOpenctiAlias={true}
               enableQuickSubscription={true}
@@ -219,18 +219,18 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
                 ),
                 content: (
                   <StixCoreObjectContentRoot
-                    stixCoreObject={individual}
+                    stixCoreObject={citizenshipDocument}
                   />
                 ),
                 analyses: (
-                  <IndividualAnalysis
-                    individual={individual}
+                  <CitizenshipDocumentAnalysis
+                    citizenshipDocument={citizenshipDocument}
                     viewAs={viewAs}
                   />
                 ),
                 sightings: (
                   <EntityStixSightingRelationships
-                    entityId={individual.id}
+                    entityId={citizenshipDocument.id}
                     entityLink={link}
                     noPadding={true}
                     isTo={true}
@@ -243,20 +243,21 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
                       'Organization',
                       'Individual',
                       'System',
+                      'CitizenshipDocument',
                     ]}
                   />
                 ),
                 files: (
                   <FileManager
-                    id={individualId}
+                    id={citizenshipDocumentId}
                     connectorsImport={connectorsForImport}
                     connectorsExport={connectorsForExport}
-                    entity={individual}
+                    entity={citizenshipDocument}
                   />
                 ),
                 history: (
                   <StixCoreObjectHistory
-                    stixCoreObjectId={individualId}
+                    stixCoreObjectId={citizenshipDocumentId}
                   />
                 ),
               }}
@@ -270,16 +271,16 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
   );
 };
 const Root = () => {
-  const { individualId } = useParams() as { individualId: string };
-  const queryRef = useQueryLoading<RootIndividualQuery>(individualQuery, {
-    id: individualId,
+  const { citizenshipDocumentId } = useParams() as { citizenshipDocumentId: string };
+  const queryRef = useQueryLoading<RootCitizenshipDocumentQuery>(citizenshipDocumentQuery, {
+    id: citizenshipDocumentId,
   });
 
   return (
     <>
       {queryRef && (
         <Suspense fallback={<Loader variant={LoaderVariant.container} />}>
-          <RootIndividual individualId={individualId} queryRef={queryRef} />
+          <RootCitizenshipDocument citizenshipDocumentId={citizenshipDocumentId} queryRef={queryRef} />
         </Suspense>
       )}
     </>

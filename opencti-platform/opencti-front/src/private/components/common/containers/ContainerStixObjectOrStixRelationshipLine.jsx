@@ -203,6 +203,9 @@ export const ContainerStixObjectOrStixRelationshipLine = createFragmentContainer
         ... on CourseOfAction {
           name
         }
+        ... on CitizenshipDocument {
+          name
+        }
         ... on Individual {
           name
         }
@@ -329,6 +332,9 @@ export const ContainerStixObjectOrStixRelationshipLine = createFragmentContainer
             ... on CourseOfAction {
               name
             }
+            ... on CitizenshipDocument {
+              name
+            }
             ... on Individual {
               name
             }
@@ -421,6 +427,9 @@ export const ContainerStixObjectOrStixRelationshipLine = createFragmentContainer
               name
             }
             ... on CourseOfAction {
+              name
+            }
+            ... on CitizenshipDocument {
               name
             }
             ... on Individual {
@@ -536,6 +545,9 @@ export const ContainerStixObjectOrStixRelationshipLine = createFragmentContainer
             ... on CourseOfAction {
               name
             }
+            ... on CitizenshipDocument {
+              name
+            }
             ... on Individual {
               name
             }
@@ -628,6 +640,9 @@ export const ContainerStixObjectOrStixRelationshipLine = createFragmentContainer
               name
             }
             ... on CourseOfAction {
+              name
+            }
+            ... on CitizenshipDocument {
               name
             }
             ... on Individual {
