@@ -13,6 +13,8 @@ import CreatedByField from '../../common/form/CreatedByField';
 import ObjectLabelField from '../../common/form/ObjectLabelField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
 import MarkdownField from '../../../../components/fields/markdownField/MarkdownField';
+import SelectField from '../../../../components/fields/SelectField';
+import MenuItem from '@mui/material/MenuItem';
 import { ExternalReferencesField } from '../../common/form/ExternalReferencesField';
 import { useDynamicSchemaCreationValidation, useIsMandatoryAttribute, yupShapeConditionalRequired } from '../../../../utils/hooks/useEntitySettings';
 import { insertNode } from '../../../../utils/store';
@@ -51,13 +53,15 @@ const citizenshipDocumentMutation = graphql`
   }
 `;
 
-const CITIZENSHIP_DOCUMENT_TYPE = 'CitizenshipDocument';
+const CITIZENSHIP_DOCUMENT_TYPE = 'Citizenship-Document';
 
 interface CitizenshipDocumentAddInput {
   name: string;
   description: string;
   confidence: number | null;
   x_opencti_reliability: string | undefined;
+  x_opencti_citizenship_document_id: string | undefined;
+  x_opencti_citizenship_document_type: string | undefined;
   createdBy: FieldOption | undefined;
   objectMarking: FieldOption[];
   objectLabel: FieldOption[];
@@ -97,6 +101,8 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
     confidence: Yup.number().nullable(),
     x_opencti_reliability: Yup.string()
       .nullable(),
+    x_opencti_citizenship_document_id: Yup.string().nullable(),
+    x_opencti_citizenship_document_type: Yup.string().nullable(),
     createdBy: Yup.object().nullable(),
     objectMarking: Yup.array().nullable(),
   }, mandatoryAttributes);
@@ -105,7 +111,7 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
   const [commit] = useApiMutation<CitizenshipDocumentCreationMutation>(
     citizenshipDocumentMutation,
     undefined,
-    { successMessage: `${t_i18n('entity_CitizenshipDocument')} ${t_i18n('successfully created')}` },
+    { successMessage: `${t_i18n('entity_Citizenship-Document')} ${t_i18n('successfully created')}` },
   );
   const { buildCreationFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
   const {
@@ -141,6 +147,8 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
         name,
         description: values.description,
         x_opencti_reliability: values.x_opencti_reliability,
+        x_opencti_citizenship_document_id: values.x_opencti_citizenship_document_id,
+        x_opencti_citizenship_document_type: values.x_opencti_citizenship_document_type,
         createdBy: values.createdBy?.value,
         confidence: parseInt(String(values.confidence), 10),
         objectMarking: values.objectMarking.map((v) => v.value),
@@ -170,6 +178,8 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
       name: inputValue ?? '',
       description: '',
       x_opencti_reliability: undefined,
+      x_opencti_citizenship_document_id: '',
+      x_opencti_citizenship_document_type: 'citizenship document',
       confidence: null,
       createdBy: defaultCreatedBy ?? undefined, // undefined for Require Fields Flagging, if Configured Mandatory Field
       objectMarking: defaultMarkingDefinitions ?? [],
@@ -248,6 +258,46 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
             <ConfidenceField
               entityType="CitizenshipDocument"
               containerStyle={fieldSpacingContainerStyle}
+            />
+            <Field
+              component={SelectField}
+              variant="standard"
+              as="select"
+              name="x_opencti_citizenship_document_type"
+              label={t_i18n('Document_type')}
+              fullWidth={true}
+              multiline={true}
+              rows="4"
+              style={{ marginTop: 20 }}
+            >
+              <MenuItem
+                key="passport"
+                value="passport"
+              >
+                Passport
+              </MenuItem>
+              <MenuItem
+                key="national id"
+                value="national id"
+              >
+                National ID
+              </MenuItem>
+              <MenuItem
+                key="citizenship document"
+                value="citizenship document"
+              >
+                Citizenship Documents
+              </MenuItem>
+            </Field>
+            <Field
+              component={BulkTextField}
+              variant="standard"
+              name="x_opencti_citizenship_document_id"
+              label={t_i18n('Document ID')}
+              fullWidth={true}
+              multiline={true}
+              rows="4"
+              style={{ marginTop: 20 }}
             />
             <OpenVocabField
               label={t_i18n('Reliability')}
@@ -328,7 +378,7 @@ const CitizenshipDocumentCreation = ({ paginationOptions }: {
     'citizenshipDocumentAdd',
   );
   const CreateCitizenshipDocumentControlledDial = (props: DrawerControlledDialProps) => (
-    <CreateEntityControlledDial entityType="CitizenshipDocument" {...props} />
+    <CreateEntityControlledDial entityType="Citizenship-Document" {...props} />
   );
 
   return (

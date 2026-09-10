@@ -34,10 +34,16 @@ class CitizenshipDocumentDetailsComponent extends Component {
                 value={citizenshipDocument.x_opencti_reliability}
               />
               <Label sx={{ marginTop: 2 }}>
-                {t('Contact information')}
+                {t('Doc Type')}
               </Label>
-              <FieldOrEmpty source={citizenshipDocument.contact_information}>
-                <Tag label={citizenshipDocument.contact_information} />
+              <FieldOrEmpty source={citizenshipDocument.x_opencti_citizenship_document_type}>
+                <Tag label={citizenshipDocument.x_opencti_citizenship_document_type} />
+              </FieldOrEmpty>
+              <Label sx={{ marginTop: 2 }}>
+                {t('Doc Value')}
+              </Label>
+              <FieldOrEmpty source={citizenshipDocument.x_opencti_citizenship_document_id}>
+                <Tag label={citizenshipDocument.x_opencti_citizenship_document_id} />
               </FieldOrEmpty>
             </Grid>
           </Grid>
@@ -57,9 +63,10 @@ const CitizenshipDocumentDetails = createFragmentContainer(CitizenshipDocumentDe
   citizenshipDocument: graphql`
     fragment CitizenshipDocumentDetails_citizenshipDocument on CitizenshipDocument {
       id
-      contact_information
       description
       x_opencti_reliability
+      x_opencti_citizenship_document_type
+      x_opencti_citizenship_document_id
     }
   `,
 });

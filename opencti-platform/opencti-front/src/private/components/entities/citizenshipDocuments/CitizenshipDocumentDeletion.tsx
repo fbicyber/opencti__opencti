@@ -38,7 +38,7 @@ const CitizenshipDocumentDeletion = ({ id, isOpen, handleClose }: { id: string; 
       onCompleted: () => {
         setDeleting(false);
         handleClose();
-        navigate('/dashboard/entities/citizenshipDocuments');
+        navigate('/dashboard/entities/citizenship_documents');
       },
       onError: (error) => {
         MESSAGING$.notifyRelayError(error);

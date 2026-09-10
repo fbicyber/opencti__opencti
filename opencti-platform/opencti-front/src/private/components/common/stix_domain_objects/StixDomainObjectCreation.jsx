@@ -68,7 +68,7 @@ const IDENTITY_ENTITIES = [
   'Sector',
   'Organization',
   'Individual',
-  'CitizenshipDocument',
+  'Citizenship-Document',
   'System',
   'Event',
 ];
@@ -446,7 +446,7 @@ const StixDomainPanel = ({
         />
       );
     }
-    if (type === 'CitizenshipDocument') {
+    if (type === 'Citizenship-Document') {
       // CitizenshipDocument
       return (
         <CitizenshipDocumentCreationForm

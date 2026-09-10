@@ -107,7 +107,7 @@ const CitizenshipDocument: React.FC<CitizenshipDocumentProps> = ({
           <Grid item xs={6}>
             <SimpleStixObjectOrStixRelationshipStixCoreRelationships
               stixObjectOrStixRelationshipId={citizenshipDocument.id}
-              stixObjectOrStixRelationshipLink={`/dashboard/entities/citizenshipDocument/${citizenshipDocument.id}/knowledge`}
+              stixObjectOrStixRelationshipLink={`/dashboard/entities/citizenship_documents/${citizenshipDocument.id}/knowledge`}
             />
           </Grid>
         )}

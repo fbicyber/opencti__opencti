@@ -28,7 +28,7 @@ const CitizenshipDocumentKnowledgeComponent = ({
     citizenshipDocumentData,
   );
   const location = useLocation();
-  const link = `/dashboard/entities/citizenshipDocument/${citizenshipDocument.id}/knowledge`;
+  const link = `/dashboard/entities/citizenship_documents/${citizenshipDocument.id}/knowledge`;
   const { schema } = useAuth();
   const allRelationshipsTypes = getRelationshipTypesForEntityType(citizenshipDocument.entity_type, schema);
   return (

@@ -39,7 +39,7 @@ export const resolveLink = (type = 'unknown'): string | null => {
     case 'Individual':
       return '/dashboard/entities/individuals';
     case 'CitizenshipDocument':
-      return '/dashboard/entities/citizenshipDocuments';
+      return '/dashboard/entities/citizenship_documents';
     case 'Organization':
       return '/dashboard/entities/organizations';
     case 'SecurityPlatform':

@@ -682,7 +682,7 @@ const LeftBarComponent = ({ queryRef }) => {
                     { type: 'SecurityPlatform', link: '/dashboard/entities/security_platforms', label: t_i18n('Security platforms'), icon: <SecurityOutlined fontSize="small" /> },
                     { type: 'System', link: '/dashboard/entities/systems', label: t_i18n('Systems'), icon: <StorageOutlined fontSize="small" /> },
                     { type: 'Individual', link: '/dashboard/entities/individuals', label: t_i18n('Individuals'), icon: <PersonOutlined fontSize="small" /> },
-                    { type: 'CitizenshipDocument', link: '/dashboard/entities/citizenshipDocuments', label: t_i18n('CitizenshipDocuments'), icon: <PersonOutlined fontSize="small" /> },
+                    { type: 'CitizenshipDocument', link: '/dashboard/entities/citizenship_documents', label: t_i18n('Citizenship Documents'), icon: <PersonOutlined fontSize="small" /> },
                   ]
                 }
               />

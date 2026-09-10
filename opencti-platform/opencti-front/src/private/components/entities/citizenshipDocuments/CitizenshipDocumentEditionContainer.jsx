@@ -13,7 +13,7 @@ const CitizenshipDocumentEditionContainer = (props) => {
 
   return (
     <Drawer
-      title={t_i18n('Update a citizenshipDocument')}
+      title={t_i18n('Update a citizenship-Document')}
       open={open}
       onClose={handleClose}
       context={editContext}
@@ -21,7 +21,7 @@ const CitizenshipDocumentEditionContainer = (props) => {
     >
       <CitizenshipDocumentEditionOverview
         citizenshipDocument={citizenshipDocument}
-        enableReferences={useIsEnforceReference('CitizenshipDocument')}
+        enableReferences={useIsEnforceReference('Citizenship-Document')}
         context={editContext}
         handleClose={handleClose}
       />

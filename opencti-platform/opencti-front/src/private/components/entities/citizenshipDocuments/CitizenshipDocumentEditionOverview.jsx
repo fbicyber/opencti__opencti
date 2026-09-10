@@ -5,7 +5,9 @@ import * as R from 'ramda';
 import * as Yup from 'yup';
 import ConfidenceField from '../../common/form/ConfidenceField';
 import { useFormatter } from '../../../../components/i18n';
+import SelectField from '../../../../components/fields/SelectField';
 import TextField from '../../../../components/TextField';
+import MenuItem from '@mui/material/MenuItem';
 import { SubscriptionFocus } from '../../../../components/Subscription';
 import CreatedByField from '../../common/form/CreatedByField';
 import ObjectMarkingField from '../../common/form/ObjectMarkingField';
@@ -82,7 +84,7 @@ const citizenshipDocumentMutationRelationDelete = graphql`
   }
 `;
 
-const CITIZENSHIP_DOCUMENT_TYPE = 'CitizenshipDocument';
+const CITIZENSHIP_DOCUMENT_TYPE = 'Citizenship-Document';
 
 const CitizenshipDocumentEditionOverviewComponent = (props) => {
   const { citizenshipDocument, enableReferences, context, handleClose } = props;
@@ -94,6 +96,8 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
     confidence: Yup.number().nullable(),
     contact_information: Yup.string().nullable(),
     x_opencti_reliability: Yup.string().nullable(),
+    x_opencti_citizenship_document_type: Yup.string().nullable(),
+    x_opencti_citizenship_document_id: Yup.string().nullable(),
     references: Yup.array(),
     x_opencti_workflow_id: Yup.object(),
     createdBy: Yup.object().nullable(),
@@ -248,6 +252,53 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
               <SubscriptionFocus context={context} fieldName="contact_information" />
             }
           />
+          <Field
+            component={SelectField}
+            variant="standard"
+            as="select"
+            name="x_opencti_citizenship_document_type"
+            label={t_i18n('Document_type')}
+            fullWidth={true}
+            multiline={true}
+            rows="4"
+            style={{ marginTop: 20 }}
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+          >
+            <MenuItem
+              key="passport"
+              value="passport"
+            >
+              Passport
+            </MenuItem>
+            <MenuItem
+              key="national id"
+              value="national id"
+            >
+              National ID
+            </MenuItem>
+            <MenuItem
+              key="citizenship document"
+              value="citizenship document"
+            >
+              Citizenship Documents
+            </MenuItem>
+          </Field>
+          <Field
+            component={TextField}
+            variant="standard"
+            name="x_opencti_citizenship_document_id"
+            label={t_i18n('Document ID')}
+            fullWidth={true}
+            multiline={true}
+            rows="4"
+            style={{ marginTop: 20 }}
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            helperText={
+              <SubscriptionFocus context={context} fieldName="x_opencti_citizenship_document_id" />
+            }
+          />
           <OpenVocabField
             label={t_i18n('Reliability')}
             type="reliability_ov"
@@ -319,6 +370,8 @@ export default createFragmentContainer(CitizenshipDocumentEditionOverviewCompone
         contact_information
         confidence
         entity_type
+        x_opencti_citizenship_document_type
+        x_opencti_citizenship_document_id
         x_opencti_reliability
         createdBy {
           ... on Identity {

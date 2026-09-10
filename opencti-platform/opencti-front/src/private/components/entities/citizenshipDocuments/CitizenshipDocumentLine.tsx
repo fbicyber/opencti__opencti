@@ -88,7 +88,7 @@ export const CitizenshipDocumentLine: FunctionComponent<CitizenshipDocumentLineP
       classes={{ root: classes.item }}
       divider={true}
       component={Link}
-      to={`/dashboard/entities/citizenshipDocument/${data.id}`}
+      to={`/dashboard/entities/citizenship_documents/${data.id}`}
     >
       <ListItemIcon classes={{ root: classes.itemIcon }}>
         <ItemIcon type="CitizenshipDocument" />
