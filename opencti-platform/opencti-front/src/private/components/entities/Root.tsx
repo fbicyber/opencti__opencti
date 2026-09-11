@@ -33,8 +33,8 @@ const Root = () => {
     redirect = 'systems';
   } else if (!useIsHiddenEntity('Individual')) {
     redirect = 'individuals';
-  } else if (!useIsHiddenEntity('CitizenshipDocument')) {
-    redirect = 'citizenshipDocuments';
+  } else if (!useIsHiddenEntity('Citizenship-Document')) {
+    redirect = 'citizenship_documents';
   }
   return (
     <Suspense fallback={<Loader />}>
@@ -92,11 +92,11 @@ const Root = () => {
           element={boundaryWrapper(RootIndividual)}
         />
         <Route
-          path="/citizenshipDocuments"
+          path="/citizenship_documents"
           element={boundaryWrapper(CitizenshipDocuments)}
         />
         <Route
-          path="/citizenshipDocuments/:citizenshipDocumentId/*"
+          path="/citizenship_documents/:citizenshipDocumentId/*"
           element={boundaryWrapper(RootCitizenshipDocument)}
         />
       </Routes>

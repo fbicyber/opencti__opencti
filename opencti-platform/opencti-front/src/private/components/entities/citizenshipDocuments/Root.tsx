@@ -166,13 +166,13 @@ const RootCitizenshipDocument = ({ citizenshipDocumentId, queryRef }: RootCitize
           <div style={{ paddingRight }}>
             <Breadcrumbs elements={[
               { label: t_i18n('Entities') },
-              { label: t_i18n('CitizenshipDocuments'), link: PATH_CITIZENSHIP_DOCUMENTS },
+              { label: t_i18n('Citizenship Documents'), link: PATH_CITIZENSHIP_DOCUMENTS },
               { label: citizenshipDocument.name, current: true },
             ]}
             />
             {/* TODO: Lookinto thw isUser, do we need it? */ }
             <StixDomainObjectHeader
-              entityType="CitizenshipDocument"
+              entityType="Citizenship-Document"
               stixDomainObject={citizenshipDocument}
               isOpenctiAlias={true}
               enableQuickSubscription={true}

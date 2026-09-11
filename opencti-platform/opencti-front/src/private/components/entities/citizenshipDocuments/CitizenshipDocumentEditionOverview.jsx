@@ -173,6 +173,8 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
       'description',
       'contact_information',
       'x_opencti_reliability',
+      'x_opencti_citizenship_document_type',
+      'x_opencti_citizenship_document_id',
       'createdBy',
       'objectMarking',
       'confidence',
@@ -213,57 +215,17 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
             }
           />
           <Field
-            component={MarkdownField}
-            name="description"
-            label={t_i18n('Description')}
-            required={(mandatoryAttributes.includes('description'))}
-            fullWidth={true}
-            multiline={true}
-            rows="4"
-            style={{ marginTop: 20 }}
-            onFocus={editor.changeFocus}
-            onSubmit={handleSubmitField}
-            uploadEntityId={citizenshipDocument.id}
-            helperText={
-              <SubscriptionFocus context={context} fieldName="description" />
-            }
-          />
-          <ConfidenceField
-            onFocus={editor.changeFocus}
-            onSubmit={handleSubmitField}
-            entityType="CitizenshipDocument"
-            containerStyle={fieldSpacingContainerStyle}
-            editContext={context}
-            variant="edit"
-          />
-          <Field
-            component={TextField}
-            variant="standard"
-            name="contact_information"
-            label={t_i18n('Contact information')}
-            required={(mandatoryAttributes.includes('contact_information'))}
-            fullWidth={true}
-            multiline={true}
-            rows="4"
-            style={{ marginTop: 20 }}
-            onFocus={editor.changeFocus}
-            onSubmit={handleSubmitField}
-            helperText={
-              <SubscriptionFocus context={context} fieldName="contact_information" />
-            }
-          />
-          <Field
             component={SelectField}
             variant="standard"
             as="select"
             name="x_opencti_citizenship_document_type"
             label={t_i18n('Document_type')}
-            fullWidth={true}
-            multiline={true}
+            multiple={false}
             rows="4"
             style={{ marginTop: 20 }}
             onFocus={editor.changeFocus}
             onSubmit={handleSubmitField}
+            containerStyle={fieldSpacingContainerStyle}
           >
             <MenuItem
               key="passport"
@@ -290,7 +252,6 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
             name="x_opencti_citizenship_document_id"
             label={t_i18n('Document ID')}
             fullWidth={true}
-            multiline={true}
             rows="4"
             style={{ marginTop: 20 }}
             onFocus={editor.changeFocus}
@@ -298,6 +259,30 @@ const CitizenshipDocumentEditionOverviewComponent = (props) => {
             helperText={
               <SubscriptionFocus context={context} fieldName="x_opencti_citizenship_document_id" />
             }
+          />
+          <Field
+            component={MarkdownField}
+            name="description"
+            label={t_i18n('Description')}
+            required={(mandatoryAttributes.includes('description'))}
+            fullWidth={true}
+            multiline={true}
+            rows="4"
+            style={{ marginTop: 20 }}
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            uploadEntityId={citizenshipDocument.id}
+            helperText={
+              <SubscriptionFocus context={context} fieldName="description" />
+            }
+          />
+          <ConfidenceField
+            onFocus={editor.changeFocus}
+            onSubmit={handleSubmitField}
+            entityType="CitizenshipDocument"
+            containerStyle={fieldSpacingContainerStyle}
+            editContext={context}
+            variant="edit"
           />
           <OpenVocabField
             label={t_i18n('Reliability')}

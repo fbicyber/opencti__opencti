@@ -44,8 +44,13 @@ const CitizenshipDocuments = () => {
     const dataColumns = {
       name: {
         label: 'Name',
-        width: '35%',
+        width: '25%',
         isSortable: true,
+      },
+      x_opencti_citizenship_document_type: {
+        label: 'Document Type',
+        width: '25%',
+        isSortable: false,
       },
       objectLabel: {
         label: 'Labels',
@@ -54,12 +59,12 @@ const CitizenshipDocuments = () => {
       },
       created: {
         label: 'Original creation date',
-        width: '15%',
+        width: '12%',
         isSortable: true,
       },
       modified: {
         label: 'Modification date',
-        width: '15%',
+        width: '13%',
         isSortable: true,
       },
     };
@@ -123,7 +128,7 @@ const CitizenshipDocuments = () => {
 
   return (
     <div data-testid="citizenshipDocument-page">
-      <Breadcrumbs elements={[{ label: t_i18n('Entities') }, { label: t_i18n('CitizenshipDocuments'), current: true }]} />
+      <Breadcrumbs elements={[{ label: t_i18n('Entities') }, { label: t_i18n('Citizenship Documents'), current: true }]} />
       {renderLines()}
     </div>
   );

@@ -243,29 +243,12 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
               detectDuplicate={['User']}
             />
             <Field
-              component={MarkdownField}
-              name="description"
-              label={t_i18n('Description')}
-              required={(mandatoryAttributes.includes('description'))}
-              fullWidth={true}
-              multiline={true}
-              rows="4"
-              style={fieldSpacingContainerStyle}
-              autoPersistOnBlur={false}
-              registerMarkdownImagesController={registerMarkdownImagesController}
-              uploadFileMarkings={values.objectMarking.map(({ value }) => value)}
-            />
-            <ConfidenceField
-              entityType="CitizenshipDocument"
-              containerStyle={fieldSpacingContainerStyle}
-            />
-            <Field
               component={SelectField}
               variant="standard"
               as="select"
               name="x_opencti_citizenship_document_type"
               label={t_i18n('Document_type')}
-              fullWidth={true}
+              containerStyle={fieldSpacingContainerStyle}
               multiline={true}
               rows="4"
               style={{ marginTop: 20 }}
@@ -298,6 +281,22 @@ export const CitizenshipDocumentCreationForm: FunctionComponent<CitizenshipDocum
               multiline={true}
               rows="4"
               style={{ marginTop: 20 }}
+            />
+            <Field
+              component={MarkdownField}
+              name="description"
+              label={t_i18n('Description')}
+              required={(mandatoryAttributes.includes('description'))}
+              multiline={true}
+              rows="4"
+              style={fieldSpacingContainerStyle}
+              autoPersistOnBlur={false}
+              registerMarkdownImagesController={registerMarkdownImagesController}
+              uploadFileMarkings={values.objectMarking.map(({ value }) => value)}
+            />
+            <ConfidenceField
+              entityType="CitizenshipDocument"
+              containerStyle={fieldSpacingContainerStyle}
             />
             <OpenVocabField
               label={t_i18n('Reliability')}

@@ -56,6 +56,7 @@ const citizenshipDocumentLineFragment = graphql`
         name
         created
         modified
+        x_opencti_citizenship_document_type
         draftVersion {
             draft_id
             draft_operation
@@ -102,6 +103,12 @@ export const CitizenshipDocumentLine: FunctionComponent<CitizenshipDocumentLineP
             >
               {data.name}
               {data.draftVersion && (<DraftChip />)}
+            </div>
+            <div
+              className={classes.bodyItem}
+              style={{ width: dataColumns.x_opencti_citizenship_document_type.width }}
+            >
+              {data.x_opencti_citizenship_document_type}
             </div>
             <div
               className={classes.bodyItem}
@@ -162,6 +169,17 @@ export const CitizenshipDocumentLineDummy = ({
                 animation="wave"
                 variant="rectangular"
                 width="90%"
+                height="100%"
+              />
+            </div>
+            <div
+              className={classes.bodyItem}
+              style={{ width: dataColumns.x_opencti_citizenship_document_type.width }}
+            >
+              <Skeleton
+                animation="wave"
+                variant="rectangular"
+                width={140}
                 height="100%"
               />
             </div>
